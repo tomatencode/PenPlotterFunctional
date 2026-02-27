@@ -6,7 +6,7 @@
 
 class StepperAxis {
     public:
-        StepperAxis(Stepper& stepper);
+        StepperAxis(Stepper& stepper, float microsteps);
 
         void step(bool clockwise);
         
@@ -15,5 +15,6 @@ class StepperAxis {
     private:
         Stepper& _stepper;
         float _positionSteps;
+        float _microsteps;
 };
 #endif
