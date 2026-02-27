@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "Stepper.hpp"
+#include "stepper.hpp"
 
 Stepper::Stepper(uint8_t stepPin, uint8_t dirPin) 
     : _stepPin(stepPin), _dirPin(dirPin) {
