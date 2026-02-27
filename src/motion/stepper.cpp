@@ -13,6 +13,6 @@ void Stepper::setDirection(bool clockwise) {
 
 void Stepper::step() {
     digitalWrite(_stepPin, HIGH);
-    delayMicroseconds(2); // Driver pulse width requirement
+    delayMicroseconds(2);
     digitalWrite(_stepPin, LOW);
 }
