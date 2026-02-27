@@ -1,18 +1,18 @@
 #include <Arduino.h>
-#include <functional>
+#include "Stepper.hpp"
 
-struct StepperConfig {
-    uint8_t stepPin;
-    uint8_t dirPin;
-};
+Stepper::Stepper(uint8_t stepPin, uint8_t dirPin) 
+    : _stepPin(stepPin), _dirPin(dirPin) {
+    pinMode(_stepPin, OUTPUT);
+    pinMode(_dirPin, OUTPUT);
+}
 
-using StepperFunc = std::function<void(bool direction)>;
+void Stepper::setDirection(bool clockwise) {
+    digitalWrite(_dirPin, clockwise ? HIGH : LOW);
+}
 
-StepperFunc create_stepper(StepperConfig config) {
-    return [config](bool direction) -> void {
-        digitalWrite(config.dirPin, direction ? HIGH : LOW);
-        digitalWrite(config.stepPin, HIGH);
-        delayMicroseconds(2);
-        digitalWrite(config.stepPin, LOW);
-    };
+void Stepper::step() {
+    digitalWrite(_stepPin, HIGH);
+    delayMicroseconds(2); // Driver pulse width requirement
+    digitalWrite(_stepPin, LOW);
 }
