@@ -15,6 +15,7 @@ public:
 
 private:
     TMC2209Stepper& _driver;
+    uint16_t _microsteps{0};
 };
 
 #endif
