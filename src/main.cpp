@@ -28,7 +28,7 @@ StepperAxis axisA(stepA, driverA);
 StepperAxis axisB(stepB, driverB);
 
 // Kinematics
-CoreXYKinematics kinematics(80.0f); // 80 steps/mm
+CoreXYKinematics kinematics(5); // 80 steps/mm
 
 void configureDriver(TMC2209Driver& driver) {
     driver.begin();
@@ -51,5 +51,42 @@ void setup() {
     configureDriver(driverB);
 }
 
+// move in a square
+
+float side_lenght_mm = 100.0f;
+float mm_per_s = 50.0f;
+
 void loop() {
+    // to top right
+    MoveToXY(
+        {side_lenght_mm / 2.0f, side_lenght_mm / 2.0f},
+        mm_per_s,
+        kinematics,
+        axisA,
+        axisB
+    );
+    // to top left
+    MoveToXY(
+        {-side_lenght_mm / 2.0f, side_lenght_mm / 2.0f},
+        mm_per_s,
+        kinematics,
+        axisA,
+        axisB
+    );
+    // to bottom left
+    MoveToXY(
+        {-side_lenght_mm / 2.0f, -side_lenght_mm / 2.0f},
+        mm_per_s,
+        kinematics,
+        axisA,
+        axisB
+    );
+    // to bottom right
+    MoveToXY(
+        {side_lenght_mm / 2.0f, -side_lenght_mm / 2.0f},
+        mm_per_s,
+        kinematics,
+        axisA,
+        axisB
+    );
 }

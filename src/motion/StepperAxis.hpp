@@ -13,9 +13,13 @@ class StepperAxis {
         
         void zero();
         float positionSteps() const;
+
+        // helper to expose information without leaking the driver
+        uint16_t microsteps() const;
+
     private:
+        MotorDriver& _driver;
         Stepper& _stepper;
         float _positionSteps;
-        MotorDriver& _driver;
 };
 #endif

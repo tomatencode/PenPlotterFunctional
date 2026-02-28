@@ -4,14 +4,18 @@
 #include <Arduino.h>
 
 void MoveToXY(
-    const MotorSteps& currentSteps,
-    const XYPos& currentPos,
     const XYPos& targetPos,
     float mm_per_s,
     const CoreXYKinematics& kinematics,
-    StepCallback stepperACallback,
-    StepCallback stepperBCallback
+    StepperAxis& axisA,
+    StepperAxis& axisB
 ) {
+    // derive current position from steps for motion planning
+    MotorSteps currentSteps = {axisA.positionSteps(), axisB.positionSteps()};
+    uint16_t msA = axisA.microsteps();
+    uint16_t msB = axisB.microsteps();
+
+    XYPos currentPos = kinematics.steps_to_mm(currentSteps);
     float dx = targetPos.x_mm - currentPos.x_mm;
     float dy = targetPos.y_mm - currentPos.y_mm;
     float distance_mm = std::sqrt(dx * dx + dy * dy);
@@ -19,8 +23,9 @@ void MoveToXY(
 
     MotorSteps targetSteps = kinematics.mm_to_steps(targetPos);
 
-    int32_t deltaA = targetSteps.a - currentSteps.a;
-    int32_t deltaB = targetSteps.b - currentSteps.b;
+    // convert deltas from full steps to microsteps
+    int32_t deltaA = static_cast<int32_t>((targetSteps.a - currentSteps.a) * msA);
+    int32_t deltaB = static_cast<int32_t>((targetSteps.b - currentSteps.b) * msB);
 
     int32_t absA = std::abs(deltaA);
     int32_t absB = std::abs(deltaB);
@@ -55,12 +60,12 @@ void MoveToXY(
         errB += absB;
 
         if (errA >= stepsInLoop) {
-            stepperACallback(dirA);
+            axisA.step(dirA);
             errA -= stepsInLoop;
         }
 
         if (errB >= stepsInLoop) {
-            stepperBCallback(dirB);
+            axisB.step(dirB);
             errB -= stepsInLoop;
         }
     }

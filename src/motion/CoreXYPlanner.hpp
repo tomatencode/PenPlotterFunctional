@@ -3,17 +3,17 @@
 
 #include <cstdint>
 #include "CoreXYKinematics.hpp"
+#include "StepperAxis.hpp"
 
 using StepCallback = void(*)(bool direction);
 
 // Plan and execute a linear move directly using a callback
 void MoveToXY(
-    const MotorSteps& currentSteps,
     const XYPos& targetPos,
     float mm_per_s,
     const CoreXYKinematics& kinematics,
-    StepCallback stepperACallback,
-    StepCallback stepperBCallback
+    StepperAxis& axisA,
+    StepperAxis& axisB
 );
 
 #endif
