@@ -1,8 +1,9 @@
-#ifndef AXIS_H
-#define AXIS_H
+#ifndef STEPPER_AXIS_HPP
+#define STEPPER_AXIS_HPP
 
 #include <Arduino.h>
 #include "Stepper.hpp"
+#include "MotorDriver.hpp"
 
 class StepperAxis {
     public:

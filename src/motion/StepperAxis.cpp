@@ -8,7 +8,7 @@ StepperAxis::StepperAxis(Stepper& stepper, MotorDriver& driver)
 void StepperAxis::step(bool clockwise) {
     _stepper.setDirection(clockwise);
     _stepper.step();
-    _positionSteps += clockwise ? 1 : -1 / _driver.getMicrosteps();
+    _positionSteps += (clockwise ? 1 : -1) / _driver.getMicrosteps();;
 }
 
 void StepperAxis::zero() { _positionSteps = 0; }
