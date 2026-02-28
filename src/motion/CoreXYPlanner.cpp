@@ -16,16 +16,18 @@ void MoveToXY(
     uint16_t msB = axisB.microsteps();
 
     XYPos currentPos = kinematics.steps_to_mm(currentSteps);
+
     float dx = targetPos.x_mm - currentPos.x_mm;
     float dy = targetPos.y_mm - currentPos.y_mm;
+    
     float distance_mm = std::sqrt(dx * dx + dy * dy);
     if (distance_mm <= 0.0f) return;
 
-    MotorSteps targetSteps = kinematics.mm_to_steps(targetPos);
+    MotorSteps dfullsteps = kinematics.mm_to_steps({dx, dy});
 
     // convert deltas from full steps to microsteps
-    int32_t deltaA = static_cast<int32_t>((targetSteps.a - currentSteps.a) * msA);
-    int32_t deltaB = static_cast<int32_t>((targetSteps.b - currentSteps.b) * msB);
+    int32_t deltaA = static_cast<int32_t>((dfullsteps.a) * msA);
+    int32_t deltaB = static_cast<int32_t>((dfullsteps.b) * msB);
 
     int32_t absA = std::abs(deltaA);
     int32_t absB = std::abs(deltaB);

@@ -11,12 +11,10 @@ class StepperAxis {
 
         void step(bool clockwise);
         
-        void zero();
+        void setPositionSteps(float steps);
         float positionSteps() const;
 
-        // helper to expose information without leaking the driver
         uint16_t microsteps() const;
-
     private:
         MotorDriver& _driver;
         Stepper& _stepper;

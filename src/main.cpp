@@ -37,6 +37,8 @@ void configureDriver(TMC2209Driver& driver) {
 }
 
 void setup() {
+    Serial.begin(115200);
+
     // Mute buzzer
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
