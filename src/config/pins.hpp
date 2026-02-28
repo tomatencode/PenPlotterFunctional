@@ -19,3 +19,6 @@ constexpr float R_SENSE = 0.11f;
 
 // buzzer
 constexpr uint8_t BUZZER_PIN = 14;
+
+// servo
+constexpr uint8_t SERVO_PIN = 13;

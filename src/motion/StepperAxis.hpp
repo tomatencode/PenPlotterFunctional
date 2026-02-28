@@ -7,7 +7,7 @@
 
 class StepperAxis {
     public:
-        StepperAxis(Stepper& stepper, MotorDriver& driver);
+        StepperAxis(Stepper& stepper, MotorDriver& driver, bool flippedDirection);
 
         void step(bool clockwise);
         
@@ -16,6 +16,7 @@ class StepperAxis {
 
         uint16_t microsteps() const;
     private:
+        bool flippedDirection;
         MotorDriver& _driver;
         Stepper& _stepper;
         float _positionSteps;

@@ -2,11 +2,11 @@
 #include "Stepper.hpp"
 #include "MotorDriver.hpp"
 
-StepperAxis::StepperAxis(Stepper& stepper, MotorDriver& driver)
-    : _stepper(stepper), _positionSteps(0), _driver(driver) {}
+StepperAxis::StepperAxis(Stepper& stepper, MotorDriver& driver, bool flippedDirection)
+    : _stepper(stepper), _positionSteps(0), _driver(driver), flippedDirection(flippedDirection) {}
 
 void StepperAxis::step(bool clockwise) {
-    _stepper.setDirection(clockwise);
+    _stepper.setDirection(clockwise != flippedDirection);
     _stepper.step();
     _positionSteps += (clockwise ? 1 : -1) / (float)_driver.getMicrosteps();
 }
