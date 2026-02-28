@@ -7,7 +7,7 @@ void MoveToXY(
     const MotorSteps& currentSteps,
     const XYPos& currentPos,
     const XYPos& targetPos,
-    float stepsPerMM,
+    const CoreXYKinematics& kinematics,
     float mm_per_s,
     StepCallback stepperACallback,
     StepCallback stepperBCallback
@@ -17,7 +17,7 @@ void MoveToXY(
     float distance_mm = std::sqrt(dx * dx + dy * dy);
     if (distance_mm <= 0.0f) return;
 
-    MotorSteps targetSteps = mm_to_steps(targetPos, stepsPerMM);
+    MotorSteps targetSteps = kinematics.mm_to_steps(targetPos);
 
     int32_t deltaA = targetSteps.a - currentSteps.a;
     int32_t deltaB = targetSteps.b - currentSteps.b;
@@ -45,7 +45,7 @@ void MoveToXY(
 
         // Wait until scheduled time
         while ((int32_t)(micros() - next_step_time) < 0) {
-            yield();
+            yield(); // for watchdog (idk if this is necessary)
         }
 
         next_step_time += step_interval_us;

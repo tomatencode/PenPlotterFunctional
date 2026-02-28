@@ -13,10 +13,19 @@ struct XYPos {
     float y_mm;
 };
 
-// Convert real-world X/Y (mm) → CoreXY motor steps
-MotorSteps mm_to_steps(const XYPos& pos, float steps_per_mm);
+class CoreXYKinematics {
+public:
+    explicit CoreXYKinematics(float steps_per_mm_) : steps_per_mm(steps_per_mm_) {}
 
-// Convert motor steps → real-world X/Y (mm)
-XYPos steps_to_mm(const MotorSteps& steps, float steps_per_mm);
+    MotorSteps mm_to_steps(const XYPos& pos) const {
+        return { pos.x_mm * steps_per_mm, pos.y_mm * steps_per_mm };
+    }
 
+    XYPos steps_to_mm(const MotorSteps& steps) const {
+        return { steps.a / steps_per_mm, steps.b / steps_per_mm };
+    }
+
+private:
+    float steps_per_mm;
+};
 #endif

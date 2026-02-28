@@ -5,6 +5,8 @@
 #include "motion/Stepper.hpp"
 #include "motion/StepperAxis.hpp"
 #include "motion/TMC2209Driver.hpp"
+#include "motion/CoreXYKinematics.hpp"
+#include "motion/CoreXYPlanner.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -21,9 +23,12 @@ TMC2209Driver driverB(rawDriverB);
 Stepper stepA(STEP_PIN_A, DIR_PIN_A);
 Stepper stepB(STEP_PIN_B, DIR_PIN_B);
 
-// Axis layer (now uses MotorDriver instead of lambda)
+// Axis layer
 StepperAxis axisA(stepA, driverA);
 StepperAxis axisB(stepB, driverB);
+
+// Kinematics
+CoreXYKinematics kinematics(80.0f); // 80 steps/mm
 
 void configureDriver(TMC2209Driver& driver) {
     driver.begin();
