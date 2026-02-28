@@ -10,7 +10,7 @@ using StepCallback = void(*)(bool direction);
 void MoveToXY(
     const MotorSteps& currentSteps,
     const XYPos& targetPos,
-    float stepsPerMM,
+    const CoreXYKinematics& kinematics,
     StepCallback stepperACallback,
     StepCallback stepperBCallback
 );
