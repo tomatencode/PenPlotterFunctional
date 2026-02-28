@@ -1,0 +1,20 @@
+#ifndef TMC2209_DRIVER_HPP
+#define TMC2209_DRIVER_HPP
+
+#include <TMCStepper.h>
+#include "MotorDriver.hpp"
+
+class TMC2209Driver : public MotorDriver {
+public:
+    TMC2209Driver(TMC2209Stepper& driver);
+
+    void begin() override;
+    void setMicrosteps(uint16_t ms) override;
+    uint16_t getMicrosteps() override;
+    void setCurrent(uint16_t mA) override;
+
+private:
+    TMC2209Stepper& _driver;
+};
+
+#endif
