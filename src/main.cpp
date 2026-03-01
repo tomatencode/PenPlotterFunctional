@@ -8,7 +8,7 @@
 #include "motion/TMC2209Driver.hpp"
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/CoreXYPlanner.hpp"
-#include "drawText.hpp"
+#include "examples/drawText.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -40,7 +40,7 @@ float side_lenght_mm = 100.0f;
 float mm_per_s_draw = 20.0f;
 float mm_per_s_fast = 50.0f;
 
-float servo_up_pos = 105.0f;
+float servo_up_pos = 100.0f;
 float servo_down_pos = 65.0f;
 
 void configureDriver(TMC2209Driver& driver) {
@@ -75,13 +75,14 @@ void setup() {
 // move in a square
 void loop() {
     
-    // Example: Draw "HELLO" at position (30, 50) with size 5mm
+    // Example: Draw "HELLO WORLD!" at position (0, 0) with size 12mm
     DrawText(
-        "HELLO WORLD",           // Text to draw
+        "HELLO WORLD!",    // Text to draw
         0.0f,              // X position (mm)
         0.0f,              // Y position (mm)
         12.0f,             // Font size (mm)
         mm_per_s_draw,     // Drawing speed (mm/s)
+        mm_per_s_fast,     // Moving speed (mm/s)
         kinematics,        // Kinematics
         axisA, axisB,      // Motor axes
         penServo,          // Servo
@@ -89,50 +90,35 @@ void loop() {
         servo_down_pos     // Pen down angle
     );
 
-    delay(50000000); // Wait before repeating
-
-    /*
-    // Original square drawing code (commented out)
-    
-    // to top right
-    MoveToXY(
-        {side_lenght_mm / 2.0f, side_lenght_mm / 2.0f},
-        mm_per_s_fast,
-        kinematics,
-        axisA,
-        axisB
+    // Example: Draw all uppercase letters at position (-20, 0) with size 5mm
+    DrawText(
+        "ABCDEFGHIJKLMNOPQRST",    // Text to draw
+        0.0f,              // X position (mm)
+        -20.0f,              // Y position (mm)
+        8.0f,              // Font size (mm)
+        mm_per_s_draw,     // Drawing speed (mm/s)
+        mm_per_s_fast,     // Moving speed (mm/s)
+        kinematics,        // Kinematics
+        axisA, axisB,      // Motor axes
+        penServo,          // Servo
+        servo_up_pos,      // Pen up angle
+        servo_down_pos     // Pen down angle
     );
-    penServo.write(servo_down_pos);
-    delay(100);
-    // to top left
-    MoveToXY(
-        {-side_lenght_mm / 2.0f, side_lenght_mm / 2.0f},
-        mm_per_s_draw,
-        kinematics,
-        axisA,
-        axisB
+    DrawText(
+        "UVWXYZ1234567890!?.,",    // Text to draw
+        0.0f,              // X position (mm)
+        -32.0f,             // Y position (mm)
+        8.0f,              // Font size (mm)
+        mm_per_s_draw,     // Drawing speed (mm/s)
+        mm_per_s_fast,     // Moving speed (mm/s)
+        kinematics,        // Kinematics
+        axisA, axisB,      // Motor axes
+        penServo,          // Servo
+        servo_up_pos,      // Pen up angle
+        servo_down_pos     // Pen down angle
     );
-    penServo.write(servo_up_pos);
-    delay(100);
-    // to bottom left
-    MoveToXY(
-        {-side_lenght_mm / 2.0f, -side_lenght_mm / 2.0f},
-        mm_per_s_fast,
-        kinematics,
-        axisA,
-        axisB
-    );
-    penServo.write(servo_down_pos);
-    delay(100);
-    // to bottom right
-    MoveToXY(
-        {side_lenght_mm / 2.0f, -side_lenght_mm / 2.0f},
-        mm_per_s_draw,
-        kinematics,
-        axisA,
-        axisB
-    );
-    penServo.write(servo_up_pos);
-    delay(100);
-    */
+    // stop after drawing
+    while (true) {
+        delay(1000);
+    }
 }
