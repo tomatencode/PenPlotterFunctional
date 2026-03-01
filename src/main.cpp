@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include <TMCStepper.h>
-#include <Servo.h>
 
 #include "config/pins.hpp"
 #include "motion/Stepper.hpp"
+#include "motion/ServoPen.hpp"
 #include "motion/StepperAxis.hpp"
 #include "motion/TMC2209Driver.hpp"
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/MotionSystem.hpp"
-#include "examples/drawText.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -23,6 +22,9 @@ TMC2209Stepper rawDriverB(&driverSerial, R_SENSE, 2);
 // Abstracted drivers
 TMC2209Driver driverA(rawDriverA);
 TMC2209Driver driverB(rawDriverB);
+
+// abstracted pen
+ServoPen pen(penServo, 100, 65); // up position, down position
 
 // Step pulse layer
 Stepper stepA(STEP_PIN_A, DIR_PIN_A);
@@ -39,12 +41,8 @@ CoreXYKinematics kinematics(5); // 5 steps/mm
 MotionSystem motionSystem(axisA, axisB, kinematics);
 
 // sequence variables
-float side_lenght_mm = 100.0f;
 float mm_per_s_draw = 20.0f;
 float mm_per_s_fast = 50.0f;
-
-float servo_up_pos = 100.0f;
-float servo_down_pos = 65.0f;
 
 void configureDriver(TMC2209Driver& driver) {
     driver.begin();
@@ -62,7 +60,7 @@ void setup() {
     // Set servo
     pinMode(SERVO_PIN, OUTPUT);
     penServo.attach(SERVO_PIN);
-    penServo.write(servo_up_pos);
+    pen.up();
     
 
     // Enable drivers
@@ -77,46 +75,15 @@ void setup() {
 
 // move in a square
 void loop() {
-    
-    // Example: Draw "HELLO WORLD!" at position (0, 0) with size 12mm
-    DrawText(
-        "HELLO WORLD!",    // Text to draw
-        0.0f,              // X position (mm)
-        0.0f,              // Y position (mm)
-        12.0f,             // Font size (mm)
-        mm_per_s_draw,     // Drawing speed (mm/s)
-        mm_per_s_fast,     // Moving speed (mm/s)
-        motionSystem,      // Motion system
-        penServo,          // Servo
-        servo_up_pos,      // Pen up angle
-        servo_down_pos     // Pen down angle
-    );
+    motionSystem.moveToXY({50, 0}, mm_per_s_fast);
+    pen.down();
+    delay(200);
+    motionSystem.arcToXY({- 50, 0}, {0, 0}, true,  mm_per_s_draw);
+    motionSystem.arcToXY({ 50, 0}, {0, 0}, true,  mm_per_s_draw);
+    delay(200);
+    pen.up();
+    motionSystem.moveToXY({0, 0}, mm_per_s_fast);
 
-    // Example: Draw all uppercase letters at position (-20, 0) with size 5mm
-    DrawText(
-        "ABCDEFGHIJKLMNOPQRST",    // Text to draw
-        0.0f,              // X position (mm)
-        -20.0f,              // Y position (mm)
-        8.0f,              // Font size (mm)
-        mm_per_s_draw,     // Drawing speed (mm/s)
-        mm_per_s_fast,     // Moving speed (mm/s)
-        motionSystem,      // Motion system
-        penServo,          // Servo
-        servo_up_pos,      // Pen up angle
-        servo_down_pos     // Pen down angle
-    );
-    DrawText(
-        "UVWXYZ1234567890!?.,",    // Text to draw
-        0.0f,              // X position (mm)
-        -32.0f,             // Y position (mm)
-        8.0f,              // Font size (mm)
-        mm_per_s_draw,     // Drawing speed (mm/s)
-        mm_per_s_fast,     // Moving speed (mm/s)
-        motionSystem,      // Motion system
-        penServo,          // Servo
-        servo_up_pos,      // Pen up angle
-        servo_down_pos     // Pen down angle
-    );
     // stop after drawing
     while (true) {
         delay(1000);

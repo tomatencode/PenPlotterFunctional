@@ -2,10 +2,10 @@
 #define DRAW_TEXT_HPP
 
 #include <Arduino.h>
-#include <Servo.h>
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/StepperAxis.hpp"
 #include "motion/MotionSystem.hpp"
+#include "motion/Pen.hpp"
 
 /**
  * Draw text on the plotter at a specific location with custom size
@@ -16,9 +16,7 @@
  * @param size_mm Font size in millimeters (base unit is 10mm per character)
  * @param speed_mm_per_s Drawing speed in millimeters per second
  * @param motionSystem Motion system reference
- * @param penServo Servo object for pen control
- * @param pen_up_position Servo angle for pen up position
- * @param pen_down_position Servo angle for pen down position
+ * @param Pen
  */
 void DrawText(
     const char* text,
@@ -28,9 +26,7 @@ void DrawText(
     float move_speed_mm_per_s,
     float draw_speed_mm_per_s,
     MotionSystem& motionSystem,
-    Servo& penServo,
-    float pen_up_position,
-    float pen_down_position
+    Pen& pen
 );
 
 #endif // DRAW_TEXT_HPP

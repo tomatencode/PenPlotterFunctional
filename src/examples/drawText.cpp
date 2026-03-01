@@ -87,7 +87,7 @@ const Stroke fontY[] = {
     {1, 10, 5, 5}, {5, 5, 9, 10}, {5, 5, 5, 0}
 };
 const Stroke fontZ[] = {
-    {8, 10, 1, 10}, {1, 10, 8, 0}, {8, 0, 1, 0}
+    {2, 10, 9, 10}, {9, 10, 2, 0}, {2, 0, 9, 0}
 };
 
 // Digit definitions
@@ -137,6 +137,15 @@ const Stroke fontComma[] = {
 };
 const Stroke fontQuestion[] = {
     {5, 0, 5, 1}, {5, 4, 5, 5}, {5, 5, 9, 5}, {9, 5, 9, 10}, {9, 10, 1, 10}
+};
+const Stroke fontBracketOpen[] = {
+    {6,0,4,3}, {4,3,4,7}, {4,7,6,10}
+};
+const Stroke fontBracketClose[] = {
+    {4,0,6,3}, {6,3,6,7}, {6,7,4,10}
+};
+const Stroke fontColon[] = {
+    {4, 7, 5, 7}, {4, 3, 5, 3}
 };
 
 
@@ -202,6 +211,12 @@ CharacterDef getCharacter(char c) {
         return {fontComma, sizeof(fontComma) / sizeof(Stroke)};
     } else if (c == '?') {
         return {fontQuestion, sizeof(fontQuestion) / sizeof(Stroke)};
+    } else if (c == '(') {
+        return {fontBracketOpen, sizeof(fontBracketOpen) / sizeof(Stroke)};
+    } else if (c == ')') {
+        return {fontBracketClose, sizeof(fontBracketClose) / sizeof(Stroke)};
+    } else if (c == ':') {
+        return {fontColon, sizeof(fontColon) / sizeof(Stroke)};
     }
     
     // Default: return empty
@@ -216,9 +231,7 @@ void DrawText(
     float draw_speed_mm_per_s,
     float move_speed_mm_per_s,
     MotionSystem& motionSystem,
-    Servo& penServo,
-    float pen_up_position,
-    float pen_down_position
+    Pen& pen
 ) {
     float char_width = 11.0f * size_mm / 10.0f;  // Each char is ~10 units wide, +1 for spacing
     float current_x = x_mm;
@@ -256,18 +269,18 @@ void DrawText(
             }
 
             if (needLift) {
-                penServo.write(pen_up_position);
+                pen.up();
                 delay(100);
 
                 // Move to start of stroke
                 motionSystem.moveToXY({x1, y1}, move_speed_mm_per_s);
 
                 // Lower pen
-                penServo.write(pen_down_position);
+                pen.down();
                 delay(100);
             } else {
                 // Already at the correct start point - ensure pen is down
-                penServo.write(pen_down_position);
+                pen.down();
                 delay(20);
             }
 
@@ -285,5 +298,5 @@ void DrawText(
     }
 
     // Final pen up
-    penServo.write(pen_up_position);
+    pen.up();
 }
