@@ -1,5 +1,4 @@
 #include "examples/drawText.hpp"
-#include "motion/CoreXYPlanner.hpp"
 #include <cmath>
 
 // Simple vector font - each letter defined as stroke endpoints
@@ -216,9 +215,7 @@ void DrawText(
     float size_mm,
     float draw_speed_mm_per_s,
     float move_speed_mm_per_s,
-    const CoreXYKinematics& kinematics,
-    StepperAxis& axisA,
-    StepperAxis& axisB,
+    MotionSystem& motionSystem,
     Servo& penServo,
     float pen_up_position,
     float pen_down_position
@@ -263,7 +260,7 @@ void DrawText(
                 delay(100);
 
                 // Move to start of stroke
-                MoveToXY({x1, y1}, move_speed_mm_per_s, kinematics, axisA, axisB);
+                motionSystem.moveToXY({x1, y1}, move_speed_mm_per_s);
 
                 // Lower pen
                 penServo.write(pen_down_position);
@@ -275,7 +272,7 @@ void DrawText(
             }
 
             // Draw stroke
-            MoveToXY({x2, y2}, draw_speed_mm_per_s, kinematics, axisA, axisB);
+            motionSystem.moveToXY({x2, y2}, draw_speed_mm_per_s);
 
             // Update last drawn end point
             last_x = x2;

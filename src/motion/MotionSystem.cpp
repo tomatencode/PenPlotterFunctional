@@ -1,21 +1,22 @@
-#include "CoreXYPlanner.hpp"
+#include "MotionSystem.hpp"
 #include <cmath>
 #include <algorithm>
 #include <Arduino.h>
 
-void MoveToXY(
+
+MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics)
+    : _axisA(axisA), _axisB(axisB), _kinematics(kinematics) {}
+
+void MotionSystem::moveToXY(
     const XYPos& targetPos,
-    float mm_per_s,
-    const CoreXYKinematics& kinematics,
-    StepperAxis& axisA,
-    StepperAxis& axisB
+    float mm_per_s
 ) {
     // derive current position from steps for motion planning
-    MotorSteps currentSteps = {axisA.positionSteps(), axisB.positionSteps()};
-    uint16_t msA = axisA.microsteps();
-    uint16_t msB = axisB.microsteps();
+    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
+    uint16_t msA = _axisA.microsteps();
+    uint16_t msB = _axisB.microsteps();
 
-    XYPos currentPos = kinematics.steps_to_mm(currentSteps);
+    XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
 
     float dx = targetPos.x_mm - currentPos.x_mm;
     float dy = targetPos.y_mm - currentPos.y_mm;
@@ -23,7 +24,7 @@ void MoveToXY(
     float distance_mm = std::sqrt(dx * dx + dy * dy);
     if (distance_mm <= 0.0f) return;
 
-    MotorSteps dfullsteps = kinematics.mm_to_steps({dx, dy});
+    MotorSteps dfullsteps = _kinematics.mm_to_steps({dx, dy});
 
     // convert deltas from full steps to microsteps
     int32_t deltaA = static_cast<int32_t>((dfullsteps.a) * msA);
@@ -62,12 +63,12 @@ void MoveToXY(
         errB += absB;
 
         if (errA >= stepsInLoop) {
-            axisA.step(dirA);
+            _axisA.step(dirA);
             errA -= stepsInLoop;
         }
 
         if (errB >= stepsInLoop) {
-            axisB.step(dirB);
+            _axisB.step(dirB);
             errB -= stepsInLoop;
         }
     }

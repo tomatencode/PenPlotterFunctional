@@ -7,7 +7,7 @@
 #include "motion/StepperAxis.hpp"
 #include "motion/TMC2209Driver.hpp"
 #include "motion/CoreXYKinematics.hpp"
-#include "motion/CoreXYPlanner.hpp"
+#include "motion/MotionSystem.hpp"
 #include "examples/drawText.hpp"
 
 // UART
@@ -33,7 +33,10 @@ StepperAxis axisA(stepA, driverA, true); // Invert direction for axis A
 StepperAxis axisB(stepB, driverB, true); // Invert direction for axis B
 
 // Kinematics
-CoreXYKinematics kinematics(5); // 80 steps/mm
+CoreXYKinematics kinematics(5); // 5 steps/mm
+
+// Motion system
+MotionSystem motionSystem(axisA, axisB, kinematics);
 
 // sequence variables
 float side_lenght_mm = 100.0f;
@@ -83,8 +86,7 @@ void loop() {
         12.0f,             // Font size (mm)
         mm_per_s_draw,     // Drawing speed (mm/s)
         mm_per_s_fast,     // Moving speed (mm/s)
-        kinematics,        // Kinematics
-        axisA, axisB,      // Motor axes
+        motionSystem,      // Motion system
         penServo,          // Servo
         servo_up_pos,      // Pen up angle
         servo_down_pos     // Pen down angle
@@ -98,8 +100,7 @@ void loop() {
         8.0f,              // Font size (mm)
         mm_per_s_draw,     // Drawing speed (mm/s)
         mm_per_s_fast,     // Moving speed (mm/s)
-        kinematics,        // Kinematics
-        axisA, axisB,      // Motor axes
+        motionSystem,      // Motion system
         penServo,          // Servo
         servo_up_pos,      // Pen up angle
         servo_down_pos     // Pen down angle
@@ -111,8 +112,7 @@ void loop() {
         8.0f,              // Font size (mm)
         mm_per_s_draw,     // Drawing speed (mm/s)
         mm_per_s_fast,     // Moving speed (mm/s)
-        kinematics,        // Kinematics
-        axisA, axisB,      // Motor axes
+        motionSystem,      // Motion system
         penServo,          // Servo
         servo_up_pos,      // Pen up angle
         servo_down_pos     // Pen down angle
