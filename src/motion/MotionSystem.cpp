@@ -4,12 +4,12 @@
 #include <Arduino.h>
 
 
-MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, float min_feature_size_mm)
+MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, double min_feature_size_mm)
     : _axisA(axisA), _axisB(axisB), _kinematics(kinematics), _min_feature_size_mm(min_feature_size_mm) {}
 
 void MotionSystem::moveToXY(
     const XYPos& targetPos,
-    float mm_per_s
+    double mm_per_s
 ) {
     // derive current position from steps for motion planning
     MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
@@ -21,10 +21,10 @@ void MotionSystem::moveToXY(
     float dx = targetPos.x_mm - currentPos.x_mm;
     float dy = targetPos.y_mm - currentPos.y_mm;
     
-    float distance_mm = std::sqrt(dx * dx + dy * dy);
-    if (distance_mm <= 0.0f) return;
+    double distance_mm = std::sqrt(dx * dx + dy * dy);
+    if (distance_mm <= 0.0) return;
 
-    if (mm_per_s <= 0.0f) return;
+    if (mm_per_s <= 0.0) return;
 
     MotorSteps dfullsteps = _kinematics.mm_to_steps({dx, dy});
 
@@ -42,9 +42,9 @@ void MotionSystem::moveToXY(
     if (stepsInLoop == 0) return;
 
     // ---- timing calculation ----
-    float move_time_s = distance_mm / mm_per_s;
-    float step_frequency = stepsInLoop / move_time_s;
-    uint32_t step_interval_us = static_cast<uint32_t>(1e6f / step_frequency);
+    double move_time_s = distance_mm / mm_per_s;
+    double step_frequency = stepsInLoop / move_time_s;
+    uint32_t step_interval_us = static_cast<uint32_t>(1e6 / step_frequency);
     if (step_interval_us == 0) step_interval_us = 1;
 
     uint32_t next_step_time = micros();
@@ -81,7 +81,7 @@ void MotionSystem::arcToXY(
     const XYPos& targetPos,
     const XYPos& centerPos,
     bool clockwise,
-    float mm_per_s
+    double mm_per_s
 ) {
     // derive current position from steps for motion planning
     MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
@@ -94,20 +94,20 @@ void MotionSystem::arcToXY(
         Serial.println("Error: microstepping mismatch between axes");
         return;
     }
-    float ms = msA; // or msB, since they are equal
+    double ms = msA; // or msB, since they are equal
 
     XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
 
     // Calculate the radius and angles
-    float dx = currentPos.x_mm - centerPos.x_mm;
-    float dy = currentPos.y_mm - centerPos.y_mm;
-    float radius = std::sqrt(dx * dx + dy * dy);
+    double dx = currentPos.x_mm - centerPos.x_mm;
+    double dy = currentPos.y_mm - centerPos.y_mm;
+    double radius = std::sqrt(dx * dx + dy * dy);
 
-    float startAngle = atan2(currentPos.y_mm - centerPos.y_mm, currentPos.x_mm - centerPos.x_mm);
-    float endAngle = atan2(targetPos.y_mm - centerPos.y_mm, targetPos.x_mm - centerPos.x_mm);
+    double startAngle = atan2(currentPos.y_mm - centerPos.y_mm, currentPos.x_mm - centerPos.x_mm);
+    double endAngle = atan2(targetPos.y_mm - centerPos.y_mm, targetPos.x_mm - centerPos.x_mm);
 
     // Calculate the total angle to move through
-    float totalAngle;
+    double totalAngle;
     if (clockwise) {
         totalAngle = startAngle - endAngle;
         if (totalAngle < 0) totalAngle += 2 * M_PI; // Ensure positive angle
@@ -117,19 +117,19 @@ void MotionSystem::arcToXY(
     }
 
     // Calculate the arc length and time to move
-    float arcLength = radius * totalAngle;
+    double arcLength = radius * totalAngle;
 
-    if (_min_feature_size_mm <= 0.0f) return;
+    if (_min_feature_size_mm <= 0.0) return;
 
     int linesegments = static_cast<int>(arcLength / _min_feature_size_mm); // Number of line segments to approximate the arc
     linesegments = std::max(1, std::min(linesegments, 1000));
 
     for (int32_t i = 1; i <= linesegments; i++) {
         // Calculate the current angle along the arc
-        float t = static_cast<float>(i) / (linesegments); // Normalized progress along the arc
-        float angle = startAngle + (clockwise ? -1 : 1) * t * totalAngle;
-        float x = centerPos.x_mm + radius * cos(angle);
-        float y = centerPos.y_mm + radius * sin(angle);
+        double t = static_cast<double>(i) / (linesegments); // Normalized progress along the arc
+        double angle = startAngle + (clockwise ? -1 : 1) * t * totalAngle;
+        double x = centerPos.x_mm + radius * cos(angle);
+        double y = centerPos.y_mm + radius * sin(angle);
         moveToXY({x, y}, mm_per_s); // Move to the calculated position
     }
 }

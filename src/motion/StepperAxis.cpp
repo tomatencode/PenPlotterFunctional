@@ -8,14 +8,14 @@ StepperAxis::StepperAxis(Stepper& stepper, MotorDriver& driver, bool flippedDire
 void StepperAxis::step(bool clockwise) {
     _stepper.setDirection(clockwise != flippedDirection);
     _stepper.step();
-    _positionSteps += (clockwise ? 1 : -1) / (float)_driver.getMicrosteps();
+    _positionSteps += (clockwise ? 1 : -1) / (double)_driver.getMicrosteps();
 }
 
-void StepperAxis::setPositionSteps(float steps) {
+void StepperAxis::setPositionSteps(double steps) {
     _positionSteps = steps;
 }
 
-float StepperAxis::positionSteps() const { return _positionSteps; }
+double StepperAxis::positionSteps() const { return _positionSteps; }
 
 uint16_t StepperAxis::microsteps() const {
     return _driver.getMicrosteps();

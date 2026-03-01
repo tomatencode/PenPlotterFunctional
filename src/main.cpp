@@ -41,8 +41,8 @@ CoreXYKinematics kinematics(5); // 5 steps/mm
 MotionSystem motionSystem(axisA, axisB, kinematics);
 
 // sequence variables
-float mm_per_s_draw = 20.0f;
-float mm_per_s_fast = 50.0f;
+float mm_per_s_draw = 20.0;
+float mm_per_s_fast = 50.0;
 
 void configureDriver(TMC2209Driver& driver) {
     driver.begin();

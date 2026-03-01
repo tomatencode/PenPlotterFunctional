@@ -11,14 +11,14 @@ class StepperAxis {
 
         void step(bool clockwise);
         
-        void setPositionSteps(float steps);
-        float positionSteps() const;
+        void setPositionSteps(double steps);
+        double positionSteps() const;
 
         uint16_t microsteps() const;
     private:
         bool flippedDirection;
         MotorDriver& _driver;
         Stepper& _stepper;
-        float _positionSteps;
+        double _positionSteps;
 };
 #endif
