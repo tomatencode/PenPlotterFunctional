@@ -10,11 +10,13 @@ public:
 
     void down() override;
     void up() override;
+    bool isDown() const override;
 
 private:
     Servo& _servo;
     int _upPosition;
     int _downPosition;
+    bool _penDown;
 };
 
 #endif

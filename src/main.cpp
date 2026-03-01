@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <TMCStepper.h>
+#include <vector>
 
 #include "config/pins.hpp"
 #include "motion/Stepper.hpp"
@@ -8,6 +9,7 @@
 #include "motion/TMC2209Driver.hpp"
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/MotionSystem.hpp"
+#include "motion/GCodeParser.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -40,6 +42,9 @@ CoreXYKinematics kinematics(5); // 5 steps/mm
 // Motion system
 MotionSystem motionSystem(axisA, axisB, kinematics);
 
+// G-code parser
+GCodeParser gcodeParser(motionSystem, pen, 20.0, 50.0); // feed rate for drawing, feed rate for travel
+
 // sequence variables
 float mm_per_s_draw = 20.0;
 float mm_per_s_fast = 50.0;
@@ -71,20 +76,47 @@ void setup() {
 
     configureDriver(driverA);
     configureDriver(driverB);
+
+    Serial.println("Setup complete. Ready to receive G-code.");
 }
 
-// move in a square
-void loop() {
-    motionSystem.moveToXY({50, 0}, mm_per_s_fast);
-    pen.down();
-    delay(200);
-    motionSystem.cubicBezierToXY({20, 20}, {0, -50}, {-50, 0},  mm_per_s_draw);
-    delay(200);
-    pen.up();
-    motionSystem.moveToXY({0, 0}, mm_per_s_fast);
+std::vector<String> gcodeLines = {
+    // Head (circle with radius 40mm, centered at 50,50)
+    "PU",
+    "G0 X10 Y50",          // Move to leftmost point of head
+    "PD",
+    "G2 X10 Y50 I40 J0 F20", // Clockwise full circle (head)
+    "PU",
 
-    // stop after drawing
-    while (true) {
-        delay(1000);
+    // Left eye (circle radius 5mm)
+    "G0 X30 Y65",          // Move to left eye
+    "PD",
+    "G2 X30 Y65 I5 J0 F15",   // small circle for left eye
+    "PU",
+
+    // Right eye (circle radius 5mm)
+    "G0 X60 Y65",          // Move to right eye
+    "PD",
+    "G2 X60 Y65 I5 J0 F15",   // small circle for right eye
+    "PU",
+
+    // Smile (quadratic Bézier)
+    "G0 X30 Y35",          // Start of smile
+    "PD",
+    "QUAD X70 Y35 C50 D20 F15", // Control point at (50,20), target at (70,35)
+    "PU",
+
+    // Move out of the way
+    "G0 X0 Y0 F50"
+};
+
+void loop() {
+    // G-code execution example
+    for (int i = 0; i < gcodeLines.size(); i++) {
+        Serial.print("Executing: ");
+        Serial.println(gcodeLines[i]);
+        gcodeParser.executeLine(gcodeLines[i].c_str());
     }
+
+    delay(10000); // Wait before repeating
 }
