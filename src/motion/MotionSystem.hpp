@@ -23,7 +23,18 @@ class MotionSystem {
             bool clockwise,
             double mm_per_s
         );
+        void quadraticBezierToXY(
+            const XYPos& controlPoint,
+            const XYPos& targetPos,
+            float mm_per_s
+        );
 
+        void cubicBezierToXY(
+            const XYPos& controlPoint1,
+            const XYPos& controlPoint2,
+            const XYPos& targetPos,
+            float mm_per_s
+        );
     private:
         StepperAxis& _axisA;
         StepperAxis& _axisB;

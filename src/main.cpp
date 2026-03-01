@@ -78,8 +78,7 @@ void loop() {
     motionSystem.moveToXY({50, 0}, mm_per_s_fast);
     pen.down();
     delay(200);
-    motionSystem.arcToXY({- 50, 0}, {0, 0}, true,  mm_per_s_draw);
-    motionSystem.arcToXY({ 50, 0}, {0, 0}, true,  mm_per_s_draw);
+    motionSystem.cubicBezierToXY({20, 20}, {0, -50}, {-50, 0},  mm_per_s_draw);
     delay(200);
     pen.up();
     motionSystem.moveToXY({0, 0}, mm_per_s_fast);

@@ -85,16 +85,6 @@ void MotionSystem::arcToXY(
 ) {
     // derive current position from steps for motion planning
     MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
-    uint16_t msA = _axisA.microsteps();
-    uint16_t msB = _axisB.microsteps();
-
-    if (msA != msB) {
-        // For simplicity, require both axes to have the same microstepping
-        // In a real implementation, we could handle this more gracefully
-        Serial.println("Error: microstepping mismatch between axes");
-        return;
-    }
-    double ms = msA; // or msB, since they are equal
 
     XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
 
@@ -132,4 +122,130 @@ void MotionSystem::arcToXY(
         double y = centerPos.y_mm + radius * sin(angle);
         moveToXY({x, y}, mm_per_s); // Move to the calculated position
     }
+}
+
+void MotionSystem::quadraticBezierToXY(
+    const XYPos& controlPoint,
+    const XYPos& targetPos,
+    float mm_per_s
+) {
+    // Get current position (start anchor)
+    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
+    XYPos startPos = _kinematics.steps_to_mm(currentSteps);
+
+    // Lambda to evaluate the quadratic Bézier at t
+    auto bezier = [&](double t) -> XYPos {
+        double u = 1.0 - t;
+        XYPos p;
+        p.x_mm = u*u*startPos.x_mm + 2*u*t*controlPoint.x_mm + t*t*targetPos.x_mm;
+        p.y_mm = u*u*startPos.y_mm + 2*u*t*controlPoint.y_mm + t*t*targetPos.y_mm;
+        return p;
+    };
+
+    const double maxSegmentLength = _min_feature_size_mm;
+
+    double t0 = 0.0;
+    XYPos lastPos = startPos;
+
+    // Fully adaptive loop
+    while (t0 < 1.0) {
+        // Small initial increment in t
+        double dt = 0.01;
+        double t1 = t0 + dt;
+        if (t1 > 1.0) t1 = 1.0;
+
+        XYPos p1 = bezier(t1);
+
+        // Increase t1 until distance >= maxSegmentLength or t1 reaches 1.0
+        while (t1 < 1.0) {
+            double dx = p1.x_mm - lastPos.x_mm;
+            double dy = p1.y_mm - lastPos.y_mm;
+            double dist = std::sqrt(dx*dx + dy*dy);
+            if (dist >= maxSegmentLength) break;
+
+            t1 += dt;
+            if (t1 > 1.0) t1 = 1.0;
+            p1 = bezier(t1);
+        }
+
+        // Move the pen to the computed point
+        moveToXY(p1, mm_per_s);
+
+        // Prepare for next segment
+        lastPos = p1;
+        t0 = t1;
+    }
+
+    // Ensure the pen ends exactly at target
+    moveToXY(targetPos, mm_per_s);
+}
+
+void MotionSystem::cubicBezierToXY(
+    const XYPos& controlPoint1,
+    const XYPos& controlPoint2,
+    const XYPos& targetPos,
+    float mm_per_s
+) {
+    // Get current position (start anchor)
+    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
+    XYPos startPos = _kinematics.steps_to_mm(currentSteps);
+
+    // Lambda to evaluate the cubic Bézier at t
+    auto bezier = [&](double t) -> XYPos {
+        double u = 1.0 - t;
+        double uu = u * u;
+        double uuu = uu * u;
+        double tt = t * t;
+        double ttt = tt * t;
+
+        XYPos p;
+        p.x_mm = uuu * startPos.x_mm
+                 + 3 * uu * t * controlPoint1.x_mm
+                 + 3 * u * tt * controlPoint2.x_mm
+                 + ttt * targetPos.x_mm;
+
+        p.y_mm = uuu * startPos.y_mm
+                 + 3 * uu * t * controlPoint1.y_mm
+                 + 3 * u * tt * controlPoint2.y_mm
+                 + ttt * targetPos.y_mm;
+
+        return p;
+    };
+
+    const double maxSegmentLength = _min_feature_size_mm;
+
+    double t0 = 0.0;
+    XYPos lastPos = startPos;
+
+    // Fully adaptive loop
+    while (t0 < 1.0) {
+        // Small initial increment in t
+        double dt = 0.01;
+        double t1 = t0 + dt;
+        if (t1 > 1.0) t1 = 1.0;
+
+        XYPos p1 = bezier(t1);
+
+        // Increase t1 until distance >= maxSegmentLength or t1 reaches 1.0
+        while (t1 < 1.0) {
+            double dx = p1.x_mm - lastPos.x_mm;
+            double dy = p1.y_mm - lastPos.y_mm;
+            double dist = std::sqrt(dx*dx + dy*dy);
+            if (dist >= maxSegmentLength) break;
+
+            t1 += dt;
+            if (t1 > 1.0) t1 = 1.0;
+            p1 = bezier(t1);
+        }
+
+        // Move the pen to the computed point
+        moveToXY(p1, mm_per_s);
+
+        // Prepare for next segment
+        lastPos = p1;
+        t0 = t1;
+    }
+
+    // Ensure the pen ends exactly at target
+    moveToXY(targetPos, mm_per_s);
 }
