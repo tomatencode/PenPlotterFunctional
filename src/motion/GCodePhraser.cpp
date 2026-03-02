@@ -37,9 +37,9 @@ void GCodeParser::executeLine(const std::string& line) {
     if (cmd == "G0" || cmd == "G1") handleG0G1(params);
     else if (cmd == "G2") handleG2G3(params, true);
     else if (cmd == "G3") handleG2G3(params, false);
-    else if (cmd == "QUAD") handleQUAD(params);
-    else if (cmd == "CUBIC") handleCUBIC(params);
-    else if (cmd == "PU" || cmd == "PD") handlePenUpDown(cmd);
+    else if (cmd == "G5") handleQUAD(params);
+    else if (cmd == "G5.1") handleCUBIC(params);
+    else if (cmd == "M3" || cmd == "M5") handlePenUpDown(cmd);
     else {
         Serial.print("Unknown command: ");
         Serial.println(cmd.c_str());
@@ -103,9 +103,9 @@ void GCodeParser::handleCUBIC(const std::map<char,double>& params) {
 
 // Pen up/down
 void GCodeParser::handlePenUpDown(const std::string& cmd) {
-    if (cmd == "PD") {
+    if (cmd == "M3") {
         _pen.down();
-    } else if (cmd == "PU") {
+    } else if (cmd == "M5") {
         _pen.up();
     }
 }

@@ -82,29 +82,29 @@ void setup() {
 
 std::vector<String> gcodeLines = {
     // Head (circle with radius 40mm, centered at 50,50)
-    "PU",
+    "M5",
     "G0 X10 Y50",          // Move to leftmost point of head
-    "PD",
+    "M3",
     "G2 X10 Y50 I40 J0 F20", // Clockwise full circle (head)
-    "PU",
+    "M5",
 
     // Left eye (circle radius 5mm)
     "G0 X30 Y65",          // Move to left eye
-    "PD",
+    "M3",
     "G2 X30 Y65 I5 J0 F15",   // small circle for left eye
-    "PU",
+    "M5",
 
     // Right eye (circle radius 5mm)
     "G0 X60 Y65",          // Move to right eye
-    "PD",
+    "M3",
     "G2 X60 Y65 I5 J0 F15",   // small circle for right eye
-    "PU",
+    "M5",
 
     // Smile (quadratic Bézier)
     "G0 X30 Y35",          // Start of smile
-    "PD",
-    "QUAD X70 Y35 C50 D20 F15", // Control point at (50,20), target at (70,35)
-    "PU",
+    "M3",
+    "G5 X70 Y35 C50 D20 F15", // Control point at (50,20), target at (70,35)
+    "M5",
 
     // Move out of the way
     "G0 X0 Y0 F50"
