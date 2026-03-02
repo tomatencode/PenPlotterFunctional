@@ -105,7 +105,9 @@ void GCodeParser::handleCUBIC(const std::map<char,double>& params) {
 void GCodeParser::handlePenUpDown(const std::string& cmd) {
     if (cmd == "M3") {
         _pen.down();
+        delay(100); // Small delay to ensure pen is fully down before moving
     } else if (cmd == "M5") {
+        delay(100); // Small delay to ensure pen is fully up before moving
         _pen.up();
     }
 }
