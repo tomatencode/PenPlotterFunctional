@@ -38,7 +38,7 @@ StepperAxis axisA(stepA, driverA, true); // Invert direction for axis A
 StepperAxis axisB(stepB, driverB, true); // Invert direction for axis B
 
 // Homing controller
-HoamingController homingController(axisA, axisB, driverA, driverB, 360, 150.0, 100.0, 1000); // speed_stps_per_s, stallGuard_threshold, sgCheckInterval_ms, acceleration_time_ms
+HoamingController homingController(axisA, axisB, driverA, driverB, 360, 200.0, 100.0, 1000); // speed_stps_per_s, stallGuard_threshold, sgCheckInterval_ms, acceleration_time_ms
 
 // Kinematics
 CoreXYKinematics kinematics(5); // 5 steps/mm
@@ -124,7 +124,6 @@ void loop() {
         Serial.print("Executing: ");
         Serial.println(line.c_str());
         gcodeParser.executeLine(line.c_str());
-        delay(1000); // Short delay between commands for visibility
     }
     
     while (true)
