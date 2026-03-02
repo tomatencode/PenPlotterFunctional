@@ -10,6 +10,7 @@
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/MotionSystem.hpp"
 #include "motion/GCodeParser.hpp"
+#include "motion/HoamingController.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -36,6 +37,9 @@ Stepper stepB(STEP_PIN_B, DIR_PIN_B);
 StepperAxis axisA(stepA, driverA, true); // Invert direction for axis A
 StepperAxis axisB(stepB, driverB, true); // Invert direction for axis B
 
+// Homing controller
+HoamingController homingController(axisA, axisB, driverA, driverB, 360, 150.0, 100.0, 1000); // speed_stps_per_s, stallGuard_threshold, sgCheckInterval_ms, acceleration_time_ms
+
 // Kinematics
 CoreXYKinematics kinematics(5); // 5 steps/mm
 
@@ -51,6 +55,7 @@ float mm_per_s_fast = 50.0;
 
 void configureDriver(TMC2209Driver& driver) {
     driver.begin();
+    driver.setStallGuardThreshold(15); // Set stallGuard threshold (adjust as needed)
     driver.setCurrent(1000);
     driver.setMicrosteps(16);
 }
@@ -83,27 +88,27 @@ void setup() {
 std::vector<String> gcodeLines = {
     // Head (circle with radius 40mm, centered at 50,50)
     "M5",
-    "G0 X10 Y50",          // Move to leftmost point of head
+    "G0 X60 Y100",          // Move to leftmost point of head
     "M3",
-    "G2 X10 Y50 I40 J0 F20", // Clockwise full circle (head)
+    "G2 X60 Y100 I40 J0 F20", // Clockwise full circle (head)
     "M5",
 
     // Left eye (circle radius 5mm)
-    "G0 X30 Y65",          // Move to left eye
+    "G0 X80 Y115",          // Move to left eye
     "M3",
-    "G2 X30 Y65 I5 J0 F15",   // small circle for left eye
+    "G2 X80 Y115 I5 J0 F15",   // small circle for left eye
     "M5",
 
     // Right eye (circle radius 5mm)
-    "G0 X60 Y65",          // Move to right eye
+    "G0 X110 Y115",          // Move to right eye
     "M3",
-    "G2 X60 Y65 I5 J0 F15",   // small circle for right eye
+    "G2 X110 Y115 I5 J0 F15",   // small circle for right eye
     "M5",
 
     // Smile (quadratic Bézier)
-    "G0 X30 Y35",          // Start of smile
+    "G0 X80 Y85",          // Start of smile
     "M3",
-    "G5 X70 Y35 C50 D20 F15", // Control point at (50,20), target at (70,35)
+    "G5 X120 Y85 C100 D70 F15", // Control point at (50,20), target at (70,35)
     "M5",
 
     // Move out of the way
@@ -111,12 +116,20 @@ std::vector<String> gcodeLines = {
 };
 
 void loop() {
-    // G-code execution example
-    for (int i = 0; i < gcodeLines.size(); i++) {
-        Serial.print("Executing: ");
-        Serial.println(gcodeLines[i]);
-        gcodeParser.executeLine(gcodeLines[i].c_str());
-    }
+    
+    pen.up();
+    homingController.home();
 
-    delay(10000); // Wait before repeating
+    for (const auto& line : gcodeLines) {
+        Serial.print("Executing: ");
+        Serial.println(line.c_str());
+        gcodeParser.executeLine(line.c_str());
+        delay(1000); // Short delay between commands for visibility
+    }
+    
+    while (true)
+    {
+        delay(1000);
+    }
+    
 }

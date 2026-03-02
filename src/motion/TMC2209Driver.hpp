@@ -13,6 +13,10 @@ public:
     uint16_t getMicrosteps() override;
     void setCurrent(uint16_t mA) override;
 
+    void setStallGuardThreshold(uint8_t threshold) override;
+    uint32_t getStallGuardResult() override;
+
+    void setSpeed(float stps_per_s) override;
 private:
     TMC2209Stepper& _driver;
     uint16_t _microsteps{0};
