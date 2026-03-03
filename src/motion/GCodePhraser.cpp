@@ -1,5 +1,9 @@
 #include "GCodeParser.hpp"
 
+GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel)
+        : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
+          _absolute(true) {}
+
 void GCodeParser::executeLine(const std::string& line) {
     std::string cmd;
     std::map<char,double> params;
@@ -40,6 +44,8 @@ void GCodeParser::executeLine(const std::string& line) {
     else if (cmd == "G5") handleQUAD(params);
     else if (cmd == "G5.1") handleCUBIC(params);
     else if (cmd == "M3" || cmd == "M5") handlePenUpDown(cmd);
+    else if (cmd == "G90" || cmd == "G91") handleG90G91(cmd);
+    else if (cmd == "G28") handlehoming(cmd);
     else {
         Serial.print("Unknown command: ");
         Serial.println(cmd.c_str());
@@ -107,5 +113,19 @@ void GCodeParser::handlePenUpDown(const std::string& cmd) {
         _pen.down();
     } else if (cmd == "M5") {
         _pen.up();
+    }
+}
+
+void GCodeParser::handleG90G91(const std::string& cmd) {
+    if (cmd == "G90") {
+        _absolute = true;
+    } else if (cmd == "G91") {
+        _absolute = false;
+    }
+}
+
+void GCodeParser::handlehoming(const std::string& cmd) {
+    if (cmd == "G28") {
+        _homingController.home();
     }
 }

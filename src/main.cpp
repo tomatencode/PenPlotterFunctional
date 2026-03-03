@@ -10,7 +10,7 @@
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/MotionSystem.hpp"
 #include "motion/GCodeParser.hpp"
-#include "motion/HoamingController.hpp"
+#include "motion/HomingController.hpp"
 
 // UART
 HardwareSerial driverSerial(1);
@@ -38,7 +38,7 @@ StepperAxis axisA(stepA, driverA, true); // Invert direction for axis A
 StepperAxis axisB(stepB, driverB, true); // Invert direction for axis B
 
 // Homing controller
-HoamingController homingController(axisA, axisB, driverA, driverB, 360, 200.0, 100.0, 1000); // speed_stps_per_s, stallGuard_threshold, sgCheckInterval_ms, acceleration_time_ms
+HomingController homingController(axisA, axisB, driverA, driverB, 360, 200.0, 100.0, 1000); // speed_stps_per_s, stallGuard_threshold, sgCheckInterval_ms, acceleration_time_ms
 
 // Kinematics
 CoreXYKinematics kinematics(5); // 5 steps/mm
@@ -47,7 +47,7 @@ CoreXYKinematics kinematics(5); // 5 steps/mm
 MotionSystem motionSystem(axisA, axisB, kinematics);
 
 // G-code parser
-GCodeParser gcodeParser(motionSystem, pen, 20.0, 50.0); // feed rate for drawing, feed rate for travel
+GCodeParser gcodeParser(motionSystem, pen, homingController, 20.0, 50.0); // feed rate for drawing, feed rate for travel
 
 // sequence variables
 float mm_per_s_draw = 20.0;
@@ -86,6 +86,9 @@ void setup() {
 }
 
 std::vector<String> gcodeLines = {
+    // Homing sequence
+    "G28", // Home all axes
+
     // Head (circle with radius 40mm, centered at 50,50)
     "M5",
     "G0 X60 Y100",          // Move to leftmost point of head
@@ -116,10 +119,6 @@ std::vector<String> gcodeLines = {
 };
 
 void loop() {
-    
-    pen.up();
-    homingController.home();
-
     for (const auto& line : gcodeLines) {
         Serial.print("Executing: ");
         Serial.println(line.c_str());

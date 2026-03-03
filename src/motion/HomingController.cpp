@@ -1,9 +1,9 @@
-#include "motion/HoamingController.hpp"
+#include "motion/HomingController.hpp"
 
-HoamingController::HoamingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t sgStartTimeout_ms)
+HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t sgStartTimeout_ms)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _sgStartTimeout_ms(sgStartTimeout_ms) {}
 
-void HoamingController::moveToLimit(bool Afw, bool Bfw)
+void HomingController::moveToLimit(bool Afw, bool Bfw)
 {
     if (_speed_stps_per_s <= 0.0f) return;
     if (_driverA.getMicrosteps() != _driverB.getMicrosteps()) return;
@@ -51,7 +51,7 @@ void HoamingController::moveToLimit(bool Afw, bool Bfw)
     _driverB.setSpeed(0);
 }
 
-void HoamingController::home() {
+void HomingController::home() {
     if (_axisA.microsteps() != _axisB.microsteps()) return;
 
     moveToLimit(false, true); // Move both axes towards their limits

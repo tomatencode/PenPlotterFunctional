@@ -3,24 +3,19 @@
 
 #include "motion/MotionSystem.hpp"
 #include "motion/Pen.hpp"
+#include "motion/HomingController.hpp"
 #include <string>
 #include <vector>
 #include <map>
 
 class GCodeParser {
 public:
-    GCodeParser(MotionSystem& motion, Pen& pen, double feedRateDraw, double feedRateTravel)
-        : _motion(motion), _pen(pen), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
-          _absolute(true) {}
+    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel);
 
     void executeLine(const std::string& line);
-
-    void setAbsoluteMode(bool abs) { _absolute = abs; }
-    void setFeedRateDraw(double f) { _feedRateDraw = f; }
-    void setFeedRateTravel(double f) { _feedRateTravel = f; }
-
 private:
     MotionSystem& _motion;
+    HomingController& _homingController;
     double _feedRateDraw;
     double _feedRateTravel;
     bool _absolute;
@@ -32,6 +27,8 @@ private:
     void handleQUAD(const std::map<char,double>& params);
     void handleCUBIC(const std::map<char,double>& params);
     void handlePenUpDown(const std::string& cmd);
+    void handleG90G91(const std::string& cmd);
+    void handlehoming(const std::string& cmd);
 };
 
 #endif

@@ -1,11 +1,11 @@
-#ifndef HoamingController_HPP
-#define HoamingController_HPP
+#ifndef HomingController_HPP
+#define HomingController_HPP
 
 #include "motion/StepperAxis.hpp"
 
-class HoamingController {
+class HomingController {
 public:
-    HoamingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t sgStartTimeout_ms);
+    HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t sgStartTimeout_ms);
 
     void home();
 private:
