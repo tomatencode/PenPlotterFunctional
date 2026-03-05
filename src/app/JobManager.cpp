@@ -7,6 +7,7 @@
 
 static File currentFile;
 static bool running = false;
+static uint32_t currentLineIndex = 0;
 
 #define MAX_GCODE_LINE 96
 
@@ -25,6 +26,7 @@ void jobStart(String filename)
         return;
     }
 
+    currentLineIndex = 0;
     running = true;
 }
 
@@ -33,6 +35,7 @@ void jobStop()
     if (currentFile)
         currentFile.close();
 
+    currentLineIndex = 0;
     running = false;
 }
 
@@ -61,13 +64,18 @@ void jobManagerUpdate()
         String line = currentFile.readStringUntil('\n');
         line.trim();
 
-        // skip empty lines instead of breaking
-        if (line.length() == 0) continue;
+        // skip empty lines
+        if (line.length() == 0)
+            continue;
 
-        char buffer[MAX_GCODE_LINE];
-        line.toCharArray(buffer, MAX_GCODE_LINE);
+        GcodeMessage msg;
 
-        if (xQueueSend(gcodeQueue, &buffer, 0) != pdTRUE)
+        msg.lineNumber = currentLineIndex++;   // track job progress
+
+        line.toCharArray(msg.line, MAX_GCODE_LINE);
+        msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
+
+        if (xQueueSend(gcodeQueue, &msg, 0) != pdTRUE)
         {
             // queue full, stop sending
             break;

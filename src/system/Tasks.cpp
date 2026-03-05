@@ -20,7 +20,7 @@ TaskHandle_t systemTaskHandle = nullptr;
 */
 void motionTask(void *parameter)
 {
-    char line[MAX_GCODE_LINE];
+    GcodeMessage msg;
 
     Serial.print("Motion task running on core:");
     Serial.println(xPortGetCoreID());
@@ -30,12 +30,17 @@ void motionTask(void *parameter)
 
     while (true)
     {
-        if (xQueueReceive(gcodeQueue, &line, portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE)
         {
-            Serial.print("Executing: ");
-            Serial.println(line);
+            Serial.print("Executing line ");
+            Serial.print(msg.lineNumber);
+            Serial.print(": ");
+            Serial.println(msg.line);
 
-            gcodeParser.executeLine(line);
+            // if you implement shared motionState later
+            // motionState.currentLineNumber = msg.lineNumber;
+
+            gcodeParser.executeLine(msg.line);
         }
     }
 }
