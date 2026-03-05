@@ -8,8 +8,6 @@
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;
 
-#define MAX_GCODE_LINE 96
-
 TaskHandle_t motionTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
 
