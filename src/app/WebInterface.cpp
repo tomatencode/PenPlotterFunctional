@@ -3,16 +3,17 @@
 #include "../storage/FileSystem.hpp"
 
 #include <WiFi.h>
+#include <ESPmDNS.h>
 #include <WebServer.h>
 #include <FS.h>
 
 static WebServer server(80);
 
-static const char* ssid = "Plotter";
-static const char* password = "12345678";
+// Replace these with your home WiFi credentials
+static const char* ssid = "Thomas_Wifi";
+static const char* password = "TotallyHarmless";
 
 // ===== Handlers =====
-
 void handleFileList()
 {
     auto files = fsListFiles();
@@ -55,7 +56,6 @@ void handleStopJob()
     server.send(200, "text/plain", "Job stopped");
 }
 
-// Upload handler
 void handleUpload()
 {
     HTTPUpload& upload = server.upload();
@@ -89,11 +89,42 @@ void handleUpload()
 }
 
 // ===== Init =====
-
 void webInit()
 {
-    WiFi.softAP(ssid, password);
+    Serial.print("Connecting to WiFi ");
+    Serial.println(ssid);
 
+    WiFi.begin(ssid, password);
+
+    // Wait for connection
+    int retry = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print(".");
+        retry++;
+        if (retry > 60)
+        {
+            Serial.println("Failed to connect to WiFi");
+            return;
+        }
+    }
+
+    Serial.println("");
+    Serial.print("Connected! IP address: ");
+    Serial.println(WiFi.localIP());
+
+    // ===== mDNS =====
+    if (!MDNS.begin("esp32")) // hostname = esp32.local
+    {
+        Serial.println("Error starting mDNS");
+    }
+    else
+    {
+        Serial.println("mDNS started: http://esp32.local");
+    }
+
+    // HTTP server routes
     server.on("/files", HTTP_GET, handleFileList);
     server.on("/start", HTTP_POST, handleStartJob);
     server.on("/stop", HTTP_POST, handleStopJob);
@@ -102,8 +133,6 @@ void webInit()
     server.begin();
     Serial.println("Web interface started");
 }
-
-// ===== Update =====
 
 void webUpdate()
 {
