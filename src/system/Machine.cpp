@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../config/pins.hpp"
+#include "../config/machine_config.hpp"
 #include "../motion/Stepper.hpp"
 #include "../motion/ServoPen.hpp"
 #include "../motion/StepperAxis.hpp"
@@ -28,7 +29,7 @@ TMC2209Driver driverA(rawDriverA);
 TMC2209Driver driverB(rawDriverB);
 
 // Pen abstraction
-ServoPen pen(penServo, 100, 65);
+ServoPen pen(penServo, PEN_UP_ANGLE, PEN_DOWN_ANGLE);
 
 // Step pulse layer
 Stepper stepA(STEP_PIN_A, DIR_PIN_A);
@@ -44,26 +45,26 @@ HomingController homingController(
     axisB,
     driverA,
     driverB,
-    360,
-    200.0,
-    100.0,
-    1000);
+    HOMING_SPEED_STPS_PER_S,
+    HOMING_STALLGUARD_THRESHOLD,
+    HOMING_SG_CHECK_INTERVAL_MS,
+    HOMING_SG_START_TIMEOUT_MS);
 
 // Kinematics
-CoreXYKinematics kinematics(5);
+CoreXYKinematics kinematics(STEPS_PER_MM);
 
 // Motion system
 MotionSystem motionSystem(axisA, axisB, kinematics);
 
 // Global G-code parser
-GCodeParser gcodeParser(motionSystem, pen, homingController, 20.0, 50.0);
+GCodeParser gcodeParser(motionSystem, pen, homingController, FEED_RATE_DRAW_MM_PER_S, FEED_RATE_TRAVEL_MM_PER_S);
 
 static void configureDriver(TMC2209Driver& driver)
 {
     driver.begin();
-    driver.setStallGuardThreshold(15);
-    driver.setCurrent(1000);
-    driver.setMicrosteps(16);
+    driver.setStallGuardThreshold(HOMING_STALLGUARD_THRESHOLD);
+    driver.setCurrent(CURRENT_MA);
+    driver.setMicrosteps(MICROSTEPS);
 }
 
 void initMachine()
