@@ -6,7 +6,6 @@
 
 void setup()
 {
-    initMachine();     // hardware + motion system
     initQueues();      // communication queues
     startSystemTasks();// multicore tasks
 }

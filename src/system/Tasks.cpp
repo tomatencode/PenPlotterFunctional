@@ -3,6 +3,7 @@
 
 #include "../gcode/GCodeParser.hpp"
 #include "../system/App.hpp"
+#include "../system/Machine.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;
@@ -25,6 +26,9 @@ void motionTask(void *parameter)
 
     Serial.print("Motion task running on core:");
     Serial.println(xPortGetCoreID());
+
+    // Initialize all motion-related subsystems
+    initMachine();
 
     while (true)
     {
