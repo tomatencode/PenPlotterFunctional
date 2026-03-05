@@ -1,7 +1,6 @@
 #include <Arduino.h>
 
-#include "system/Machine.hpp"
-#include "system/Queues.hpp"
+#include "shared/Queues.hpp"
 #include "system/Tasks.hpp"
 
 void setup()

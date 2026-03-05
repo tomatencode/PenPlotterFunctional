@@ -1,6 +1,6 @@
 #include "Tasks.hpp"
-#include "Queues.hpp"
 
+#include "../shared/Queues.hpp"
 #include "../gcode/GCodeParser.hpp"
 #include "../system/App.hpp"
 #include "../system/Machine.hpp"
