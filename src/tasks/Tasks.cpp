@@ -2,8 +2,8 @@
 
 #include "../shared/Queues.hpp"
 #include "../gcode/GCodeParser.hpp"
-#include "../system/App.hpp"
-#include "../system/Machine.hpp"
+#include "../tasks/App.hpp"
+#include "../tasks/Machine.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;

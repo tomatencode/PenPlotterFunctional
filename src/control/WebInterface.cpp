@@ -1,5 +1,5 @@
 #include "WebInterface.hpp"
-#include "../app/JobManager.hpp"
+#include "../control/JobManager.hpp"
 #include "../storage/FileSystem.hpp"
 #include "../shared/SharedData.hpp"
 
