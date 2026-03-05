@@ -27,11 +27,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
 
         int stallGuardA = _driverA.getStallGuardResult();
         int stallGuardB = _driverB.getStallGuardResult();
-        Serial.print("StallGuard A: ");
-        Serial.print(stallGuardA);
-        Serial.print(" | StallGuard B: ");
-        Serial.println(stallGuardB);
-
+        
         if (stallGuardA < _stallGuard_threshold || stallGuardB < _stallGuard_threshold)
         {
             stallCount++;

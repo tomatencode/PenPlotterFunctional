@@ -6,14 +6,14 @@ constexpr float PEN_UP_ANGLE = 100.0f;
 constexpr float PEN_DOWN_ANGLE = 65.0f;
 
 // Driver
-constexpr float CURRENT_MA = 600.0f;
+constexpr float CURRENT_MA = 1000.0f;
 constexpr uint16_t MICROSTEPS = 16;
 
 // Homing
 constexpr float HOMING_SPEED_STPS_PER_S = 360.0f;
-constexpr float HOMING_STALLGUARD_THRESHOLD = 200.0f;
-constexpr float HOMING_SG_CHECK_INTERVAL_MS = 100.0f;
-constexpr uint16_t HOMING_SG_START_TIMEOUT_MS = 1000;
+constexpr float HOMING_STALLGUARD_THRESHOLD = 150.0f;
+constexpr float HOMING_SG_CHECK_INTERVAL_MS = 50.0f;
+constexpr uint16_t HOMING_SG_START_TIMEOUT_MS = 500;
 
 // Kinematics
 constexpr float STEPS_PER_MM = 5.0f;

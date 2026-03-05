@@ -23,7 +23,7 @@ void motionTask(void *parameter)
 {
     char line[MAX_GCODE_LINE];
 
-    Serial.println("Motion task running on core:");
+    Serial.print("Motion task running on core:");
     Serial.println(xPortGetCoreID());
 
     while (true)
