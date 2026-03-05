@@ -1,6 +1,7 @@
 #include "WebInterface.hpp"
 #include "../app/JobManager.hpp"
 #include "../storage/FileSystem.hpp"
+#include "../shared/SharedData.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
@@ -27,6 +28,18 @@ void handleFileList()
     json += "]";
 
     server.send(200, "application/json", json);
+}
+
+void handlePauseJob()
+{
+    motionCommand = MotionCommand::PAUSE;
+    server.send(200, "text/plain", "Job paused");
+}
+
+void handleResumeJob()
+{
+    motionCommand = MotionCommand::NONE; // Clear the stop command to allow motion to continue
+    server.send(200, "text/plain", "Job resumed");
 }
 
 void handleStartJob()
@@ -129,6 +142,8 @@ void webInit()
     server.on("/start", HTTP_POST, handleStartJob);
     server.on("/stop", HTTP_POST, handleStopJob);
     server.on("/upload", HTTP_POST, [](){}, handleUpload);
+    server.on("/pause", HTTP_POST, handlePauseJob);
+    server.on("/resume", HTTP_POST, handleResumeJob);
 
     server.begin();
     Serial.println("Web interface started");

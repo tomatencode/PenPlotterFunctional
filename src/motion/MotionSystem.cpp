@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <Arduino.h>
+#include "../shared/SharedData.hpp"
 
 
 MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, double min_feature_size_mm)
@@ -57,6 +58,15 @@ void MotionSystem::moveToXY(
         // Wait until scheduled time
         while ((int32_t)(micros() - next_step_time) < 0) {
             yield(); // for watchdog (idk if this is necessary)
+        }
+
+        // Check for motion commands
+        if (motionCommand == MotionCommand::PAUSE) {
+            telemetry.state = MotionState::MOTION_PAUSED;
+            while (motionCommand == MotionCommand::PAUSE)
+            {
+                yield(); // for watchdog (idk if this is necessary)
+            }
         }
 
         next_step_time += step_interval_us;
