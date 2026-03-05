@@ -11,8 +11,9 @@ constexpr uint16_t MICROSTEPS = 16;
 
 // Homing
 constexpr float HOMING_SPEED_STPS_PER_S = 360.0f;
-constexpr float HOMING_STALLGUARD_THRESHOLD = 150.0f;
+constexpr float HOMING_STALLGUARD_THRESHOLD = 120.0f;
 constexpr float HOMING_SG_CHECK_INTERVAL_MS = 50.0f;
+constexpr uint16_t HOMING_CONSECUTIVE_STALL_CHECKS = 5;
 constexpr uint16_t HOMING_SG_START_TIMEOUT_MS = 500;
 
 // Kinematics

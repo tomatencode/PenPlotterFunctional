@@ -2,7 +2,7 @@
 #include "Queues.hpp"
 
 #include "../gcode/GCodeParser.hpp"
-#include "../app/App.hpp"
+#include "../system/App.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;

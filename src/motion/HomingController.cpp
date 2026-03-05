@@ -1,7 +1,7 @@
 #include "motion/HomingController.hpp"
 
-HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t sgStartTimeout_ms)
-    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _sgStartTimeout_ms(sgStartTimeout_ms) {}
+HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms)
+    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _consecutiveStallChecks(consecutiveStallChecks), _sgStartTimeout_ms(sgStartTimeout_ms) {}
 
 void HomingController::moveToLimit(bool Afw, bool Bfw)
 {
@@ -31,7 +31,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
         if (stallGuardA < _stallGuard_threshold || stallGuardB < _stallGuard_threshold)
         {
             stallCount++;
-            if (stallCount >= 3) break;
+            if (stallCount >= _consecutiveStallChecks) break;
         }
         else
         {
@@ -50,9 +50,9 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
 void HomingController::home() {
     if (_axisA.microsteps() != _axisB.microsteps()) return;
 
-    moveToLimit(false, true); // Move both axes towards their limits
+    moveToLimit(false, false); // Move to x limit
     delay(500); // Short delay to ensure we're fully at the limit
-    moveToLimit(false, false); // Move both axes away from limits to clear them
+    moveToLimit(false, true); // Move to y limit
     
     uint16_t stepInterval_us = 1000000UL / _speed_stps_per_s;
 
