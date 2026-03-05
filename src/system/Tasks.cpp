@@ -2,6 +2,7 @@
 #include "Queues.hpp"
 
 #include "../gcode/GCodeParser.hpp"
+#include "../app/App.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;
@@ -42,36 +43,25 @@ void motionTask(void *parameter)
     System task
 
     Handles:
-    - UI
-    - filesystem
-    - web interface
-    - serial commands
-
-    For now it only pushes test G-code.
+    - UI (encoder + LCD)
+    - Web interface (upload/list/start/stop jobs)
+    - Job manager (streams files to motion queue)
 */
 void systemTask(void *parameter)
 {
-    Serial.println("System task running on core:");
+    Serial.print("System task running on core: ");
     Serial.println(xPortGetCoreID());
 
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    for (const auto &l : gcodeLines)
-    {
-        char line[MAX_GCODE_LINE];
-
-        strncpy(line, l.c_str(), MAX_GCODE_LINE);
-        line[MAX_GCODE_LINE - 1] = '\0';
-
-        Serial.print("Queueing: ");
-        Serial.println(line);
-
-        xQueueSend(gcodeQueue, &line, portMAX_DELAY);
-    }
+    // Initialize all Core 0 subsystems
+    appInit();
 
     while (true)
     {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        // Non-blocking updates
+        appUpdate();  // updates: web interface, UI, JobManager
+
+        // Small delay to yield CPU, adjust if needed
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
