@@ -4,18 +4,15 @@
 
 #include "../storage/FileSystem.hpp"
 #include "../systemServices/Queues.hpp"
+#include "../systemServices/shared/SharedData.hpp"
+#include "../systemServices/shared/MotionCommand.hpp"
+#include "../systemServices/shared/Telemetry.hpp"
 
-static File currentFile;
-static bool running = false;
-static uint32_t currentLineIndex = 0;
 
-void jobManagerInit() {}
+JobManager::JobManager() : currentLineIndex(0) {}
 
-void jobStart(String filename)
+void JobManager::start(String filename)
 {
-    if (running)
-        jobStop();
-
     currentFile = fsOpenRead(filename);
 
     if (!currentFile)
@@ -25,32 +22,37 @@ void jobStart(String filename)
     }
 
     currentLineIndex = 0;
-    running = true;
 }
 
-void jobStop()
+void JobManager::pause()
 {
-    if (currentFile)
-        currentFile.close();
+    motionCommand = MotionCommand::PAUSE;
+}
 
+void JobManager::resume()
+{
+    motionCommand = MotionCommand::NONE;
+}
+
+void JobManager::abort()
+{
+    motionCommand = MotionCommand::ABORT;
+    xQueueReset(gcodeQueue); // Clear any pending G-code commands
+    if (currentFile) currentFile.close();
     currentLineIndex = 0;
-    running = false;
 }
 
-bool jobRunning()
-{
-    return running;
-}
 
-void jobManagerUpdate()
+void JobManager::jobManagerUpdate()
 {
-    if (!running)
-        return;
-
-    if (!currentFile.available())
+    // If an abort command was issued and the machine is now idle, clear the abort command
+    if (motionCommand == MotionCommand::ABORT && telemetry.state == MotionState::IDLE)
     {
-        Serial.println("Job finished");
-        jobStop();
+        motionCommand = MotionCommand::NONE;
+    }
+
+    if (!currentFile || !currentFile.available())
+    {
         return;
     }
 

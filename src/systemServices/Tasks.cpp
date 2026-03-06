@@ -4,6 +4,8 @@
 #include "../motion/parser/GCodeParser.hpp"
 #include "../interface/App.hpp"
 #include "../motion/Machine.hpp"
+#include "../motion/hardware/ServoPen.hpp"
+#include "shared/SharedData.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;
@@ -30,8 +32,11 @@ void motionTask(void *parameter)
 
     while (true)
     {
-        if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE && motionCommand != MotionCommand::ABORT)
         {
+            telemetry.currentLineNumber = msg.lineNumber;
+            telemetry.state = MotionState::RUNNING;
+
             Serial.print("Executing line ");
             Serial.print(msg.lineNumber);
             Serial.print(": ");
@@ -41,6 +46,10 @@ void motionTask(void *parameter)
             // motionState.currentLineNumber = msg.lineNumber;
 
             gcodeParser.executeLine(msg.line);
+        }
+        else 
+        {
+            telemetry.state = MotionState::IDLE;
         }
     }
 }

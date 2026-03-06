@@ -62,12 +62,18 @@ void MotionSystem::moveToXY(
 
         // Check for motion commands
         if (motionCommand == MotionCommand::PAUSE) {
-            telemetry.state = MotionState::MOTION_PAUSED;
+            telemetry.state = MotionState::PAUSED;
             while (motionCommand == MotionCommand::PAUSE)
             {
                 yield(); // for watchdog (idk if this is necessary)
             }
+            telemetry.state = MotionState::RUNNING;
         }
+        else if (motionCommand == MotionCommand::ABORT)
+        {
+            return; // Exit the motion loop immediately on abort
+        }
+        
 
         next_step_time += step_interval_us;
 
@@ -131,6 +137,12 @@ void MotionSystem::arcToXY(
         double x = centerPos.x_mm + radius * cos(angle);
         double y = centerPos.y_mm + radius * sin(angle);
         moveToXY({x, y}, mm_per_s); // Move to the calculated position
+
+        // Check for abort
+        if (motionCommand == MotionCommand::ABORT)
+        {
+            return; // Exit the motion loop immediately on abort
+        }
     }
 }
 
@@ -174,8 +186,16 @@ void MotionSystem::quadraticBezierToXY(
         }
 
         moveToXY(p1, mm_per_s);
+
+        // Prepare for next segment
         lastPos = p1;
         t0 = t1;
+
+        // Check for abort
+        if (motionCommand == MotionCommand::ABORT)
+        {
+            return; // Exit the motion loop immediately on abort
+        }
     }
 
     // Only move to exact target if not already there
@@ -248,6 +268,12 @@ void MotionSystem::cubicBezierToXY(
         // Prepare for next segment
         lastPos = p1;
         t0 = t1;
+
+        // Check for abort
+        if (motionCommand == MotionCommand::ABORT)
+        {
+            return; // Exit the motion loop immediately on abort
+        }
     }
 
     // Ensure the pen ends exactly at target

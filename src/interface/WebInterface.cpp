@@ -7,6 +7,7 @@
 #include <ESPmDNS.h>
 #include <WebServer.h>
 #include <FS.h>
+#include "App.hpp"
 
 static WebServer server(80);
 
@@ -32,11 +33,13 @@ void handleFileList()
 
 void handlePauseJob()
 {
+    jobManager.pause();
     server.send(200, "text/plain", "Job paused");
 }
 
 void handleResumeJob()
 {
+    jobManager.resume();
     server.send(200, "text/plain", "Job resumed");
 }
 
@@ -56,14 +59,14 @@ void handleStartJob()
         return;
     }
 
-    jobStart(filename);
+    jobManager.start(filename);
 
     server.send(200, "text/plain", "Job started");
 }
 
-void handleStopJob()
+void handleAbortJob()
 {
-    jobStop();
+    jobManager.abort();
     server.send(200, "text/plain", "Job stopped");
 }
 
@@ -138,7 +141,7 @@ void webInit()
     // HTTP server routes
     server.on("/files", HTTP_GET, handleFileList);
     server.on("/start", HTTP_POST, handleStartJob);
-    server.on("/stop", HTTP_POST, handleStopJob);
+    server.on("/abort", HTTP_POST, handleAbortJob);
     server.on("/upload", HTTP_POST, [](){}, handleUpload);
     server.on("/pause", HTTP_POST, handlePauseJob);
     server.on("/resume", HTTP_POST, handleResumeJob);

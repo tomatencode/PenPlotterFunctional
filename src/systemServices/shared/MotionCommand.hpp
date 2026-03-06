@@ -5,6 +5,5 @@ enum class MotionCommand : uint8_t
 {
     NONE = 0,
     PAUSE = 1,
-    RESUME = 2,
-    STOP = 3
+    ABORT = 2
 };

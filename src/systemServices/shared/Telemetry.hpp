@@ -3,9 +3,9 @@
 
 enum class MotionState
 {
-    MOTION_IDLE,
-    MOTION_RUNNING,
-    MOTION_PAUSED
+    IDLE = 0,
+    RUNNING = 1,
+    PAUSED = 2
 };
 
 struct Telemetry
@@ -16,5 +16,4 @@ struct Telemetry
     uint32_t currentLineNumber;
 
     MotionState state;
-    bool penDown;
 };
