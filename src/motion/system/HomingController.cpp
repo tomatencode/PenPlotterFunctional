@@ -1,4 +1,4 @@
-#include "motion/HomingController.hpp"
+#include "HomingController.hpp"
 
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _consecutiveStallChecks(consecutiveStallChecks), _sgStartTimeout_ms(sgStartTimeout_ms) {}

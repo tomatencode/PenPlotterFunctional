@@ -1,7 +1,7 @@
 #ifndef HomingController_HPP
 #define HomingController_HPP
 
-#include "motion/StepperAxis.hpp"
+#include "../hardware/StepperAxis.hpp"
 
 class HomingController {
 public:

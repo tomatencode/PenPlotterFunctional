@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../motion/GCodeParser.hpp"
+#include "parser/GCodeParser.hpp"
 
 // Expose the parser so tasks can use it
 extern GCodeParser gcodeParser;

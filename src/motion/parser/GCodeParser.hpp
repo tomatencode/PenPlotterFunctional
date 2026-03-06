@@ -1,9 +1,9 @@
 #ifndef GCodeParser_H
 #define GCodeParser_H
 
-#include "motion/MotionSystem.hpp"
-#include "motion/Pen.hpp"
-#include "motion/HomingController.hpp"
+#include "../system/MotionSystem.hpp"
+#include "../hardware/Pen.hpp"
+#include "../system/HomingController.hpp"
 #include <string>
 #include <vector>
 #include <map>

@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <Arduino.h>
-#include "../systemServices/shared/SharedData.hpp"
+#include "../../systemServices/shared/SharedData.hpp"
 
 
 MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, double min_feature_size_mm)

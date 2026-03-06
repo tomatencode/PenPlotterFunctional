@@ -1,7 +1,7 @@
 #include "Tasks.hpp"
 
 #include "../systemServices/Queues.hpp"
-#include "../motion/GCodeParser.hpp"
+#include "../motion/parser/GCodeParser.hpp"
 #include "../interface/App.hpp"
 #include "../motion/Machine.hpp"
 
