@@ -14,6 +14,9 @@
 #include "system/MotionSystem.hpp"
 #include "system/HomingController.hpp"
 
+#include "../systemServices/Queues.hpp"
+#include "../systemServices/shared/SharedData.hpp"
+
 // UART
 HardwareSerial driverSerial(1);
 
@@ -88,4 +91,29 @@ void initMachine()
     configureDriver(driverB);
 
     Serial.println("Machine initialized.");
+}
+
+void machineUpdate()
+{
+    GcodeMessage msg;
+    
+    if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE && motionCommand != MotionCommand::ABORT)
+    {
+        telemetry.currentLineNumber = msg.lineNumber;
+        telemetry.state = MotionState::RUNNING;
+
+        Serial.print("Executing line ");
+        Serial.print(msg.lineNumber);
+        Serial.print(": ");
+        Serial.println(msg.line);
+
+        // if you implement shared motionState later
+        // motionState.currentLineNumber = msg.lineNumber;
+
+        gcodeParser.executeLine(msg.line);
+    }
+    else 
+    {
+        telemetry.state = MotionState::IDLE;
+    }
 }

@@ -4,7 +4,6 @@
 #include "../motion/parser/GCodeParser.hpp"
 #include "../interface/App.hpp"
 #include "../motion/Machine.hpp"
-#include "../motion/hardware/ServoPen.hpp"
 #include "shared/SharedData.hpp"
 
 extern GCodeParser gcodeParser;
@@ -22,8 +21,6 @@ TaskHandle_t systemTaskHandle = nullptr;
 */
 void motionTask(void *parameter)
 {
-    GcodeMessage msg;
-
     Serial.print("Motion task running on core:");
     Serial.println(xPortGetCoreID());
 
@@ -32,25 +29,7 @@ void motionTask(void *parameter)
 
     while (true)
     {
-        if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE && motionCommand != MotionCommand::ABORT)
-        {
-            telemetry.currentLineNumber = msg.lineNumber;
-            telemetry.state = MotionState::RUNNING;
-
-            Serial.print("Executing line ");
-            Serial.print(msg.lineNumber);
-            Serial.print(": ");
-            Serial.println(msg.line);
-
-            // if you implement shared motionState later
-            // motionState.currentLineNumber = msg.lineNumber;
-
-            gcodeParser.executeLine(msg.line);
-        }
-        else 
-        {
-            telemetry.state = MotionState::IDLE;
-        }
+        machineUpdate();
     }
 }
 
