@@ -1,9 +1,9 @@
 #include "Tasks.hpp"
 
-#include "../shared/Queues.hpp"
-#include "../gcode/GCodeParser.hpp"
-#include "../tasks/App.hpp"
-#include "../tasks/Machine.hpp"
+#include "../systemServices/Queues.hpp"
+#include "../motion/GCodeParser.hpp"
+#include "../interface/App.hpp"
+#include "../motion/Machine.hpp"
 
 extern GCodeParser gcodeParser;
 extern std::vector<String> gcodeLines;

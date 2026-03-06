@@ -1,7 +1,7 @@
 #include "WebInterface.hpp"
-#include "../control/JobManager.hpp"
+#include "../jobManager/JobManager.hpp"
 #include "../storage/FileSystem.hpp"
-#include "../shared/SharedData.hpp"
+#include "../systemServices/shared/MotionCommand.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
@@ -32,13 +32,11 @@ void handleFileList()
 
 void handlePauseJob()
 {
-    motionCommand = MotionCommand::PAUSE;
     server.send(200, "text/plain", "Job paused");
 }
 
 void handleResumeJob()
 {
-    motionCommand = MotionCommand::NONE; // Clear the stop command to allow motion to continue
     server.send(200, "text/plain", "Job resumed");
 }
 

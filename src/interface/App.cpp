@@ -1,9 +1,9 @@
 #include "App.hpp"
 
 #include "../storage/FileSystem.hpp"
-#include "../control/JobManager.hpp"
-#include "../control/WebInterface.hpp"
-#include "../control/UI.hpp"
+#include "../jobManager/JobManager.hpp"
+#include "../interface/WebInterface.hpp"
+#include "../interface/UI.hpp"
 
 void appInit()
 {

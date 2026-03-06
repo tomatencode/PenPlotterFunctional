@@ -3,8 +3,8 @@
 
 enum class MotionCommand : uint8_t
 {
-    NONE,
-    PAUSE,
-    RESUME,
-    STOP
+    NONE = 0,
+    PAUSE = 1,
+    RESUME = 2,
+    STOP = 3
 };

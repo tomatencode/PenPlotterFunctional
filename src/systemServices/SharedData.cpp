@@ -1,5 +1,5 @@
 // SharedData.cpp
-#include "SharedData.hpp"
+#include "shared/SharedData.hpp"
 
 // Core1 writes telemetry
 volatile Telemetry telemetry;

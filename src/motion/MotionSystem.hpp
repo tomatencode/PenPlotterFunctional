@@ -1,5 +1,5 @@
-#ifndef MotionSystem_H
-#define MotionSystem_H
+#ifndef MotionSystem_HPP
+#define MotionSystem_HPP
 
 #include <cstdint>
 #include "CoreXYKinematics.hpp"
