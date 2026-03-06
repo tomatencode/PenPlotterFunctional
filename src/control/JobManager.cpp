@@ -9,8 +9,6 @@ static File currentFile;
 static bool running = false;
 static uint32_t currentLineIndex = 0;
 
-#define MAX_GCODE_LINE 96
-
 void jobManagerInit() {}
 
 void jobStart(String filename)
