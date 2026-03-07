@@ -1,13 +1,13 @@
 #include "WebInterface.hpp"
-#include "../jobManager/JobManager.hpp"
-#include "../storage/FileSystem.hpp"
-#include "../systemServices/shared/MotionCommand.hpp"
+#include "jobManager/JobManager.hpp"
+#include "storage/FileSystem.hpp"
+#include "systemServices/shared/MotionCommand.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WebServer.h>
 #include <FS.h>
-#include "App.hpp"
+#include "app/App.hpp"
 
 static WebServer server(80);
 

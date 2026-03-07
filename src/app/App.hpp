@@ -1,5 +1,5 @@
 #pragma once
-#include "../jobManager/JobManager.hpp"
+#include "jobManager/JobManager.hpp"
 
 extern JobManager jobManager;
 

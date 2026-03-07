@@ -1,6 +1,6 @@
 #include "StepperAxis.hpp"
-#include "Stepper.hpp"
-#include "MotorDriver.hpp"
+#include "hardware/steppers/Stepper.hpp"
+#include "hardware/drivers/MotorDriver.hpp"
 
 StepperAxis::StepperAxis(Stepper& stepper, MotorDriver& driver, bool flippedDirection)
     : _stepper(stepper), _positionSteps(0), _driver(driver), flippedDirection(flippedDirection) {}

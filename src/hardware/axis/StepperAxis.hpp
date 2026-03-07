@@ -2,8 +2,8 @@
 #define STEPPER_AXIS_HPP
 
 #include <Arduino.h>
-#include "Stepper.hpp"
-#include "MotorDriver.hpp"
+#include "hardware/steppers/Stepper.hpp"
+#include "hardware/drivers/MotorDriver.hpp"
 
 class StepperAxis {
     public:

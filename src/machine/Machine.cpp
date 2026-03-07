@@ -4,18 +4,18 @@
 #include <TMCStepper.h>
 #include <vector>
 
-#include "../config/pins.hpp"
-#include "../config/machine_config.hpp"
-#include "hardware/Stepper.hpp"
-#include "hardware/ServoPen.hpp"
-#include "hardware/StepperAxis.hpp"
-#include "hardware/TMC2209Driver.hpp"
-#include "system/CoreXYKinematics.hpp"
-#include "system/MotionSystem.hpp"
-#include "system/HomingController.hpp"
+#include "config/pins.hpp"
+#include "config/machine_config.hpp"
+#include "hardware/steppers/Stepper.hpp"
+#include "hardware/pen/ServoPen.hpp"
+#include "hardware/axis/StepperAxis.hpp"
+#include "hardware/drivers/TMC2209Driver.hpp"
+#include "motion/CoreXYKinematics.hpp"
+#include "motion/MotionSystem.hpp"
+#include "motion/HomingController.hpp"
 
-#include "../systemServices/Queues.hpp"
-#include "../systemServices/shared/SharedData.hpp"
+#include "systemServices/Queues.hpp"
+#include "systemServices/shared/SharedData.hpp"
 
 // UART
 HardwareSerial driverSerial(1);

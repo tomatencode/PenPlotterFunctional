@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include "CoreXYKinematics.hpp"
-#include "../hardware/StepperAxis.hpp"
+#include "hardware/axis/StepperAxis.hpp"
 
 using StepCallback = void(*)(bool direction);
 

@@ -2,11 +2,11 @@
 
 #include <FS.h>
 
-#include "../storage/FileSystem.hpp"
-#include "../systemServices/Queues.hpp"
-#include "../systemServices/shared/SharedData.hpp"
-#include "../systemServices/shared/MotionCommand.hpp"
-#include "../systemServices/shared/Telemetry.hpp"
+#include "storage/FileSystem.hpp"
+#include "systemServices/Queues.hpp"
+#include "systemServices/shared/SharedData.hpp"
+#include "systemServices/shared/MotionCommand.hpp"
+#include "systemServices/shared/Telemetry.hpp"
 
 
 JobManager::JobManager() : currentLineIndex(0) {}

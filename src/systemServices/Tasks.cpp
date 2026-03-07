@@ -1,9 +1,8 @@
 #include "Tasks.hpp"
 
-#include "../systemServices/Queues.hpp"
-#include "../motion/parser/GCodeParser.hpp"
-#include "../interface/App.hpp"
-#include "../motion/Machine.hpp"
+#include "systemServices/Queues.hpp"
+#include "app/App.hpp"
+#include "machine/Machine.hpp"
 #include "shared/SharedData.hpp"
 
 extern GCodeParser gcodeParser;

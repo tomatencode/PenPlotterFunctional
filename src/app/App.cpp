@@ -1,9 +1,9 @@
 #include "App.hpp"
 
-#include "../storage/FileSystem.hpp"
-#include "../jobManager/JobManager.hpp"
-#include "../interface/WebInterface.hpp"
-#include "../interface/UI.hpp"
+#include "storage/FileSystem.hpp"
+#include "jobManager/JobManager.hpp"
+#include "interface/WebInterface.hpp"
+#include "interface/UI.hpp"
 
 JobManager jobManager;
 

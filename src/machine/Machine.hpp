@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parser/GCodeParser.hpp"
+#include "gcode/GCodeParser.hpp"
 
 // Expose the parser so tasks can use it
 extern GCodeParser gcodeParser;
