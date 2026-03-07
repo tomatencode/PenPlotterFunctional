@@ -13,6 +13,7 @@ JobManager::JobManager() : currentLineIndex(0) {}
 
 void JobManager::start(String filename)
 {
+    Serial.println("Starting job: " + filename);
     currentFile = fsOpenRead(filename);
 
     if (!currentFile)
@@ -26,16 +27,19 @@ void JobManager::start(String filename)
 
 void JobManager::pause()
 {
+    Serial.println("Pausing job");
     motionCommand = MotionCommand::PAUSE;
 }
 
 void JobManager::resume()
 {
+    Serial.println("Resuming job");
     motionCommand = MotionCommand::NONE;
 }
 
 void JobManager::abort()
 {
+    Serial.println("Aborting job");
     motionCommand = MotionCommand::ABORT;
     xQueueReset(gcodeQueue); // Clear any pending G-code commands
     if (currentFile) currentFile.close();
