@@ -73,9 +73,6 @@ static void configureDriver(TMC2209Driver& driver)
 
 void initMachine()
 {
-    pinMode(BUZZER_PIN, OUTPUT);
-    digitalWrite(BUZZER_PIN, LOW);
-
     pinMode(SERVO_PIN, OUTPUT);
     penServo.attach(SERVO_PIN);
     pen.up();
