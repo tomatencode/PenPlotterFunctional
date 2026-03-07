@@ -91,6 +91,9 @@ void RotaryEncoder::handleButton()
         }
         _lastButtonTime = now;
     }
+    if (digitalRead(_sw) == HIGH) {
+        _lastButtonTime = now;
+    }
 }
 void RotaryEncoder::isrEncoder()
 {
