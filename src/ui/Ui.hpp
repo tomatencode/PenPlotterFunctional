@@ -3,17 +3,19 @@
 
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
-#include "systemServices/shared/SharedData.hpp" // for telemetry and MotionState
+#include "hardware/buzzer/Buzzer.hpp"
+#include "systemServices/shared/SharedData.hpp"
 
 class UI
 {
 public:
-    UI(LcdDisplay& display, RotaryEncoder& encoder);
+    UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
     void update();
 
 private:
     LcdDisplay& _display;
     RotaryEncoder& _encoder;
+    Buzzer& _buzzer;
 };
 
 #endif

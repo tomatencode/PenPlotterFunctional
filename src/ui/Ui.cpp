@@ -3,7 +3,7 @@
 
 int bnt_counter = 0;
 
-UI::UI(LcdDisplay& display, RotaryEncoder& encoder) : _display(display), _encoder(encoder) {}
+UI::UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer) : _display(display), _encoder(encoder), _buzzer(buzzer) {}
 
 void UI::update()
 {
@@ -14,6 +14,7 @@ void UI::update()
     _display.print(("Position: " + std::to_string(pos)).c_str());
 
     if (buttonPressed) {
+        _buzzer.beep(1000, 100); // Beep at 1 kHz for 100 ms on button press
         bnt_counter++;
     }
 
