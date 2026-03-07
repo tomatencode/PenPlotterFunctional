@@ -108,19 +108,25 @@ void webInit()
     Serial.print("Connecting to WiFi ");
     Serial.println(ssid);
 
-    WiFi.begin(ssid, password);
 
-    // Wait for connection
-    int retry = 0;
-    while (WiFi.status() != WL_CONNECTED)
+    int tries = 0;
+    for (tries = 0; tries < 3; tries++)
     {
-        delay(500);
-        Serial.print(".");
-        retry++;
-        if (retry > 60)
+        WiFi.begin(ssid, password);
+
+        // Wait for connection
+        float secs = 0;
+        while (WiFi.status() != WL_CONNECTED)
         {
-            Serial.println("Failed to connect to WiFi");
-            return;
+            delay(500);
+            Serial.print(".");
+            secs += 0.5;
+            if (secs > 5)
+            {   
+                if (tries < 2) Serial.println("\nRetrying WiFi connection...");
+                else Serial.println("\nFailed to connect to WiFi after 3 attempts");
+                return;
+            }
         }
     }
 
