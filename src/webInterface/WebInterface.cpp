@@ -110,22 +110,29 @@ void webInit()
 
 
     int tries = 0;
-    for (tries = 0; tries < 3; tries++)
+    int maxTries = 3;
+    for (tries = 0; tries < maxTries || WiFi.status() != WL_CONNECTED; tries++)
     {
         WiFi.begin(ssid, password);
 
         // Wait for connection
         float secs = 0;
+        float timeoutSecs = 5;
         while (WiFi.status() != WL_CONNECTED)
         {
             delay(500);
             Serial.print(".");
             secs += 0.5;
-            if (secs > 5)
+            if (secs >= timeoutSecs)
             {   
-                if (tries < 2) Serial.println("\nRetrying WiFi connection...");
-                else Serial.println("\nFailed to connect to WiFi after 3 attempts");
-                return;
+                if (tries < maxTries - 1) {
+                    Serial.println("\nRetrying WiFi connection");
+                    break; // Break inner loop to retry connection
+                }
+                else {
+                    Serial.println("\nFailed to connect to WiFi after " + String(maxTries) + " attempts");
+                    return;
+                }
             }
         }
     }
