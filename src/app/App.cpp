@@ -2,8 +2,8 @@
 
 #include "storage/FileSystem.hpp"
 #include "jobManager/JobManager.hpp"
-#include "interface/WebInterface.hpp"
-#include "interface/UI.hpp"
+#include "webInterface/WebInterface.hpp"
+#include "ui/UI.hpp"
 
 JobManager jobManager;
 
