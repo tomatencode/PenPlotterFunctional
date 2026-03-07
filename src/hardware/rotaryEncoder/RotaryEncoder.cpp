@@ -38,12 +38,13 @@ long RotaryEncoder::getPosition()
     noInterrupts();
     long pos = _position;
     interrupts();
-    return pos / 4;
+    return pos;
 }
 
 void RotaryEncoder::reset()
 {
     noInterrupts();
+    _stepAccumulator = 0;
     _position = 0;
     interrupts();
 }
@@ -63,7 +64,17 @@ void RotaryEncoder::updateEncoder()
 
     uint8_t index = (_state << 2) | newState;
 
-    _position += transitionTable[index];
+    _stepAccumulator += transitionTable[index];
+
+    // Emit a full detent step if accumulator reaches 4
+    if (_stepAccumulator >= 4) {
+        _position++;
+        _stepAccumulator -= 4;
+    } 
+    else if (_stepAccumulator <= -4) {
+        _position--;
+        _stepAccumulator += 4; 
+    }
 
     _state = newState;
 }
@@ -74,11 +85,11 @@ void RotaryEncoder::handleButton()
 
     if (now - _lastButtonTime > _debounce) {
 
-        // confirm the button is actually pressed
+        // confirm the button is getting pressed
         if (digitalRead(_sw) == LOW) {
             _buttonFlag = true;
-            _lastButtonTime = now;
         }
+        _lastButtonTime = now;
     }
 }
 void RotaryEncoder::isrEncoder()

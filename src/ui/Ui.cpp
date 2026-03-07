@@ -1,6 +1,8 @@
 #include "UI.hpp"
 #include <string>
 
+int bnt_counter = 0;
+
 UI::UI(LcdDisplay& display, RotaryEncoder& encoder) : _display(display), _encoder(encoder) {}
 
 void UI::update()
@@ -12,9 +14,11 @@ void UI::update()
     _display.print(("Position: " + std::to_string(pos)).c_str());
 
     if (buttonPressed) {
-        _display.setCursor(0, 1);
-        _display.print("Button Pressed!");
+        bnt_counter++;
     }
+
+    _display.setCursor(0, 1);
+    _display.print(("Button Pressed: " + std::to_string(bnt_counter)).c_str());
 
     delay(100); // Small delay to prevent excessive updates, adjust as needed
 }

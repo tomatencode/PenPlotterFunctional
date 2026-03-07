@@ -5,7 +5,7 @@
 
 class RotaryEncoder {
 public:
-    RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debounce = 75);
+    RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debounce = 50);
 
     void begin();
 
@@ -21,6 +21,7 @@ private:
 
     volatile long _position = 0;
     volatile uint8_t _state = 0;
+    volatile int8_t _stepAccumulator = 0;
 
     volatile bool _buttonFlag = false;
 
