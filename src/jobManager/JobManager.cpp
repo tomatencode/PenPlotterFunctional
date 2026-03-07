@@ -57,9 +57,14 @@ void JobManager::jobManagerUpdate()
         motionCommand = MotionCommand::NONE;
     }
 
-    if (!currentFile || !currentFile.available())
-    {
+    if (!currentFile)
         return;
+
+    if (!currentFile.available())
+    {
+        // Job finished
+        Serial.println("Job completed");
+        currentFile.close();
     }
 
     // prefetch queue space
