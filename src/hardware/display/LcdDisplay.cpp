@@ -8,9 +8,13 @@ void LcdDisplay::clear()
     _lcd.clear();
 }
 
-void LcdDisplay::drawText(int x, int y, const char* text)
+void LcdDisplay::setCursor(int x, int y)
 {
     _lcd.setCursor(x, y);
+}
+
+void LcdDisplay::print(const char* text)
+{
     _lcd.print(text);
 }
 
