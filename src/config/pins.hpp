@@ -1,10 +1,6 @@
 #pragma once
 #include <cstdint>
 
-// Workspace
-constexpr float MAX_X_MM = 185.0f;
-constexpr float MAX_Y_MM = 265.0f;
-
 // Motor pins
 constexpr uint8_t STEP_PIN_A = 19;
 constexpr uint8_t DIR_PIN_A  = 4;
@@ -16,6 +12,11 @@ constexpr uint8_t EN_PIN     = 23;
 constexpr uint8_t DRIVER_TX_PIN = 17;
 constexpr uint8_t DRIVER_RX_PIN = 16;
 constexpr float R_SENSE = 0.11f;
+
+// Lcd Display pins
+constexpr uint8_t LCD_I2C_ADDRESS = 0x27;
+constexpr uint8_t LCD_SDA_PIN = 21;
+constexpr uint8_t LCD_SCL_PIN = 22;
 
 // buzzer
 constexpr uint8_t BUZZER_PIN = 14;

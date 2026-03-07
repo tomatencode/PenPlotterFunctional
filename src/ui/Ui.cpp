@@ -1,12 +1,10 @@
 #include "UI.hpp"
+#include <string>
 
-void uiInit()
-{
-    // init encoder + LCD here later
-}
+UI::UI(TextDisplay& display) : _display(display) {}
 
-void uiUpdate()
+void UI::update()
 {
-    // poll encoder
-    // update display
+    _display.clear();
+    _display.drawText(0, 0, "Pen Plotter");
 }

@@ -1,4 +1,17 @@
-#pragma once
+#ifndef UI_HPP
+#define UI_HPP
 
-void uiInit();
-void uiUpdate();
+#include "hardware/display/TextDisplay.hpp"
+#include "systemServices/shared/SharedData.hpp" // for telemetry and MotionState
+
+class UI
+{
+public:
+    UI(TextDisplay& display);
+    void update();
+
+private:
+    TextDisplay& _display;
+};
+
+#endif

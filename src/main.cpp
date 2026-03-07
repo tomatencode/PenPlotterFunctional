@@ -5,8 +5,9 @@
 
 void setup()
 {
-    initQueues();      // communication queues
-    startSystemTasks();// multicore tasks
+    Serial.begin(115200); // Initialize serial communication for debugging
+    initQueues();         // communication queues
+    startSystemTasks();   // multicore tasks
 }
 
 void loop() {}

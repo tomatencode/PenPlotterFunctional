@@ -73,8 +73,6 @@ static void configureDriver(TMC2209Driver& driver)
 
 void initMachine()
 {
-    Serial.begin(115200);
-
     pinMode(BUZZER_PIN, OUTPUT);
     digitalWrite(BUZZER_PIN, LOW);
 
@@ -93,11 +91,21 @@ void initMachine()
     Serial.println("Machine initialized.");
 }
 
+std::string motionCommandToString(MotionCommand command)
+{
+    switch (command) {
+        case MotionCommand::NONE:  return "NONE";
+        case MotionCommand::PAUSE: return "PAUSE";
+        case MotionCommand::ABORT:  return "ABORT";
+        default:                   return "UNKNOWN";
+    }
+}
+
 void machineUpdate()
 {
     GcodeMessage msg;
-    
-    if (xQueueReceive(gcodeQueue, &msg, portMAX_DELAY) == pdTRUE && motionCommand != MotionCommand::ABORT)
+
+    if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && motionCommand != MotionCommand::ABORT)
     {
         telemetry.currentLineNumber = msg.lineNumber;
         telemetry.state = MotionState::RUNNING;
@@ -107,13 +115,11 @@ void machineUpdate()
         Serial.print(": ");
         Serial.println(msg.line);
 
-        // if you implement shared motionState later
-        // motionState.currentLineNumber = msg.lineNumber;
-
         gcodeParser.executeLine(msg.line);
     }
-    else 
+    else
     {
+        // Queue empty or aborting
         telemetry.state = MotionState::IDLE;
     }
 }
