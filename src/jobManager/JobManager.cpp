@@ -14,6 +14,8 @@ JobManager::JobManager() : currentLineIndex(0) {}
 void JobManager::start(String filename)
 {
     Serial.println("Starting job: " + filename);
+
+    motionCommand = MotionCommand::NONE; // Clear any existing motion commands
     currentFile = fsOpenRead(filename);
 
     if (!currentFile)
