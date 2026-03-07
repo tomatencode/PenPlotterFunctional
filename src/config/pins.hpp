@@ -18,6 +18,11 @@ constexpr uint8_t LCD_I2C_ADDRESS = 0x27;
 constexpr uint8_t LCD_SDA_PIN = 21;
 constexpr uint8_t LCD_SCL_PIN = 22;
 
+// Rotary Encoder pins
+constexpr uint8_t ENCODER_DT_PIN = 26;
+constexpr uint8_t ENCODER_CLK_PIN = 27;
+constexpr uint8_t ENCODER_SW_PIN = 25;
+
 // buzzer
 constexpr uint8_t BUZZER_PIN = 14;
 

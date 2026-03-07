@@ -7,6 +7,7 @@
 
 #include <LCD-I2C.h>
 #include "hardware/display/LcdDisplay.hpp"
+#include "hardware/rotaryEncoder/RotaryEncoder.hpp"
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
 
@@ -14,7 +15,10 @@ JobManager jobManager;
 LCD_I2C lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS);
 LcdDisplay display(lcd);
 
-UI ui(display);
+RotaryEncoder encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN);
+
+
+UI ui(display, encoder);
 
 void appInit()
 {
@@ -23,6 +27,8 @@ void appInit()
     lcd.begin(&Wire);
     lcd.display();
     lcd.backlight();
+
+    encoder.begin();
 
     fsInit();
     webInit();
