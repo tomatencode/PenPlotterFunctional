@@ -15,7 +15,7 @@ JobManager jobManager;
 LCD_I2C lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS);
 LcdDisplay display(lcd);
 
-RotaryEncoder encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN);
+RotaryEncoder encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS);
 
 
 UI ui(display, encoder);

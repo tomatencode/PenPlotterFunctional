@@ -5,7 +5,7 @@
 
 class RotaryEncoder {
 public:
-    RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debounce = 50);
+    RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debounce);
 
     void begin();
 
