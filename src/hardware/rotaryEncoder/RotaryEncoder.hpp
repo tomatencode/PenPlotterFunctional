@@ -14,7 +14,7 @@ public:
 
     bool buttonPressed();
     bool buttonReleased();
-    bool buttonReleased();
+    bool buttonDown();
 
 private:
     uint8_t _dt;
