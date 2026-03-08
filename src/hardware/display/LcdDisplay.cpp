@@ -18,12 +18,12 @@ void LcdDisplay::print(const char* text)
     _lcd.print(text);
 }
 
-int LcdDisplay::width()
+void LcdDisplay::write(uint8_t character)
 {
-    return LCD_COLS;
+    _lcd.write(character);
 }
 
-int LcdDisplay::height()
+void LcdDisplay::createChar(uint8_t memory_location, uint8_t* charmap)
 {
-    return LCD_ROWS; 
+    _lcd.createChar(memory_location, charmap);
 }

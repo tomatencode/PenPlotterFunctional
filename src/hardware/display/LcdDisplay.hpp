@@ -11,8 +11,8 @@ public:
     void clear();
     void setCursor(int x, int y);
     void print(const char* text);
-    int width();
-    int height();
+    void write(uint8_t character);
+    void createChar(uint8_t memory_location, uint8_t* charmap);
 private:
     LCD_I2C& _lcd;
 };

@@ -40,8 +40,8 @@ void appInit()
     encoder.begin();
 
     fsInit();
+    ui.init();
     webInit();
-
 
     Serial.println("App initialized.");
     buzzer.playMelody(startupMelody);
@@ -50,8 +50,7 @@ void appInit()
 void appUpdate()
 {
     webUpdate();
-    ui.update();
     jobManager.jobManagerUpdate();
-
     buzzer.update();
+    ui.update();
 }
