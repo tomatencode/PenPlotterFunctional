@@ -81,17 +81,19 @@ void RotaryEncoder::updateEncoder()
 
 void RotaryEncoder::handleButton()
 {
+    bool buttonState = digitalRead(_sw);
+
     unsigned long now = millis();
 
     if (now - _lastButtonTime > _debounce) {
 
         // confirm the button is getting pressed
-        if (digitalRead(_sw) == LOW) {
+        if (buttonState == LOW) {
             _buttonFlag = true;
         }
         _lastButtonTime = now;
     }
-    if (digitalRead(_sw) == HIGH) {
+    if (buttonState == HIGH) {
         _lastButtonTime = now;
     }
 }
