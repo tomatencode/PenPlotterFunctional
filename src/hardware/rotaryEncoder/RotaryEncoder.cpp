@@ -83,6 +83,10 @@ void RotaryEncoder::handleButton()
 {
     bool buttonState = digitalRead(_sw);
 
+    if (buttonState == _lastButtonState) {
+        return; // No change in button state, ignore
+    }
+
     unsigned long now = millis();
 
     if (now - _lastButtonTime > _debounce) {
@@ -96,6 +100,8 @@ void RotaryEncoder::handleButton()
     if (buttonState == HIGH) {
         _lastButtonTime = now;
     }
+
+    _lastButtonState = buttonState;
 }
 void RotaryEncoder::isrEncoder()
 {

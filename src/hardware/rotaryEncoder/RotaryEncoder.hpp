@@ -27,6 +27,7 @@ private:
 
     uint16_t _debounce;
     volatile unsigned long _lastButtonTime = 0;
+    volatile bool _lastButtonState = HIGH;
 
     void updateEncoder();
     void handleButton();
