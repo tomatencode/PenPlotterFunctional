@@ -51,11 +51,28 @@ void RotaryEncoder::reset()
 
 bool RotaryEncoder::buttonPressed()
 {
-    if (_buttonFlag) {
-        _buttonFlag = false;
+    if (_buttonPrsFlag) {
+        _buttonPrsFlag = false;
         return true;
     }
     return false;
+}
+
+bool RotaryEncoder::buttonReleased()
+{
+    if (_buttonRelFlag) {
+        _buttonRelFlag = false;
+        return true;
+    }
+    return false;
+}
+
+bool RotaryEncoder::buttonDown()
+{
+    noInterrupts();
+    bool isDown = digitalRead(_sw) == LOW;
+    interrupts();
+    return isDown;
 }
 
 void RotaryEncoder::updateEncoder()
@@ -89,20 +106,31 @@ void RotaryEncoder::handleButton()
 
     unsigned long now = millis();
 
-    if (now - _lastButtonTime > _debounce) {
+    // Handle button press with debounce
+    if (now - _ButtonPrsDebounceTime > _debounce && now - _ButtonRelDebounceTime > _debounce) {
+        // often a release can trigger a press, so we want to make sure both debounce times have passed before registering a new press
+        // this also means that if the button is repressed very quickly, it will be missed but that is a reasonable tradeoff
 
         // confirm the button is getting pressed
         if (buttonState == LOW) {
-            _buttonFlag = true;
+            _buttonPrsFlag = true;
+            _ButtonPrsDebounceTime = now;
         }
-        _lastButtonTime = now;
     }
-    if (buttonState == HIGH) {
-        _lastButtonTime = now;
+
+    // Handle button release with debounce
+    if (now - _ButtonRelDebounceTime > _debounce) {
+
+        // confirm the button is getting released
+        if (buttonState == HIGH) {
+            _buttonRelFlag = true;
+            _ButtonRelDebounceTime = now;
+        }
     }
 
     _lastButtonState = buttonState;
 }
+
 void RotaryEncoder::isrEncoder()
 {
     instance->updateEncoder();

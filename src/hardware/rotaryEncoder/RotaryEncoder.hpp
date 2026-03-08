@@ -13,6 +13,8 @@ public:
     void reset();
 
     bool buttonPressed();
+    bool buttonReleased();
+    bool buttonReleased();
 
 private:
     uint8_t _dt;
@@ -23,10 +25,12 @@ private:
     volatile uint8_t _state = 0;
     volatile int8_t _stepAccumulator = 0;
 
-    volatile bool _buttonFlag = false;
+    volatile bool _buttonPrsFlag = false;
+    volatile bool _buttonRelFlag = false;
 
     uint16_t _debounce;
-    volatile unsigned long _lastButtonTime = 0;
+    volatile unsigned long _ButtonPrsDebounceTime = 0;
+    volatile unsigned long _ButtonRelDebounceTime = 0;
     volatile bool _lastButtonState = HIGH;
 
     void updateEncoder();

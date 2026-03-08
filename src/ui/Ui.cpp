@@ -2,7 +2,8 @@
 #include "render/CustomChars.hpp"
 #include <string>
 
-int bnt_counter = 0;
+int bnt_prs_counter = 0;
+int bnt_rel_counter = 0;
 
 UI::UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
     : _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display)
@@ -29,13 +30,14 @@ void UI::update()
     posGlyphs[posStr.size()].id = TERMINATOR.id; // terminator
     _renderer.drawGlyphsToBuffer(0, 0, posGlyphs);
 
+    // If button was pressed, increment counter and beep
     if (buttonPressed) {
         _buzzer.beep(1000, 100);
-        bnt_counter++;
+        bnt_prs_counter++;
     }
 
     // Draw "Button Pressed: <number>"
-    std::string btnStr = "Button Pressed: " + std::to_string(bnt_counter);
+    std::string btnStr = "Button Pressed: " + std::to_string(bnt_prs_counter);
     Glyph btnGlyphs[20];
     for (size_t i = 0; i < btnStr.size() && i < 20; i++) {
         btnGlyphs[i].id = btnStr[i];
@@ -44,19 +46,28 @@ void UI::update()
     btnGlyphs[btnStr.size()].id = TERMINATOR.id; // terminator
     _renderer.drawGlyphsToBuffer(0, 1, btnGlyphs);
 
-    // Custom char test
+    // If button was released, increment counter
+    if (_encoder.buttonReleased()) {
+        bnt_rel_counter++;
+    }
 
-    Glyph customGlyphs[9];
-    customGlyphs[0].id = CURSOR_L;
-    customGlyphs[1].id = CURSOR_R;
-    customGlyphs[2].id = CURSOR_DWN_L;
-    customGlyphs[3].id = CURSOR_DWN_R;
-    customGlyphs[4].id = BOX_CHECKD;
-    customGlyphs[5].id = BOX_EMPTY;
-    customGlyphs[6].id = ENTER;
-    customGlyphs[7].id = PROGRESS_FULL;
-    customGlyphs[8].id = TERMINATOR.id; // terminator
-    _renderer.drawGlyphsToBuffer(0, 2, customGlyphs);
+    // Draw "Button Released: <number>"
+    std::string btnRelStr = "Button Released: " + std::to_string(bnt_rel_counter);
+    Glyph btnRelGlyphs[20];
+    for (size_t i = 0; i < btnRelStr.size() && i < 20; i++) {
+        btnRelGlyphs[i].id = btnRelStr[i];
+    }
+    btnRelGlyphs[btnRelStr.size()].id = TERMINATOR.id; // terminator
+    _renderer.drawGlyphsToBuffer(0, 2, btnRelGlyphs);
+
+    // Draw "Button Down: <boolean>"
+    std::string btnDownStr = "Button Down: " + std::to_string(_encoder.buttonDown());
+    Glyph btnDownGlyphs[20];
+    for (size_t i = 0; i < btnDownStr.size() && i < 20; i++) {
+        btnDownGlyphs[i].id = btnDownStr[i];
+    }
+    btnDownGlyphs[btnDownStr.size()].id = TERMINATOR.id; // terminator
+    _renderer.drawGlyphsToBuffer(0, 3, btnDownGlyphs);
 
     _renderer.renderToDisplay();
 
@@ -68,6 +79,8 @@ InputState UI::readInputs()
     InputState state;
     state.encoderDelta = _encoder.getPosition();
     state.buttonPressed = _encoder.buttonPressed();
+    state.buttonReleased = _encoder.buttonReleased();
+    state.buttonDown = _encoder.buttonDown();
     _encoder.reset();
     return state;
 }
