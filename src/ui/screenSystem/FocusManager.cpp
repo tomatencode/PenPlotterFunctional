@@ -26,15 +26,11 @@ void FocusManager::handleInput(InputState& input)
     // Handle encoder rotation after focusable widget has processed input, allowing it to consume rotation if needed
     if (input.encoderDelta > 0)
     {
-        for (size_t i = 0; i < input.encoderDelta ; i++) {
-            next();
-        }
+        next();
     }
     else if (input.encoderDelta < 0)
     {
-        for (size_t i = 0; i < -input.encoderDelta ; i++) {
-            prev();
-        }
+        prev();
     }
 }
 
