@@ -7,13 +7,9 @@
 #include "widgets/ButtonWidget.hpp"
 #include "router/Router.hpp"
 
-// Global counters for demo
-int button1Pressed = 0;
-int button2Pressed = 0;
-
 // Button callbacks
-void onButton1Press() { button1Pressed++; }
-void onButton2Press() { button2Pressed++; }
+void onButton1Press() { Serial.println("Button 1 pressed"); }
+void onButton2Press() { Serial.println("Button 2 pressed"); }
 
 void setupTestUI(Router& router)
 {
