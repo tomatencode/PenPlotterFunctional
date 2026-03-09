@@ -1,8 +1,8 @@
+#include "ButtonState.hpp"
+
 struct InputState
 {
     int encoderDelta = 0;   // steps since last frame
 
-    bool buttonPressed = false;
-    bool buttonReleased = false;
-    bool buttonDown = false;
+    ButtonState buttonState;  // current button state
 };
