@@ -1,6 +1,6 @@
 #include "ButtonWidget.hpp"
 
-ButtonWidget::ButtonWidget(Rect box, const char* label, void (*onPress)(), void (*onRelease)())
+ButtonWidget::ButtonWidget(Rect box, const char* label, std::function<void()> onPress, std::function<void()> onRelease)
     : SelectableWidget(box), label(label), onPress(onPress), onRelease(onRelease) {}
 
 void ButtonWidget::render(Renderer& r, Rect canvasBox)
