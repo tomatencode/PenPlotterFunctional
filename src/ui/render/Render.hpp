@@ -14,6 +14,7 @@ public:
 
     void clearBuffer();
     void drawGlyphsToBuffer(int x, int y, const Glyph* glyphs);
+    void drawTextToBuffer(int x, int y, const char* text);
 
     void renderToDisplay();
 

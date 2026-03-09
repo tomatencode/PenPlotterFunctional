@@ -4,9 +4,13 @@
 
 struct Glyph
 {
-    uint8_t id;
+    uint8_t code;
+
+    constexpr Glyph(uint8_t c) : code(c) {}
+    constexpr Glyph() : code(' ') {}
 };
 
-const Glyph TERMINATOR = {255};
+constexpr Glyph GLYPH_SPACE(' ');
+constexpr Glyph GLYPH_TERMINATOR(255);
 
 #endif
