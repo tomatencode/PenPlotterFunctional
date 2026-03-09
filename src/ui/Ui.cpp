@@ -5,9 +5,6 @@
 
 #include <string>
 
-int bnt_prs_counter = 0;
-int bnt_rel_counter = 0;
-
 UI::UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
     : _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
@@ -25,8 +22,7 @@ void UI::update()
 
     _router.render(_renderer);
     _renderer.renderToDisplay();
-
-    delay(100);
+    delay(50); // simple debounce for display updates, adjust as needed
 }
 
 InputState UI::readInputs()
