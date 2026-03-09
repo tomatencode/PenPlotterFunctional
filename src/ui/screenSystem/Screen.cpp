@@ -13,6 +13,7 @@ Screen::Screen(Widget* children[], size_t count)
 
 void Screen::render(Renderer& r)
 {
+    r.clearBuffer();
     root.render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
