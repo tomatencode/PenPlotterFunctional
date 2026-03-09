@@ -9,7 +9,7 @@ public:
 
     void begin();
 
-    long getPosition();
+    uint8_t getPositionDelta();
     void reset();
 
     bool buttonPressed();
@@ -21,9 +21,9 @@ private:
     uint8_t _clk;
     uint8_t _sw;
 
-    volatile long _position = 0;
+    volatile uint8_t _position_delta = 0;
     volatile uint8_t _state = 0;
-    volatile int8_t _stepAccumulator = 0;
+    volatile int8_t _stepAccumulator = 0;   
 
     volatile bool _buttonPrsFlag = false;
     volatile bool _buttonRelFlag = false;

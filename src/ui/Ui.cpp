@@ -29,12 +29,10 @@ InputState UI::readInputs()
 {
     InputState state;
 
-    state.encoderDelta = _encoder.getPosition();
+    state.encoderDelta = _encoder.getPositionDelta();
     state.buttonState.buttonPressed = _encoder.buttonPressed();
     state.buttonState.buttonReleased = _encoder.buttonReleased();
     state.buttonState.buttonDown = _encoder.buttonDown();
-
-    _encoder.reset();
 
     return state;
 }

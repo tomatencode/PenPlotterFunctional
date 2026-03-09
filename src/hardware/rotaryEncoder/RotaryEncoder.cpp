@@ -33,19 +33,20 @@ void RotaryEncoder::begin()
     attachInterrupt(digitalPinToInterrupt(_sw), isrButton, CHANGE);
 }
 
-long RotaryEncoder::getPosition()
+uint8_t RotaryEncoder::getPositionDelta()
 {
     noInterrupts();
-    long pos = _position;
+    uint8_t pos_delta = _position_delta;
+    _position_delta = 0; // reset after reading
     interrupts();
-    return pos;
+    return pos_delta;
 }
 
 void RotaryEncoder::reset()
 {
     noInterrupts();
     _stepAccumulator = 0;
-    _position = 0;
+    _position_delta = 0;
     interrupts();
 }
 
@@ -85,11 +86,11 @@ void RotaryEncoder::updateEncoder()
 
     // Emit a full detent step if accumulator reaches 4
     if (_stepAccumulator >= 4) {
-        _position++;
+        _position_delta++;
         _stepAccumulator -= 4;
     } 
     else if (_stepAccumulator <= -4) {
-        _position--;
+        _position_delta--;
         _stepAccumulator += 4; 
     }
 
