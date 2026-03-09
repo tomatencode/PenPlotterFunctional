@@ -17,11 +17,11 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
     {
         if (_isPressed)
         {
-            snprintf(Text, maxChars + 1, "<%s>", label);
+            snprintf(Text, maxChars + 1, "-%s-", label);
         }
         else
         {
-            snprintf(Text, maxChars + 1, "-%s-", label);
+            snprintf(Text, maxChars + 1, ">%s<", label);
         }
     } else {
         snprintf(Text, maxChars + 1, "[%s]", label);
