@@ -8,6 +8,7 @@
 
 #include "render/Render.hpp"
 #include "InputState.hpp"
+#include "router/Router.hpp"
 
 class UI
 {
@@ -21,7 +22,9 @@ public:
 private:
     InputState readInputs();
 
+    Router _router;
     Renderer _renderer;
+
     LcdDisplay& _display;
     RotaryEncoder& _encoder;
     Buzzer& _buzzer;

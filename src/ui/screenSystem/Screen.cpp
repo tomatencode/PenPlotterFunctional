@@ -16,5 +16,10 @@ void Screen::render(Renderer& r)
     root.render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
+void Screen::handleInput(InputState& input)
+{
+    focusManager.handleInput(input);
+}
+
 void Screen::onEnter() {}
 void Screen::onExit() {}

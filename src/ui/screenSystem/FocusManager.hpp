@@ -4,6 +4,8 @@
 #include <cstddef>
 #include "../widgetSystem/SelectableWidget.hpp"
 
+constexpr size_t MAX_SELECTABLE_WIDGETS = 16;
+
 class FocusManager
 {
 public:
@@ -19,7 +21,7 @@ private:
     void next();
     void prev();
 
-    SelectableWidget* const* _widgets; // pointer to array of selectable widgets
+    SelectableWidget* _widgets[MAX_SELECTABLE_WIDGETS]; // Own storage for widgets
     size_t _count;                      // number of selectable widgets
     size_t _index;                      // current focused widget index
 };

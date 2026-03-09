@@ -13,7 +13,7 @@ class Container : public Widget
 public:
     // Constructor: box + number of children
     Container(Rect box, Widget* children[], size_t count)
-        : Widget(box), _box(box), _count(count)
+        : Widget(box), _count(count)
     {
         for (size_t i = 0; i < _count && i < MAX_CHILDREN; i++)
             _children[i] = children[i];
@@ -24,14 +24,17 @@ public:
     void render(Renderer& r, Rect canvasBox) override
     {
         Rect newCanvas = {
-            canvasBox.x + _box.x,
-            canvasBox.y + _box.y,
-            std::min(canvasBox.w, _box.w),
-            std::min(canvasBox.h, _box.h)
+            static_cast<uint8_t>(canvasBox.x + box().x),
+            static_cast<uint8_t>(canvasBox.y + box().y),
+            static_cast<uint8_t>(std::min(canvasBox.w, box().w)),
+            static_cast<uint8_t>(std::min(canvasBox.h, box().h))
         };
 
         for (size_t i = 0; i < _count; i++)
-            _children[i]->render(r, newCanvas);
+        {
+            if (_children[i] != nullptr)
+                _children[i]->render(r, newCanvas);
+        }
     }
 
     // Collect all selectable widgets recursively
@@ -40,6 +43,7 @@ public:
         for (size_t i = 0; i < _count; i++)
         {
             Widget* child = _children[i];
+            if (child == nullptr) continue;
 
             if (child->type() == WidgetType::Selectable)
             {
@@ -55,7 +59,6 @@ public:
 private:
     Widget* _children[MAX_CHILDREN]{ nullptr };
     size_t _count{ 0 };
-    Rect _box;
 };
 
 #endif
