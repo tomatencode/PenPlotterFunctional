@@ -9,7 +9,7 @@ public:
 
     void begin();
 
-    uint8_t getPositionDelta();
+    int getPositionDelta();
     void reset();
 
     bool buttonPressed();
@@ -21,7 +21,7 @@ private:
     uint8_t _clk;
     uint8_t _sw;
 
-    volatile uint8_t _position_delta = 0;
+    volatile int _position_delta = 0;
     volatile uint8_t _state = 0;
     volatile int8_t _stepAccumulator = 0;   
 

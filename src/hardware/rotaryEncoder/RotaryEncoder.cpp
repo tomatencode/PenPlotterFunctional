@@ -33,10 +33,10 @@ void RotaryEncoder::begin()
     attachInterrupt(digitalPinToInterrupt(_sw), isrButton, CHANGE);
 }
 
-uint8_t RotaryEncoder::getPositionDelta()
+int RotaryEncoder::getPositionDelta()
 {
     noInterrupts();
-    uint8_t pos_delta = _position_delta;
+    int pos_delta = _position_delta;
     _position_delta = 0; // reset after reading
     interrupts();
     return pos_delta;
