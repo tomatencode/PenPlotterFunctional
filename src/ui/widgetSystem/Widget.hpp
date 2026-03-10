@@ -5,7 +5,6 @@
 #include "box.hpp"
 #include "Size.hpp"
 #include "Alignment.hpp"
-#include "WidgetTypes.hpp"
 
 class Widget
 {
@@ -16,7 +15,11 @@ public:
 
     virtual Size measure() const { return Size{_box.w, _box.h}; }
 
-    virtual WidgetType type() const { return WidgetType::Base; }
+    virtual bool isSelectable() const { return false; }
+
+    virtual size_t childCount() const { return 0; }
+    virtual Widget* child(size_t) const { return nullptr; }
+
     Rect box() const { return _box; }
     Alignment align() const { return _align; }
 private:

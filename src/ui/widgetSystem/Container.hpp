@@ -19,8 +19,6 @@ public:
             _children[i] = children[i];
     }
 
-    virtual WidgetType type() const override { return WidgetType::Container; }
-
     void render(Renderer& r, Rect canvasBox) override
     {
         Rect newCanvas = {
@@ -38,22 +36,19 @@ public:
     }
 
     // Collect all selectable widgets recursively
-    void collectSelectables(SelectableWidget* out[], size_t& count) const
-    {
-        for (size_t i = 0; i < _count; i++)
-        {
-            Widget* child = _children[i];
-            if (child == nullptr) continue;
+    void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count) {
+        if (w->isSelectable())
+            out[count++] = static_cast<SelectableWidget*>(w);
 
-            if (child->type() == WidgetType::Selectable)
-            {
-                out[count++] = static_cast<SelectableWidget*>(child);
-            }
-            else if (child->type() == WidgetType::Container)
-            {
-                static_cast<Container*>(child)->collectSelectables(out, count);
-            }
-        }
+        for (size_t i = 0; i < w->childCount(); i++)
+            collectSelectables(w->child(i), out, count);
+    }
+
+    virtual size_t childCount() const override { return _count; }
+    virtual Widget* child(size_t index) const override {
+        if (index < _count)
+            return _children[index];
+        return nullptr;
     }
 
 private:

@@ -7,7 +7,7 @@ Screen::Screen(Widget* children[], size_t count)
     size_t selectableCount = 0;
 
     // Collect selectable widgets recursively from the root container
-    root.collectSelectables(selectableWidgets, selectableCount);
+    root.collectSelectables(&root, selectableWidgets, selectableCount);
     focusManager.setWidgets(selectableWidgets, selectableCount);
 }
 

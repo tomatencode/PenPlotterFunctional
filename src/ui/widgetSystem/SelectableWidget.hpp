@@ -9,7 +9,7 @@ class SelectableWidget : public Widget
 public:
     SelectableWidget(Rect box, Alignment align) : Widget(box, align) {}
 
-    virtual WidgetType type() const override { return WidgetType::Selectable; }
+    virtual bool isSelectable() const override { return true; }
 
     virtual void focus() { _focused = true; onFocusGained(); }
     virtual void unfocus() { _focused = false; onFocusLost(); }
