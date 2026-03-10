@@ -1,153 +1,50 @@
 #include "WebInterface.hpp"
-#include "jobManager/JobManager.hpp"
-#include "storage/FileSystem.hpp"
-#include "systemServices/shared/MotionCommand.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <FS.h>
-#include "app/App.hpp"
-
-static WebInterface* g_webInterface = nullptr;
 
 // WiFi credentials
 static const char* SSID = "Thomas_Wifi";
 static const char* PASSWORD = "TotallyHarmless";
 
-// ===== WebInterface Constructor =====
-WebInterface::WebInterface() : server(80)
+WebInterface::WebInterface() : server(80) {}
+
+// Non-blocking
+void WebInterface::startWiFiConnection()
 {
+    WiFi.mode(WIFI_STA);
+    WiFi.setAutoConnect(true);
+    WiFi.setAutoReconnect(true);
+    WiFi.begin(SSID, PASSWORD);
+    _wifiStartTime = millis();
+    _wifiInitialized = true;
 }
 
-// ===== Handlers =====
-
-// ===== Handlers =====
-void WebInterface::handleFileList()
+void WebInterface::checkWiFiStatus()
 {
-    auto files = fsListFiles();
+    if (!_wifiInitialized) return; // Should not happen, but guard just in case
 
-    String json = "[";
-    for (size_t i = 0; i < files.size(); i++)
+    wl_status_t status = WiFi.status();
+
+    if (status == WL_CONNECTED && !_serverStarted)
     {
-        if (i != 0) json += ",";
-        json += "\"" + files[i] + "\"";
-    }
-    json += "]";
-
-    server.send(200, "application/json", json);
-}
-
-void WebInterface::handlePauseJob()
-{
-    jobManager.pause();
-    server.send(200, "text/plain", "Job paused");
-}
-
-void WebInterface::handleResumeJob()
-{
-    jobManager.resume();
-    server.send(200, "text/plain", "Job resumed");
-}
-
-void WebInterface::handleStartJob()
-{
-    if (!server.hasArg("file"))
-    {
-        server.send(400, "text/plain", "Missing 'file' parameter");
-        return;
-    }
-
-    String filename = server.arg("file");
-
-    if (!fsExists(filename))
-    {
-        server.send(404, "text/plain", "File not found");
-        return;
-    }
-
-    jobManager.start(filename);
-
-    server.send(200, "text/plain", "Job started");
-}
-
-void WebInterface::handleAbortJob()
-{
-    jobManager.abort();
-    server.send(200, "text/plain", "Job stopped");
-}
-
-void WebInterface::handleUpload()
-{
-    HTTPUpload& upload = server.upload();
-
-    if (upload.status == UPLOAD_FILE_START)
-    {
-        String path = "/" + upload.filename;
-        Serial.printf("Upload start: %s\n", path.c_str());
-
-        if (fsExists(path)) fsDelete(path);
-
-        File f = fsOpenWrite(path);
-        if (!f)
-            Serial.println("Failed to open file for writing");
-
-        f.close();
-    }
-    else if (upload.status == UPLOAD_FILE_WRITE)
-    {
-        String path = "/" + upload.filename;
-        File f = fsOpenWrite(path);
-        f.write(upload.buf, upload.currentSize);
-        f.close();
-    }
-    else if (upload.status == UPLOAD_FILE_END)
-    {
-        Serial.printf("Upload finished: %s (%u bytes)\n",
-                      upload.filename.c_str(), upload.totalSize);
-        server.send(200, "text/plain", "File uploaded");
+        setupServer();
+        _serverStarted = true;
     }
 }
 
-// ===== Init =====
-void WebInterface::init()
+void WebInterface::setupServer()
 {
-    Serial.print("Connecting to WiFi ");
-    Serial.println(SSID);
+    if (_serverStarted) return; // Already set up
+    if (WiFi.status() != WL_CONNECTED) return; // Should not happen, but guard just in case
 
-    int tries = 0;
-    int maxTries = 3;
-    for (tries = 0; tries < maxTries || WiFi.status() != WL_CONNECTED; tries++)
-    {
-        WiFi.begin(SSID, PASSWORD);
-
-        // Wait for connection
-        float secs = 0;
-        float timeoutSecs = 5;
-        while (WiFi.status() != WL_CONNECTED)
-        {
-            delay(500);
-            Serial.print(".");
-            secs += 0.5;
-            if (secs >= timeoutSecs)
-            {   
-                if (tries < maxTries - 1) {
-                    Serial.println("\nRetrying WiFi connection");
-                    break; // Break inner loop to retry connection
-                }
-                else {
-                    Serial.println("\nFailed to connect to WiFi after " + String(maxTries) + " attempts");
-                    return;
-                }
-            }
-        }
-    }
-
-    Serial.println("");
+    Serial.println();
     Serial.print("Connected! IP address: ");
     Serial.println(WiFi.localIP());
 
-    // ===== mDNS =====
-    if (!MDNS.begin("esp32")) // hostname = esp32.local
+    // mDNS 
+    if (!MDNS.begin("esp32"))
     {
         Serial.println("Error starting mDNS");
     }
@@ -165,10 +62,28 @@ void WebInterface::init()
     server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
 
     server.begin();
-    Serial.println("Web interface started");
+}
+
+void WebInterface::init()
+{
+    Serial.println("WebInterface initializing (WiFi connects in background)...");
+    startWiFiConnection();
+}
+
+bool WebInterface::isWiFiConnected() const
+{
+    return WiFi.status() == WL_CONNECTED;
 }
 
 void WebInterface::update()
 {
-    server.handleClient();
+    if (!_serverStarted)
+    {
+        checkWiFiStatus();
+    }
+
+    if (_serverStarted)
+    {
+        server.handleClient();
+    }
 }
