@@ -23,7 +23,7 @@ Size LabelWidget::measure() const
 
 void LabelWidget::render(Renderer& r, Rect canvasBox)
 {
-    Rect drawRect = computeContentAlignment(canvasBox, align(), measure(), canvasBox);
+    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
 
     if (drawRect.w == 0 || drawRect.h == 0)
         return;

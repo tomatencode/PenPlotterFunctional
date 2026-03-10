@@ -22,7 +22,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override
     {
-        Rect drawRect = computeContentAlignment(canvasBox, align(), measure(), canvasBox);
+        Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
         
         for (size_t i = 0; i < _count; i++)
         {

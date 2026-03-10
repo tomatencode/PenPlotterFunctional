@@ -28,7 +28,7 @@ Size ButtonWidget::measure() const
 void ButtonWidget::render(Renderer& r, Rect canvasBox)
 {
     // Compute final drawing rectangle including alignment + clipping
-    Rect drawRect = computeContentAlignment(canvasBox, align(), measure(), canvasBox);
+    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
 
     if (drawRect.w == 0 || drawRect.h == 0)
         return; // nothing visible
