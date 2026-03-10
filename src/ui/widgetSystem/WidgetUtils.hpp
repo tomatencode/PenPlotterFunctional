@@ -1,14 +1,11 @@
-#pragma once
+#ifndef WIDGET_UTILS_HPP
+#define WIDGET_UTILS_HPP
+
 #include "Widget.hpp"
 #include "SelectableWidget.hpp"
 
-inline void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count)
-{
-    if (!w) return;
+void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count);
 
-    if (w->isSelectable())
-        out[count++] = static_cast<SelectableWidget*>(w);
+Rect computeContentAlignment(Rect widgetBox, Alignment align, Size contentSize, Rect parentCanvas);
 
-    for (size_t i = 0; i < w->childCount(); i++)
-        collectSelectables(w->child(i), out, count);
-}
+#endif

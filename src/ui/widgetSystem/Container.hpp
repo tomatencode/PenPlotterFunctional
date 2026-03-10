@@ -3,6 +3,7 @@
 
 #include "Widget.hpp"
 #include "SelectableWidget.hpp"
+#include "WidgetUtils.hpp"
 #include <algorithm>
 #include <cstddef>
 
@@ -21,7 +22,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override
     {
-        Rect drawRect = computeContentRect(canvasBox);
+        Rect drawRect = computeContentAlignment(canvasBox, align(), measure(), canvasBox);
         
         for (size_t i = 0; i < _count; i++)
         {

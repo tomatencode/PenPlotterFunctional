@@ -1,5 +1,6 @@
 #include "LabelWidget.hpp"
 #include "../render/Render.hpp"
+#include "../widgetSystem/WidgetUtils.hpp"
 
 LabelWidget::LabelWidget(Rect box, TextSource& textSource,  Alignment align)
     : Widget(box, align), text(textSource)
@@ -22,7 +23,7 @@ Size LabelWidget::measure() const
 
 void LabelWidget::render(Renderer& r, Rect canvasBox)
 {
-    Rect drawRect = computeContentRect(canvasBox);
+    Rect drawRect = computeContentAlignment(canvasBox, align(), measure(), canvasBox);
 
     if (drawRect.w == 0 || drawRect.h == 0)
         return;
