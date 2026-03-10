@@ -13,6 +13,7 @@ void UI::init()
 {
     _renderer.init();
     setupTestUI(_router);
+    Serial.println("UI initialized.");
 }
 
 void UI::update()
