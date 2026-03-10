@@ -1,33 +1,65 @@
 #include "ButtonWidget.hpp"
 
-ButtonWidget::ButtonWidget(Rect box, const char* label, std::function<void()> onPress, std::function<void()> onRelease)
-    : SelectableWidget(box), label(label), onPress(onPress), onRelease(onRelease) {}
+ButtonWidget::ButtonWidget(Rect box,
+                           Widget* child,
+                           ButtonStyle style,
+                           std::function<void()> onPress,
+                           std::function<void()> onRelease)
+    : SelectableWidget(box),
+      _child(child),
+      _style(style),
+      _onPress(onPress),
+      _onRelease(onRelease),
+      _isPressed(false)
+{
+}
 
 void ButtonWidget::render(Renderer& r, Rect canvasBox)
 {
-    // Calculate absolute position on the display
-    int absX = canvasBox.x + box().x;
-    int absY = canvasBox.y + box().y;
+    Rect widgetBox = box();
+    int absX = canvasBox.x + widgetBox.x;
+    int absY = canvasBox.y + widgetBox.y;
 
-    int maxChars = box().w; // assuming 1 char per column
-    char Text[maxChars + 1];
+    // Choose decorations based on state
+    Glyph left  = _style.leftNormal;
+    Glyph right = _style.rightNormal;
 
-    // add visual indication for focus (e.g., brackets)
-    if (isFocused())
+    if (_isPressed)
     {
-        if (_isPressed)
-        {
-            snprintf(Text, maxChars + 1, "-%s-", label);
-        }
-        else
-        {
-            snprintf(Text, maxChars + 1, ">%s<", label);
-        }
-    } else {
-        snprintf(Text, maxChars + 1, "[%s]", label);
+        left  = _style.leftPressed;
+        right = _style.rightPressed;
+    }
+    else if (isFocused())
+    {
+        left  = _style.leftFocused;
+        right = _style.rightFocused;
     }
 
-    r.drawTextToBuffer(absX, absY, Text);
+    // Draw left decoration if needed
+    int x = absX;
+    if (left.code != GLYPH_NONE.code && widgetBox.w > 0)
+    {
+        r.drawGlyphToBuffer(x, absY, left);
+        x++;
+    }
+
+    // Draw child
+    if (_child)
+    {
+        Size childSize = _child->measure();
+        Rect childCanvas = { 
+            static_cast<uint8_t>(x),
+            static_cast<uint8_t>(absY),
+            static_cast<uint8_t>(childSize.w),
+            1 // single line height
+        };
+        _child->render(r, childCanvas);
+        x += childSize.w;
+    }
+
+    // Draw right decoration if needed
+    if (right.code != GLYPH_NONE.code && widgetBox.w > 1)
+        r.drawGlyphToBuffer(x, absY, right);
 }
 
 void ButtonWidget::handleInput(InputState& input)
@@ -36,22 +68,19 @@ void ButtonWidget::handleInput(InputState& input)
 
     _isPressed = input.buttonState.buttonDown;
 
-    if (input.buttonState.buttonPressed)
-    {
-        if (onPress) onPress();
-    }
-    else if (input.buttonState.buttonReleased)
-    {
-        if (onRelease) onRelease();
-    }
+    if (input.buttonState.buttonPressed && _onPress)
+        _onPress();
+
+    if (input.buttonState.buttonReleased && _onRelease)
+        _onRelease();
 }
 
 void ButtonWidget::onFocusGained()
 {
-    // Optional: could add visual feedback or sound here
+    // Optional: visual or sound feedback
 }
 
 void ButtonWidget::onFocusLost()
 {
-    // Optional: could add visual feedback or sound here
+    // Optional: visual or sound feedback
 }

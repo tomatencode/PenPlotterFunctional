@@ -1,6 +1,6 @@
 #include "UI.hpp"
 
-#include "render/CustomChars.hpp"
+#include "text/CustomChars.hpp"
 #include "TestUI.hpp"
 
 #include <string>

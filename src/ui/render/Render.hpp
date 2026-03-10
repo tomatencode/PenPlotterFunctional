@@ -2,8 +2,8 @@
 #define RENDER_HPP
 #include "config/ui_config.hpp"
 #include "hardware/display/LcdDisplay.hpp"
-#include "CustomChars.hpp"
-#include "Glyph.hpp"
+#include "../text/CustomChars.hpp"
+#include "../text/Glyph.hpp"
 
 class Renderer
 {
@@ -15,6 +15,8 @@ public:
     void clearBuffer();
     void drawGlyphsToBuffer(int x, int y, const Glyph* glyphs);
     void drawTextToBuffer(int x, int y, const char* text);
+
+    void drawGlyphToBuffer(int x, int y, Glyph g);
 
     void renderToDisplay();
 

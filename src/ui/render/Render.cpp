@@ -31,9 +31,18 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const Glyph* glyphs)
 
     while (glyphs->code != GLYPH_TERMINATOR.code && x < LCD_COLS)
     {
-        _buffer[y][x++] = *glyphs;
+        if (glyphs->code != GLYPH_NONE.code) // skip "no glyph"
+            _buffer[y][x] = *glyphs;
+        x++;
         glyphs++;
     }
+}
+
+void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
+{
+    if (y >= LCD_ROWS || x >= LCD_COLS) return;
+    if (g.code != GLYPH_NONE.code)
+        _buffer[y][x] = g;
 }
 
 void Renderer::drawTextToBuffer(int x, int y, const char* text)
