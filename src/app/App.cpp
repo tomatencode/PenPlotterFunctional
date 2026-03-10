@@ -23,6 +23,8 @@ Buzzer buzzer(BUZZER_PIN, 5);
 
 UI ui(display, encoder, buzzer);
 
+WebInterface webInterface;
+
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
 void appInit()
@@ -41,7 +43,7 @@ void appInit()
 
     fsInit();
     ui.init();
-    webInit();
+    webInterface.init();
 
     Serial.println("App initialized.");
     buzzer.playMelody(startupMelody);
@@ -49,7 +51,7 @@ void appInit()
 
 void appUpdate()
 {
-    webUpdate();
+    webInterface.update();
     jobManager.jobManagerUpdate();
     buzzer.update();
     ui.update();

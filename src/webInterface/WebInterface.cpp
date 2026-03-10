@@ -5,18 +5,24 @@
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
-#include <WebServer.h>
 #include <FS.h>
 #include "app/App.hpp"
 
-static WebServer server(80);
+static WebInterface* g_webInterface = nullptr;
 
-// Replace these with your home WiFi credentials
-static const char* ssid = "Thomas_Wifi";
-static const char* password = "TotallyHarmless";
+// WiFi credentials
+static const char* SSID = "Thomas_Wifi";
+static const char* PASSWORD = "TotallyHarmless";
+
+// ===== WebInterface Constructor =====
+WebInterface::WebInterface() : server(80)
+{
+}
 
 // ===== Handlers =====
-void handleFileList()
+
+// ===== Handlers =====
+void WebInterface::handleFileList()
 {
     auto files = fsListFiles();
 
@@ -31,19 +37,19 @@ void handleFileList()
     server.send(200, "application/json", json);
 }
 
-void handlePauseJob()
+void WebInterface::handlePauseJob()
 {
     jobManager.pause();
     server.send(200, "text/plain", "Job paused");
 }
 
-void handleResumeJob()
+void WebInterface::handleResumeJob()
 {
     jobManager.resume();
     server.send(200, "text/plain", "Job resumed");
 }
 
-void handleStartJob()
+void WebInterface::handleStartJob()
 {
     if (!server.hasArg("file"))
     {
@@ -64,13 +70,13 @@ void handleStartJob()
     server.send(200, "text/plain", "Job started");
 }
 
-void handleAbortJob()
+void WebInterface::handleAbortJob()
 {
     jobManager.abort();
     server.send(200, "text/plain", "Job stopped");
 }
 
-void handleUpload()
+void WebInterface::handleUpload()
 {
     HTTPUpload& upload = server.upload();
 
@@ -103,17 +109,16 @@ void handleUpload()
 }
 
 // ===== Init =====
-void webInit()
+void WebInterface::init()
 {
     Serial.print("Connecting to WiFi ");
-    Serial.println(ssid);
-
+    Serial.println(SSID);
 
     int tries = 0;
     int maxTries = 3;
     for (tries = 0; tries < maxTries || WiFi.status() != WL_CONNECTED; tries++)
     {
-        WiFi.begin(ssid, password);
+        WiFi.begin(SSID, PASSWORD);
 
         // Wait for connection
         float secs = 0;
@@ -152,18 +157,18 @@ void webInit()
     }
 
     // HTTP server routes
-    server.on("/files", HTTP_GET, handleFileList);
-    server.on("/start", HTTP_POST, handleStartJob);
-    server.on("/abort", HTTP_POST, handleAbortJob);
-    server.on("/upload", HTTP_POST, [](){}, handleUpload);
-    server.on("/pause", HTTP_POST, handlePauseJob);
-    server.on("/resume", HTTP_POST, handleResumeJob);
+    server.on("/files", HTTP_GET, [this]() { handleFileList(); });
+    server.on("/start", HTTP_POST, [this]() { handleStartJob(); });
+    server.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
+    server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUpload(); });
+    server.on("/pause", HTTP_POST, [this]() { handlePauseJob(); });
+    server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
 
     server.begin();
     Serial.println("Web interface started");
 }
 
-void webUpdate()
+void WebInterface::update()
 {
     server.handleClient();
 }
