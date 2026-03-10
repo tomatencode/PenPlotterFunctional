@@ -4,7 +4,7 @@
 #include <array>
 #include <cstddef>
 #include <cassert>
-#include "../screenSystem/Screen.hpp"
+#include "../screen/Screen.hpp"
 #include "../InputState.hpp"
 
 class Router

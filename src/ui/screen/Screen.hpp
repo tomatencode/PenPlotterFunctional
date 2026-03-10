@@ -2,7 +2,7 @@
 #define SCREEN_HPP
 
 #include "../widgetSystem/Container.hpp"
-#include "FocusManager.hpp"
+#include "../focusManager/FocusManager.hpp"
 
 constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
 

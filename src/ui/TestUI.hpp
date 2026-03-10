@@ -1,7 +1,7 @@
 #ifndef TEST_UI_HPP
 #define TEST_UI_HPP
 
-#include "screenSystem/Screen.hpp"
+#include "screen/Screen.hpp"
 #include "widgetSystem/Container.hpp"
 #include "widgets/LabelWidget.hpp"
 #include "widgets/ButtonWidget.hpp"
