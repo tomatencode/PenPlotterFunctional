@@ -19,59 +19,47 @@ Size LabelWidget::measure() const
         static_cast<uint8_t>(1) // single line height
     };
 }
+
 void LabelWidget::render(Renderer& r, Rect canvasBox)
 {
     int absX = canvasBox.x + box().x;
     int absY = canvasBox.y + box().y;
 
-    int maxWidth = box().w;
+    int maxWidth = std::min(box().w, static_cast<uint8_t>(std::abs(canvasBox.w - box().x)));
 
-    // Temporary glyph buffer
-    Glyph glyphs[LCD_COLS + 1]; // enough for whole LCD width + terminator
+    const Glyph* srcGlyphs = text.getGlyphs();
 
-    // Fill glyph buffer from TextSource
-    const Glyph* srcGlyphs = text.getGlyphs(); // TextSource provides glyph array
-    int i = 0;
-    for (; i < maxWidth && srcGlyphs[i].code != GLYPH_TERMINATOR.code; i++)
-    {
-        glyphs[i] = srcGlyphs[i];
+    int textWidth = 0;
+    while (srcGlyphs[textWidth].code != GLYPH_TERMINATOR.code && textWidth < maxWidth)
+        textWidth++;
+
+    if (textWidth == 0)
+        return; // Nothing to render
+
+    int renderTextWidth = std::min(textWidth, maxWidth);
+
+    Glyph renderGlyphs[LCD_COLS + 1]; // +1 for terminator
+    for (int i = 0; i < renderTextWidth; i++) {
+        renderGlyphs[i] = srcGlyphs[i]; // copy glyphs to render buffer
     }
 
-    // Handle ellipsis if text is longer than maxWidth
-    bool addEllipsis = srcGlyphs[i].code != GLYPH_TERMINATOR.code;
-    if (addEllipsis && i > 0)
-    {
-        glyphs[i - 1] = Glyph('.'); // last char becomes ellipsis
-    }
+    if (renderTextWidth == 0)
+        return; // No glyphs to render
 
-    // Fill remaining space with GLYPH_SPACE
-    for (; i < maxWidth; i++)
-        glyphs[i] = GLYPH_SPACE;
+    // Indicate truncation if text exceeds max width
+    if (textWidth > maxWidth)
+        renderGlyphs[renderTextWidth-1] = Glyph('.');
 
-    glyphs[maxWidth] = GLYPH_TERMINATOR;
+    // add terminator
+    renderGlyphs[renderTextWidth] = GLYPH_TERMINATOR;
 
-    // Determine starting X based on alignment
-    int textLen = 0;
-    while (textLen < maxWidth && glyphs[textLen].code != GLYPH_TERMINATOR.code)
-        textLen++;
-
+    // Calculate starting X based on alignment
     int startX = absX;
-    switch (align)
-    {
-        case TextAlign::Left:
-            startX = absX;
-            break;
-        case TextAlign::Center:
-            startX = absX + (maxWidth - textLen) / 2;
-            break;
-        case TextAlign::Right:
-            startX = absX + maxWidth - textLen;
-            break;
-    }
-
-    if (startX < 0) startX = 0;
-    if (startX + maxWidth > LCD_COLS) startX = LCD_COLS - maxWidth;
+    if (align == TextAlign::Center)
+        startX += (box().w - renderTextWidth) / 2;
+    else if (align == TextAlign::Right)
+        startX += box().w - renderTextWidth;
 
     // Draw glyphs to buffer
-    r.drawGlyphsToBuffer(startX, absY, glyphs);
+    r.drawGlyphsToBuffer(startX, absY, renderGlyphs);
 }
