@@ -21,17 +21,12 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override
     {
-        Rect newCanvas = {
-            static_cast<uint8_t>(canvasBox.x + box().x),
-            static_cast<uint8_t>(canvasBox.y + box().y),
-            static_cast<uint8_t>(std::min(canvasBox.w, box().w)),
-            static_cast<uint8_t>(std::min(canvasBox.h, box().h))
-        };
-
+        Rect drawRect = computeContentRect(canvasBox);
+        
         for (size_t i = 0; i < _count; i++)
         {
             if (_children[i] != nullptr)
-                _children[i]->render(r, newCanvas);
+                _children[i]->render(r, drawRect);
         }
     }
 

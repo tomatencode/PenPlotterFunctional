@@ -26,23 +26,14 @@ Size ButtonWidget::measure() const
 
 void ButtonWidget::render(Renderer& r, Rect canvasBox)
 {
-    Rect widgetBox = box();
-    int absX = canvasBox.x + widgetBox.x;
-    int absY = canvasBox.y + widgetBox.y;
+    // Compute final drawing rectangle including alignment + clipping
+    Rect drawRect = computeContentRect(canvasBox);
 
-    Size ownSize = measure();
+    if (drawRect.w == 0 || drawRect.h == 0)
+        return; // nothing visible
 
-    int StartX = absX;
-    if (align().horizontal == HorizontalAlignment::Center)
-        StartX += (widgetBox.w - ownSize.w) / 2;
-    else if (align().horizontal == HorizontalAlignment::Right)
-        StartX += widgetBox.w - ownSize.w;
-    
-    int StartY = absY;
-    if (align().vertical == VerticalAlignment::Middle)
-        StartY += (widgetBox.h - ownSize.h) / 2;
-    else if (align().vertical == VerticalAlignment::Bottom)
-        StartY += widgetBox.h - ownSize.h;
+    int x = drawRect.x;
+    int y = drawRect.y;
 
     // Choose decorations based on state
     Glyph left  = _style.leftNormal;
@@ -59,31 +50,36 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
         right = _style.rightFocused;
     }
 
-    // Draw left decoration if needed
-    int x = StartX;
-    if (left.code != GLYPH_NONE.code && widgetBox.w > 0)
+    // Draw left decoration
+    if (left.code != GLYPH_NONE.code && drawRect.w > 0)
     {
-        r.drawGlyphToBuffer(x, StartY, left);
+        r.drawGlyphToBuffer(x, y, left);
         x++;
     }
 
-    // Draw child
+    // Draw child if present
     if (_child)
     {
         Size childSize = _child->measure();
-        Rect childCanvas = { 
+
+        // Create a small canvas for the child within the button
+        Rect childCanvas = {
             static_cast<uint8_t>(x),
-            static_cast<uint8_t>(StartY),
-            static_cast<uint8_t>(childSize.w),
-            1 // single line height
+            static_cast<uint8_t>(y),
+            static_cast<uint8_t>(std::min<int>(childSize.w, drawRect.w - (x - drawRect.x))),
+            1 // assume single-line height
         };
+
         _child->render(r, childCanvas);
+
         x += childSize.w;
     }
 
-    // Draw right decoration if needed
-    if (right.code != GLYPH_NONE.code && widgetBox.w > 1)
-        r.drawGlyphToBuffer(x, StartY, right);
+    // Draw right decoration
+    if (right.code != GLYPH_NONE.code && drawRect.w > 1)
+    {
+        r.drawGlyphToBuffer(x, y, right);
+    }
 }
 
 void ButtonWidget::handleInput(InputState& input)

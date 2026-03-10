@@ -22,50 +22,34 @@ Size LabelWidget::measure() const
 
 void LabelWidget::render(Renderer& r, Rect canvasBox)
 {
-    int absX = canvasBox.x + box().x;
-    int absY = canvasBox.y + box().y;
+    Rect drawRect = computeContentRect(canvasBox);
 
-    int maxWidth = std::min(box().w, static_cast<uint8_t>(std::abs(canvasBox.w - box().x)));
+    if (drawRect.w == 0 || drawRect.h == 0)
+        return;
 
     const Glyph* srcGlyphs = text.getGlyphs();
+
+    int maxWidth = drawRect.w;
 
     int textWidth = 0;
     while (srcGlyphs[textWidth].code != GLYPH_TERMINATOR.code && textWidth < maxWidth)
         textWidth++;
 
     if (textWidth == 0)
-        return; // Nothing to render
+        return;
 
     int renderTextWidth = std::min(textWidth, maxWidth);
 
-    Glyph renderGlyphs[LCD_COLS + 1]; // +1 for terminator
-    for (int i = 0; i < renderTextWidth; i++) {
-        renderGlyphs[i] = srcGlyphs[i]; // copy glyphs to render buffer
-    }
+    Glyph renderGlyphs[LCD_COLS + 1];
 
-    if (renderTextWidth == 0)
-        return; // No glyphs to render
+    for (int i = 0; i < renderTextWidth; i++)
+        renderGlyphs[i] = srcGlyphs[i];
 
-    // Indicate truncation if text exceeds max width
-    if (textWidth > maxWidth)
-        renderGlyphs[renderTextWidth-1] = Glyph('.');
+    // truncate indicator
+    if (textWidth > maxWidth && renderTextWidth > 0)
+        renderGlyphs[renderTextWidth - 1] = Glyph('.');
 
-    // add terminator
     renderGlyphs[renderTextWidth] = GLYPH_TERMINATOR;
 
-    // Calculate starting X based on alignment
-    int startX = absX;
-    if (align().horizontal == HorizontalAlignment::Center)
-        startX += (box().w - renderTextWidth) / 2;
-    else if (align().horizontal == HorizontalAlignment::Right)
-        startX += box().w - renderTextWidth;
-    
-    int startY = absY;
-    if (align().vertical == VerticalAlignment::Middle)
-        startY += (box().h - 1) / 2; // center vertically (assuming single line height)
-    else if (align().vertical == VerticalAlignment::Bottom)
-        startY += box().h - 1; // align to bottom
-
-    // Draw glyphs to buffer
-    r.drawGlyphsToBuffer(startX, startY, renderGlyphs);
+    r.drawGlyphsToBuffer(drawRect.x, drawRect.y, renderGlyphs);
 }
