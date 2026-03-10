@@ -1,4 +1,5 @@
 #include "Screen.hpp"
+#include "../widgetSystem/WidgetUtils.hpp"
 
 Screen::Screen(Widget* children[], size_t count)
     : root({0, 0, LCD_COLS, LCD_ROWS}, {HorizontalAlignment::Left, VerticalAlignment::Top}, children, count), focusManager()
@@ -7,7 +8,7 @@ Screen::Screen(Widget* children[], size_t count)
     size_t selectableCount = 0;
 
     // Collect selectable widgets recursively from the root container
-    root.collectSelectables(&root, selectableWidgets, selectableCount);
+    collectSelectables(&root, selectableWidgets, selectableCount);
     focusManager.setWidgets(selectableWidgets, selectableCount);
 }
 

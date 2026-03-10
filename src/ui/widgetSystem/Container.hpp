@@ -30,15 +30,6 @@ public:
         }
     }
 
-    // Collect all selectable widgets recursively
-    void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count) {
-        if (w->isSelectable())
-            out[count++] = static_cast<SelectableWidget*>(w);
-
-        for (size_t i = 0; i < w->childCount(); i++)
-            collectSelectables(w->child(i), out, count);
-    }
-
     virtual size_t childCount() const override { return _count; }
     virtual Widget* child(size_t index) const override {
         if (index < _count)
