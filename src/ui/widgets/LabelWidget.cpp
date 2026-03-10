@@ -1,8 +1,8 @@
 #include "LabelWidget.hpp"
 #include "../render/Render.hpp"
 
-LabelWidget::LabelWidget(Rect box, TextSource& textSource, TextAlign align)
-    : Widget(box), text(textSource), align(align)
+LabelWidget::LabelWidget(Rect box, TextSource& textSource,  Alignment align)
+    : Widget(box, align), text(textSource)
 {}
 
 Size LabelWidget::measure() const
@@ -55,11 +55,17 @@ void LabelWidget::render(Renderer& r, Rect canvasBox)
 
     // Calculate starting X based on alignment
     int startX = absX;
-    if (align == TextAlign::Center)
+    if (align().horizontal == HorizontalAlignment::Center)
         startX += (box().w - renderTextWidth) / 2;
-    else if (align == TextAlign::Right)
+    else if (align().horizontal == HorizontalAlignment::Right)
         startX += box().w - renderTextWidth;
+    
+    int startY = absY;
+    if (align().vertical == VerticalAlignment::Middle)
+        startY += (box().h - 1) / 2; // center vertically (assuming single line height)
+    else if (align().vertical == VerticalAlignment::Bottom)
+        startY += box().h - 1; // align to bottom
 
     // Draw glyphs to buffer
-    r.drawGlyphsToBuffer(startX, absY, renderGlyphs);
+    r.drawGlyphsToBuffer(startX, startY, renderGlyphs);
 }

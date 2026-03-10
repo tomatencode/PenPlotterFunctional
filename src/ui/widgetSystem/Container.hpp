@@ -12,8 +12,8 @@ class Container : public Widget
 {
 public:
     // Constructor: box + number of children
-    Container(Rect box, Widget* children[], size_t count)
-        : Widget(box), _count(count)
+    Container(Rect box, Alignment align, Widget* children[], size_t count)
+        : Widget(box, align), _count(count)
     {
         for (size_t i = 0; i < _count && i < MAX_CHILDREN; i++)
             _children[i] = children[i];

@@ -1,7 +1,7 @@
 #include "Screen.hpp"
 
 Screen::Screen(Widget* children[], size_t count)
-    : root({0, 0, LCD_COLS, LCD_ROWS}, children, count), focusManager()
+    : root({0, 0, LCD_COLS, LCD_ROWS}, {HorizontalAlignment::Left, VerticalAlignment::Top}, children, count), focusManager()
 {
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;

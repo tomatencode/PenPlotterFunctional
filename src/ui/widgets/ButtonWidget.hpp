@@ -24,8 +24,11 @@ public:
                  Widget* child,
                  ButtonStyle style = ButtonStyle{},
                  std::function<void()> onPress = nullptr,
-                 std::function<void()> onRelease = nullptr);
-
+                 std::function<void()> onRelease = nullptr,
+                 Alignment align = {HorizontalAlignment::Left, VerticalAlignment::Top}
+                );
+    
+    Size measure() const override;
     void render(Renderer& r, Rect canvasBox) override;
     void handleInput(InputState& input) override;
 
