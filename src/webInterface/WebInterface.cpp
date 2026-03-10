@@ -39,8 +39,7 @@ void WebInterface::setupServer()
     if (_serverStarted) return; // Already set up
     if (WiFi.status() != WL_CONNECTED) return; // Should not happen, but guard just in case
 
-    Serial.println();
-    Serial.print("Connected! IP address: ");
+    Serial.print("WiFi Connected! IP address: ");
     Serial.println(WiFi.localIP());
 
     // mDNS 
