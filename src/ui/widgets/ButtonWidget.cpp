@@ -20,8 +20,21 @@ Size ButtonWidget::measure() const
 {
     Size childSize = _child ? _child->measure() : Size{0, 0};
     uint8_t width = childSize.w;
-    if (_style.leftNormal.code != GLYPH_NONE.code) width++;
-    if (_style.rightNormal.code != GLYPH_NONE.code) width++;
+    if (isFocused())
+    {
+        if (_style.leftFocused.code != GLYPH_NONE.code) width++;
+        if (_style.rightFocused.code != GLYPH_NONE.code) width++;
+    }
+    else if (_isPressed)
+    {
+        if (_style.leftPressed.code != GLYPH_NONE.code) width++;
+        if (_style.rightPressed.code != GLYPH_NONE.code) width++;
+    }
+    else
+    {
+        if (_style.leftNormal.code != GLYPH_NONE.code) width++;
+        if (_style.rightNormal.code != GLYPH_NONE.code) width++;
+    }
     return { width, static_cast<uint8_t>(1) };
 }
 
@@ -103,5 +116,5 @@ void ButtonWidget::onFocusGained()
 
 void ButtonWidget::onFocusLost()
 {
-    // Optional: visual or sound feedback
+    _isPressed = false; // reset pressed state when losing focus
 }

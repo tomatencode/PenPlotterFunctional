@@ -9,7 +9,8 @@
 #include "text/textSources/StaticText.hpp"
 #include "widgets/ProgressBarWidget.hpp"
 #include "text/textSources/FunctionText.hpp"
-#include "widgetSystem/ScrollableContainer.hpp"
+#include "widgets/ScrollableVerticalLayout.hpp"
+#include "text/Glyph.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;
@@ -19,8 +20,16 @@ Screen* g_screen3 = nullptr;
 // Global router pointer for callbacks
 static Router* g_router = nullptr;
 
-// Optional: simple button style
+// simple button styles
 static ButtonStyle defaultButtonStyle;
+static ButtonStyle MenueButtonStyle = {
+    Glyph(GLYPH_NONE.code),
+    Glyph(GLYPH_NONE.code),
+    Glyph('>'),
+    Glyph(GLYPH_NONE.code),
+    Glyph('-'),
+    Glyph(GLYPH_NONE.code)
+};
 
 // Progress value for the progress bar (0-100)
 static uint8_t g_progressValue = 80;
@@ -161,44 +170,44 @@ void setupTestUI(Router& router)
 
     static StaticText btn1Text("Button 1");
     LabelWidget* btn1Label = new LabelWidget({0, 0, 18, 1}, btn1Text);
-    ButtonWidget* button1 = new ButtonWidget({0, 0, 20, 1}, btn1Label, defaultButtonStyle,
+    ButtonWidget* button1 = new ButtonWidget({0, 0, 20, 1}, btn1Label, MenueButtonStyle,
                                              onButton1Pressed);
 
     static StaticText btn2Text("Button 2");
     LabelWidget* btn2Label = new LabelWidget({0, 0, 18, 1}, btn2Text);
-    ButtonWidget* button2 = new ButtonWidget({0, 1, 20, 1}, btn2Label, defaultButtonStyle,
+    ButtonWidget* button2 = new ButtonWidget({0, 0, 20, 1}, btn2Label, MenueButtonStyle,
                                              onButton2Pressed);
 
     static StaticText btn3Text("Button 3");
     LabelWidget* btn3Label = new LabelWidget({0, 0, 18, 1}, btn3Text);
-    ButtonWidget* button3 = new ButtonWidget({0, 2, 20, 1}, btn3Label, defaultButtonStyle,
+    ButtonWidget* button3 = new ButtonWidget({0, 0, 20, 1}, btn3Label, MenueButtonStyle,
                                              onButton3Pressed);
 
     static StaticText btn4Text("Button 4");
     LabelWidget* btn4Label = new LabelWidget({0, 0, 18, 1}, btn4Text);
-    ButtonWidget* button4 = new ButtonWidget({0, 3, 20, 1}, btn4Label, defaultButtonStyle,
+    ButtonWidget* button4 = new ButtonWidget({0, 0, 20, 1}, btn4Label, MenueButtonStyle,
                                              onButton4Pressed);
 
     static StaticText btn5Text("Button 5");
     LabelWidget* btn5Label = new LabelWidget({0, 0, 18, 1}, btn5Text);
-    ButtonWidget* button5 = new ButtonWidget({0, 4, 20, 1}, btn5Label, defaultButtonStyle,
+    ButtonWidget* button5 = new ButtonWidget({0, 0, 20, 1}, btn5Label, MenueButtonStyle,
                                              onButton5Pressed);
 
     static StaticText btn6Text("Button 6");
     LabelWidget* btn6Label = new LabelWidget({0, 0, 18, 1}, btn6Text);
-    ButtonWidget* button6 = new ButtonWidget({0, 5, 20, 1}, btn6Label, defaultButtonStyle,
+    ButtonWidget* button6 = new ButtonWidget({0, 0, 20, 1}, btn6Label, MenueButtonStyle,
                                              onButton6Pressed);
 
 
     Widget* scrollableChildren[] = { button1, button2, button3, button4, button5, button6 };
-    ScrollableContainer* scrollableContainer = new ScrollableContainer({0, 2, 20, 2}, {HorizontalAlignment::Left, VerticalAlignment::Top}, scrollableChildren, 6);
+    ScrollableVerticalLayout* scrollableVerticalLayout = new ScrollableVerticalLayout({0, 1, 20, 3}, {HorizontalAlignment::Left, VerticalAlignment::Top}, scrollableChildren, 6);
 
     LabelWidget* backLabel2 = new LabelWidget({0, 0, 6, 1}, backText);
     ButtonWidget* back_button_2 = new ButtonWidget({14, 0, 6, 1}, backLabel2, defaultButtonStyle,
                                                    nullptr,
                                                    goBack);
 
-    Widget* screen3Widgets[] = { label3, scrollableContainer, back_button_2 };
+    Widget* screen3Widgets[] = { label3, scrollableVerticalLayout, back_button_2 };
     g_screen3 = new Screen(screen3Widgets, 3);
 
     router.setScreen(g_screen1);

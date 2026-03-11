@@ -20,9 +20,8 @@ public:
     virtual size_t childCount() const { return 0; }
     virtual Widget* child(size_t) const { return nullptr; }
 
-    Rect box() const { return _box; }
-
 protected:
+    Rect box() const { return _box; }
     Alignment align() const { return _align; }
 
 private:
