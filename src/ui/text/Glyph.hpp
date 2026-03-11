@@ -1,5 +1,4 @@
-#ifndef GLYPH_HPP
-#define GLYPH_HPP
+#pragma once
 #include <cstdint>
 
 struct Glyph
@@ -18,5 +17,3 @@ constexpr Glyph GLYPH_NONE(254);
 
 // Space glyph for clearingbuffers
 constexpr Glyph GLYPH_SPACE(' ');
-
-#endif

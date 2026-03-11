@@ -1,6 +1,4 @@
-#ifndef MOTOR_DRIVER_HPP
-#define MOTOR_DRIVER_HPP
-
+#pragma once
 #include <cstdint>
 
 class MotorDriver {
@@ -19,5 +17,3 @@ public:
 private:
     uint16_t _microsteps;
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef TEXT_SOURCE_HPP
-#define TEXT_SOURCE_HPP
+#pragma once
 
 #include "Glyph.hpp"
 
@@ -9,5 +8,3 @@ public:
     virtual const Glyph* getGlyphs() const = 0;
     virtual ~TextSource() = default;
 };
-
-#endif

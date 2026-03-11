@@ -1,5 +1,4 @@
-#ifndef LABEL_WIDGET_HPP
-#define LABEL_WIDGET_HPP
+#pragma once
 
 #include "../widgetSystem/Widget.hpp"
 #include "../text/TextSource.hpp"
@@ -18,5 +17,3 @@ public:
 private:
     TextSource& text;
 };
-
-#endif

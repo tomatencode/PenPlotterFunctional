@@ -1,5 +1,4 @@
-#ifndef BUZZER_HPP
-#define BUZZER_HPP
+#pragma once
 
 #include <Arduino.h>
 
@@ -46,5 +45,3 @@ private:
     size_t _melodyLength;
     size_t _melodyIndex;
 };
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef COREXY_KINEMATICS_H
-#define COREXY_KINEMATICS_H
-
+#pragma once
 #include <cstdint>
 
 struct MotorSteps {
@@ -23,4 +21,3 @@ public:
 private:
     double steps_per_mm;
 };
-#endif

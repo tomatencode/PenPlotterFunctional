@@ -1,5 +1,4 @@
-#ifndef TEST_UI_HPP
-#define TEST_UI_HPP
+#pragma once
 
 #include "screen/Screen.hpp"
 #include "widgetSystem/Container.hpp"
@@ -212,5 +211,3 @@ void setupTestUI(Router& router)
 
     router.setScreen(g_screen1);
 }
-
-#endif

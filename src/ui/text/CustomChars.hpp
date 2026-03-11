@@ -1,5 +1,4 @@
-#ifndef CUSTOMCHARS_HPP
-#define CUSTOMCHARS_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -16,5 +15,3 @@ enum CustomChar
 };
 
 extern uint8_t* CUSTOM_CHAR_MAP[];
-
-#endif

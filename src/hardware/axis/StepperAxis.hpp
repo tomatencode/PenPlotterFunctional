@@ -1,5 +1,4 @@
-#ifndef STEPPER_AXIS_HPP
-#define STEPPER_AXIS_HPP
+#pragma once
 
 #include <Arduino.h>
 #include "hardware/steppers/Stepper.hpp"
@@ -21,4 +20,3 @@ class StepperAxis {
         Stepper& _stepper;
         double _positionSteps;
 };
-#endif

@@ -1,5 +1,4 @@
-#ifndef MotionSystem_HPP
-#define MotionSystem_HPP
+#pragma once
 
 #include <cstdint>
 #include "CoreXYKinematics.hpp"
@@ -44,6 +43,3 @@ class MotionSystem {
         CoreXYKinematics& _kinematics;
         double _min_feature_size_mm;
 };
-
-
-#endif

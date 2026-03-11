@@ -1,5 +1,4 @@
-#ifndef BUTTON_WIDGET_HPP
-#define BUTTON_WIDGET_HPP
+#pragma once
 
 #include "../widgetSystem/SelectableWidget.hpp"
 #include "../widgetSystem/Widget.hpp"
@@ -47,5 +46,3 @@ private:
     void onFocusGained() override;
     void onFocusLost() override;
 };
-
-#endif

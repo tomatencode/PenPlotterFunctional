@@ -1,5 +1,4 @@
-#ifndef ROTARY_ENCODER_HPP
-#define ROTARY_ENCODER_HPP
+#pragma once
 
 #include <Arduino.h>
 
@@ -41,5 +40,3 @@ private:
 
     static RotaryEncoder* instance;
 };
-
-#endif

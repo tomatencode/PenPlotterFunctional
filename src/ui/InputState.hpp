@@ -1,5 +1,4 @@
-#ifndef INPUT_STATE_HPP
-#define INPUT_STATE_HPP
+#pragma once
 
 struct ButtonState {
     bool buttonPressed = false;
@@ -13,5 +12,3 @@ struct InputState
 
     ButtonState buttonState;  // current button state
 };
-
-#endif

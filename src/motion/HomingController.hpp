@@ -1,5 +1,4 @@
-#ifndef HomingController_HPP
-#define HomingController_HPP
+#pragma once
 
 #include "hardware/axis/StepperAxis.hpp"
 
@@ -21,5 +20,3 @@ private:
 
     void moveToLimit(bool Afw, bool Bfw);
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef JobManager_HPP
-#define JobManager_HPP
+#pragma once
 #include <Arduino.h>
 #include <FS.h>
 
@@ -17,5 +16,3 @@ private:
     File currentFile;
     uint32_t currentLineIndex;
 };
-
-#endif

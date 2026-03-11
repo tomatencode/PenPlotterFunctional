@@ -1,5 +1,4 @@
-#ifndef GCodeParser_H
-#define GCodeParser_H
+#pragma once
 
 #include "motion/MotionSystem.hpp"
 #include "hardware/pen/Pen.hpp"
@@ -30,5 +29,3 @@ private:
     void handleG90G91(const std::string& cmd);
     void handlehoming(const std::string& cmd);
 };
-
-#endif

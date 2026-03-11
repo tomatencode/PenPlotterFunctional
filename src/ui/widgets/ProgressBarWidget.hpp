@@ -1,5 +1,4 @@
-#ifndef PROGRESS_BAR_WIDGET_HPP
-#define PROGRESS_BAR_WIDGET_HPP
+#pragma once
 
 #include "../widgetSystem/Widget.hpp"
 
@@ -18,5 +17,3 @@ public:
 private:
     uint8_t (*_getProgress)();  // Function pointer returning 0-100
 };
-
-#endif

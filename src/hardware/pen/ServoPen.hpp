@@ -1,5 +1,4 @@
-#ifndef SERVO_PEN_HPP
-#define SERVO_PEN_HPP
+#pragma once
 
 #include <ESP32Servo.h>
 #include "Pen.hpp"
@@ -18,5 +17,3 @@ private:
     int _downPosition;
     bool _penDown;
 };
-
-#endif

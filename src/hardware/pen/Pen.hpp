@@ -1,5 +1,4 @@
-#ifndef PEN_HPP
-#define PEN_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -11,5 +10,3 @@ public:
 
     virtual ~Pen() = default;
 };
-
-#endif

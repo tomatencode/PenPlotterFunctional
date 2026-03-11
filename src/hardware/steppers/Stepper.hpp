@@ -1,5 +1,4 @@
-#ifndef STEPPER_H
-#define STEPPER_H
+#pragma once
 
 #include <Arduino.h>
 
@@ -13,5 +12,3 @@ private:
     uint8_t _stepPin;
     uint8_t _dirPin;
 };
-
-#endif

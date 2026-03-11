@@ -1,6 +1,4 @@
-#ifndef LcdDisplay_HPP
-#define LcdDisplay_HPP
-
+#pragma once
 #include <LCD-I2C.h>
 
 class LcdDisplay
@@ -16,5 +14,3 @@ public:
 private:
     LCD_I2C& _lcd;
 };
-
-#endif
