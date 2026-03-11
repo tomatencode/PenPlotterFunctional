@@ -7,6 +7,7 @@
 #include "widgets/ButtonWidget.hpp"
 #include "router/Router.hpp"
 #include "text/textSources/StaticText.hpp"
+#include "widgets/ProgressBarWidget.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;
@@ -47,15 +48,21 @@ void setupTestUI(Router& router)
     static StaticText submenu1TitleText("Submenu 1");
     LabelWidget* label2 = new LabelWidget({0, 0, 13, 1}, submenu1TitleText);
 
+    ProgressBarWidget* progressBar = new ProgressBarWidget({0, 1, 20, 1}, 75, {HorizontalAlignment::Left, VerticalAlignment::Top});
+
     static StaticText btn1Text("Button 1");
-    LabelWidget* btn1Label = new LabelWidget({0, 0, 18, 1}, btn1Text);
-    ButtonWidget* button3 = new ButtonWidget({0, 2, 20, 1}, btn1Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 1 pressed"); });
+    LabelWidget* btn1Label = new LabelWidget({0, 0, 8, 1}, btn1Text);
+    ButtonWidget* button3 = new ButtonWidget({0, 3, 10, 1}, btn1Label, defaultButtonStyle,
+                                             [](){ Serial.println("Button 1 pressed"); },
+                                             nullptr,
+                                             {HorizontalAlignment::Center, VerticalAlignment::Top});
 
     static StaticText btn2Text("Button 2");
-    LabelWidget* btn2Label = new LabelWidget({0, 0, 18, 1}, btn2Text);
-    ButtonWidget* button4 = new ButtonWidget({0, 3, 20, 1}, btn2Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 2 pressed"); });
+    LabelWidget* btn2Label = new LabelWidget({0, 0, 8, 1}, btn2Text);
+    ButtonWidget* button4 = new ButtonWidget({10, 3, 10, 1}, btn2Label, defaultButtonStyle,
+                                             [](){ Serial.println("Button 2 pressed"); },
+                                             nullptr,
+                                             {HorizontalAlignment::Center, VerticalAlignment::Top});
 
     // Back button
     static StaticText backText("Back");
@@ -64,8 +71,8 @@ void setupTestUI(Router& router)
                                                    nullptr,
                                                    [&router](){ router.popScreen(); });
 
-    Widget* screen2Widgets[] = { label2, button3, button4, back_button_1 };
-    g_screen2 = new Screen(screen2Widgets, 4);
+    Widget* screen2Widgets[] = { label2, progressBar, button3, button4, back_button_1 };
+    g_screen2 = new Screen(screen2Widgets, 5);
 
     // ---------------- Submenu 2 ----------------
     static StaticText submenu2TitleText("Submenu 2");
