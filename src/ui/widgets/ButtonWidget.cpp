@@ -4,8 +4,8 @@
 ButtonWidget::ButtonWidget(Rect box,
                            Widget* child,
                            ButtonStyle style,
-                           std::function<void()> onPress,
-                           std::function<void()> onRelease,
+                           void (*onPress)(),
+                           void (*onRelease)(),
                            Alignment align
                         )
     : SelectableWidget(box, align),

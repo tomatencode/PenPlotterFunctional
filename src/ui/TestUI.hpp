@@ -14,11 +14,51 @@ Screen* g_screen1 = nullptr;
 Screen* g_screen2 = nullptr;
 Screen* g_screen3 = nullptr;
 
+// Global router pointer for callbacks
+static Router* g_router = nullptr;
+
 // Optional: simple button style
 static ButtonStyle defaultButtonStyle;
 
+// Static callback functions
+static void goToScreen2()
+{
+    if (g_router) g_router->pushScreen(g_screen2);
+}
+
+static void goToScreen3()
+{
+    if (g_router) g_router->pushScreen(g_screen3);
+}
+
+static void goBack()
+{
+    if (g_router) g_router->popScreen();
+}
+
+static void onButton1Pressed()
+{
+    Serial.println("Button 1 pressed");
+}
+
+static void onButton2Pressed()
+{
+    Serial.println("Button 2 pressed");
+}
+
+static void onButton3Pressed()
+{
+    Serial.println("Button 3 pressed");
+}
+
+static void onButton4Pressed()
+{
+    Serial.println("Button 4 pressed");
+}
+
 void setupTestUI(Router& router)
 {
+    g_router = &router; // Set global router pointer for callbacks
     // ---------------- Home Screen ----------------
     static StaticText homeText("Home");
     LabelWidget* label1 = new LabelWidget({0, 0, 20, 1}, homeText, {HorizontalAlignment::Center, VerticalAlignment::Top});
@@ -28,7 +68,7 @@ void setupTestUI(Router& router)
     ButtonWidget* button1 = new ButtonWidget(
                                                 {0, 1, 20, 1}, sub1Label, defaultButtonStyle,
                                                 nullptr,
-                                                [&router](){ router.pushScreen(g_screen2); },
+                                                goToScreen2,
                                                 {HorizontalAlignment::Center, VerticalAlignment::Top}
                                             );
 
@@ -37,7 +77,7 @@ void setupTestUI(Router& router)
     ButtonWidget* button2 = new ButtonWidget(
                                                 {0, 2, 20, 1}, sub2Label, defaultButtonStyle,
                                                 nullptr,
-                                                [&router](){ router.pushScreen(g_screen3); },
+                                                goToScreen3,
                                                 {HorizontalAlignment::Center, VerticalAlignment::Top}
                                             );
 
@@ -53,14 +93,14 @@ void setupTestUI(Router& router)
     static StaticText btn1Text("Button 1");
     LabelWidget* btn1Label = new LabelWidget({0, 0, 8, 1}, btn1Text);
     ButtonWidget* button3 = new ButtonWidget({0, 3, 10, 1}, btn1Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 1 pressed"); },
+                                             onButton1Pressed,
                                              nullptr,
                                              {HorizontalAlignment::Center, VerticalAlignment::Top});
 
     static StaticText btn2Text("Button 2");
     LabelWidget* btn2Label = new LabelWidget({0, 0, 8, 1}, btn2Text);
     ButtonWidget* button4 = new ButtonWidget({10, 3, 10, 1}, btn2Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 2 pressed"); },
+                                             onButton2Pressed,
                                              nullptr,
                                              {HorizontalAlignment::Center, VerticalAlignment::Top});
 
@@ -69,7 +109,7 @@ void setupTestUI(Router& router)
     LabelWidget* backLabel1 = new LabelWidget({0, 0, 6, 1}, backText);
     ButtonWidget* back_button_1 = new ButtonWidget({14, 0, 6, 1}, backLabel1, defaultButtonStyle,
                                                    nullptr,
-                                                   [&router](){ router.popScreen(); });
+                                                   goBack);
 
     Widget* screen2Widgets[] = { label2, progressBar, button3, button4, back_button_1 };
     g_screen2 = new Screen(screen2Widgets, 5);
@@ -81,17 +121,17 @@ void setupTestUI(Router& router)
     static StaticText btn3Text("Button 3");
     LabelWidget* btn3Label = new LabelWidget({0, 0, 18, 1}, btn3Text);
     ButtonWidget* button5 = new ButtonWidget({0, 2, 20, 1}, btn3Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 3 pressed"); });
+                                             onButton3Pressed);
 
     static StaticText btn4Text("Button 4");
     LabelWidget* btn4Label = new LabelWidget({0, 0, 18, 1}, btn4Text);
     ButtonWidget* button6 = new ButtonWidget({0, 3, 20, 1}, btn4Label, defaultButtonStyle,
-                                             [](){ Serial.println("Button 4 pressed"); });
+                                             onButton4Pressed);
 
     LabelWidget* backLabel2 = new LabelWidget({0, 0, 6, 1}, backText);
     ButtonWidget* back_button_2 = new ButtonWidget({14, 0, 6, 1}, backLabel2, defaultButtonStyle,
                                                    nullptr,
-                                                   [&router](){ router.popScreen(); });
+                                                   goBack);
 
     Widget* screen3Widgets[] = { label3, button5, button6, back_button_2 };
     g_screen3 = new Screen(screen3Widgets, 4);

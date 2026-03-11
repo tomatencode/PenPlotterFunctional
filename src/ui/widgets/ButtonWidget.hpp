@@ -3,7 +3,6 @@
 
 #include "../widgetSystem/SelectableWidget.hpp"
 #include "../widgetSystem/Widget.hpp"
-#include <functional>
 
 // Optional: simple style for button decorations
 struct ButtonStyle
@@ -23,8 +22,8 @@ public:
     ButtonWidget(Rect box,
                  Widget* child,
                  ButtonStyle style = ButtonStyle{},
-                 std::function<void()> onPress = nullptr,
-                 std::function<void()> onRelease = nullptr,
+                 void (*onPress)() = nullptr,
+                 void (*onRelease)() = nullptr,
                  Alignment align = {HorizontalAlignment::Left, VerticalAlignment::Top}
                 );
     
@@ -35,8 +34,8 @@ public:
 private:
     Widget* _child;               // the child widget to render inside the button
     ButtonStyle _style;           // visual decorations
-    std::function<void()> _onPress;
-    std::function<void()> _onRelease;
+    void (*_onPress)();
+    void (*_onRelease)();
 
     bool _isPressed = false;
 
