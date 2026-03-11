@@ -2,21 +2,11 @@
 #include "../widgetSystem/WidgetUtils.hpp"
 
 ProgressBarWidget::ProgressBarWidget(Rect box,
-                                     uint8_t progress,
+                                     uint8_t (*getProgress)(),
                                      Alignment align)
     : Widget(box, align),
-      _progress(progress > 100 ? 100 : progress)
+      _getProgress(getProgress)
 {}
-
-void ProgressBarWidget::setProgress(uint8_t progress)
-{
-    _progress = progress > 100 ? 100 : progress;
-}
-
-uint8_t ProgressBarWidget::getProgress() const
-{
-    return _progress;
-}
 
 Size ProgressBarWidget::measure() const
 {
@@ -38,7 +28,9 @@ void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
 
     // Calculate inner bar width (excluding brackets)
     uint8_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;
-    uint8_t filledWidth = (innerWidth * _progress) / 100;
+    uint8_t progress = (_getProgress != nullptr) ? _getProgress() : 0;
+    progress = (progress > 100) ? 100 : progress;
+    uint8_t filledWidth = (innerWidth * progress) / 100;
 
     // Draw the progress bar
     for (uint8_t row = 0; row < barHeight; row++)

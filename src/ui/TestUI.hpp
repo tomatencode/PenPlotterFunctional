@@ -8,6 +8,7 @@
 #include "router/Router.hpp"
 #include "text/textSources/StaticText.hpp"
 #include "widgets/ProgressBarWidget.hpp"
+#include "text/textSources/FunctionText.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;
@@ -19,6 +20,9 @@ static Router* g_router = nullptr;
 
 // Optional: simple button style
 static ButtonStyle defaultButtonStyle;
+
+// Progress value for the progress bar (0-100)
+static uint8_t g_progressValue = 80;
 
 // Static callback functions
 static void goToScreen2()
@@ -38,12 +42,12 @@ static void goBack()
 
 static void onButton1Pressed()
 {
-    Serial.println("Button 1 pressed");
+    g_progressValue = (g_progressValue >= 90) ? 100 : g_progressValue + 10; // Increment progress, max at 100
 }
 
 static void onButton2Pressed()
 {
-    Serial.println("Button 2 pressed");
+    g_progressValue = (g_progressValue >= 10) ? (g_progressValue - 10) : 0; // Decrement progress, floor at 0
 }
 
 static void onButton3Pressed()
@@ -54,6 +58,18 @@ static void onButton3Pressed()
 static void onButton4Pressed()
 {
     Serial.println("Button 4 pressed");
+}
+
+static uint8_t getProgressValue()
+{
+    return g_progressValue;
+}
+
+static const char* progressTextFunc()
+{
+    static char buffer[10];
+    snprintf(buffer, sizeof(buffer), "%d%%", g_progressValue);
+    return buffer;
 }
 
 void setupTestUI(Router& router)
@@ -88,16 +104,19 @@ void setupTestUI(Router& router)
     static StaticText submenu1TitleText("Submenu 1");
     LabelWidget* label2 = new LabelWidget({0, 0, 13, 1}, submenu1TitleText);
 
-    ProgressBarWidget* progressBar = new ProgressBarWidget({0, 1, 20, 1}, 75, {HorizontalAlignment::Left, VerticalAlignment::Top});
+    ProgressBarWidget* progressBar = new ProgressBarWidget({1, 2, 13, 1}, getProgressValue);
+    
+    static FunctionText progressText(progressTextFunc);
+    LabelWidget* progressLabel = new LabelWidget({15, 2, 5, 1}, progressText, {HorizontalAlignment::Right, VerticalAlignment::Top});
 
-    static StaticText btn1Text("Button 1");
+    static StaticText btn1Text("+ prog");
     LabelWidget* btn1Label = new LabelWidget({0, 0, 8, 1}, btn1Text);
     ButtonWidget* button3 = new ButtonWidget({0, 3, 10, 1}, btn1Label, defaultButtonStyle,
                                              onButton1Pressed,
                                              nullptr,
                                              {HorizontalAlignment::Center, VerticalAlignment::Top});
 
-    static StaticText btn2Text("Button 2");
+    static StaticText btn2Text("- prog");
     LabelWidget* btn2Label = new LabelWidget({0, 0, 8, 1}, btn2Text);
     ButtonWidget* button4 = new ButtonWidget({10, 3, 10, 1}, btn2Label, defaultButtonStyle,
                                              onButton2Pressed,
@@ -111,8 +130,8 @@ void setupTestUI(Router& router)
                                                    nullptr,
                                                    goBack);
 
-    Widget* screen2Widgets[] = { label2, progressBar, button3, button4, back_button_1 };
-    g_screen2 = new Screen(screen2Widgets, 5);
+    Widget* screen2Widgets[] = { label2, progressBar, progressLabel, button3, button4, back_button_1 };
+    g_screen2 = new Screen(screen2Widgets, 6);
 
     // ---------------- Submenu 2 ----------------
     static StaticText submenu2TitleText("Submenu 2");
