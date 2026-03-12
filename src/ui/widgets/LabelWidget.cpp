@@ -2,8 +2,8 @@
 #include "../render/Render.hpp"
 #include "../widgetSystem/WidgetUtils.hpp"
 
-LabelWidget::LabelWidget(Rect box, TextSource& textSource,  Alignment align)
-    : Widget(box, align), text(textSource)
+LabelWidget::LabelWidget(TextSource& textSource)
+    : text(textSource)
 {}
 
 Size LabelWidget::measure() const
@@ -12,7 +12,7 @@ Size LabelWidget::measure() const
     int width = 0;
 
     // Count glyphs until terminator or max LCD width
-    while (glyphs[width].code != GLYPH_TERMINATOR.code && width < box().w)
+    while (glyphs[width].code != GLYPH_TERMINATOR.code && width < LCD_COLS)
         width++;
 
     return {
@@ -23,14 +23,12 @@ Size LabelWidget::measure() const
 
 void LabelWidget::render(Renderer& r, Rect canvasBox)
 {
-    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
-
-    if (drawRect.w == 0 || drawRect.h == 0)
+    if (canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
     const Glyph* srcGlyphs = text.getGlyphs();
 
-    int maxWidth = drawRect.w;
+    int maxWidth = canvasBox.w;
 
     int textWidth = 0;
     while (srcGlyphs[textWidth].code != GLYPH_TERMINATOR.code && textWidth < maxWidth)
@@ -52,5 +50,5 @@ void LabelWidget::render(Renderer& r, Rect canvasBox)
 
     renderGlyphs[renderTextWidth] = GLYPH_TERMINATOR;
 
-    r.drawGlyphsToBuffer(drawRect.x, drawRect.y, renderGlyphs);
+    r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, renderGlyphs);
 }

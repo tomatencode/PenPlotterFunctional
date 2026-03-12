@@ -23,12 +23,10 @@ class ButtonWidget : public SelectableWidget
 {
 public:
     // Construct a button wrapping any child widget
-    ButtonWidget(Rect box,
-                 Widget* child,
+    ButtonWidget(Widget* child,
                  ButtonStyle style = ButtonStyle{},
                  void (*onPress)() = nullptr,
-                 void (*onRelease)() = nullptr,
-                 Alignment align = {HorizontalAlignment::Left, VerticalAlignment::Top}
+                 void (*onRelease)() = nullptr
                 );
     
     Size measure() const override;

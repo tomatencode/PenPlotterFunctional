@@ -3,6 +3,7 @@
 
 #include "Widget.hpp"
 #include "SelectableWidget.hpp"
+#include "Alignment.hpp"
 
 void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count);
 

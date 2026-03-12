@@ -1,4 +1,5 @@
 #include "WidgetUtils.hpp"
+#include "Alignment.hpp"
 
 void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count) {
     if (!w) return;

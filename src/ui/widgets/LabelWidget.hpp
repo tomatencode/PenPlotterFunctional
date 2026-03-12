@@ -6,7 +6,7 @@
 class LabelWidget : public Widget
 {
 public:
-    LabelWidget(Rect box, TextSource& text, Alignment align = {HorizontalAlignment::Left, VerticalAlignment::Top});
+    LabelWidget(TextSource& text);
 
     // Render the label within the given canvas
     void render(Renderer& r, Rect canvasBox) override;

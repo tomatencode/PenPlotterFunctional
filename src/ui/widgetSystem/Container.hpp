@@ -1,46 +1,93 @@
-#ifndef CONTAINER_HPP
-#define CONTAINER_HPP
+#pragma once
 
 #include "Widget.hpp"
-#include "SelectableWidget.hpp"
+#include "Alignment.hpp"
 #include "WidgetUtils.hpp"
-#include <algorithm>
 #include <cstddef>
 
-constexpr size_t MAX_CHILDREN = 16; // maximum widgets per container
+constexpr size_t MAX_CHILDREN = 16;
 
 class Container : public Widget
 {
+protected:
+    struct ChildLayout {
+        Widget* widget;
+        Rect box;
+        Alignment align;
+    };
+
 public:
-    // Constructor: box + number of children
-    Container(Rect box, Alignment align, Widget* children[], size_t count)
-        : Widget(box, align), _count(count)
+    Container(Rect containerBox)
+        : _containerBox(containerBox), _count(0)
     {
-        for (size_t i = 0; i < _count && i < MAX_CHILDREN; i++)
-            _children[i] = children[i];
     }
 
-    void render(Renderer& r, Rect canvasBox) override
+    virtual ~Container() = default;
+
+    // Add a child with absolute positioning and alignment
+    void addChild(Widget* widget, Rect box, Alignment align)
     {
-        Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
-        
-        for (size_t i = 0; i < _count; i++)
+        if (_count < MAX_CHILDREN && widget)
         {
-            if (_children[i] != nullptr)
-                _children[i]->render(r, drawRect);
+            _children[_count] = {widget, box, align};
+            _count++;
         }
     }
 
-    virtual size_t childCount() const override { return _count; }
-    virtual Widget* child(size_t index) const override {
+    void render(Renderer& r, Rect parentCanvas) override
+    {
+        // Compute container's absolute position
+        int absX = parentCanvas.x + _containerBox.x;
+        int absY = parentCanvas.y + _containerBox.y;
+
+        // Create container's draw rect (clipped to parent)
+        Rect containerDrawRect{
+            static_cast<uint8_t>(absX),
+            static_cast<uint8_t>(absY),
+            _containerBox.w,
+            _containerBox.h
+        };
+
+        // Render each child at its specified position
+        for (size_t i = 0; i < _count; i++)
+        {
+            if (_children[i].widget == nullptr)
+                continue;
+
+            Size childSize = _children[i].widget->measure();
+            
+            // Compute child's position with alignment inside its box
+            Rect drawRect = computeContentAlignment(
+                _children[i].box,
+                _children[i].align,
+                childSize,
+                containerDrawRect
+            );
+
+            _children[i].widget->render(r, drawRect);
+        }
+    }
+
+    Size measure() const override
+    {
+        return Size{_containerBox.w, _containerBox.h};
+    }
+
+    size_t childCount() const override { return _count; }
+    Widget* child(size_t index) const override
+    {
         if (index < _count)
-            return _children[index];
+            return _children[index].widget;
         return nullptr;
     }
 
-private:
-    Widget* _children[MAX_CHILDREN]{ nullptr };
-    size_t _count{ 0 };
-};
+protected:
+    Rect getContainerBox() const { return _containerBox; }
+    const ChildLayout& getChildLayout(size_t index) const { return _children[index]; }
+    size_t getChildCount() const { return _count; }
 
-#endif
+private:
+    ChildLayout _children[MAX_CHILDREN]{};
+    size_t _count{0};
+    Rect _containerBox;
+};

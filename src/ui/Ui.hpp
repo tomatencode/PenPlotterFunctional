@@ -1,5 +1,4 @@
-#ifndef UI_HPP
-#define UI_HPP
+#pragma once
 
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
@@ -29,5 +28,3 @@ private:
     RotaryEncoder& _encoder;
     Buzzer& _buzzer;
 };
-
-#endif

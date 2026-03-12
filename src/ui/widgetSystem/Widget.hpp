@@ -4,16 +4,18 @@
 #include "../render/Render.hpp"
 #include "box.hpp"
 #include "Size.hpp"
-#include "Alignment.hpp"
 
 class Widget
 {
 public:
-    Widget(Rect box, Alignment align) : _box(box), _align(align) {}
+    Widget() {}
+    
+    // For leaf widgets that have a size
+    Widget(uint8_t w, uint8_t h) : _w(w), _h(h) {}
 
     virtual void render(Renderer& r, Rect canvasBox) = 0;
 
-    virtual Size measure() const { return Size{_box.w, _box.h}; }
+    virtual Size measure() const { return Size{_w, _h}; }
 
     virtual bool isSelectable() const { return false; }
 
@@ -21,12 +23,8 @@ public:
     virtual Widget* child(size_t) const { return nullptr; }
 
 protected:
-    Rect box() const { return _box; }
-    Alignment align() const { return _align; }
-
-private:
-    Rect _box;
-    Alignment _align;
+    uint8_t _w = 0;
+    uint8_t _h = 0;
 };
 
 #endif

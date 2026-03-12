@@ -7,9 +7,9 @@ class ProgressBarWidget : public Widget
 public:
     // Construct a progress bar with specified width and height
     // getProgress: function pointer that returns progress 0-100
-    ProgressBarWidget(Rect box,
-                      uint8_t (*getProgress)() = nullptr,
-                      Alignment align = {HorizontalAlignment::Left, VerticalAlignment::Top});
+    ProgressBarWidget(uint8_t width,
+                      uint8_t height,
+                      uint8_t (*getProgress)() = nullptr);
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

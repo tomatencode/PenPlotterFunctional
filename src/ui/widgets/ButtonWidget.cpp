@@ -1,15 +1,12 @@
 #include "ButtonWidget.hpp"
 #include "../widgetSystem/WidgetUtils.hpp"
 
-ButtonWidget::ButtonWidget(Rect box,
-                           Widget* child,
+ButtonWidget::ButtonWidget(Widget* child,
                            ButtonStyle style,
                            void (*onPress)(),
-                           void (*onRelease)(),
-                           Alignment align
+                           void (*onRelease)()
                         )
-    : SelectableWidget(box, align),
-      _child(child),
+    : _child(child),
       _style(style),
       _onPress(onPress),
       _onRelease(onRelease),
@@ -40,14 +37,12 @@ Size ButtonWidget::measure() const
 
 void ButtonWidget::render(Renderer& r, Rect canvasBox)
 {
-    // Compute final drawing rectangle including alignment + clipping
-    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
-
-    if (drawRect.w == 0 || drawRect.h == 0)
+    // Button renders at the given canvasBox position, full width
+    if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    int x = drawRect.x;
-    int y = drawRect.y;
+    int x = canvasBox.x;
+    int y = canvasBox.y;
 
     // Choose decorations based on state
     Glyph left  = _style.leftNormal;
@@ -65,7 +60,7 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
     }
 
     // Draw left decoration
-    if (left.code != GLYPH_NONE.code && drawRect.w > 0)
+    if (left.code != GLYPH_NONE.code && canvasBox.w > 0)
     {
         r.drawGlyphToBuffer(x, y, left);
         x++;
@@ -76,11 +71,11 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
     {
         Size childSize = _child->measure();
 
-        // Create a small canvas for the child within the button
+        // Create a canvas for the child within the button
         Rect childCanvas = {
             static_cast<uint8_t>(x),
             static_cast<uint8_t>(y),
-            static_cast<uint8_t>(std::min<int>(childSize.w, drawRect.w - (x - drawRect.x))),
+            static_cast<uint8_t>(std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x))),
             1 // assume single-line height
         };
 
@@ -90,7 +85,7 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
     }
 
     // Draw right decoration
-    if (right.code != GLYPH_NONE.code && drawRect.w > 1)
+    if (right.code != GLYPH_NONE.code && canvasBox.w > 1)
     {
         r.drawGlyphToBuffer(x, y, right);
     }

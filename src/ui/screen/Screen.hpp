@@ -1,7 +1,7 @@
 #ifndef SCREEN_HPP
 #define SCREEN_HPP
 
-#include "../widgetSystem/Container.hpp"
+#include "../widgets/VerticalLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
 
 constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
@@ -9,7 +9,7 @@ constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
 class Screen
 {
 public:
-    // Constructor: takes an array of Widget* and the number of widgets
+    // Constructor: takes an array of Widget* and auto-stacks them vertically
     Screen(Widget* children[], size_t count);
 
     // Render the screen
@@ -23,7 +23,7 @@ public:
     virtual void handleInput(InputState& input);
 
 private:
-    Container root;
+    VerticalLayout root;
     FocusManager focusManager;
 };
 

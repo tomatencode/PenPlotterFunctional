@@ -1,30 +1,27 @@
 #include "ProgressBarWidget.hpp"
 #include "../widgetSystem/WidgetUtils.hpp"
 
-ProgressBarWidget::ProgressBarWidget(Rect box,
-                                     uint8_t (*getProgress)(),
-                                     Alignment align)
-    : Widget(box, align),
+ProgressBarWidget::ProgressBarWidget(uint8_t width,
+                                     uint8_t height,
+                                     uint8_t (*getProgress)())
+    : Widget(width, height),
       _getProgress(getProgress)
 {}
 
 Size ProgressBarWidget::measure() const
 {
-    return Size{box().w, box().h};
+    return Size{_w, _h};
 }
 
 void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
 {
-    // Compute final drawing rectangle including alignment + clipping
-    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
-
-    if (drawRect.w == 0 || drawRect.h == 0)
+    if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    int x = drawRect.x;
-    int y = drawRect.y;
-    uint8_t barWidth = drawRect.w;
-    uint8_t barHeight = drawRect.h;
+    int x = canvasBox.x;
+    int y = canvasBox.y;
+    uint8_t barWidth = canvasBox.w;
+    uint8_t barHeight = canvasBox.h;
 
     // Calculate inner bar width (excluding brackets)
     uint8_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;

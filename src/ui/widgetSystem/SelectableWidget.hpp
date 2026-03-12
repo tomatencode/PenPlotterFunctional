@@ -7,7 +7,7 @@
 class SelectableWidget : public Widget
 {
 public:
-    SelectableWidget(Rect box, Alignment align) : Widget(box, align) {}
+    SelectableWidget() {}
 
     virtual bool isSelectable() const override { return true; }
 

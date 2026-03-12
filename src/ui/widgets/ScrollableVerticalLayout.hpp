@@ -5,8 +5,8 @@
 class ScrollableVerticalLayout : public VerticalLayout
 {
 public:
-    // Constructor: box + array of children
-    ScrollableVerticalLayout(Rect box, Alignment align, Widget* children[], size_t count);
+    // Constructor: just children, parent provides canvas
+    ScrollableVerticalLayout(Widget* children[], size_t count);
 
     void render(Renderer& r, Rect canvasBox) override;
 

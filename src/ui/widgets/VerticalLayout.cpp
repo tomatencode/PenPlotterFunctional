@@ -1,16 +1,20 @@
 #include "VerticalLayout.hpp"
-#include "../widgetSystem/WidgetUtils.hpp"
 
-VerticalLayout::VerticalLayout(Rect box, Alignment align, Widget* children[], size_t count)
-    : Widget(box, align), _count(count)
+VerticalLayout::VerticalLayout(Widget* children[], size_t count)
+    : _count(0)
 {
-    for (size_t i = 0; i < _count && i < MAX_LAYOUT_CHILDREN; i++)
-        _children[i] = children[i];
+    for (size_t i = 0; i < count && i < MAX_LAYOUT_CHILDREN; i++)
+    {
+        if (children[i] != nullptr)
+            _children[_count++] = children[i];
+    }
 }
 
 Size VerticalLayout::measure() const
 {
-    return Size{box().w, box().h};
+    // Width fills available space, height is sum of children
+    // Parent determines actual width via canvasBox during render
+    return Size{0, static_cast<uint8_t>(getTotalHeight())};
 }
 
 Widget* VerticalLayout::child(size_t index) const
@@ -33,13 +37,10 @@ uint16_t VerticalLayout::getTotalHeight() const
 
 void VerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    // Compute final drawing rectangle including alignment + clipping
-    Rect drawRect = computeContentAlignment(box(), align(), measure(), canvasBox);
-
-    if (drawRect.w == 0 || drawRect.h == 0)
+    if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    int currentY = drawRect.y;
+    int currentY = canvasBox.y;
 
     // Render each child stacked vertically
     for (size_t i = 0; i < _count; i++)
@@ -51,14 +52,14 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
 
         // Create a canvas for this child
         Rect childCanvas = {
-            drawRect.x,
+            canvasBox.x,
             static_cast<uint8_t>(currentY),
-            drawRect.w,
+            canvasBox.w,
             childSize.h
         };
 
         // Only render if child is within visible area
-        if (currentY < drawRect.y + drawRect.h)
+        if (currentY < canvasBox.y + canvasBox.h)
         {
             _children[i]->render(r, childCanvas);
         }

@@ -18,4 +18,5 @@ struct Alignment
     VerticalAlignment vertical;
 
     constexpr Alignment(HorizontalAlignment h, VerticalAlignment v) : horizontal(h), vertical(v) {}
+    constexpr Alignment() : horizontal(HorizontalAlignment::Left), vertical(VerticalAlignment::Top) {}
 };
