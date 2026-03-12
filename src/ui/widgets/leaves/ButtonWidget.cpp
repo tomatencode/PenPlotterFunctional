@@ -1,5 +1,5 @@
 #include "ButtonWidget.hpp"
-#include "../widgetSystem/WidgetUtils.hpp"
+#include "../core/WidgetUtils.hpp"
 
 ButtonWidget::ButtonWidget(Widget* child,
                            ButtonStyle style,

@@ -1,5 +1,5 @@
 #include "ScrollableVerticalLayout.hpp"
-#include "../widgetSystem/SelectableWidget.hpp"
+#include "../core/SelectableWidget.hpp"
 
 ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t count)
     : VerticalLayout(children, count), _scrollOffset(0)

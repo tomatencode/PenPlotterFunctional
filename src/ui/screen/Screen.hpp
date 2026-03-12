@@ -1,7 +1,7 @@
 #ifndef SCREEN_HPP
 #define SCREEN_HPP
 
-#include "../widgets/VerticalLayout.hpp"
+#include "../widgets/layouts/VerticalLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
 
 constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;

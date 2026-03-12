@@ -1,14 +1,14 @@
 #pragma once
 
 #include "screen/Screen.hpp"
-#include "widgetSystem/Container.hpp"
-#include "widgets/LabelWidget.hpp"
-#include "widgets/ButtonWidget.hpp"
+#include "widgets/layouts/AbsoluteLayout.hpp"
+#include "widgets/leaves/LabelWidget.hpp"
+#include "widgets/leaves/ButtonWidget.hpp"
 #include "router/Router.hpp"
 #include "text/textSources/StaticText.hpp"
-#include "widgets/ProgressBarWidget.hpp"
+#include "widgets/leaves/ProgressBarWidget.hpp"
 #include "text/textSources/FunctionText.hpp"
-#include "widgets/ScrollableVerticalLayout.hpp"
+#include "widgets/layouts/ScrollableVerticalLayout.hpp"
 #include "text/Glyph.hpp"
 
 // Global screen pointers to keep them alive

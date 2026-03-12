@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../widgetSystem/Widget.hpp"
+#include "../core/Widget.hpp"
 
 constexpr size_t MAX_LAYOUT_CHILDREN = 16;
 

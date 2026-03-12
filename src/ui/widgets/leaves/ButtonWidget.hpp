@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../widgetSystem/SelectableWidget.hpp"
-#include "../widgetSystem/Widget.hpp"
+#include "../core/SelectableWidget.hpp"
+#include "../core/Widget.hpp"
 
 // Optional: simple style for button decorations
 struct ButtonStyle

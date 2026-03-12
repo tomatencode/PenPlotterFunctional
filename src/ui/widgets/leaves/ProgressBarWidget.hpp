@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../widgetSystem/Widget.hpp"
+#include "../core/Widget.hpp"
 
 class ProgressBarWidget : public Widget
 {

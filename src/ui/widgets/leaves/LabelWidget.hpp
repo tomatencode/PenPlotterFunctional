@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../widgetSystem/Widget.hpp"
-#include "../text/TextSource.hpp"
+#include "../core/Widget.hpp"
+#include "../../text/TextSource.hpp"
 
 class LabelWidget : public Widget
 {

@@ -1,8 +1,7 @@
-#ifndef SELECTABLE_WIDGET_HPP
-#define SELECTABLE_WIDGET_HPP
+#pragma once
 
 #include "Widget.hpp"
-#include "../InputState.hpp"
+#include "../../InputState.hpp"
 
 class SelectableWidget : public Widget
 {
@@ -23,5 +22,3 @@ private:
     virtual void onFocusGained() {}
     virtual void onFocusLost() {}
 };
-
-#endif

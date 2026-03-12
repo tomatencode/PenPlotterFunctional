@@ -1,6 +1,6 @@
 #include "LabelWidget.hpp"
-#include "../render/Render.hpp"
-#include "../widgetSystem/WidgetUtils.hpp"
+#include "../../render/Render.hpp"
+#include "../core/WidgetUtils.hpp"
 
 LabelWidget::LabelWidget(TextSource& textSource)
     : text(textSource)

@@ -1,7 +1,6 @@
-#ifndef WIDGET_HPP
-#define WIDGET_HPP
+#pragma once
 
-#include "../render/Render.hpp"
+#include "../../render/Render.hpp"
 #include "box.hpp"
 #include "Size.hpp"
 
@@ -26,5 +25,3 @@ protected:
     uint8_t _w = 0;
     uint8_t _h = 0;
 };
-
-#endif

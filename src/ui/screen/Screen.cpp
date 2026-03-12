@@ -1,5 +1,5 @@
 #include "Screen.hpp"
-#include "../widgetSystem/WidgetUtils.hpp"
+#include "../widgets/core/WidgetUtils.hpp"
 
 Screen::Screen(Widget* children[], size_t count)
     : root(children, count), focusManager()

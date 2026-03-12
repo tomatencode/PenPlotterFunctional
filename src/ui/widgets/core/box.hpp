@@ -1,5 +1,4 @@
-#ifndef BOX_HPP
-#define BOX_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -10,5 +9,3 @@ struct Rect
     uint8_t w;
     uint8_t h;
 };
-
-#endif

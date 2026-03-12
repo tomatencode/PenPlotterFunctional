@@ -2,7 +2,7 @@
 #define FOCUS_MANAGER_HPP
 
 #include <cstddef>
-#include "../widgetSystem/SelectableWidget.hpp"
+#include "../widgets/core/SelectableWidget.hpp"
 
 constexpr size_t MAX_SELECTABLE_WIDGETS = 16;
 
