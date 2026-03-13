@@ -223,15 +223,10 @@ void setupTestUI(Router& router)
     LabelWidget* btn6Label = new LabelWidget(btn6Text);
     ButtonWidget* button6 = new ButtonWidget(btn6Label, MenueButtonStyle,
                                              onButton6Pressed);
-    
-    LayoutStyle scrollLayoutStyle;
-    //scrollLayoutStyle.spacing = 1;
-    //scrollLayoutStyle.marginTop = 1;
-    //scrollLayoutStyle.horizontalAlign = HorizontalAlignment::Center;
 
 
     Widget* scrollableChildren[] = { button1, button2, button3, button4, button5, button6 };
-    ScrollableVerticalLayout* scrollableVerticalLayout = new ScrollableVerticalLayout(scrollableChildren, 6, scrollLayoutStyle);
+    ScrollableVerticalLayout* scrollableVerticalLayout = new ScrollableVerticalLayout(scrollableChildren, 6);
 
     LabelWidget* backLabel2 = new LabelWidget(backText);
     ButtonWidget* back_button_2 = new ButtonWidget(backLabel2, defaultButtonStyle,
