@@ -11,6 +11,7 @@
 #include "widgets/layouts/ScrollableVerticalLayout.hpp"
 #include "text/Glyph.hpp"
 #include "widgets/layouts/HorizontalLayout.hpp"
+#include "widgets/leaves/SpacerWidget.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;
@@ -136,7 +137,9 @@ void setupTestUI(Router& router)
     static StaticText submenu1TitleText("Submenu 1");
     LabelWidget* label2 = new LabelWidget(submenu1TitleText);
 
-    ProgressBarWidget* progressBar = new ProgressBarWidget(13, 1, getProgressValue);
+    SpacerWidget* titleSpacer = new SpacerWidget(LCD_COLS, 1);
+
+    ProgressBarWidget* progressBar = new ProgressBarWidget(12, getProgressValue);
     
     static FunctionText progressText(progressTextFunc);
     LabelWidget* progressLabel = new LabelWidget(progressText);
@@ -159,14 +162,32 @@ void setupTestUI(Router& router)
     ButtonWidget* back_button_1 = new ButtonWidget(backLabel1, defaultButtonStyle,
                                                    nullptr,
                                                    goBack);
+    
+    LayoutStyle titleBarStyle_1;
+    titleBarStyle_1.spacingMode = SpacingMode::SpaceBetween;    
 
-    Widget* screen2Widgets[] = { label2, progressBar, progressLabel, ProgPlusButton, ProgMinusButton, back_button_1 };
+    Widget* titleBarWidgets_1[] = { label2, back_button_1 };
+    HorizontalLayout* titleBar_1 = new HorizontalLayout(titleBarWidgets_1, 2, titleBarStyle_1);
+
+
+    LayoutStyle progressLayoutStyle;
+    progressLayoutStyle.spacingMode = SpacingMode::SpaceBetween;
+    progressLayoutStyle.marginLeft = 2;
+    progressLayoutStyle.marginRight = 2;
+
+    Widget* ProgressWidgets[] = { progressBar, progressLabel};
+    HorizontalLayout* progressLayout = new HorizontalLayout(ProgressWidgets, 2, progressLayoutStyle);
+
+    LayoutStyle buttonLayoutStyle;
+    buttonLayoutStyle.spacingMode = SpacingMode::Even;
+
+    Widget* ButtonWidgets[] = { ProgPlusButton, ProgMinusButton };
+    HorizontalLayout* buttonLayout = new HorizontalLayout(ButtonWidgets, 2, buttonLayoutStyle);
+
+
+    Widget* screen2Widgets[] = { titleBar_1, titleSpacer, progressLayout, buttonLayout };
     
-    // Center screen 2 elements
-    LayoutStyle screen2Style;
-    screen2Style.horizontalAlign = HorizontalAlignment::Center;
-    
-    VerticalLayout* screen2Layout = new VerticalLayout(screen2Widgets, 6, screen2Style);
+    VerticalLayout* screen2Layout = new VerticalLayout(screen2Widgets, 4);
     g_screen2 = new Screen(screen2Layout);
 
     // ---------------- Submenu 2 ----------------
@@ -212,14 +233,14 @@ void setupTestUI(Router& router)
                                                    nullptr,
                                                    goBack);
 
-    LayoutStyle titleBarStyle;
-    titleBarStyle.spacingMode = SpacingMode::SpaceBetween;
+    LayoutStyle titleBarStyle_2;
+    titleBarStyle_2.spacingMode = SpacingMode::SpaceBetween;
 
-    Widget* titleBarWidgets[] = { label3, back_button_2 };
+    Widget* titleBarWidgets_2[] = { label3, back_button_2 };
 
-    HorizontalLayout* titleBar = new HorizontalLayout(titleBarWidgets, 2, titleBarStyle);
+    HorizontalLayout* titleBar_2 = new HorizontalLayout(titleBarWidgets_2, 2, titleBarStyle_2);
 
-    Widget* screen3Widgets[] = { titleBar, scrollableVerticalLayout};
+    Widget* screen3Widgets[] = { titleBar_2, scrollableVerticalLayout};
     
     // Center screen 3 elements
     LayoutStyle screen3Style;

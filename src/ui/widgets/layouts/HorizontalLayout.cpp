@@ -154,7 +154,7 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
             static_cast<uint8_t>(currentX),
             static_cast<uint8_t>(childY),
             childSize.w,
-            contentArea.h - static_cast<uint8_t>(childY)  // Full available height
+            contentArea.h  // Full available height
         };
 
         // Only render if child is within visible area

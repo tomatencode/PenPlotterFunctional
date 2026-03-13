@@ -1,16 +1,15 @@
 #include "ProgressBarWidget.hpp"
 #include "../core/WidgetUtils.hpp"
 
-ProgressBarWidget::ProgressBarWidget(uint8_t width,
-                                     uint8_t height,
-                                     uint8_t (*getProgress)())
-    : Widget(width, height),
-      _getProgress(getProgress)
+ProgressBarWidget::ProgressBarWidget(uint8_t width, uint8_t (*getProgress)())
+    : Widget(),
+      _getProgress(getProgress),
+      _width(width)
 {}
 
 Size ProgressBarWidget::measure() const
 {
-    return Size{_w, _h};
+    return Size{_width, 1};
 }
 
 void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
