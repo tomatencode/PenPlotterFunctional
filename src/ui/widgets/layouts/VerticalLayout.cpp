@@ -149,10 +149,11 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         }
 
         // Create canvas for this child
+        // VerticalLayout fills horizontal space, so give child full available width
         Rect childCanvas = {
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
-            childSize.w,
+            contentArea.w - static_cast<uint8_t>(childX),  // Full available width
             childSize.h
         };
 

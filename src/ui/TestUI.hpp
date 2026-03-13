@@ -10,6 +10,7 @@
 #include "text/textSources/FunctionText.hpp"
 #include "widgets/layouts/ScrollableVerticalLayout.hpp"
 #include "text/Glyph.hpp"
+#include "widgets/layouts/HorizontalLayout.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;
@@ -123,16 +124,13 @@ void setupTestUI(Router& router)
 
     Widget* screen1Widgets[] = { label1, sub1Button, sub2Button };
 
-    // Center all elements both horizontally and vertically
-    LayoutStyle centeredStyle;
-    centeredStyle.horizontalAlign = HorizontalAlignment::Center;  // Center each widget horizontally
+    LayoutStyle screen1Style;
+    screen1Style.horizontalAlign = HorizontalAlignment::Center;
+    
+    VerticalLayout* screen1Layout = new VerticalLayout(screen1Widgets, 3, screen1Style);
 
-    VerticalLayout *menuLayout = new VerticalLayout(
-        screen1Widgets, 3, centeredStyle
-    );
 
-    Widget* screen1Root[] = { menuLayout };
-    g_screen1 = new Screen(screen1Root, 1);
+    g_screen1 = new Screen(screen1Layout);
 
     // ---------------- Submenu 1 ----------------
     static StaticText submenu1TitleText("Submenu 1");
@@ -214,11 +212,18 @@ void setupTestUI(Router& router)
                                                    nullptr,
                                                    goBack);
 
-    Widget* screen3Widgets[] = { label3, scrollableVerticalLayout, back_button_2 };
+    LayoutStyle titleBarStyle;
+    titleBarStyle.spacingMode = SpacingMode::SpaceBetween;
+
+    Widget* titleBarWidgets[] = { label3, back_button_2 };
+
+    HorizontalLayout* titleBar = new HorizontalLayout(titleBarWidgets, 2, titleBarStyle);
+
+    Widget* screen3Widgets[] = { titleBar, scrollableVerticalLayout};
     
     // Center screen 3 elements
     LayoutStyle screen3Style;
-    screen3Style.horizontalAlign = HorizontalAlignment::Center;
+
     
     VerticalLayout* screen3Layout = new VerticalLayout(screen3Widgets, 3, screen3Style);
     g_screen3 = new Screen(screen3Layout);

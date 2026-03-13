@@ -149,11 +149,12 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
         }
 
         // Create canvas for this child
+        // HorizontalLayout fills vertical space, so give child full available height
         Rect childCanvas = {
             static_cast<uint8_t>(currentX),
             static_cast<uint8_t>(childY),
             childSize.w,
-            childSize.h
+            contentArea.h - static_cast<uint8_t>(childY)  // Full available height
         };
 
         // Only render if child is within visible area

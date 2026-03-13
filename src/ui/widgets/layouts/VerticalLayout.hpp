@@ -2,8 +2,7 @@
 
 #include "../core/Widget.hpp"
 #include "../core/LayoutStyle.hpp"
-
-constexpr size_t MAX_LAYOUT_CHILDREN = 16;
+#include "config/ui_config.hpp"
 
 class VerticalLayout : public Widget
 {
