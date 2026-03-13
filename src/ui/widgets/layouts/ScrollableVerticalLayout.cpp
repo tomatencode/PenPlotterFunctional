@@ -46,14 +46,12 @@ void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
                     _scrollOffset = childBottom - visibleHeight;  // Move child up into view
                 }
                 
-                // Ensure scroll offset doesn't go negative
-                if (_scrollOffset < 0) _scrollOffset = 0;
                 return;
             }
         }
 
         childY += childWidget->measure().h;
-        if (i < _count - 1) childY += _style.spacing;
+        childY += _style.spacing;
     }
 }
 
