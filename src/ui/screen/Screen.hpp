@@ -11,6 +11,9 @@ class Screen
 public:
     // Constructor: takes an array of Widget* and auto-stacks them vertically
     Screen(Widget* children[], size_t count);
+    
+    // Constructor: takes a single root widget
+    Screen(Widget* rootWidget);
 
     // Render the screen
     virtual void render(Renderer& r);
@@ -23,7 +26,7 @@ public:
     virtual void handleInput(InputState& input);
 
 private:
-    VerticalLayout root;
+    Widget* root;
     FocusManager focusManager;
 };
 

@@ -5,11 +5,11 @@
 
 constexpr size_t MAX_LAYOUT_CHILDREN = 16;
 
-class VerticalLayout : public Widget
+class HorizontalLayout : public Widget
 {
 public:
     // Constructor: children with layout style
-    VerticalLayout(Widget* children[], size_t count, const LayoutStyle& style = LayoutStyle());
+    HorizontalLayout(Widget* children[], size_t count, const LayoutStyle& style = LayoutStyle());
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
@@ -22,9 +22,9 @@ private:
     size_t _count{0};
     LayoutStyle _style;
     
-    // Calculate total height of all children including spacing
-    uint16_t getTotalHeight() const;
+    // Calculate total width of all children including spacing
+    uint16_t getTotalWidth() const;
     
     // Calculate spacing for even distribution modes
-    uint8_t getSpacing(uint16_t availableHeight) const;
+    uint8_t getSpacing(uint16_t availableWidth) const;
 };

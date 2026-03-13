@@ -122,7 +122,17 @@ void setupTestUI(Router& router)
                                                 goToScreen3);
 
     Widget* screen1Widgets[] = { label1, sub1Button, sub2Button };
-    g_screen1 = new Screen(screen1Widgets, 3);
+
+    // Center all elements both horizontally and vertically
+    LayoutStyle centeredStyle;
+    centeredStyle.horizontalAlign = HorizontalAlignment::Center;  // Center each widget horizontally
+
+    VerticalLayout *menuLayout = new VerticalLayout(
+        screen1Widgets, 3, centeredStyle
+    );
+
+    Widget* screen1Root[] = { menuLayout };
+    g_screen1 = new Screen(screen1Root, 1);
 
     // ---------------- Submenu 1 ----------------
     static StaticText submenu1TitleText("Submenu 1");
@@ -153,7 +163,13 @@ void setupTestUI(Router& router)
                                                    goBack);
 
     Widget* screen2Widgets[] = { label2, progressBar, progressLabel, ProgPlusButton, ProgMinusButton, back_button_1 };
-    g_screen2 = new Screen(screen2Widgets, 6);
+    
+    // Center screen 2 elements
+    LayoutStyle screen2Style;
+    screen2Style.horizontalAlign = HorizontalAlignment::Center;
+    
+    VerticalLayout* screen2Layout = new VerticalLayout(screen2Widgets, 6, screen2Style);
+    g_screen2 = new Screen(screen2Layout);
 
     // ---------------- Submenu 2 ----------------
     static StaticText submenu2TitleText("Submenu 2");
@@ -199,7 +215,13 @@ void setupTestUI(Router& router)
                                                    goBack);
 
     Widget* screen3Widgets[] = { label3, scrollableVerticalLayout, back_button_2 };
-    g_screen3 = new Screen(screen3Widgets, 3);
+    
+    // Center screen 3 elements
+    LayoutStyle screen3Style;
+    screen3Style.horizontalAlign = HorizontalAlignment::Center;
+    
+    VerticalLayout* screen3Layout = new VerticalLayout(screen3Widgets, 3, screen3Style);
+    g_screen3 = new Screen(screen3Layout);
 
     router.setScreen(g_screen1);
 }
