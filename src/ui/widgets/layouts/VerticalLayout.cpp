@@ -15,7 +15,27 @@ Size VerticalLayout::measure() const
     if (_count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
-    uint16_t contentHeight = getTotalHeight();
+    uint16_t contentHeight = 0;
+    for (size_t i = 0; i < _count; i++)
+    {
+        if (_children[i])
+            contentHeight += _children[i]->measure().h;
+    }
+    
+    // Add spacing based on mode
+    if (_count > 1)
+    {
+        switch (_style.spacingMode)
+        {
+            case SpacingMode::Fixed:
+                contentHeight += (_count - 1) * _style.spacing;
+                break;
+            // For even spacing modes, spacing is calculated dynamically in render()
+            default:
+                break;
+        }
+    }
+    
     uint16_t contentWidth = 0;
     
     // Find maximum width among children
@@ -41,32 +61,6 @@ Widget* VerticalLayout::child(size_t index) const
     if (index < _count)
         return _children[index];
     return nullptr;
-}
-
-uint16_t VerticalLayout::getTotalHeight() const
-{
-    uint16_t totalHeight = 0;
-    for (size_t i = 0; i < _count; i++)
-    {
-        if (_children[i])
-            totalHeight += _children[i]->measure().h;
-    }
-    
-    // Add spacing based on mode
-    if (_count > 1)
-    {
-        switch (_style.spacingMode)
-        {
-            case SpacingMode::Fixed:
-                totalHeight += (_count - 1) * _style.spacing;
-                break;
-            // For even spacing modes, spacing is calculated dynamically in render()
-            default:
-                break;
-        }
-    }
-    
-    return totalHeight;
 }
 
 uint8_t VerticalLayout::getSpacing(uint16_t availableHeight) const
@@ -153,7 +147,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         Rect childCanvas = {
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
-            contentArea.w - static_cast<uint8_t>(childX),  // Full available width
+            static_cast<uint8_t>(contentArea.w - childX),  // Full available width
             std::min(childSize.h, static_cast<uint8_t>(contentArea.y + contentArea.h - currentY)) // Don't exceed content area
         };
 

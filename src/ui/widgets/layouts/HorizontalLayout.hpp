@@ -19,7 +19,7 @@ public:
 private:
     Widget* _children[MAX_LAYOUT_CHILDREN]{nullptr};
     size_t _count{0};
-    LayoutStyle _style;
+    const LayoutStyle _style;
     
     // Calculate total width of all children including spacing
     uint16_t getTotalWidth() const;
