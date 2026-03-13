@@ -154,7 +154,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
             contentArea.w - static_cast<uint8_t>(childX),  // Full available width
-            childSize.h
+            std::min(childSize.h, static_cast<uint8_t>(contentArea.y + contentArea.h - currentY)) // Don't exceed content area
         };
 
         // Only render if child is within visible area

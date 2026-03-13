@@ -5,64 +5,45 @@ ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t co
     : VerticalLayout(children, count), _scrollOffset(0)
 {}
 
-int16_t ScrollableVerticalLayout::getChildY(size_t index) const
+void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 {
-    // Calculate Y position relative to layout start, accounting for scroll
-    int16_t y = -_scrollOffset;
-    
-    for (size_t i = 0; i < index; i++)
-    {
-        Widget* childWidget = child(i);
-        if (childWidget)
-            y += childWidget->measure().h;
-    }
-    
-    return y;
-}
-
-void ScrollableVerticalLayout::updateScrollOffset()
-{
+    uint16_t childY = 0;
     // Find the focused child and ensure it's visible
     for (size_t i = 0; i < childCount(); i++)
     {
         Widget* childWidget = child(i);
-        if (childWidget == nullptr)
-            continue;
+        if (childWidget == nullptr) continue;
 
         if (childWidget->isSelectable())
         {
             SelectableWidget* selectable = static_cast<SelectableWidget*>(childWidget);
             if (selectable->isFocused())
             {
-                // Get child's position and height relative to scroll
                 Size childSize = childWidget->measure();
-                int16_t childY = getChildY(i);
                 int16_t childBottom = childY + childSize.h;
 
                 // Scroll up if child is above visible area (y < 0)
-                if (childY < 0)
+                if (childY < _scrollOffset)
                 {
-                    _scrollOffset -= childY;  // Move child down into view
+                    _scrollOffset = childY;  // Move child down into view
                 }
-                // Scroll down if child is below visible area
-                // Assume layout is full height of canvasBox
-                // We'll check this during render when we have canvasBox.h
+                else if (childBottom > _scrollOffset + visibleHeight)
+                {
+                    _scrollOffset = childBottom - visibleHeight;  // Move child up into view
+                }
                 
                 return;
             }
         }
-    }
-}
 
-void ScrollableVerticalLayout::ensureFocusedChildVisible()
-{
-    updateScrollOffset();
+        childY += childWidget->measure().h;
+    }
 }
 
 void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 {
     // Update scroll to keep focused child visible
-    updateScrollOffset();
+    updateScrollOffset(canvasBox.h);
 
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return;
