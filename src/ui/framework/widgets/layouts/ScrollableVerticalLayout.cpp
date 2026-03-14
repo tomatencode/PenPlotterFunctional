@@ -3,7 +3,7 @@
 #include <cassert>
 
 ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : _count(0), _style(style)
+    : VerticalLayout(children, count, style)
 {
     // Scrollable layouts don't support advanced spacing modes
     // as they don't make sense when content exceeds screen size
@@ -11,21 +11,17 @@ ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t co
         // Throw error - only Fixed spacing supported
         assert(false && "ScrollableVerticalLayout only supports Fixed spacing mode");
     }
-
-    for (size_t i = 0; i < count && i < MAX_LAYOUT_CHILDREN; i++)
-    {
-        if (children[i] != nullptr)
-            _children[_count++] = children[i];
-    }
 }
 
 void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 {
-    uint16_t childY = _style.marginTop; // Start at top margin
+    uint16_t childY = style().marginTop; // Start at top margin
     // Find the focused child and ensure it's visible
-    for (size_t i = 0; i < _count; i++)
+    const size_t count = childCount();
+
+    for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = _children[i];
+        Widget* childWidget = child(i);
         if (childWidget == nullptr) continue;
 
         if (childWidget->isSelectable())
@@ -51,21 +47,22 @@ void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
         }
 
         childY += childWidget->measure().h;
-        childY += _style.spacing;
+        childY += style().spacing;
     }
 }
 
 void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    if (_count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
+    const size_t count = childCount();
+    if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing to render
 
     // Apply margins to create content area
     Rect contentArea = {
-        static_cast<uint8_t>(canvasBox.x + _style.marginLeft),
-        static_cast<uint8_t>(canvasBox.y + _style.marginTop),
-        static_cast<uint8_t>(canvasBox.w - _style.marginLeft - _style.marginRight),
-        static_cast<uint8_t>(canvasBox.h - _style.marginTop - _style.marginBottom)
+        static_cast<uint8_t>(canvasBox.x + style().marginLeft),
+        static_cast<uint8_t>(canvasBox.y + style().marginTop),
+        static_cast<uint8_t>(canvasBox.w - style().marginLeft - style().marginRight),
+        static_cast<uint8_t>(canvasBox.h - style().marginTop - style().marginBottom)
     };
 
     // Update scroll offset to keep focused child visible
@@ -75,16 +72,17 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
     int currentY = contentArea.y - _scrollOffset;
 
     // Render each child
-    for (size_t i = 0; i < _count; i++)
+    for (size_t i = 0; i < count; i++)
     {
-        if (_children[i] == nullptr)
+        Widget* childWidget = child(i);
+        if (childWidget == nullptr)
             continue;
 
-        Size childSize = _children[i]->measure();
+        Size childSize = childWidget->measure();
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;
-        switch (_style.horizontalAlign)
+        switch (style().horizontalAlign)
         {
             case HorizontalAlignment::Center:
                 childX += (contentArea.w - childSize.w) / 2;
@@ -101,70 +99,24 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
         Rect childCanvas = {
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
-            static_cast<uint8_t>(contentArea.w - childX),  // Full available width
+            static_cast<uint8_t>(contentArea.w - (childX - contentArea.x)),  // Full available width
             std::min(childSize.h, static_cast<uint8_t>(contentArea.y + contentArea.h - currentY)) // Don't exceed content area
         };
 
         // Only render if child is within visible area
         if (currentY + childSize.h > canvasBox.y && currentY < canvasBox.y + canvasBox.h)
         {
-            _children[i]->render(r, childCanvas);
+            childWidget->render(r, childCanvas);
         }
 
         // Move to next position
-        currentY += childSize.h + _style.spacing;
+        currentY += childSize.h + style().spacing;
     }
 }
 
 Size ScrollableVerticalLayout::measure() const
 {
-    if (_count == 0) return Size{0, 0};
-    
-    // Calculate content size (excluding margins)
-    uint16_t contentHeight = 0;
-    for (size_t i = 0; i < _count; i++)
-    {
-        if (_children[i])
-            contentHeight += _children[i]->measure().h;
-    }
-    
-    // Add spacing based on mode
-    if (_count > 1)
-    {
-        switch (_style.spacingMode)
-        {
-            case SpacingMode::Fixed:
-                contentHeight += (_count - 1) * _style.spacing;
-                break;
-            // For even spacing modes, spacing is calculated dynamically in render()
-            default:
-                break;
-        }
-    }
-    
-    uint16_t contentWidth = 0;
-    
-    // Find maximum width among children
-    for (size_t i = 0; i < _count; i++)
-    {
-        if (_children[i])
-        {
-            Size childSize = _children[i]->measure();
-            if (childSize.w > contentWidth)
-                contentWidth = childSize.w;
-        }
-    }
-    
-    // Add margins to get total size
-    uint16_t totalWidth = contentWidth + _style.marginLeft + _style.marginRight;
-    uint16_t totalHeight = contentHeight + _style.marginTop + _style.marginBottom;
-    
-    return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
+    // ScrollableVerticalLayout uses the same measurement rules as VerticalLayout
+    return VerticalLayout::measure();
 }
 
-Widget* ScrollableVerticalLayout::child(size_t index) const
-{
-    if (index < _count)
-        return _children[index];
-    return nullptr;
-}

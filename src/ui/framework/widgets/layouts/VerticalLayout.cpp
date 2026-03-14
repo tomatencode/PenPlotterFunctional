@@ -1,34 +1,30 @@
 #include "VerticalLayout.hpp"
 
 VerticalLayout::VerticalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : _count(0), _style(style)
+    : LayoutWidget(children, count, style)
 {
-    for (size_t i = 0; i < count && i < MAX_LAYOUT_CHILDREN; i++)
-    {
-        if (children[i] != nullptr)
-            _children[_count++] = children[i];
-    }
 }
 
 Size VerticalLayout::measure() const
 {
-    if (_count == 0) return Size{0, 0};
+    const size_t count = childCount();
+    if (count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
     uint16_t contentHeight = 0;
-    for (size_t i = 0; i < _count; i++)
+    for (size_t i = 0; i < count; i++)
     {
-        if (_children[i])
-            contentHeight += _children[i]->measure().h;
+        if (Widget* w = child(i))
+            contentHeight += w->measure().h;
     }
     
     // Add spacing based on mode
-    if (_count > 1)
+    if (count > 1)
     {
-        switch (_style.spacingMode)
+        switch (style().spacingMode)
         {
             case SpacingMode::Fixed:
-                contentHeight += (_count - 1) * _style.spacing;
+                contentHeight += (count - 1) * style().spacing;
                 break;
             // For even spacing modes, spacing is calculated dynamically in render()
             default:
@@ -39,73 +35,68 @@ Size VerticalLayout::measure() const
     uint16_t contentWidth = 0;
     
     // Find maximum width among children
-    for (size_t i = 0; i < _count; i++)
+    for (size_t i = 0; i < count; i++)
     {
-        if (_children[i])
+        if (Widget* w = child(i))
         {
-            Size childSize = _children[i]->measure();
+            Size childSize = w->measure();
             if (childSize.w > contentWidth)
                 contentWidth = childSize.w;
         }
     }
     
     // Add margins to get total size
-    uint16_t totalWidth = contentWidth + _style.marginLeft + _style.marginRight;
-    uint16_t totalHeight = contentHeight + _style.marginTop + _style.marginBottom;
+    uint16_t totalWidth = contentWidth + style().marginLeft + style().marginRight;
+    uint16_t totalHeight = contentHeight + style().marginTop + style().marginBottom;
     
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Widget* VerticalLayout::child(size_t index) const
-{
-    if (index < _count)
-        return _children[index];
-    return nullptr;
-}
-
 uint8_t VerticalLayout::getSpacing(uint16_t availableHeight) const
 {
-    if (_count <= 1) return 0;
+    const size_t count = childCount();
+    if (count <= 1) return 0;
     
     uint16_t totalChildHeight = 0;
-    for (size_t i = 0; i < _count; i++)
+    for (size_t i = 0; i < count; i++)
     {
-        if (_children[i])
-            totalChildHeight += _children[i]->measure().h;
+        if (Widget* w = child(i))
+            totalChildHeight += w->measure().h;
     }
     
     uint16_t remainingSpace = availableHeight - totalChildHeight;
     
-    switch (_style.spacingMode)
+    switch (style().spacingMode)
     {
         case SpacingMode::Even:
             // Distribute remaining space evenly between all gaps (including edges)
-            return remainingSpace / (_count + 1);
+            return remainingSpace / (count + 1);
             
         case SpacingMode::SpaceBetween:
             // Space between children only, no space at edges
-            return remainingSpace / (_count - 1);
+            return remainingSpace / (count - 1);
             
         case SpacingMode::SpaceAround:
             // Space around each child, half at edges
-            return remainingSpace / _count;
+            return remainingSpace / count;
             
         default: // Fixed
-            return _style.spacing;
+            return style().spacing;
     }
 }
 
 void VerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    if (_count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
+    const size_t count = childCount();
+    if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing to render
 
     // Apply margins to create content area
     Rect contentArea = {
-        static_cast<uint8_t>(canvasBox.x + _style.marginLeft),
-        static_cast<uint8_t>(canvasBox.y + _style.marginTop),
-        static_cast<uint8_t>(canvasBox.w - _style.marginLeft - _style.marginRight),
-        static_cast<uint8_t>(canvasBox.h - _style.marginTop - _style.marginBottom)
+        static_cast<uint8_t>(canvasBox.x + style().marginLeft),
+        static_cast<uint8_t>(canvasBox.y + style().marginTop),
+        static_cast<uint8_t>(canvasBox.w - style().marginLeft - style().marginRight),
+        static_cast<uint8_t>(canvasBox.h - style().marginTop - style().marginBottom)
     };
 
     // Calculate dynamic spacing if needed
@@ -115,22 +106,23 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
     int currentY = contentArea.y;
     
     // For even spacing with edge space, add initial spacing
-    if (_style.spacingMode == SpacingMode::Even || _style.spacingMode == SpacingMode::SpaceAround)
+    if (style().spacingMode == SpacingMode::Even || style().spacingMode == SpacingMode::SpaceAround)
     {
         currentY += spacing;
     }
 
     // Render each child
-    for (size_t i = 0; i < _count; i++)
+    for (size_t i = 0; i < count; i++)
     {
-        if (_children[i] == nullptr)
+        Widget* childWidget = child(i);
+        if (childWidget == nullptr)
             continue;
 
-        Size childSize = _children[i]->measure();
+        Size childSize = childWidget->measure();
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;
-        switch (_style.horizontalAlign)
+        switch (style().horizontalAlign)
         {
             case HorizontalAlignment::Center:
                 childX += (contentArea.w - childSize.w) / 2;
@@ -147,21 +139,21 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         Rect childCanvas = {
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
-            static_cast<uint8_t>(contentArea.w - childX),  // Full available width
+            static_cast<uint8_t>(contentArea.w - (childX - contentArea.x)),  // Full available width
             std::min(childSize.h, static_cast<uint8_t>(contentArea.y + contentArea.h - currentY)) // Don't exceed content area
         };
 
         // Only render if child is within visible area
         if (currentY < canvasBox.y + canvasBox.h)
         {
-            _children[i]->render(r, childCanvas);
+            childWidget->render(r, childCanvas);
         }
 
         // Move to next position
         currentY += childSize.h + spacing;
         
         // For SpaceAround, add spacing after each child
-        if (_style.spacingMode == SpacingMode::SpaceAround && i < _count - 1)
+        if (style().spacingMode == SpacingMode::SpaceAround && i < count - 1)
         {
             currentY += spacing;
         }
