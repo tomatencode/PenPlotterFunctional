@@ -14,8 +14,7 @@ class HeaderLine: public Widget
 {
 public:
     HeaderLine(const char* headerText, bool backButton,
-               void (*onBackPress)(void* context) = nullptr,
-               void* backContext = nullptr);
+               void (*onBackPress)(void* context) = nullptr);
     ~HeaderLine();
 
     void render(Renderer& r, Rect canvasBox) override;
@@ -36,7 +35,6 @@ private:
     ButtonWidget _backButton;
     bool _hasBackButton;
     void (*_onBackPress)(void*);
-    void* _backContext;
 
     // Layout used to evenly space the elements
     HorizontalLayout* _layout;

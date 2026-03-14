@@ -1,17 +1,15 @@
 #include "HeaderLine.hpp"
 
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
-                         void (*onBackPress)(void*),
-                         void* backContext)
+                         void (*onBackPress)(void*))
     : Widget()
     , _headerText(headerText)
     , _headerLabel(_headerText)
     , _backText("Back")
     , _backLabel(_backText)
-    , _backButton(&_backLabel, ButtonStyle(), onBackPress, nullptr, backContext)
+    , _backButton(&_backLabel, ButtonStyle(), nullptr, onBackPress)
     , _hasBackButton(backButton)
     , _onBackPress(onBackPress)
-    , _backContext(backContext)
     , _layout(nullptr)
 {
     // Build child list for the layout: wifi + header text + optional back button
