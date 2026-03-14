@@ -11,12 +11,7 @@ static void onBackPressed(void* ctx)
 
 SecondaryScreen::SecondaryScreen()
     : Screen()
-    , titleText("Second Screen")
-    , titleLabel(titleText)
-    , backText("Back")
-    , backLabel(backText)
-    , backButton(&backLabel, ButtonStyle(), onBackPressed, nullptr, this)
+    , header("Second Screen", true, onBackPressed, this)
 {
-    Widget* children[] = { &titleLabel, &backButton };
-    initRoot(children, 2);
+    initRoot(&header);
 }
