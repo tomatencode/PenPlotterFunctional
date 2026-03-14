@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Widget.hpp"
-#include "../../InputState.hpp"
+#include "../../input/InputState.hpp"
 
 class SelectableWidget : public Widget
 {

@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cassert>
 #include "../screen/Screen.hpp"
-#include "../InputState.hpp"
+#include "../input/InputState.hpp"
 
 class Router
 {

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "screen/Screen.hpp"
-#include "widgets/layouts/AbsoluteLayout.hpp"
-#include "widgets/leaves/LabelWidget.hpp"
-#include "widgets/leaves/ButtonWidget.hpp"
-#include "router/Router.hpp"
-#include "text/textSources/StaticText.hpp"
-#include "widgets/leaves/ProgressBarWidget.hpp"
-#include "text/textSources/FunctionText.hpp"
-#include "widgets/layouts/ScrollableVerticalLayout.hpp"
-#include "text/Glyph.hpp"
-#include "widgets/layouts/HorizontalLayout.hpp"
-#include "widgets/leaves/SpacerWidget.hpp"
+#include "../framework/screen/Screen.hpp"
+#include "../framework/widgets/layouts/AbsoluteLayout.hpp"
+#include "../framework/widgets/leaves/LabelWidget.hpp"
+#include "../framework/widgets/leaves/ButtonWidget.hpp"
+#include "../framework/router/Router.hpp"
+#include "../framework/text/textSources/StaticText.hpp"
+#include "../framework/widgets/leaves/ProgressBarWidget.hpp"
+#include "../framework/text/textSources/FunctionText.hpp"
+#include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
+#include "../framework/text/Glyph.hpp"
+#include "../framework/widgets/layouts/HorizontalLayout.hpp"
+#include "../framework/widgets/leaves/SpacerWidget.hpp"
 
 // Global screen pointers to keep them alive
 Screen* g_screen1 = nullptr;

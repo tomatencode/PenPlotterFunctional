@@ -5,9 +5,9 @@
 #include "hardware/buzzer/Buzzer.hpp"
 #include "systemServices/shared/SharedData.hpp"
 
-#include "render/Render.hpp"
-#include "InputState.hpp"
-#include "router/Router.hpp"
+#include "framework/render/Render.hpp"
+#include "framework/input/InputState.hpp"
+#include "framework/router/Router.hpp"
 
 class UI
 {

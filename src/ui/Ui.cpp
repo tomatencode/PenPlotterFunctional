@@ -1,7 +1,7 @@
 #include "UI.hpp"
 
-#include "text/CustomChars.hpp"
-#include "TestUI.hpp"
+#include "framework/text/CustomChars.hpp"
+#include "screens/TestUI.hpp"
 
 #include <string>
 
