@@ -2,8 +2,26 @@
 #include "../widgets/core/WidgetUtils.hpp"
 
 Screen::Screen(Widget* children[], size_t count)
-    : root(new VerticalLayout(children, count)), focusManager()
+    : Screen() // build base state then init
 {
+    initRoot(children, count);
+}
+
+Screen::Screen(Widget* rootWidget)
+    : Screen() // build base state then init
+{
+    initRoot(rootWidget);
+}
+
+Screen::Screen()
+    : root(nullptr), focusManager()
+{
+}
+
+void Screen::initRoot(Widget* children[], size_t count)
+{
+    root = new VerticalLayout(children, count);
+
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;
 
@@ -12,9 +30,10 @@ Screen::Screen(Widget* children[], size_t count)
     focusManager.setWidgets(selectableWidgets, selectableCount);
 }
 
-Screen::Screen(Widget* rootWidget)
-    : root(rootWidget), focusManager()
+void Screen::initRoot(Widget* rootWidget)
 {
+    root = rootWidget;
+
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;
 

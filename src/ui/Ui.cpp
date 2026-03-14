@@ -12,7 +12,10 @@ UI::UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
 void UI::init()
 {
     _renderer.init();
-    setupTestUI(_router);
+
+    // Start on the first screen. Replace this with your own screen stack as needed.
+    _router.setScreen(createTestScreen());
+
     Serial.println("UI initialized.");
 }
 

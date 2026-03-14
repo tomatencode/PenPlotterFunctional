@@ -25,6 +25,14 @@ public:
     // Access selectable widgets
     virtual void handleInput(InputState& input);
 
+protected:
+    // Allows derived screens to build their widget tree after construction
+    Screen();
+
+    // Initialize the screen root after members are initialized
+    void initRoot(Widget* children[], size_t count);
+    void initRoot(Widget* rootWidget);
+
 private:
     Widget* root;
     FocusManager focusManager;

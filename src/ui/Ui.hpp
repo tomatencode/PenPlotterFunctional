@@ -9,6 +9,8 @@
 #include "framework/input/InputState.hpp"
 #include "framework/router/Router.hpp"
 
+class Screen;
+
 class UI
 {
 public:
