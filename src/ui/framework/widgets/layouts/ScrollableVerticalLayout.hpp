@@ -2,7 +2,7 @@
 
 #include "VerticalLayout.hpp"
 
-class ScrollableVerticalLayout : public VerticalLayout
+class ScrollableVerticalLayout : public LayoutWidget
 {
 public:
     // Constructor: just children, parent provides canvas

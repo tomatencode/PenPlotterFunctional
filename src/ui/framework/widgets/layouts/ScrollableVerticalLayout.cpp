@@ -3,7 +3,7 @@
 #include <cassert>
 
 ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : VerticalLayout(children, count, style)
+    : LayoutWidget(children, count, style)
 {
     // Scrollable layouts don't support advanced spacing modes
     // as they don't make sense when content exceeds screen size
@@ -116,7 +116,48 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 
 Size ScrollableVerticalLayout::measure() const
 {
-    // ScrollableVerticalLayout uses the same measurement rules as VerticalLayout
-    return VerticalLayout::measure();
+    const size_t count = childCount();
+    if (count == 0) return Size{0, 0};
+    
+    // Calculate content size (excluding margins)
+    uint16_t contentHeight = 0;
+    for (size_t i = 0; i < count; i++)
+    {
+        if (Widget* w = child(i))
+            contentHeight += w->measure().h;
+    }
+    
+    // Add spacing based on mode
+    if (count > 1)
+    {
+        switch (style().spacingMode)
+        {
+            case SpacingMode::Fixed:
+                contentHeight += (count - 1) * style().spacing;
+                break;
+            // For even spacing modes, spacing is calculated dynamically in render()
+            default:
+                break;
+        }
+    }
+    
+    uint16_t contentWidth = 0;
+    
+    // Find maximum width among children
+    for (size_t i = 0; i < count; i++)
+    {
+        if (Widget* w = child(i))
+        {
+            Size childSize = w->measure();
+            if (childSize.w > contentWidth)
+                contentWidth = childSize.w;
+        }
+    }
+    
+    // Add margins to get total size
+    uint16_t totalWidth = contentWidth + style().marginLeft + style().marginRight;
+    uint16_t totalHeight = contentHeight + style().marginTop + style().marginBottom;
+    
+    return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
