@@ -1,5 +1,4 @@
-#ifndef SCREEN_HPP
-#define SCREEN_HPP
+#pragma once
 
 #include "../widgets/layouts/VerticalLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
@@ -48,5 +47,3 @@ private:
     friend class Router;
     void setRouter(Router* r) { _router = r; }
 };
-
-#endif

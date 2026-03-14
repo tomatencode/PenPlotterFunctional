@@ -1,5 +1,4 @@
-#ifndef FOCUS_MANAGER_HPP
-#define FOCUS_MANAGER_HPP
+#pragma once
 
 #include <cstddef>
 #include "../widgets/core/SelectableWidget.hpp"
@@ -25,5 +24,3 @@ private:
     size_t _count;                      // number of selectable widgets
     size_t _index;                      // current focused widget index
 };
-
-#endif

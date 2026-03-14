@@ -1,5 +1,4 @@
-#ifndef ROUTER_HPP
-#define ROUTER_HPP
+#pragma once
 
 #include <array>
 #include <cstddef>
@@ -42,5 +41,3 @@ private:
     std::array<Screen*, MAX_STACK> _stack;
     size_t _stackCount;
 };
-
-#endif
