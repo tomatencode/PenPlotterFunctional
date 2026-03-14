@@ -1,5 +1,5 @@
 #include "AbsoluteLayout.hpp"
-#include "../core/WidgetUtils.hpp"
+#include <algorithm>
 
 AbsoluteLayout::AbsoluteLayout(Rect layoutBox)
     : _layoutBox(layoutBox), _count(0)
@@ -50,12 +50,53 @@ void AbsoluteLayout::render(Renderer& r, Rect parentCanvas)
         Size childSize = _children[i].widget->measure();
         
         // Compute child's position with alignment inside its box
-        Rect drawRect = computeContentAlignment(
-            _children[i].box,
-            _children[i].align,
-            childSize,
-            layoutDrawRect
-        );
+        int childAbsX = layoutDrawRect.x + _children[i].box.x;
+        int childAbsY = layoutDrawRect.y + _children[i].box.y;
+
+        int startX = childAbsX;
+        int startY = childAbsY;
+
+        switch (_children[i].align.horizontal)
+        {
+            case HorizontalAlignment::Center:
+                startX += (_children[i].box.w - childSize.w) / 2;
+                break;
+
+            case HorizontalAlignment::Right:
+                startX += _children[i].box.w - childSize.w;
+                break;
+
+            default:
+                break;
+        }
+
+        switch (_children[i].align.vertical)
+        {
+            case VerticalAlignment::Middle:
+                startY += (_children[i].box.h - childSize.h) / 2;
+                break;
+
+            case VerticalAlignment::Bottom:
+                startY += _children[i].box.h - childSize.h;
+                break;
+
+            default:
+                break;
+        }
+
+        // clipping against parent canvas
+        int remainingW = std::max(0, int(layoutDrawRect.w) - int(_children[i].box.x));
+        int remainingH = std::max(0, int(layoutDrawRect.h) - int(_children[i].box.y));
+
+        int w = std::min<int>(childSize.w, remainingW);
+        int h = std::min<int>(childSize.h, remainingH);
+
+        Rect drawRect{
+            static_cast<uint8_t>(startX),
+            static_cast<uint8_t>(startY),
+            static_cast<uint8_t>(w),
+            static_cast<uint8_t>(h)
+        };
 
         _children[i].widget->render(r, drawRect);
     }

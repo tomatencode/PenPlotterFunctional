@@ -1,5 +1,4 @@
 #include "ProgressBarWidget.hpp"
-#include "../core/WidgetUtils.hpp"
 
 ProgressBarWidget::ProgressBarWidget(uint8_t width, uint8_t (*getProgress)())
     : Widget(),

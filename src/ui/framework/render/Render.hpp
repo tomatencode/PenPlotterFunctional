@@ -1,5 +1,4 @@
-#ifndef RENDER_HPP
-#define RENDER_HPP
+#pragma once
 #include "config/ui_config.hpp"
 #include "hardware/display/LcdDisplay.hpp"
 #include "../text/CustomChars.hpp"
@@ -25,5 +24,3 @@ private:
 
     Glyph _buffer[LCD_ROWS][LCD_COLS]; 
 };
-
-#endif
