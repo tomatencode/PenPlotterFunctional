@@ -10,6 +10,7 @@ void Router::pushScreen(Screen* screen)
         _stack[_stackCount - 1]->onExit();
 
     _stack[_stackCount++] = screen;
+    screen->setRouter(this);
     screen->onEnter();
 }
 
@@ -18,20 +19,28 @@ void Router::popScreen()
     if (_stackCount == 0) return;
 
     _stack[_stackCount - 1]->onExit();
+    _stack[_stackCount - 1]->setRouter(nullptr);
     --_stackCount;
 
     if (_stackCount > 0)
+    {
+        _stack[_stackCount - 1]->setRouter(this);
         _stack[_stackCount - 1]->onEnter();
+    }
 }
 
 void Router::setScreen(Screen* screen)
 {
     if (_stackCount > 0)
+    {
         _stack[_stackCount - 1]->onExit();
+        _stack[_stackCount - 1]->setRouter(nullptr);
+    }
 
     _stack[0] = screen;
     _stackCount = 1;
 
+    screen->setRouter(this);
     screen->onEnter();
 }
 

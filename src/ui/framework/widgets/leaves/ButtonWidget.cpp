@@ -3,15 +3,18 @@
 
 ButtonWidget::ButtonWidget(Widget* child,
                            ButtonStyle style,
-                           void (*onPress)(),
-                           void (*onRelease)()
+                           void (*onPress)(void*),
+                           void (*onRelease)(void*),
+                           void* context
                         )
     : _child(child),
       _style(style),
       _onPress(onPress),
       _onRelease(onRelease),
+      _context(context),
       _isPressed(false)
 {}
+
 
 Size ButtonWidget::measure() const
 {
@@ -98,10 +101,10 @@ void ButtonWidget::handleInput(InputState& input)
     _isPressed = input.buttonState.buttonDown;
 
     if (input.buttonState.buttonPressed && _onPress)
-        _onPress();
+        _onPress(_context);
 
     if (input.buttonState.buttonReleased && _onRelease)
-        _onRelease();
+        _onRelease(_context);
 }
 
 void ButtonWidget::onFocusGained()

@@ -6,6 +6,8 @@
 
 constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
 
+class Router; // forward
+
 class Screen
 {
 public:
@@ -25,6 +27,9 @@ public:
     // Access selectable widgets
     virtual void handleInput(InputState& input);
 
+    // Provide access to the router for navigation from within a screen
+    Router* router() const;
+
 protected:
     // Allows derived screens to build their widget tree after construction
     Screen();
@@ -36,6 +41,10 @@ protected:
 private:
     Widget* root;
     FocusManager focusManager;
+
+    Router* _router = nullptr;
+    friend class Router;
+    void setRouter(Router* r) { _router = r; }
 };
 
 #endif

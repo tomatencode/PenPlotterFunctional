@@ -4,7 +4,9 @@
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
 #include "../framework/text/textSources/StaticText.hpp"
-#include "../framework/text/textSources/FunctionText.hpp"
+
+// Forward declare secondary screen to avoid including it here.
+class SecondaryScreen;
 
 // A simple screen that demonstrates widget layout, focus, and button interaction.
 class TestScreen : public Screen
@@ -17,9 +19,9 @@ private:
     StaticText titleText;
     LabelWidget titleLabel;
 
-    FunctionText toggleText;
-    LabelWidget toggleLabel;
-    ButtonWidget toggleButton;
+    StaticText BtnText;
+    LabelWidget BtnLabel;
+    ButtonWidget Button;
 };
 
 // Convenience helper for getting a screen instance (optional).

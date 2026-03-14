@@ -1,5 +1,6 @@
 #include "Screen.hpp"
 #include "../widgets/core/WidgetUtils.hpp"
+#include "../router/Router.hpp"
 
 Screen::Screen(Widget* children[], size_t count)
     : Screen() // build base state then init
@@ -40,6 +41,11 @@ void Screen::initRoot(Widget* rootWidget)
     // Collect selectable widgets recursively from the root widget
     collectSelectables(root, selectableWidgets, selectableCount);
     focusManager.setWidgets(selectableWidgets, selectableCount);
+}
+
+Router* Screen::router() const
+{
+    return _router;
 }
 
 void Screen::render(Renderer& r)
