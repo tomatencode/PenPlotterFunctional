@@ -2,12 +2,38 @@
 
 Router::Router() : _stackCount(0) {}
 
+bool Router::isEmpty() const
+{
+    return _stackCount == 0;
+}
+
+bool Router::canPush() const
+{
+    return _stackCount < MAX_STACK;
+}
+
+bool Router::canPop() const
+{
+    return _stackCount > 0;
+}
+
+size_t Router::stackSize() const
+{
+    return _stackCount;
+}
+
+Screen* Router::top() const
+{
+    return _stackCount ? _stack[_stackCount - 1] : nullptr;
+}
+
 void Router::pushScreen(Screen* screen)
 {
-    assert(_stackCount < MAX_STACK);
+    if (screen == nullptr) return;
+    if (!canPush()) return; // stack is full
 
-    if (_stackCount > 0)
-        _stack[_stackCount - 1]->onExit();
+    if (!isEmpty())
+        top()->onExit();
 
     _stack[_stackCount++] = screen;
     screen->setRouter(this);
@@ -16,30 +42,32 @@ void Router::pushScreen(Screen* screen)
 
 void Router::popScreen()
 {
-    if (_stackCount == 0) return;
+    if (!canPop()) return;
 
-    _stack[_stackCount - 1]->onExit();
-    _stack[_stackCount - 1]->setRouter(nullptr);
+    top()->onExit();
+    top()->setRouter(nullptr);
     --_stackCount;
 
-    if (_stackCount > 0)
+    if (canPop())
     {
-        _stack[_stackCount - 1]->setRouter(this);
-        _stack[_stackCount - 1]->onEnter();
+        top()->setRouter(this);
+        top()->onEnter();
     }
 }
 
 void Router::setScreen(Screen* screen)
 {
-    if (_stackCount > 0)
+    if (screen == nullptr) return;
+
+    // Ensure all existing screens are exited and detached
+    while (canPop())
     {
-        _stack[_stackCount - 1]->onExit();
-        _stack[_stackCount - 1]->setRouter(nullptr);
+        top()->onExit();
+        top()->setRouter(nullptr);
+        --_stackCount;
     }
 
-    _stack[0] = screen;
-    _stackCount = 1;
-
+    _stack[_stackCount++] = screen;
     screen->setRouter(this);
     screen->onEnter();
 }
