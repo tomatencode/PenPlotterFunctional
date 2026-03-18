@@ -1,7 +1,8 @@
 #include "CollectSelectables.hpp"
+#include "ui/framework/focusManager/FocusManager.hpp"
 
 void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count) {
-    if (!w) return;
+    if (!w || count >= MAX_SELECTABLE_WIDGETS) return;
 
     if (w->isSelectable())
         out[count++] = static_cast<SelectableWidget*>(w);
