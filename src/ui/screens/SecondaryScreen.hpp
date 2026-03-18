@@ -8,7 +8,4 @@ class SecondaryScreen : public Screen
 {
 public:
     SecondaryScreen();
-
-private:
-    HeaderLine* header;
 };
