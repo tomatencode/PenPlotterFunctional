@@ -1,10 +1,11 @@
-#ifndef FUNCTION_TEXT_HPP
-#define FUNCTION_TEXT_HPP
+#pragma once
 
 #include "../TextSource.hpp"
 #include "config/ui_config.hpp"
 
 #include <cstring>
+
+namespace ui {
 
 class FunctionText : public TextSource
 {
@@ -34,4 +35,4 @@ private:
     mutable Glyph _glyphs[MAX_LENGTH];
 };
 
-#endif
+} // namespace ui

@@ -3,9 +3,11 @@
 
 extern WebInterface webInterface;
 
+using namespace ui;
+
 WifiIndicator::WifiIndicator() : Widget() {}
 
-void WifiIndicator::render(Renderer& r, Rect canvasBox)
+void WifiIndicator::render(Renderer& r, widgets::Rect canvasBox)
 {   
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
@@ -19,7 +21,7 @@ void WifiIndicator::render(Renderer& r, Rect canvasBox)
     r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, wifiSymbol);
 }
 
-Size WifiIndicator::measure() const
+widgets::Size WifiIndicator::measure() const
 {
-    return Size{1, 1}; // always occupies 1 character width and 1 row height
+    return widgets::Size{1, 1}; // always occupies 1 character width and 1 row height
 }

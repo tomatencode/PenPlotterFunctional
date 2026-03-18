@@ -1,5 +1,7 @@
 #include "CustomChars.hpp"
 
+namespace ui {
+
 // Each byte represents a row (5 LSBs used)
 uint8_t CURSOR_L_BITMAP[8] = {
 	0b00000,
@@ -100,3 +102,5 @@ uint8_t* CUSTOM_CHAR_MAP[] = {
     ENTER_BITMAP,
     PROGRESS_FULL_BITMAP
 };
+
+} // namespace ui

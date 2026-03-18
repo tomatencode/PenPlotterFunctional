@@ -2,7 +2,9 @@
 #include "../widgets/core/CollectSelectables.hpp"
 #include "../router/Router.hpp"
 
-Screen::Screen(std::unique_ptr<Widget> rootWidget)
+namespace ui {
+
+Screen::Screen(std::unique_ptr<widgets::Widget> rootWidget)
     : Screen() // build base state then init
 {
     initRoot(std::move(rootWidget));
@@ -13,11 +15,11 @@ Screen::Screen()
 {
 }
 
-void Screen::initRoot(std::unique_ptr<Widget> rootWidget)
+void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
 {
     root = std::move(rootWidget);
 
-    SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
+    widgets::SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;
 
     // Collect selectable widgets recursively from the root widget
@@ -43,3 +45,5 @@ void Screen::handleInput(InputState& input)
 
 void Screen::onEnter() {}
 void Screen::onExit() {}
+
+} // namespace ui

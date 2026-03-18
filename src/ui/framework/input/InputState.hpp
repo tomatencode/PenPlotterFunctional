@@ -1,5 +1,7 @@
 #pragma once
 
+namespace ui {
+
 struct ButtonState {
     bool buttonPressed = false;
     bool buttonReleased = false;
@@ -12,3 +14,5 @@ struct InputState
 
     ButtonState buttonState;  // current button state
 };
+
+} // namespace ui

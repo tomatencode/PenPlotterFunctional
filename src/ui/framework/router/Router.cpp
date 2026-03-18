@@ -1,5 +1,7 @@
 #include "Router.hpp"
 
+namespace ui {
+
 Router::Router() : _stackCount(0) {}
 
 bool Router::isEmpty() const
@@ -86,3 +88,5 @@ void Router::render(Renderer& r)
 
     _stack[_stackCount - 1]->render(r);
 }
+
+} // namespace ui

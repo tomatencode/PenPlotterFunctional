@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+namespace ui {
+
 struct Glyph
 {
     uint8_t code;
@@ -17,3 +19,5 @@ constexpr Glyph GLYPH_NONE(254);
 
 // Space glyph for clearingbuffers
 constexpr Glyph GLYPH_SPACE(' ');
+
+} // namespace ui

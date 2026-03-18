@@ -21,7 +21,7 @@ void UI::init()
 
 void UI::update()
 {
-    InputState input = readInputs();
+    ui::InputState input = readInputs();
     _router.handleInput(input);
 
     _router.render(_renderer);
@@ -29,9 +29,9 @@ void UI::update()
     delay(50); // simple debounce for display updates, adjust as needed
 }
 
-InputState UI::readInputs()
+ui::InputState UI::readInputs()
 {
-    InputState state;
+    ui::InputState state;
 
     state.encoderDelta = _encoder.getPositionDelta();
     state.buttonState.buttonPressed = _encoder.buttonPressed();

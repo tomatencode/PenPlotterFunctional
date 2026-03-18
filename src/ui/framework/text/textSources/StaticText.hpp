@@ -1,10 +1,11 @@
-#ifndef STATIC_TEXT_HPP
-#define STATIC_TEXT_HPP
+#pragma once
 
 #include "../TextSource.hpp"
 #include "config/ui_config.hpp"
 
 #include <cstring>
+
+namespace ui {
 
 class StaticText : public TextSource
 {
@@ -32,4 +33,4 @@ private:
     Glyph _glyphs[MAX_LENGTH];
 };
 
-#endif
+} // namespace ui

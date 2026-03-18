@@ -1,5 +1,7 @@
 #include "Render.hpp"
 
+namespace ui {
+
 Renderer::Renderer(LcdDisplay& display) : _display(display)
 {
     clearBuffer();
@@ -67,3 +69,5 @@ void Renderer::renderToDisplay()
         }
     }
 }
+
+} // namespace ui

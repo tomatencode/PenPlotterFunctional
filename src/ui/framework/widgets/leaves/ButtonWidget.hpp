@@ -6,6 +6,9 @@
 #include "../core/SelectableWidget.hpp"
 #include "../core/Widget.hpp"
 
+namespace ui {
+namespace widgets {
+
 // Optional: simple style for button decorations
 struct ButtonStyle
 {
@@ -49,3 +52,6 @@ private:
     void onFocusGained() override;
     void onFocusLost() override;
 };
+
+} // namespace widgets
+} // namespace ui

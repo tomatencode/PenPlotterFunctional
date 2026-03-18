@@ -21,10 +21,10 @@ public:
     void update();
 
 private:
-    InputState readInputs();
+    ui::InputState readInputs();
 
-    Router _router;
-    Renderer _renderer;
+    ui::Router _router;
+    ui::Renderer _renderer;
 
     LcdDisplay& _display;
     RotaryEncoder& _encoder;

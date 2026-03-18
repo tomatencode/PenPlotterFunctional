@@ -1,5 +1,8 @@
 #include "VerticalLayout.hpp"
 
+namespace ui {
+namespace widgets {
+
 VerticalLayout::VerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
     : LayoutWidget(std::move(children), style)
 {
@@ -159,3 +162,6 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         }
     }
 }
+
+} // namespace widgets
+} // namespace ui

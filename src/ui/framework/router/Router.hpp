@@ -6,6 +6,8 @@
 #include "../screen/Screen.hpp"
 #include "../input/InputState.hpp"
 
+namespace ui {
+
 class Router
 {
 public:
@@ -41,3 +43,5 @@ private:
     std::array<Screen*, MAX_STACK> _stack;
     size_t _stackCount;
 };
+
+} // namespace ui

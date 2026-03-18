@@ -22,7 +22,7 @@ RotaryEncoder encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_D
 
 Buzzer buzzer(BUZZER_PIN, 5);
 
-UI ui(display, encoder, buzzer);
+UI uiManager(display, encoder, buzzer);
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
@@ -41,7 +41,7 @@ void appInit()
     encoder.begin();
 
     fsInit();
-    ui.init();
+    uiManager.init();
     webInterface.init();
 
     Serial.println("App initialized.");
@@ -53,5 +53,5 @@ void appUpdate()
     webInterface.update();
     jobManager.jobManagerUpdate();
     buzzer.update();
-    ui.update();
+    uiManager.update();
 }

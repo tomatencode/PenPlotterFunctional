@@ -6,11 +6,11 @@
 class SecondaryScreen;
 
 // A simple screen that demonstrates widget layout, focus, and button interaction.
-class TestScreen : public Screen
+class TestScreen : public ui::Screen
 {
 public:
     TestScreen();
 };
 
 // Convenience helper for getting a screen instance (optional).
-Screen* createTestScreen();
+ui::Screen* createTestScreen();

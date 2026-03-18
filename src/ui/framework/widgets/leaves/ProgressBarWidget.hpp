@@ -2,6 +2,9 @@
 
 #include "../core/Widget.hpp"
 
+namespace ui {
+namespace widgets {
+
 class ProgressBarWidget : public Widget
 {
 public:
@@ -16,3 +19,6 @@ private:
     uint8_t (*_getProgress)();  // Function pointer returning 0-100
     uint8_t _width; // Desired width of the progress bar (including brackets)
 };
+
+} // namespace widgets
+} // namespace ui

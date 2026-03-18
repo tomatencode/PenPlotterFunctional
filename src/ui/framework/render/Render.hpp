@@ -4,6 +4,8 @@
 #include "../text/CustomChars.hpp"
 #include "../text/Glyph.hpp"
 
+namespace ui {
+
 class Renderer
 {
 public:
@@ -24,3 +26,5 @@ private:
 
     Glyph _buffer[LCD_ROWS][LCD_COLS]; 
 };
+
+} // namespace ui

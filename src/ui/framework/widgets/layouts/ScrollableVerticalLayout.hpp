@@ -5,6 +5,9 @@
 
 #include "VerticalLayout.hpp"
 
+namespace ui {
+namespace widgets {
+
 class ScrollableVerticalLayout : public LayoutWidget
 {
 public:
@@ -20,3 +23,6 @@ private:
     // Find which child is focused and update scroll offset
     void updateScrollOffset(uint8_t visibleHeight);
 };
+
+} // namespace widgets
+} // namespace ui

@@ -1,5 +1,8 @@
 #include "HorizontalLayout.hpp"
 
+namespace ui {
+namespace widgets {
+
 HorizontalLayout::HorizontalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
     : LayoutWidget(std::move(children), style)
 {
@@ -167,3 +170,6 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
         }
     }
 }
+
+} // namespace widgets
+} // namespace ui

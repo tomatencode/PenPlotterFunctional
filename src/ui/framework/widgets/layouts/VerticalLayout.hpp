@@ -5,6 +5,9 @@
 
 #include "../core/LayoutWidget.hpp"
 
+namespace ui {
+namespace widgets {
+
 class VerticalLayout : public LayoutWidget
 {
 public:
@@ -18,3 +21,7 @@ private:
     // Calculate spacing for even distribution modes
     uint8_t getSpacing(uint16_t availableHeight) const;
 };
+
+} // namespace widgets
+} // namespace ui
+

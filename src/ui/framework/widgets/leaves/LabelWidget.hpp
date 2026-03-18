@@ -5,6 +5,9 @@
 #include "../core/Widget.hpp"
 #include "../../text/TextSource.hpp"
 
+namespace ui {
+namespace widgets {
+
 class LabelWidget : public Widget
 {
 public:
@@ -23,3 +26,6 @@ public:
 private:
     std::unique_ptr<TextSource> _text;
 };
+
+} // namespace widgets
+} // namespace ui

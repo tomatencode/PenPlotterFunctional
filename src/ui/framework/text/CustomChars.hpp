@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+namespace ui {
+
 enum CustomChar
 {
     CURSOR_L = 0,
@@ -15,3 +17,5 @@ enum CustomChar
 };
 
 extern uint8_t* CUSTOM_CHAR_MAP[];
+
+} // namespace ui

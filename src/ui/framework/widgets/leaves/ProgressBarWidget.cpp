@@ -1,5 +1,8 @@
 #include "ProgressBarWidget.hpp"
 
+namespace ui {
+namespace widgets {
+
 ProgressBarWidget::ProgressBarWidget(uint8_t width, uint8_t (*getProgress)())
     : Widget(),
       _getProgress(getProgress),
@@ -44,3 +47,6 @@ void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
         r.drawGlyphToBuffer(x + barWidth - 1, y + row, Glyph{']'});
     }
 }
+
+} // namespace widgets
+} // namespace ui

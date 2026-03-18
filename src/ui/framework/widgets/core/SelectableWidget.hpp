@@ -3,6 +3,9 @@
 #include "Widget.hpp"
 #include "../../input/InputState.hpp"
 
+namespace ui {
+namespace widgets {
+
 class SelectableWidget : public Widget
 {
 public:
@@ -22,3 +25,6 @@ private:
     virtual void onFocusGained() {}
     virtual void onFocusLost() {}
 };
+
+} // namespace widgets
+} // namespace ui

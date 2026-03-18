@@ -12,21 +12,21 @@
 
 #include "WifiIndicator.hpp"
 
-class HeaderLine: public Widget
+class HeaderLine: public ui::widgets::Widget
 {
 public:
     HeaderLine(const char* headerText, bool backButton,
                std::function<void()> onBackPress = nullptr);
     ~HeaderLine();
 
-    void render(Renderer& r, Rect canvasBox) override;
+    void render(ui::Renderer& r, ui::widgets::Rect canvasBox) override;
 
-    Size measure() const override;
+    ui::widgets::Size measure() const override;
 
     // Allow focus/navigation systems to traverse the back button (if present)
     size_t childCount() const override;
-    Widget* child(size_t index) const override;
+    ui::widgets::Widget* child(size_t index) const override;
 private:
     // Layout used to evenly space the elements; owns its children
-    std::unique_ptr<Widget> _layout;
+    std::unique_ptr<ui::widgets::Widget> _layout;
 };

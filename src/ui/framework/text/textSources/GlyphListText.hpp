@@ -1,7 +1,8 @@
-#ifndef GLYPH_LIST_TEXT_HPP
-#define GLYPH_LIST_TEXT_HPP
+#pragma once
 
 #include "../TextSource.hpp"
+
+namespace ui {
 
 class GlyphListText : public TextSource
 {
@@ -17,4 +18,4 @@ private:
     const Glyph* _glyphs;
 };
 
-#endif
+} // namespace ui

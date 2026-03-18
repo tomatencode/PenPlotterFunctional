@@ -1,6 +1,9 @@
 #include "AbsoluteLayout.hpp"
 #include <algorithm>
 
+namespace ui {
+namespace widgets {
+
 AbsoluteLayout::AbsoluteLayout(Rect layoutBox)
     : _layoutBox(layoutBox), _count(0)
 {
@@ -101,3 +104,6 @@ void AbsoluteLayout::render(Renderer& r, Rect parentCanvas)
         _children[i].widget->render(r, drawRect);
     }
 }
+
+} // namespace widgets
+} // namespace ui

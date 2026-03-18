@@ -1,5 +1,8 @@
 #include "ButtonWidget.hpp"
 
+namespace ui {
+namespace widgets {
+
 ButtonWidget::ButtonWidget(std::unique_ptr<Widget> child,
                            ButtonStyle style,
                            std::function<void()> onPress,
@@ -113,3 +116,6 @@ void ButtonWidget::onFocusLost()
 {
     _isPressed = false; // reset pressed state when losing focus
 }
+
+} // namespace widgets
+} // namespace ui

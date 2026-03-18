@@ -1,8 +1,10 @@
 #include "FocusManager.hpp"
 
+namespace ui {
+
 FocusManager::FocusManager() : _count(0), _index(0), _widgets() {}
 
-void FocusManager::setWidgets(SelectableWidget* const* widgets, size_t count)
+void FocusManager::setWidgets(ui::widgets::SelectableWidget* const* widgets, size_t count)
 {
     _count = (count > MAX_SELECTABLE_WIDGETS) ? MAX_SELECTABLE_WIDGETS : count;
     
@@ -61,3 +63,5 @@ void FocusManager::prev()
     if(_widgets[_index] != nullptr)
         _widgets[_index]->focus();
 }
+
+} // namespace ui

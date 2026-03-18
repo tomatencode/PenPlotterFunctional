@@ -3,6 +3,9 @@
 #include "../../text/textSources/StaticText.hpp"
 #include "../../text/textSources/GlyphListText.hpp"
 
+namespace ui {
+namespace widgets {
+
 LabelWidget::LabelWidget(std::unique_ptr<TextSource> textSource)
     : _text(std::move(textSource))
 {}
@@ -57,3 +60,6 @@ void LabelWidget::render(Renderer& r, Rect canvasBox)
 
     r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, renderGlyphs);
 }
+
+} // namespace widgets
+} // namespace ui

@@ -4,6 +4,9 @@
 #include "box.hpp"
 #include "Size.hpp"
 
+namespace ui {
+namespace widgets {
+
 class Widget
 {
 public:
@@ -19,3 +22,6 @@ public:
     virtual size_t childCount() const { return 0; }
     virtual Widget* child(size_t) const { return nullptr; }
 };
+
+} // namespace widgets
+} // namespace ui

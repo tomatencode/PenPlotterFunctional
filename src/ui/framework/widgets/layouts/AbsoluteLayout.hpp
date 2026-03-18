@@ -4,6 +4,9 @@
 #include "../core/Alignment.hpp"
 #include <cstddef>
 
+namespace ui {
+namespace widgets {
+
 constexpr size_t MAX_CHILDREN = 16;
 
 class AbsoluteLayout : public Widget
@@ -31,3 +34,7 @@ private:
     size_t _count{0};
     Rect _layoutBox;
 };
+
+} // namespace widgets
+} // namespace ui
+

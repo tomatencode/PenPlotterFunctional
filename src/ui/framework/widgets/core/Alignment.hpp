@@ -1,5 +1,8 @@
 #pragma once
 
+namespace ui {
+namespace widgets {
+
 enum class HorizontalAlignment {
     Left,
     Center,
@@ -20,3 +23,6 @@ struct Alignment
     constexpr Alignment(HorizontalAlignment h, VerticalAlignment v) : horizontal(h), vertical(v) {}
     constexpr Alignment() : horizontal(HorizontalAlignment::Left), vertical(VerticalAlignment::Top) {}
 };
+
+} // namespace widgets
+} // namespace ui

@@ -2,6 +2,9 @@
 #include "../core/SelectableWidget.hpp"
 #include <cassert>
 
+namespace ui {
+namespace widgets {
+
 ScrollableVerticalLayout::ScrollableVerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
     : LayoutWidget(std::move(children), style)
 {
@@ -161,3 +164,5 @@ Size ScrollableVerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
+} // namespace widgets
+} // namespace ui

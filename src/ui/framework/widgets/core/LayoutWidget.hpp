@@ -6,6 +6,9 @@
 #include "Widget.hpp"
 #include "LayoutStyle.hpp"
 
+namespace ui {
+namespace widgets {
+
 class LayoutWidget : public Widget
 {
 public:
@@ -29,3 +32,6 @@ private:
     std::vector<std::unique_ptr<Widget>> _ownedChildren;
     LayoutStyle _style;
 };
+
+} // namespace widgets
+} // namespace ui

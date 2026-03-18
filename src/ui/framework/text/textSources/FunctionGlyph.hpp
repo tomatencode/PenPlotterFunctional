@@ -1,7 +1,8 @@
-#ifndef FUNCTION_GLYPH_HPP
-#define FUNCTION_GLYPH_HPP
+#pragma once
 
 #include "../TextSource.hpp"
+
+namespace ui {
 
 class FunctionGlyph : public TextSource
 {
@@ -19,4 +20,4 @@ private:
     TextFunc _func;
 };
 
-#endif
+} // namespace ui

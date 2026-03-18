@@ -5,6 +5,8 @@
 #include "../widgets/layouts/VerticalLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
 
+namespace ui {
+
 constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
 
 class Router; // forward
@@ -15,7 +17,7 @@ public:
     virtual ~Screen() = default;
 
     // Constructor: takes ownership of a single root widget
-    explicit Screen(std::unique_ptr<Widget> rootWidget);
+    explicit Screen(std::unique_ptr<widgets::Widget> rootWidget);
 
     // Render the screen
     virtual void render(Renderer& r);
@@ -35,13 +37,15 @@ protected:
     Screen();
 
     // Initialize the screen root after members are initialized
-    void initRoot(std::unique_ptr<Widget> rootWidget);
+    void initRoot(std::unique_ptr<widgets::Widget> rootWidget);
 
 private:
-    std::unique_ptr<Widget> root;
+    std::unique_ptr<widgets::Widget> root;
     FocusManager focusManager;
 
     Router* _router = nullptr;
     friend class Router;
     void setRouter(Router* r) { _router = r; }
 };
+
+} // namespace ui

@@ -3,6 +3,9 @@
 #include "Alignment.hpp"
 #include <cstdint>
 
+namespace ui {
+namespace widgets {
+
 enum class SpacingMode {
     Fixed,      // Fixed spacing between children
     Even,       // Distribute children evenly across available space
@@ -34,3 +37,6 @@ struct LayoutStyle {
           marginTop(mTop), marginBottom(mBottom),
           verticalAlign(vAlign), horizontalAlign(hAlign) {}
 };
+
+} // namespace widgets
+} // namespace ui

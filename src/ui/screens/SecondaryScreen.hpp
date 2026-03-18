@@ -4,7 +4,7 @@
 #include "../components/HeaderLine.hpp"
 
 // A simple secondary screen used to demonstrate navigation.
-class SecondaryScreen : public Screen
+class SecondaryScreen : public ui::Screen
 {
 public:
     SecondaryScreen();

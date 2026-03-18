@@ -1,6 +1,9 @@
 #pragma once
 #include "../core/Widget.hpp"
 
+namespace ui {
+namespace widgets {
+
 class SpacerWidget : public Widget {
 public:
     SpacerWidget(uint8_t width, uint8_t height);
@@ -10,3 +13,6 @@ private:
     uint8_t _width;
     uint8_t _height;
 };
+
+} // namespace widgets
+} // namespace ui
