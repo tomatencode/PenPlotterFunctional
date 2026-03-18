@@ -11,7 +11,7 @@ static void onBackPressed(void* ctx)
 
 SecondaryScreen::SecondaryScreen()
     : Screen()
-    , header("Settings", true, onBackPressed)
+    , header("Settings", true, onBackPressed, this)
 {
     initRoot(&header);
 }
