@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "../core/SelectableWidget.hpp"
 #include "../core/Widget.hpp"
 
@@ -23,12 +25,11 @@ class ButtonWidget : public SelectableWidget
 {
 public:
     // Construct a button wrapping any child widget.
-    // onPress/onRelease receive an optional context pointer.
+    // onPress/onRelease are called when the button is pressed/released.
     ButtonWidget(Widget* child,
                  ButtonStyle style = ButtonStyle{},
-                 void (*onPress)(void* context) = nullptr,
-                 void (*onRelease)(void* context) = nullptr,
-                 void* context = nullptr
+                 std::function<void()> onPress = nullptr,
+                 std::function<void()> onRelease = nullptr
                 );
 
 
@@ -39,9 +40,8 @@ public:
 private:
     Widget* _child;               // the child widget to render inside the button
     ButtonStyle _style;           // visual decorations
-    void (*_onPress)(void*);
-    void (*_onRelease)(void*);
-    void* _context;
+    std::function<void()> _onPress;
+    std::function<void()> _onRelease;
 
     bool _isPressed = false;
 

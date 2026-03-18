@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "../framework/widgets/core/Widget.hpp"
 #include "../framework/widgets/core/Size.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
@@ -13,8 +15,7 @@ class HeaderLine: public Widget
 {
 public:
     HeaderLine(const char* headerText, bool backButton,
-               void (*onBackPress)(void* context) = nullptr,
-               void* backContext = nullptr);
+               std::function<void()> onBackPress = nullptr);
     ~HeaderLine();
 
     void render(Renderer& r, Rect canvasBox) override;
@@ -32,8 +33,6 @@ private:
     LabelWidget _backLabel;
     ButtonWidget _backButton;
     bool _hasBackButton;
-    void (*_onBackPress)(void*);
-    void* _backContext;
 
     // Layout used to evenly space the elements
     HorizontalLayout* _layout;

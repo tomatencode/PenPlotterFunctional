@@ -2,15 +2,13 @@
 
 ButtonWidget::ButtonWidget(Widget* child,
                            ButtonStyle style,
-                           void (*onPress)(void*),
-                           void (*onRelease)(void*),
-                           void* context
+                           std::function<void()> onPress,
+                           std::function<void()> onRelease
                         )
     : _child(child),
       _style(style),
-      _onPress(onPress),
-      _onRelease(onRelease),
-      _context(context),
+      _onPress(std::move(onPress)),
+      _onRelease(std::move(onRelease)),
       _isPressed(false)
 {}
 
@@ -100,10 +98,10 @@ void ButtonWidget::handleInput(InputState& input)
     _isPressed = input.buttonState.buttonDown;
 
     if (input.buttonState.buttonPressed && _onPress)
-        _onPress(_context);
+        _onPress();
 
     if (input.buttonState.buttonReleased && _onRelease)
-        _onRelease(_context);
+        _onRelease();
 }
 
 void ButtonWidget::onFocusGained()
