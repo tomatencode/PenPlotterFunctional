@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "../widgets/layouts/VerticalLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
 
@@ -40,7 +42,7 @@ protected:
     void initRoot(Widget* rootWidget);
 
 private:
-    Widget* root;
+    std::unique_ptr<Widget> root;
     FocusManager focusManager;
 
     Router* _router = nullptr;

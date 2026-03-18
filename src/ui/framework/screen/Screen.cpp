@@ -21,25 +21,26 @@ Screen::Screen()
 
 void Screen::initRoot(Widget* children[], size_t count)
 {
-    root = new VerticalLayout(children, count);
+    // std::make_unique is not available in C++11 for this toolchain, so construct manually.
+    root = std::unique_ptr<Widget>(new VerticalLayout(children, count));
 
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;
 
     // Collect selectable widgets recursively from the root layout
-    collectSelectables(root, selectableWidgets, selectableCount);
+    collectSelectables(root.get(), selectableWidgets, selectableCount);
     focusManager.setWidgets(selectableWidgets, selectableCount);
 }
 
 void Screen::initRoot(Widget* rootWidget)
 {
-    root = rootWidget;
+    root.reset(rootWidget);
 
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;
 
     // Collect selectable widgets recursively from the root widget
-    collectSelectables(root, selectableWidgets, selectableCount);
+    collectSelectables(root.get(), selectableWidgets, selectableCount);
     focusManager.setWidgets(selectableWidgets, selectableCount);
 }
 
