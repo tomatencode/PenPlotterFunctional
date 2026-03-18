@@ -3,10 +3,8 @@
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          void (*onBackPress)(void*))
     : Widget()
-    , _headerText(headerText)
-    , _headerLabel(_headerText)
-    , _backText("Back")
-    , _backLabel(_backText)
+    , _headerLabel(headerText)
+    , _backLabel("Back")
     , _backButton(&_backLabel, ButtonStyle(), nullptr, onBackPress)
     , _hasBackButton(backButton)
     , _onBackPress(onBackPress)

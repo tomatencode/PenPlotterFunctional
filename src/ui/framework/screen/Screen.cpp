@@ -2,12 +2,6 @@
 #include "../widgets/core/CollectSelectables.hpp"
 #include "../router/Router.hpp"
 
-Screen::~Screen()
-{
-    delete root;
-    root = nullptr;
-}
-
 Screen::Screen(Widget* children[], size_t count)
     : Screen() // build base state then init
 {

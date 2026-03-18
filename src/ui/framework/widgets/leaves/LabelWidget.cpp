@@ -1,13 +1,19 @@
 #include "LabelWidget.hpp"
 #include "../../render/Render.hpp"
+#include "../../text/textSources/StaticText.hpp"
+#include "../../text/textSources/GlyphListText.hpp"
 
-LabelWidget::LabelWidget(TextSource& textSource)
-    : text(textSource)
+LabelWidget::LabelWidget(std::unique_ptr<TextSource> textSource)
+    : _text(std::move(textSource))
+{}
+
+LabelWidget::LabelWidget(const char* text)
+    : _text(std::unique_ptr<TextSource>(new StaticText(text)))
 {}
 
 Size LabelWidget::measure() const
 {
-    const Glyph* glyphs = text.getGlyphs();
+    const Glyph* glyphs = _text->getGlyphs();
     int width = 0;
 
     // Count glyphs until terminator or max LCD width
@@ -25,7 +31,7 @@ void LabelWidget::render(Renderer& r, Rect canvasBox)
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
-    const Glyph* srcGlyphs = text.getGlyphs();
+    const Glyph* srcGlyphs = _text->getGlyphs();
 
     int maxWidth = canvasBox.w;
 

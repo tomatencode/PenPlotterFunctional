@@ -3,7 +3,6 @@
 #include "../framework/screen/Screen.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/text/textSources/StaticText.hpp"
 
 // Forward declare secondary screen to avoid including it here.
 class SecondaryScreen;
@@ -16,10 +15,7 @@ public:
 
 private:
     // UI elements stored as members to keep lifetime tied to the screen
-    StaticText titleText;
     LabelWidget titleLabel;
-
-    StaticText BtnText;
     LabelWidget BtnLabel;
     ButtonWidget Button;
 };

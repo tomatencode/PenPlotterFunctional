@@ -10,7 +10,7 @@ class Router; // forward
 class Screen
 {
 public:
-    virtual ~Screen();
+    virtual ~Screen() = default;
 
     // Constructor: takes an array of Widget* and auto-stacks them vertically
     Screen(Widget* children[], size_t count);

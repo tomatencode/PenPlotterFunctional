@@ -4,7 +4,6 @@
 #include "../framework/widgets/core/Size.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../framework/widgets/core/LayoutStyle.hpp"
-#include "../framework/text/textSources/StaticText.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
 
@@ -26,11 +25,9 @@ public:
     Widget* child(size_t index) const override;
 private:
     WifiIndicator _wifi;
-    StaticText _headerText;
     LabelWidget _headerLabel;
 
     // Optional back button
-    StaticText _backText;
     LabelWidget _backLabel;
     ButtonWidget _backButton;
     bool _hasBackButton;

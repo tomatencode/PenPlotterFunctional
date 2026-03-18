@@ -4,8 +4,6 @@
 
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/text/textSources/StaticText.hpp"
-#include "../framework/text/textSources/FunctionText.hpp"
 
 static void onTogglePressed(void* ctx)
 {
@@ -22,10 +20,8 @@ static void onTogglePressed(void* ctx)
 
 TestScreen::TestScreen()
     : Screen() // base initialized; we'll set root after member init
-    , titleText("Pen Plotter UI")
-    , titleLabel(titleText)
-    , BtnText("Next Screen")
-    , BtnLabel(BtnText)
+    , titleLabel("Pen Plotter UI")
+    , BtnLabel("Next Screen")
     , Button(&BtnLabel, ButtonStyle(), onTogglePressed, nullptr, this)
 {
     Widget* children[] = { &titleLabel, &Button };

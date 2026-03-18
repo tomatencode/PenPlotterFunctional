@@ -1,12 +1,18 @@
 #pragma once
 
+#include <memory>
+
 #include "../core/Widget.hpp"
 #include "../../text/TextSource.hpp"
 
 class LabelWidget : public Widget
 {
 public:
-    LabelWidget(TextSource& text);
+    // Takes ownership of a text source.
+    LabelWidget(std::unique_ptr<TextSource> textSource);
+
+    // Convenience constructors for common sources
+    LabelWidget(const char* text);
 
     // Render the label within the given canvas
     void render(Renderer& r, Rect canvasBox) override;
@@ -15,5 +21,5 @@ public:
     Size measure() const override;
 
 private:
-    TextSource& text;
+    std::unique_ptr<TextSource> _text;
 };

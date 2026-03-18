@@ -8,6 +8,7 @@ class Widget
 {
 public:
     Widget() {}
+    virtual ~Widget() = default;
 
     virtual void render(Renderer& r, Rect canvasBox) = 0;
 
