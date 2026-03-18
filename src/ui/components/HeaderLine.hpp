@@ -12,6 +12,8 @@
 
 #include "WifiIndicator.hpp"
 
+namespace components {
+
 class HeaderLine: public ui::widgets::Widget
 {
 public:
@@ -30,3 +32,5 @@ private:
     // Layout used to evenly space the elements; owns its children
     std::unique_ptr<ui::widgets::Widget> _layout;
 };
+
+} // namespace components

@@ -3,6 +3,8 @@
 
 using namespace ui;
 
+namespace components {
+
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          std::function<void()> onBackPress)
     : Widget()
@@ -60,3 +62,5 @@ widgets::Widget* HeaderLine::child(size_t index) const
 {
     return _layout ? _layout->child(index) : nullptr;
 }
+
+} // namespace components

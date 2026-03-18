@@ -2,6 +2,8 @@
 
 #include "../framework/widgets/core/Widget.hpp"
 
+namespace components {
+
 class WifiIndicator: public ui::widgets::Widget
 {
 public:
@@ -11,3 +13,5 @@ public:
 
     ui::widgets::Size measure() const override;
 };
+
+} // namespace components

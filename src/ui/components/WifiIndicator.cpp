@@ -5,6 +5,8 @@ extern WebInterface webInterface;
 
 using namespace ui;
 
+namespace components {
+
 WifiIndicator::WifiIndicator() : Widget() {}
 
 void WifiIndicator::render(Renderer& r, widgets::Rect canvasBox)
@@ -25,3 +27,5 @@ widgets::Size WifiIndicator::measure() const
 {
     return widgets::Size{1, 1}; // always occupies 1 character width and 1 row height
 }
+
+} // namespace components

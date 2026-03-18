@@ -4,7 +4,7 @@
 
 SecondaryScreen::SecondaryScreen()
     : Screen(
-        ui::widgets::make_widget<HeaderLine>(
+        ui::widgets::make_widget<components::HeaderLine>(
             "Settings",
             true,
             [this]() {
