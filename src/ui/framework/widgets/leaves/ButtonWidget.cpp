@@ -12,6 +12,18 @@ ButtonWidget::ButtonWidget(Widget* child,
       _isPressed(false)
 {}
 
+ButtonWidget::ButtonWidget(std::unique_ptr<Widget> child,
+                           ButtonStyle style,
+                           std::function<void()> onPress,
+                           std::function<void()> onRelease
+                        )
+    : _child(child.get()),
+      _ownedChild(std::move(child)),
+      _style(style),
+      _onPress(std::move(onPress)),
+      _onRelease(std::move(onRelease)),
+      _isPressed(false)
+{}
 
 Size ButtonWidget::measure() const
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "../core/SelectableWidget.hpp"
 #include "../core/Widget.hpp"
@@ -32,6 +33,12 @@ public:
                  std::function<void()> onRelease = nullptr
                 );
 
+    // Takes ownership of the child widget.
+    ButtonWidget(std::unique_ptr<Widget> child,
+                 ButtonStyle style = ButtonStyle{},
+                 std::function<void()> onPress = nullptr,
+                 std::function<void()> onRelease = nullptr
+                );
 
     Size measure() const override;
     void render(Renderer& r, Rect canvasBox) override;
@@ -39,6 +46,7 @@ public:
 
 private:
     Widget* _child;               // the child widget to render inside the button
+    std::unique_ptr<Widget> _ownedChild;
     ButtonStyle _style;           // visual decorations
     std::function<void()> _onPress;
     std::function<void()> _onRelease;
