@@ -1,17 +1,5 @@
 #include "ButtonWidget.hpp"
 
-ButtonWidget::ButtonWidget(Widget* child,
-                           ButtonStyle style,
-                           std::function<void()> onPress,
-                           std::function<void()> onRelease
-                        )
-    : _child(child),
-      _style(style),
-      _onPress(std::move(onPress)),
-      _onRelease(std::move(onRelease)),
-      _isPressed(false)
-{}
-
 ButtonWidget::ButtonWidget(std::unique_ptr<Widget> child,
                            ButtonStyle style,
                            std::function<void()> onPress,

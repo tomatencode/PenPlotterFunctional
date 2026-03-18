@@ -14,10 +14,10 @@ public:
     TestScreen();
 
 private:
-    // UI elements stored as members to keep lifetime tied to the screen
-    LabelWidget titleLabel;
-    LabelWidget BtnLabel;
-    ButtonWidget Button;
+    // Non-owning pointers to widgets owned by the root layout
+    LabelWidget* titleLabel = nullptr;
+    LabelWidget* btnLabel = nullptr;
+    ButtonWidget* button = nullptr;
 };
 
 // Convenience helper for getting a screen instance (optional).

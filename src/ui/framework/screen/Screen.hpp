@@ -14,11 +14,8 @@ class Screen
 public:
     virtual ~Screen() = default;
 
-    // Constructor: takes an array of Widget* and auto-stacks them vertically
-    Screen(Widget* children[], size_t count);
-    
-    // Constructor: takes a single root widget
-    Screen(Widget* rootWidget);
+    // Constructor: takes ownership of a single root widget
+    explicit Screen(std::unique_ptr<Widget> rootWidget);
 
     // Render the screen
     virtual void render(Renderer& r);
@@ -38,8 +35,7 @@ protected:
     Screen();
 
     // Initialize the screen root after members are initialized
-    void initRoot(Widget* children[], size_t count);
-    void initRoot(Widget* rootWidget);
+    void initRoot(std::unique_ptr<Widget> rootWidget);
 
 private:
     std::unique_ptr<Widget> root;

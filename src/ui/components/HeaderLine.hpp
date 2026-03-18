@@ -26,12 +26,12 @@ public:
     size_t childCount() const override;
     Widget* child(size_t index) const override;
 private:
-    WifiIndicator _wifi;
-    LabelWidget _headerLabel;
+    // Owned by the layout
+    WifiIndicator* _wifi;
+    LabelWidget* _headerLabel;
 
     // Optional back button
-    LabelWidget _backLabel;
-    ButtonWidget _backButton;
+    ButtonWidget* _backButton;
     bool _hasBackButton;
 
     // Layout used to evenly space the elements

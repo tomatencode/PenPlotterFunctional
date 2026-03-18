@@ -1,12 +1,15 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "../core/LayoutWidget.hpp"
 
 class VerticalLayout : public LayoutWidget
 {
 public:
-    // Constructor: children with layout style
-    VerticalLayout(Widget* children[], size_t count, const LayoutStyle& style = LayoutStyle());
+    // Constructor: takes ownership of the provided widgets
+    VerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style = LayoutStyle());
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

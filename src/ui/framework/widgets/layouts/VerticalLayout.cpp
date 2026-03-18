@@ -1,7 +1,7 @@
 #include "VerticalLayout.hpp"
 
-VerticalLayout::VerticalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : LayoutWidget(children, count, style)
+VerticalLayout::VerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
+    : LayoutWidget(std::move(children), style)
 {
 }
 

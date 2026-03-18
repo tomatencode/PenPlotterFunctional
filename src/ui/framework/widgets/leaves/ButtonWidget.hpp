@@ -25,15 +25,8 @@ struct ButtonStyle
 class ButtonWidget : public SelectableWidget
 {
 public:
-    // Construct a button wrapping any child widget.
-    // onPress/onRelease are called when the button is pressed/released.
-    ButtonWidget(Widget* child,
-                 ButtonStyle style = ButtonStyle{},
-                 std::function<void()> onPress = nullptr,
-                 std::function<void()> onRelease = nullptr
-                );
-
     // Takes ownership of the child widget.
+    // The child should be heap-allocated and not managed elsewhere.
     ButtonWidget(std::unique_ptr<Widget> child,
                  ButtonStyle style = ButtonStyle{},
                  std::function<void()> onPress = nullptr,

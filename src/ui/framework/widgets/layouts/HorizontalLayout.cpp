@@ -1,7 +1,7 @@
 #include "HorizontalLayout.hpp"
 
-HorizontalLayout::HorizontalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : LayoutWidget(children, count, style)
+HorizontalLayout::HorizontalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
+    : LayoutWidget(std::move(children), style)
 {
 }
 

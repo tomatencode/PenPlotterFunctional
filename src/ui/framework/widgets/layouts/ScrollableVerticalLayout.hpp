@@ -1,12 +1,15 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "VerticalLayout.hpp"
 
 class ScrollableVerticalLayout : public LayoutWidget
 {
 public:
-    // Constructor: just children, parent provides canvas
-    ScrollableVerticalLayout(Widget* children[], size_t count, const LayoutStyle& style = LayoutStyle());
+    // Constructor: takes ownership of the provided widgets
+    ScrollableVerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style = LayoutStyle());
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

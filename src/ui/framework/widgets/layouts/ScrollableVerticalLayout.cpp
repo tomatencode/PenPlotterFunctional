@@ -2,8 +2,8 @@
 #include "../core/SelectableWidget.hpp"
 #include <cassert>
 
-ScrollableVerticalLayout::ScrollableVerticalLayout(Widget* children[], size_t count, const LayoutStyle& style)
-    : LayoutWidget(children, count, style)
+ScrollableVerticalLayout::ScrollableVerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
+    : LayoutWidget(std::move(children), style)
 {
     // Scrollable layouts don't support advanced spacing modes
     // as they don't make sense when content exceeds screen size

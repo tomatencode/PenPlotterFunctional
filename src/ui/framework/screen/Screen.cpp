@@ -2,16 +2,10 @@
 #include "../widgets/core/CollectSelectables.hpp"
 #include "../router/Router.hpp"
 
-Screen::Screen(Widget* children[], size_t count)
+Screen::Screen(std::unique_ptr<Widget> rootWidget)
     : Screen() // build base state then init
 {
-    initRoot(children, count);
-}
-
-Screen::Screen(Widget* rootWidget)
-    : Screen() // build base state then init
-{
-    initRoot(rootWidget);
+    initRoot(std::move(rootWidget));
 }
 
 Screen::Screen()
@@ -19,22 +13,9 @@ Screen::Screen()
 {
 }
 
-void Screen::initRoot(Widget* children[], size_t count)
+void Screen::initRoot(std::unique_ptr<Widget> rootWidget)
 {
-    // std::make_unique is not available in C++11 for this toolchain, so construct manually.
-    root = std::unique_ptr<Widget>(new VerticalLayout(children, count));
-
-    SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
-    size_t selectableCount = 0;
-
-    // Collect selectable widgets recursively from the root layout
-    collectSelectables(root.get(), selectableWidgets, selectableCount);
-    focusManager.setWidgets(selectableWidgets, selectableCount);
-}
-
-void Screen::initRoot(Widget* rootWidget)
-{
-    root.reset(rootWidget);
+    root = std::move(rootWidget);
 
     SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
     size_t selectableCount = 0;

@@ -3,10 +3,12 @@
 
 SecondaryScreen::SecondaryScreen()
     : Screen()
-    , header("Settings", true, [this]() {
+    , header(nullptr)
+{
+    header = new HeaderLine("Settings", true, [this]() {
         if (router())
             router()->popScreen();
-      })
-{
-    initRoot(&header);
+      });
+
+    initRoot(std::unique_ptr<Widget>(header));
 }
