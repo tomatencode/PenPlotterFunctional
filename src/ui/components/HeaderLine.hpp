@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "../framework/widgets/core/Widget.hpp"
 #include "../framework/widgets/core/Size.hpp"
@@ -26,14 +27,6 @@ public:
     size_t childCount() const override;
     Widget* child(size_t index) const override;
 private:
-    // Owned by the layout
-    WifiIndicator* _wifi;
-    LabelWidget* _headerLabel;
-
-    // Optional back button
-    ButtonWidget* _backButton;
-    bool _hasBackButton;
-
-    // Layout used to evenly space the elements
-    HorizontalLayout* _layout;
+    // Layout used to evenly space the elements; owns its children
+    std::unique_ptr<Widget> _layout;
 };

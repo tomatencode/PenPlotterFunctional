@@ -1,39 +1,38 @@
 #include "HeaderLine.hpp"
-#include <vector>
+#include "../framework/widgets/Builder.hpp"
 
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          std::function<void()> onBackPress)
     : Widget()
-    , _wifi(nullptr)
-    , _headerLabel(nullptr)
-    , _backButton(nullptr)
-    , _hasBackButton(backButton)
     , _layout(nullptr)
 {
-    // Create child widgets on the heap; ownership is transferred to the layout.
-    _wifi = new WifiIndicator();
-    _headerLabel = new LabelWidget(headerText);
-
-    std::vector<std::unique_ptr<Widget>> children;
-    children.emplace_back(std::unique_ptr<Widget>(_wifi));
-    children.emplace_back(std::unique_ptr<Widget>(_headerLabel));
-
-    if (_hasBackButton)
-    {
-        LabelWidget* backLabel = new LabelWidget("Back");
-        _backButton = new ButtonWidget(std::unique_ptr<Widget>(backLabel), ButtonStyle(), onBackPress);
-        children.emplace_back(std::unique_ptr<Widget>(_backButton));
-    }
-
     LayoutStyle style = LayoutStyle();
     style.spacingMode = SpacingMode::SpaceBetween;
-    _layout = new HorizontalLayout(std::move(children), style);
+
+    if (backButton)
+    {
+        _layout = ui::widgets::make_layout<HorizontalLayout>(
+            style,
+            ui::widgets::make_widget<WifiIndicator>(),
+            ui::widgets::make_widget<LabelWidget>(headerText),
+            ui::widgets::make_widget<ButtonWidget>(
+                ui::widgets::make_widget<LabelWidget>("Back"),
+                ButtonStyle(),
+                onBackPress
+            )
+        );
+    }
+    else
+    {
+        _layout = ui::widgets::make_layout<HorizontalLayout>(
+            style,
+            ui::widgets::make_widget<WifiIndicator>(),
+            ui::widgets::make_widget<LabelWidget>(headerText)
+        );
+    }
 }
 
-HeaderLine::~HeaderLine()
-{
-    delete _layout;
-}
+HeaderLine::~HeaderLine() = default;
 
 Size HeaderLine::measure() const
 {
