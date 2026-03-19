@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "../core/Widget.hpp"
 
 namespace ui {
@@ -10,14 +12,14 @@ class ProgressBarWidget : public Widget
 public:
     // Construct a progress bar with specified width and height
     // getProgress: function pointer that returns progress 0-100
-    ProgressBarWidget(uint8_t width, uint8_t (*getProgress)() = nullptr);
+    ProgressBarWidget(std::function<uint8_t()> getProgress);
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
+    Size desiredSize(const Size& available) const override;
 
 private:
-    uint8_t (*_getProgress)();  // Function pointer returning 0-100
-    uint8_t _width; // Desired width of the progress bar (including brackets)
+    std::function<uint8_t()> _getProgress;  // Function object returning 0-100
 };
 
 } // namespace widgets
