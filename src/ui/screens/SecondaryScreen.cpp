@@ -2,9 +2,11 @@
 #include "../framework/router/Router.hpp"
 #include "../framework/widgets/Builder.hpp"
 
+using namespace ui;
+
 SecondaryScreen::SecondaryScreen()
     : Screen(
-        ui::widgets::make_widget<components::HeaderLine>(
+        widgets::make_widget<components::HeaderLine>(
             "Settings",
             true,
             [this]() {

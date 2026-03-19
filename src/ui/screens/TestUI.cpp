@@ -7,15 +7,14 @@
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 
 using namespace ui;
-using namespace widgets;
 
 TestScreen::TestScreen()
     : Screen(
-        make_layout<VerticalLayout>(LayoutStyle(),
-            make_widget<LabelWidget>("Pen Plotter UI"),
-            make_widget<ButtonWidget>(
-                make_widget<LabelWidget>("Next Screen"),
-                ButtonStyle(),
+        widgets::make_layout<widgets::VerticalLayout>(widgets::LayoutStyle(),
+            widgets::make_widget<widgets::LabelWidget>("Pen Plotter UI"),
+            widgets::make_widget<widgets::ButtonWidget>(
+                widgets::make_widget<widgets::LabelWidget>("Next Screen"),
+                widgets::ButtonStyle(),
                 [this]() {
                     if (router()) {
                         static SecondaryScreen secondScreen;
