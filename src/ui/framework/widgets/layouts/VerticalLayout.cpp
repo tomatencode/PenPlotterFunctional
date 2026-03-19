@@ -55,7 +55,7 @@ Size VerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-uint8_t VerticalLayout::getSpacing(uint16_t availableHeight) const
+double VerticalLayout::getSpacing(uint16_t availableHeight) const
 {
     const size_t count = childCount();
     if (count <= 1) return 0;
@@ -67,7 +67,7 @@ uint8_t VerticalLayout::getSpacing(uint16_t availableHeight) const
             totalChildHeight += w->measure().h;
     }
     
-    uint16_t remainingSpace = availableHeight - totalChildHeight;
+    double remainingSpace = availableHeight - totalChildHeight;
     
     switch (style().spacingMode)
     {
@@ -103,15 +103,20 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
     };
 
     // Calculate dynamic spacing if needed
-    uint8_t spacing = getSpacing(contentArea.h);
-    
+    double idealSpacing = getSpacing(contentArea.h);
+    double spacingError = 0.0; // For accumulating fractional spacing
+
     // Calculate starting Y position
     int currentY = contentArea.y;
     
-    // For even spacing with edge space, add initial spacing
-    if (style().spacingMode == SpacingMode::Even || style().spacingMode == SpacingMode::SpaceAround)
-    {
-        currentY += spacing;
+    // add initial spacing for even distribution modes
+    if (style().spacingMode == SpacingMode::Even) {
+        currentY += std::round(idealSpacing);
+        spacingError += idealSpacing - std::round(idealSpacing);
+    } 
+    else if (style().spacingMode == SpacingMode::SpaceAround) {
+        currentY += std::round(idealSpacing / 2);
+        spacingError += (idealSpacing / 2) - std::round(idealSpacing / 2);
     }
 
     // Render each child
@@ -153,12 +158,16 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         }
 
         // Move to next position
-        currentY += childSize.h + spacing;
-        
-        // For SpaceAround, add spacing after each child
-        if (style().spacingMode == SpacingMode::SpaceAround && i < count - 1)
-        {
-            currentY += spacing;
+        currentY += childSize.h + std::round(idealSpacing);
+        spacingError += idealSpacing - std::round(idealSpacing);
+        // If accumulated error exceeds 0.5 pixel, add extra spacing
+        if (spacingError >= 0.5) {
+            currentY += 1;
+            spacingError -= 1.0;
+        } 
+        else if (spacingError <= -0.5) {
+            currentY -= 1;
+            spacingError += 1.0;
         }
     }
 }

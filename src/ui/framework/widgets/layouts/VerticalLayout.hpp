@@ -19,7 +19,7 @@ public:
 
 private:
     // Calculate spacing for even distribution modes
-    uint8_t getSpacing(uint16_t availableHeight) const;
+    double getSpacing(uint16_t availableHeight) const;
 };
 
 } // namespace widgets
