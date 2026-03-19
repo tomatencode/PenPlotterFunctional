@@ -139,7 +139,11 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
         if (childWidget == nullptr)
             continue;
 
-        Size childSize = childWidget->measure();
+        Size minChildSize = childWidget->measure();
+        Size DesiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
+
+        Size childSize = {std::min(DesiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
+                          std::min(DesiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
 
         // Calculate Y position based on vertical alignment
         int childY = contentArea.y;
@@ -161,7 +165,7 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
             static_cast<uint8_t>(currentX),
             static_cast<uint8_t>(childY),
             childSize.w,
-            contentArea.h  // Full available height
+            childSize.h
         };
 
         // Only render if child is within visible area

@@ -131,18 +131,21 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         if (childWidget == nullptr)
             continue;
 
-        Size MinChildSize = childWidget->measure();
-        Size DesiredChildSize = childWidget->desiredSize({contentArea.w, MinChildSize.h});
+        Size minChildSize = childWidget->measure();
+        Size desiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
+
+        Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
+                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;
         switch (style().horizontalAlign)
         {
             case HorizontalAlignment::Center:
-                childX += (contentArea.w - DesiredChildSize.w) / 2;
+                childX += (contentArea.w - childSize.w) / 2;
                 break;
             case HorizontalAlignment::Right:
-                childX += contentArea.w - DesiredChildSize.w;
+                childX += contentArea.w - childSize.w;
                 break;
             default: // Left
                 break;
@@ -153,8 +156,8 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         Rect childCanvas = {
             static_cast<uint8_t>(childX),
             static_cast<uint8_t>(currentY),
-            std::min(DesiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
-            std::min(MinChildSize.h, static_cast<uint8_t>(contentArea.y + contentArea.h - currentY)) // minimum height, but don't exceed content area
+            childSize.w,
+            childSize.h
         };
 
         // Only render if child is within visible area
@@ -164,7 +167,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         }
 
         // Move to next position
-        currentY += MinChildSize.h + std::round(idealSpacing);
+        currentY += childSize.h + std::round(idealSpacing);
         spacingError += idealSpacing - std::round(idealSpacing);
         // If accumulated error exceeds 0.5 pixel, add extra spacing
         if (spacingError >= 0.5) {
