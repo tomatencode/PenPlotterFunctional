@@ -23,10 +23,6 @@ public:
     // Returns false if the stack is already empty.
     void popScreen();
 
-    // Replace the current screen (clears stack)
-    // Returns false if screen is null.
-    void setScreen(Screen* screen);
-
     // Query the stack for safe usage
     bool isEmpty() const;
     bool canPush() const;

@@ -57,23 +57,6 @@ void Router::popScreen()
     }
 }
 
-void Router::setScreen(Screen* screen)
-{
-    if (screen == nullptr) return;
-
-    // Ensure all existing screens are exited and detached
-    while (canPop())
-    {
-        top()->onExit();
-        top()->setRouter(nullptr);
-        --_stackCount;
-    }
-
-    _stack[_stackCount++] = screen;
-    screen->setRouter(this);
-    screen->onEnter();
-}
-
 void Router::handleInput(InputState& input)
 {
     if (_stackCount == 0) return;

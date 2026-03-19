@@ -6,13 +6,16 @@
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 
+using namespace ui;
+using namespace widgets;
+
 TestScreen::TestScreen()
-    : ui::Screen(
-        ui::widgets::make_layout<ui::widgets::VerticalLayout>(ui::widgets::LayoutStyle(),
-            ui::widgets::make_widget<ui::widgets::LabelWidget>("Pen Plotter UI"),
-            ui::widgets::make_widget<ui::widgets::ButtonWidget>(
-                ui::widgets::make_widget<ui::widgets::LabelWidget>("Next Screen"),
-                ui::widgets::ButtonStyle(),
+    : Screen(
+        make_layout<VerticalLayout>(LayoutStyle(),
+            make_widget<LabelWidget>("Pen Plotter UI"),
+            make_widget<ButtonWidget>(
+                make_widget<LabelWidget>("Next Screen"),
+                ButtonStyle(),
                 [this]() {
                     if (router()) {
                         static SecondaryScreen secondScreen;
@@ -23,10 +26,4 @@ TestScreen::TestScreen()
         )
     )
 {
-}
-
-ui::Screen* createTestScreen()
-{
-    static TestScreen instance;
-    return &instance;
 }

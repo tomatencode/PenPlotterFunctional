@@ -29,12 +29,12 @@ public:
     // Access selectable widgets
     virtual void handleInput(InputState& input);
 
-    // Provide access to the router for navigation from within a screen
-    Router* router() const;
-
 protected:
     // Allows derived screens to build their widget tree after construction
     Screen();
+
+    // Provide access to the router for navigation from within a screen
+    Router* router() const;
 
     // Initialize the screen root after members are initialized
     void initRoot(std::unique_ptr<widgets::Widget> rootWidget);

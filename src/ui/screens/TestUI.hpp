@@ -11,6 +11,3 @@ class TestScreen : public ui::Screen
 public:
     TestScreen();
 };
-
-// Convenience helper for getting a screen instance (optional).
-ui::Screen* createTestScreen();

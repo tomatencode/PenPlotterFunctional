@@ -13,8 +13,9 @@ void UI::init()
 {
     _renderer.init();
 
-    // Start on the first screen. Replace this with your own screen stack as needed.
-    _router.setScreen(createTestScreen());
+    // Start on the first screen
+    static TestScreen testScreen;
+    _router.pushScreen(&testScreen);
 
     Serial.println("UI initialized.");
 }
@@ -24,7 +25,10 @@ void UI::update()
     ui::InputState input = readInputs();
     _router.handleInput(input);
 
+    // render to buffer
     _router.render(_renderer);
+
+    // render buffer to display
     _renderer.renderToDisplay();
     delay(50); // simple debounce for display updates, adjust as needed
 }
