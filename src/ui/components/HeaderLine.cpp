@@ -47,10 +47,10 @@ Size HeaderLine::measure() const
     return {0, 0};
 }
 
-Size HeaderLine::desiredSize() const
+Size HeaderLine::desiredSize(const Size& available) const
 {
     if (_layout)
-        return _layout->desiredSize();
+        return _layout->desiredSize(available);
     return {0, 0};
 }
 

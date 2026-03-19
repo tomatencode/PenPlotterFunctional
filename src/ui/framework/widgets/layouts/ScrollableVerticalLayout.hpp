@@ -16,6 +16,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
+    Size desiredSize(const Size& available) const override;
 
 private:
     int16_t _scrollOffset = 0;

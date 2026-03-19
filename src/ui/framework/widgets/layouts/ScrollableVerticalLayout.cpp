@@ -164,5 +164,11 @@ Size ScrollableVerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
+Size ScrollableVerticalLayout::desiredSize(const Size& available) const
+{
+    // Scrollable layout desires to fill all available space to enable scrolling
+    return available;
+}
+
 } // namespace widgets
 } // namespace ui

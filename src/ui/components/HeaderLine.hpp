@@ -25,7 +25,7 @@ public:
     void render(ui::Renderer& r, ui::widgets::Rect canvasBox) override;
 
     ui::widgets::Size measure() const override;
-    ui::widgets::Size desiredSize() const override;
+    ui::widgets::Size desiredSize(const ui::widgets::Size& available) const override;
 
     // Allow focus/navigation systems to traverse the back button (if present)
     size_t childCount() const override;

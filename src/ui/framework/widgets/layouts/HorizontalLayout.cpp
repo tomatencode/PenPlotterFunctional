@@ -35,9 +35,9 @@ Size HorizontalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Size HorizontalLayout::desiredSize() const
+Size HorizontalLayout::desiredSize(const Size& available) const
 {
-    return {LCD_COLS, LCD_ROWS};
+    return available;
 }
 
 uint16_t HorizontalLayout::getTotalWidth() const

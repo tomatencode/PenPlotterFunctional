@@ -55,9 +55,9 @@ Size VerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Size VerticalLayout::desiredSize() const
+Size VerticalLayout::desiredSize(const Size& available) const
 {
-    return {LCD_COLS, LCD_ROWS};
+    return available;
 }
 
 double VerticalLayout::getSpacing(uint16_t availableHeight) const
@@ -132,7 +132,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
             continue;
 
         Size MinChildSize = childWidget->measure();
-        Size DesiredChildSize = childWidget->desiredSize();
+        Size DesiredChildSize = childWidget->desiredSize({contentArea.w, MinChildSize.h});
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;

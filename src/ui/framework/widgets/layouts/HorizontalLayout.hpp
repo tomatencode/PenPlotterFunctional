@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "../core/LayoutWidget.hpp"
-#include "config/ui_config.hpp"
 
 namespace ui {
 namespace widgets {
@@ -17,7 +16,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
-    Size desiredSize() const override;
+    Size desiredSize(const Size& available) const override;
 
 private:
     // Calculate total width of all children including spacing
