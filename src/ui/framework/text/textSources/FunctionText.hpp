@@ -1,5 +1,8 @@
 #pragma once
 
+
+#include <functional>
+
 #include "../TextSource.hpp"
 #include "config/ui_config.hpp"
 
@@ -10,9 +13,9 @@ namespace ui {
 class FunctionText : public TextSource
 {
 public:
-    using TextFunc = const char* (*)();
+    using TextFunc = std::function<const char*()>;
 
-    FunctionText(TextFunc func) : _func(func) {}
+    FunctionText(TextFunc func) : _func(std::move(func)) {}
 
     const Glyph* getGlyphs() const override
     {
