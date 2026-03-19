@@ -9,6 +9,7 @@
 #include "../framework/widgets/core/LayoutStyle.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
+#include "../framework/widgets/leaves/SpacerWidget.hpp"
 
 #include "WifiIndicator.hpp"
 

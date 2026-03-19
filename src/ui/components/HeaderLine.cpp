@@ -32,7 +32,8 @@ HeaderLine::HeaderLine(const char* headerText, bool backButton,
         _layout = make_layout<HorizontalLayout>(
             style,
             make_widget<WifiIndicator>(),
-            make_widget<LabelWidget>(headerText)
+            make_widget<LabelWidget>(headerText),
+            make_widget<SpacerWidget>(1, 1)
         );
     }
 }
