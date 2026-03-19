@@ -2,26 +2,21 @@
 
 namespace ui {
 
-FocusManager::FocusManager() : _count(0), _index(0), _widgets() {}
+FocusManager::FocusManager() : _widgets(), _index(0) {}
 
-void FocusManager::setWidgets(ui::widgets::SelectableWidget* const* widgets, size_t count)
+void FocusManager::setWidgets(std::vector<ui::widgets::SelectableWidget*> widgets)
 {
-    _count = (count > MAX_SELECTABLE_WIDGETS) ? MAX_SELECTABLE_WIDGETS : count;
-    
-    // Copy widgets into our own storage
-    for (size_t i = 0; i < _count; i++)
-        _widgets[i] = widgets[i];
-    
+    _widgets = std::move(widgets);
     _index = 0;
 
     // Give focus to the first widget if available
-    if(_count > 0 && _widgets[_index] != nullptr)
+    if (!_widgets.empty() && _widgets[_index] != nullptr)
         _widgets[_index]->focus();
 }
 
 void FocusManager::handleInput(InputState& input)
 {
-    if(_count == 0 || _widgets[_index] == nullptr) return;
+    if (_widgets.empty() || _widgets[_index] == nullptr) return;
 
     _widgets[_index]->handleInput(input);
 
@@ -39,28 +34,28 @@ void FocusManager::handleInput(InputState& input)
 // Move focus to the next widget
 void FocusManager::next()
 {
-    if(_count == 0) return;
+    if (_widgets.empty()) return;
 
-    if(_widgets[_index] != nullptr)
+    if (_widgets[_index] != nullptr)
         _widgets[_index]->unfocus();
     
-    _index = (_index + 1) % _count;
+    _index = (_index + 1) % _widgets.size();
     
-    if(_widgets[_index] != nullptr)
+    if (_widgets[_index] != nullptr)
         _widgets[_index]->focus();
 }
 
 // Move focus to the previous widget
 void FocusManager::prev()
 {
-    if(_count == 0) return;
+    if (_widgets.empty()) return;
 
-    if(_widgets[_index] != nullptr)
+    if (_widgets[_index] != nullptr)
         _widgets[_index]->unfocus();
     
-    _index = (_index + _count - 1) % _count;
+    _index = (_index + _widgets.size() - 1) % _widgets.size();
     
-    if(_widgets[_index] != nullptr)
+    if (_widgets[_index] != nullptr)
         _widgets[_index]->focus();
 }
 

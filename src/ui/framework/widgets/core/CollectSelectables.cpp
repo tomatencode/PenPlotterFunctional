@@ -1,17 +1,16 @@
 #include "CollectSelectables.hpp"
-#include "ui/framework/focusManager/FocusManager.hpp"
 
 namespace ui {
 namespace widgets {
 
-void collectSelectables(Widget* w, SelectableWidget* out[], size_t& count) {
-    if (!w || count >= MAX_SELECTABLE_WIDGETS) return;
+void collectSelectables(Widget* w, std::vector<SelectableWidget*>& out) {
+    if (!w) return;
 
     if (w->isSelectable())
-        out[count++] = static_cast<SelectableWidget*>(w);
+        out.push_back(static_cast<SelectableWidget*>(w));
 
     for (size_t i = 0; i < w->childCount(); i++)
-        collectSelectables(w->child(i), out, count);
+        collectSelectables(w->child(i), out);
 }
 
 } // namespace widgets

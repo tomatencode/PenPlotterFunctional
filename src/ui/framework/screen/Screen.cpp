@@ -19,12 +19,11 @@ void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
 {
     root = std::move(rootWidget);
 
-    widgets::SelectableWidget* selectableWidgets[MAX_WIDGETS_PER_SCREEN] = { nullptr };
-    size_t selectableCount = 0;
+    std::vector<widgets::SelectableWidget*> selectableWidgets;
 
     // Collect selectable widgets recursively from the root widget
-    collectSelectables(root.get(), selectableWidgets, selectableCount);
-    focusManager.setWidgets(selectableWidgets, selectableCount);
+    collectSelectables(root.get(), selectableWidgets);
+    focusManager.setWidgets(std::move(selectableWidgets));
 }
 
 Router* Screen::router() const
