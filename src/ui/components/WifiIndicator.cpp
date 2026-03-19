@@ -1,6 +1,7 @@
 #include "WifiIndicator.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "../framework/text/textSources/FunctionGlyph.hpp"
+#include "../framework/text/customChars.hpp"
 
 extern WebInterface webInterface;
 
@@ -17,7 +18,7 @@ WifiIndicator::WifiIndicator()
               std::unique_ptr<FunctionGlyph>(
                   new FunctionGlyph([]() -> const Glyph* {
                       static Glyph glyphs[2] = {GLYPH_SPACE, GLYPH_TERMINATOR};
-                      glyphs[0] = webInterface.isWiFiConnected() ? Glyph('W') : GLYPH_SPACE;
+                      glyphs[0] = webInterface.isWiFiConnected() ? Glyph(CustomChar::WifiSymbol) : Glyph(CustomChar::NoWifiSymbol);
                       return glyphs;
                   })
               )

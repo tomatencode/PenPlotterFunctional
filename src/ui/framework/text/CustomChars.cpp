@@ -3,104 +3,104 @@
 namespace ui {
 
 // Each byte represents a row (5 LSBs used)
-uint8_t CURSOR_L_BITMAP[8] = {
-	0b00000,
-	0b01000,
-	0b00100,
-	0b00010,
-	0b00010,
-	0b00100,
-	0b01000,
-	0b00000
-};
-
-uint8_t CURSOR_R_BITMAP[8] = {
-	0b00000,
-	0b00010,
-	0b00100,
-	0b01000,
-	0b01000,
-	0b00100,
-	0b00010,
-	0b00000
-};
-
-uint8_t CURSOR_DWN_L_BITMAP[8] = {
-	0b00000,
-	0b01000,
-	0b01100,
-	0b01110,
-	0b01110,
-	0b01100,
-	0b01000,
-	0b00000
-};
-
-uint8_t CURSOR_DWN_R_BITMAP[8] = {
-	0b00000,
-	0b00010,
-	0b00110,
-	0b01110,
-	0b01110,
-	0b00110,
-	0b00010,
-	0b00000
-};
-
-uint8_t BOX_CHECKD_BITMAP[8] = {
-	0b00000,
-	0b00000,
-	0b01110,
-	0b11111,
-	0b11111,
-	0b11111,
-	0b01110,
-	0b00000
-};
-
-uint8_t BOX_EMPTY_BITMAP[8] = {
-	0b00000,
+uint8_t WifiSymbol_BITMAP[8] = {
 	0b00000,
 	0b01110,
 	0b10001,
-	0b10001,
-	0b10001,
+	0b00000,
 	0b01110,
+	0b00000,
+	0b00100,
 	0b00000
 };
 
-uint8_t ENTER_BITMAP[8] = {
+uint8_t NoWifiSymbol_BITMAP[8] = {
 	0b00000,
-	0b10000,
-	0b10000,
-	0b10100,
-	0b10010,
-	0b11111,
-	0b00010,
-	0b00100
+	0b00000,
+	0b00100,
+	0b00100,
+	0b00100,
+	0b00000,
+	0b00100,
+	0b00000
 };
 
-uint8_t PROGRESS_FULL_BITMAP[8] = {
+uint8_t CustomChar_3_BITMAP[8] = {
 	0b00000,
-	0b11111,
-	0b11111,
-	0b11111,
-	0b11111,
-	0b11111,
-	0b11111,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
+uint8_t CustomChar_4_BITMAP[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
+uint8_t CustomChar_5_BITMAP[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
+uint8_t CustomChar_6_BITMAP[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
+uint8_t CustomChar_7_BITMAP[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
+uint8_t CustomChar_8_BITMAP[8] = {
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
+	0b00000,
 	0b00000
 };
 
 
 uint8_t* CUSTOM_CHAR_MAP[] = {
-    CURSOR_L_BITMAP,
-    CURSOR_R_BITMAP,
-    CURSOR_DWN_L_BITMAP,
-    CURSOR_DWN_R_BITMAP,
-    BOX_CHECKD_BITMAP,
-    BOX_EMPTY_BITMAP,
-    ENTER_BITMAP,
-    PROGRESS_FULL_BITMAP
+    WifiSymbol_BITMAP,
+    NoWifiSymbol_BITMAP,
+    CustomChar_3_BITMAP,
+    CustomChar_4_BITMAP,
+    CustomChar_5_BITMAP,
+    CustomChar_6_BITMAP,
+    CustomChar_7_BITMAP,
+    CustomChar_8_BITMAP
 };
 
 } // namespace ui
