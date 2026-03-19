@@ -8,9 +8,16 @@
 
 using namespace ui;
 
+widgets::LayoutStyle CenterdLayoutStyle()
+{
+    widgets::LayoutStyle style;
+    style.horizontalAlign = widgets::HorizontalAlignment::Center;
+    return style;
+}
+
 TestScreen::TestScreen()
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(widgets::LayoutStyle(),
+        widgets::make_layout<widgets::VerticalLayout>(CenterdLayoutStyle(),
             widgets::make_widget<components::HeaderLine>("Pen Plotter UI", false),
             widgets::make_widget<widgets::ButtonWidget>(
                 widgets::make_widget<widgets::LabelWidget>("Next Screen"),

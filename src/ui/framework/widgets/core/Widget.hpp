@@ -15,7 +15,10 @@ public:
 
     virtual void render(Renderer& r, Rect canvasBox) = 0;
 
+    // measure() returns the minimum size needed to render the widget properly.
     virtual Size measure() const { return Size{0, 0}; }
+    // desiredSize() can be overridden to specify a preferred size that may be larger than the minimum.
+    virtual Size desiredSize() const { return measure(); }
 
     virtual bool isSelectable() const { return false; }
 

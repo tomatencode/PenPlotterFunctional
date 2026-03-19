@@ -47,6 +47,13 @@ Size HeaderLine::measure() const
     return {0, 0};
 }
 
+Size HeaderLine::desiredSize() const
+{
+    if (_layout)
+        return _layout->desiredSize();
+    return {0, 0};
+}
+
 void HeaderLine::render(ui::Renderer& r, Rect canvasBox)
 {
     if (!_layout)
