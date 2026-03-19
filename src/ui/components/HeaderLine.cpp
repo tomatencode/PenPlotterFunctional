@@ -2,6 +2,7 @@
 #include "../framework/widgets/Builder.hpp"
 
 using namespace ui;
+using namespace widgets;
 
 namespace components {
 
@@ -10,42 +11,42 @@ HeaderLine::HeaderLine(const char* headerText, bool backButton,
     : Widget()
     , _layout(nullptr)
 {
-    widgets::LayoutStyle style = widgets::LayoutStyle();
-    style.spacingMode = widgets::SpacingMode::SpaceBetween;
+    LayoutStyle style = LayoutStyle();
+    style.spacingMode = SpacingMode::SpaceBetween;
 
     if (backButton)
     {
-        _layout = widgets::make_layout<widgets::HorizontalLayout>(
+        _layout = make_layout<HorizontalLayout>(
             style,
-            widgets::make_widget<WifiIndicator>(),
-            widgets::make_widget<widgets::LabelWidget>(headerText),
-            widgets::make_widget<widgets::ButtonWidget>(
-                widgets::make_widget<widgets::LabelWidget>("Back"),
-                widgets::ButtonStyle(),
+            make_widget<WifiIndicator>(),
+            make_widget<LabelWidget>(headerText),
+            make_widget<ButtonWidget>(
+                make_widget<LabelWidget>("Back"),
+                ButtonStyle(),
                 onBackPress
             )
         );
     }
     else
     {
-        _layout = widgets::make_layout<widgets::HorizontalLayout>(
+        _layout = make_layout<HorizontalLayout>(
             style,
-            widgets::make_widget<WifiIndicator>(),
-            widgets::make_widget<widgets::LabelWidget>(headerText)
+            make_widget<WifiIndicator>(),
+            make_widget<LabelWidget>(headerText)
         );
     }
 }
 
 HeaderLine::~HeaderLine() = default;
 
-widgets::Size HeaderLine::measure() const
+Size HeaderLine::measure() const
 {
     if (_layout)
         return _layout->measure();
     return {0, 0};
 }
 
-void HeaderLine::render(ui::Renderer& r, widgets::Rect canvasBox)
+void HeaderLine::render(ui::Renderer& r, Rect canvasBox)
 {
     if (!_layout)
         return;
@@ -58,7 +59,7 @@ size_t HeaderLine::childCount() const
     return _layout ? _layout->childCount() : 0;
 }
 
-widgets::Widget* HeaderLine::child(size_t index) const
+Widget* HeaderLine::child(size_t index) const
 {
     return _layout ? _layout->child(index) : nullptr;
 }

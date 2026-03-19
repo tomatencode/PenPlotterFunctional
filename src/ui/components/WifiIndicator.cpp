@@ -5,15 +5,17 @@
 extern WebInterface webInterface;
 
 using namespace ui;
+using namespace widgets;
 
 namespace components {
 
+
 WifiIndicator::WifiIndicator()
     : Widget()
-    , _label(std::unique_ptr<ui::widgets::LabelWidget>(
-          new ui::widgets::LabelWidget(
-              std::unique_ptr<ui::FunctionGlyph>(
-                  new ui::FunctionGlyph([]() -> const Glyph* {
+    , _label(std::unique_ptr<LabelWidget>(
+          new LabelWidget(
+              std::unique_ptr<FunctionGlyph>(
+                  new FunctionGlyph([]() -> const Glyph* {
                       static Glyph glyphs[2] = {GLYPH_SPACE, GLYPH_TERMINATOR};
                       glyphs[0] = webInterface.isWiFiConnected() ? Glyph('W') : GLYPH_SPACE;
                       return glyphs;
@@ -24,15 +26,15 @@ WifiIndicator::WifiIndicator()
 {
 }
 
-void WifiIndicator::render(Renderer& r, widgets::Rect canvasBox)
+void WifiIndicator::render(Renderer& r, Rect canvasBox)
 {
     if (_label)
         _label->render(r, canvasBox);
 }
 
-widgets::Size WifiIndicator::measure() const
+Size WifiIndicator::measure() const
 {
-    return _label ? _label->measure() : widgets::Size{0, 0};
+    return _label ? _label->measure() : Size{0, 0};
 }
 
 } // namespace components
