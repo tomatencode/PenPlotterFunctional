@@ -105,6 +105,8 @@ void ButtonWidget::handleInput(InputState& input)
 
     if (input.buttonState.buttonReleased && _onRelease)
         _onRelease();
+
+    input.buttonState.buttonPressed = false; // consume press event
 }
 
 void ButtonWidget::onFocusGained()
