@@ -29,8 +29,7 @@ SecondaryScreen::SecondaryScreen()
                 widgets::make_widget<widgets::ValueSelector<int>>(5,
                     [](int val) { return val + 1; }, // next value (stub)
                     [](int val) { return val - 1; }, // prev value (stub)
-                    [](const int& newValue) { /* onChange callback (stub) */ },
-                    [](const int& val) { return std::to_string(val); } // ToString function
+                    [](const int& newValue) { /* onChange callback (stub) */ }
                 )
             )
 

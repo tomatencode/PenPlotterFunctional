@@ -38,6 +38,13 @@ template <typename T>
 class ValueSelector : public SelectableWidget
 {
 public:
+    static std::string defaultToString(const T& value)
+    {
+        std::ostringstream ss;
+        ss << value;
+        return ss.str();
+    }
+
     ValueSelector(
         T initialValue,
         std::function<T(T)> next,
@@ -50,7 +57,7 @@ public:
         , _next(std::move(next))
         , _prev(std::move(prev))
         , _onChange(std::move(onChange))
-        , _ToString(std::move(ToString))
+        , _ToString(ToString ? std::move(ToString) : defaultToString)
         , _style(style)
     {
     }
