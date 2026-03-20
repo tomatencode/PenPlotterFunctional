@@ -1,10 +1,11 @@
 #include "HeaderLine.hpp"
 #include "../framework/widgets/Builder.hpp"
 
-using namespace ui;
-using namespace widgets;
 
+namespace ui {
 namespace components {
+
+using namespace widgets;
 
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          std::function<void()> onBackPress)
@@ -73,3 +74,4 @@ Widget* HeaderLine::child(size_t index) const
 }
 
 } // namespace components
+} // namespace ui

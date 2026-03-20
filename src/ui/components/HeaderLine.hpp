@@ -13,6 +13,7 @@
 
 #include "WifiIndicator.hpp"
 
+namespace ui {
 namespace components {
 
 class HeaderLine: public ui::widgets::Widget
@@ -36,3 +37,4 @@ private:
 };
 
 } // namespace components
+} // namespace ui

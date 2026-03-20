@@ -5,10 +5,10 @@
 
 extern WebInterface webInterface;
 
-using namespace ui;
-using namespace widgets;
-
+namespace ui {
 namespace components {
+
+using namespace widgets;
 
 
 WifiIndicator::WifiIndicator()
@@ -39,3 +39,4 @@ Size WifiIndicator::measure() const
 }
 
 } // namespace components
+} // namespace ui

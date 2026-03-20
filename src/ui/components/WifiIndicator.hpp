@@ -5,6 +5,7 @@
 #include "../framework/widgets/core/Widget.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 
+namespace ui {
 namespace components {
 
 class WifiIndicator: public ui::widgets::Widget
@@ -21,3 +22,4 @@ private:
 };
 
 } // namespace components
+} // namespace ui
