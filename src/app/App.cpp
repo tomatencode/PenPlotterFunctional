@@ -3,7 +3,7 @@
 #include "storage/FileSystem.hpp"
 #include "jobManager/JobManager.hpp"
 #include "webInterface/WebInterface.hpp"
-#include "ui/UI.hpp"
+#include "ui/UiManager.hpp"
 
 #include <LCD-I2C.h>
 #include "hardware/display/LcdDisplay.hpp"
@@ -22,7 +22,7 @@ RotaryEncoder encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_D
 
 Buzzer buzzer(BUZZER_PIN, 5);
 
-UI uiManager(display, encoder, buzzer);
+ui::UiManager uiManager(display, encoder, buzzer);
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 

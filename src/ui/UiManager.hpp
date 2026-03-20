@@ -9,24 +9,31 @@
 #include "framework/input/InputState.hpp"
 #include "framework/router/Router.hpp"
 
-class Screen;
+namespace ui {
 
-class UI
+class UiManager
 {
 public:
-    UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
     void update();
 
 private:
-    ui::InputState readInputs();
+    // abstracted input reading to keep update() clean and focused on UI logic
+    InputState readInputs();
 
-    ui::Router _router;
-    ui::Renderer _renderer;
+    // Core UI components
+    Router _router;
+    Renderer _renderer;
 
+    // References to hardware interfaces (not owned by UI)
     LcdDisplay& _display;
     RotaryEncoder& _encoder;
     Buzzer& _buzzer;
+
+    unsigned long _lastUpdateTime = 0;  // For non-blocking timing
 };
+
+} // namespace ui

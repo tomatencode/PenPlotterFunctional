@@ -1,39 +1,44 @@
-#include "UI.hpp"
+#include "UiManager.hpp"
 
 #include "framework/text/CustomChars.hpp"
-#include "screens/TestUI.hpp"
+#include "screens/HomeScreen.hpp"
 
 #include <string>
 
-UI::UI(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
+namespace ui {
+
+UiManager::UiManager(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
     : _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
 
-void UI::init()
+void UiManager::init()
 {
     _renderer.init();
 
     // Start on the first screen
-    static TestScreen testScreen;
-    _router.pushScreen(&testScreen);
+    static screens::HomeScreen homeScreen;
+    _router.pushScreen(&homeScreen);
 
     Serial.println("UI initialized.");
 }
 
-void UI::update()
+void UiManager::update()
 {
-    ui::InputState input = readInputs();
+    // Simple non-blocking timing to limit update frequency (e.g., 20 FPS)
+    unsigned long currentTime = millis();
+    if (currentTime - _lastUpdateTime < 50) return;
+
+    InputState input = readInputs();
     _router.handleInput(input);
 
-    // render to buffer
+    // render current screen to buffer
     _router.render(_renderer);
 
-    // render buffer to display
+    // push buffer to display
     _renderer.renderToDisplay();
-    delay(50); // simple debounce for display updates, adjust as needed
 }
 
-ui::InputState UI::readInputs()
+ui::InputState UiManager::readInputs()
 {
     ui::InputState state;
 
@@ -44,3 +49,5 @@ ui::InputState UI::readInputs()
 
     return state;
 }
+
+} // namespace ui
