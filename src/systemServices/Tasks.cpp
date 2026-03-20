@@ -1,8 +1,8 @@
 #include "Tasks.hpp"
 
 #include "systemServices/Queues.hpp"
-#include "app/App.hpp"
-#include "machine/Machine.hpp"
+#include "applicationManager/ApplicationManager.hpp"
+#include "plottingManager/PlottingManager.hpp"
 #include "shared/SharedData.hpp"
 
 extern GCodeParser gcodeParser;
@@ -24,11 +24,11 @@ void motionTask(void *parameter)
     Serial.println(xPortGetCoreID());
 
     // Initialize all motion-related subsystems
-    initMachine();
+    plottingManagerInit();
 
     while (true)
     {
-        machineUpdate();
+        plottingManagerUpdate();
     }
 }
 
@@ -47,12 +47,12 @@ void systemTask(void *parameter)
     Serial.println(xPortGetCoreID());
 
     // Initialize all Core 0 subsystems
-    appInit();
+    applicationManagerInit();
 
     while (true)
     {
         // Non-blocking updates
-        appUpdate();  // updates: web interface, UI, JobManager
+        applicationManagerUpdate();  // updates: web interface, UI, JobManager
 
         // Small delay to yield CPU, adjust if needed
         vTaskDelay(10 / portTICK_PERIOD_MS);

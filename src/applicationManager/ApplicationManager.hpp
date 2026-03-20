@@ -3,5 +3,5 @@
 
 extern JobManager jobManager;
 
-void appInit();
-void appUpdate();
+void applicationManagerInit();
+void applicationManagerUpdate();

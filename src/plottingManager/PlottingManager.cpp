@@ -1,4 +1,4 @@
-#include "Machine.hpp"
+#include "PlottingManager.hpp"
 
 #include <Arduino.h>
 #include <TMCStepper.h>
@@ -71,7 +71,7 @@ static void configureDriver(TMC2209Driver& driver)
     driver.setMicrosteps(MICROSTEPS);
 }
 
-void initMachine()
+void plottingManagerInit()
 {
     pinMode(SERVO_PIN, OUTPUT);
     penServo.attach(SERVO_PIN);
@@ -88,17 +88,7 @@ void initMachine()
     Serial.println("Machine initialized.");
 }
 
-std::string motionCommandToString(MotionCommand command)
-{
-    switch (command) {
-        case MotionCommand::NONE:  return "NONE";
-        case MotionCommand::PAUSE: return "PAUSE";
-        case MotionCommand::ABORT:  return "ABORT";
-        default:                   return "UNKNOWN";
-    }
-}
-
-void machineUpdate()
+void plottingManagerUpdate()
 {
     GcodeMessage msg;
 

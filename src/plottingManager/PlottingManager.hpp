@@ -5,5 +5,5 @@
 // Expose the parser so tasks can use it
 extern GCodeParser gcodeParser;
 
-void initMachine();
-void machineUpdate();
+void plottingManagerInit();
+void plottingManagerUpdate();

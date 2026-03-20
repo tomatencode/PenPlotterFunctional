@@ -1,7 +1,7 @@
 #include "WebInterface.hpp"
 #include "jobManager/JobManager.hpp"
 #include "storage/FileSystem.hpp"
-#include "app/App.hpp"
+#include "applicationManager/ApplicationManager.hpp"
 
 void WebInterface::handleFileList()
 {

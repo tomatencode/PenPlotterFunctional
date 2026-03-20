@@ -1,4 +1,4 @@
-#include "App.hpp"
+#include "ApplicationManager.hpp"
 
 #include "storage/FileSystem.hpp"
 #include "jobManager/JobManager.hpp"
@@ -26,7 +26,7 @@ ui::UiManager uiManager(display, encoder, buzzer);
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
-void appInit()
+void applicationManagerInit()
 {
     // Initialize lcd
     Wire.begin();
@@ -48,7 +48,7 @@ void appInit()
     buzzer.playMelody(startupMelody);
 }
 
-void appUpdate()
+void applicationManagerUpdate()
 {
     webInterface.update();
     jobManager.jobManagerUpdate();
