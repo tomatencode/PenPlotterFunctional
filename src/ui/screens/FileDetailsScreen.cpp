@@ -2,6 +2,7 @@
 
 // Include related screens to enable navigation
 #include "../framework/router/Router.hpp"
+#include "PlottingScreen.hpp"
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
@@ -34,13 +35,6 @@ String formatPlotTime(size_t seconds) {
     return String(mins) + "m " + String(secs) + "s";
 }
 
-String shortFilename(const String& filename) {
-    if (filename.endsWith(".gcode")) {
-        return filename.substring(0, filename.length() - 6);
-    }
-    return filename;
-}
-
 std::unique_ptr<ui::TextSource> createFileSizeTextSource(const String& filename) {
     return std::make_unique<FunctionText>([filename]() {
         size_t size = storage::fsFileSize("/" + filename);
@@ -62,7 +56,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename)
             widgets::make_layout<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(shortFilename(filename).c_str(), true, [this]() {
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
                     if (router()) {
                         router()->popScreen(); // Go back to the previous screen
                     }
@@ -74,7 +68,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename)
             widgets::make_layout<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(shortFilename(filename).c_str(), true, [this]() {
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
                     if (router()) {
                         router()->popScreen(); // Go back to the previous screen
                     }
@@ -90,8 +84,11 @@ FileDetailsScreen::FileDetailsScreen(const String& filename)
                     widgets::make_widget<widgets::ButtonWidget>(
                         widgets::make_widget<widgets::LabelWidget>("Plot"),
                         widgets::ButtonStyle(),
-                        [filename]() {
-                            // Handle plot file action
+                        [filename, this]() {
+                            PlottingScreen* plottingScreen = new PlottingScreen(filename);
+                            if (router()) {
+                                router()->pushScreen(plottingScreen);
+                            }
                         }
                     ),
                     widgets::make_widget<widgets::ButtonWidget>(

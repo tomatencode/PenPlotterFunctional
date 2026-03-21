@@ -3,8 +3,9 @@
 namespace ui {
 namespace widgets {
 
-ProgressBarWidget::ProgressBarWidget(std::function<uint8_t()> getProgress)
+ProgressBarWidget::ProgressBarWidget(ProgressBarStyle style, std::function<uint8_t()> getProgress)
     : Widget(),
+      _style(style),
       _getProgress(getProgress)
 {}
 
@@ -38,17 +39,17 @@ void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
     for (uint8_t row = 0; row < barHeight; row++)
     {
         // Draw opening bracket
-        r.drawGlyphToBuffer(x, y + row, Glyph{'['});
+        r.drawGlyphToBuffer(x, y + row, _style.leftBracket);
 
         // Draw filled and empty portions
         for (uint8_t col = 0; col < innerWidth; col++)
         {
-            Glyph g = (col < filledWidth) ? Glyph{'='} : Glyph{' '};
+            Glyph g = (col < filledWidth) ? _style.filledGlyph : _style.emptyGlyph;
             r.drawGlyphToBuffer(x + 1 + col, y + row, g);
         }
 
         // Draw closing bracket
-        r.drawGlyphToBuffer(x + barWidth - 1, y + row, Glyph{']'});
+        r.drawGlyphToBuffer(x + barWidth - 1, y + row, _style.rightBracket);
     }
 }
 
