@@ -88,7 +88,7 @@ bool HorizontalLayout::canExpandVertically() const {
 double HorizontalLayout::getSpacing(uint16_t availableWidth) const
 {
     const size_t count = childCount();
-    if (count <= 1) return 0;
+    if (count < 1) return 0;
     
     uint16_t totalChildWidth = 0;
     for (size_t i = 0; i < count; i++)

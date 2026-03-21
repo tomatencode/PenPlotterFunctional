@@ -87,7 +87,7 @@ bool VerticalLayout::canExpandVertically() const {
 double VerticalLayout::getSpacing(uint16_t availableHeight) const
 {
     const size_t count = childCount();
-    if (count <= 1) return 0;
+    if (count < 1) return 0;
     
     uint16_t totalChildHeight = 0;
     for (size_t i = 0; i < count; i++)
