@@ -16,7 +16,7 @@ void UiManager::init()
     _renderer.init();
 
     // Start on the first screen
-    static screens::HomeScreen homeScreen;
+    static screens::HomeScreen homeScreen(_jobManager);
     _router.pushScreen(&homeScreen);
 
     Serial.println("UI initialized.");

@@ -11,6 +11,9 @@ public:
     void resume();
     void abort();
 
+    bool isJobPaused() const;
+    double currentProgress() const;
+
     void jobManagerUpdate();
 private:
     File currentFile;

@@ -50,7 +50,7 @@ std::unique_ptr<ui::TextSource> createPlotTimeTextSource(const String& filename)
     });
 }
 
-FileDetailsScreen::FileDetailsScreen(const String& filename)
+FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager)
     : Screen(
         !storage::fsExists("/" + filename) ? (
             widgets::make_layout<widgets::VerticalLayout>(
@@ -84,8 +84,8 @@ FileDetailsScreen::FileDetailsScreen(const String& filename)
                     widgets::make_widget<widgets::ButtonWidget>(
                         widgets::make_widget<widgets::LabelWidget>("Plot"),
                         widgets::ButtonStyle(),
-                        [filename, this]() {
-                            PlottingScreen* plottingScreen = new PlottingScreen(filename);
+                        [filename, this, &jobManager]() {
+                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobManager);
                             if (router()) {
                                 router()->pushScreen(plottingScreen);
                             }

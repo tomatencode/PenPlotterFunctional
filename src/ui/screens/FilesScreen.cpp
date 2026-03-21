@@ -17,7 +17,7 @@ namespace ui {
 namespace screens {
 
 
-FilesScreen::FilesScreen()
+FilesScreen::FilesScreen(JobManager& jobManager)
     : Screen(
         widgets::make_layout<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{},
@@ -26,8 +26,8 @@ FilesScreen::FilesScreen()
                     router()->popScreen(); // Go back to the previous screen
                 }
             }),
-            widgets::make_widget<components::FileList>([this](const String& file) {
-                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file);
+            widgets::make_widget<components::FileList>([this, &jobManager](const String& file) {
+                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobManager);
                 if (router()) {
                     router()->pushScreen(detailsScreen);
                 }

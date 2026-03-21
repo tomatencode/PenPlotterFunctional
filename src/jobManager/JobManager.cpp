@@ -48,6 +48,26 @@ void JobManager::abort()
     currentLineIndex = 0;
 }
 
+bool JobManager::isJobPaused() const
+{
+    return motionCommand == MotionCommand::PAUSE;
+}
+
+double JobManager::currentProgress() const
+{
+    if (!currentFile)
+        return 0.0;
+
+    size_t totalBytes = currentFile.size();
+    size_t currentBytes = currentFile.position();
+
+    Serial.println("Calculating progress: " + String(currentBytes) + " / " + String(totalBytes));
+
+    if (totalBytes == 0)
+        return 0.0;
+
+    return static_cast<double>(currentBytes) / static_cast<double>(totalBytes);
+}
 
 void JobManager::jobManagerUpdate()
 {

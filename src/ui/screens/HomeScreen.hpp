@@ -2,6 +2,8 @@
 
 #include "../framework/screen/Screen.hpp"
 
+#include "jobManager/JobManager.hpp"
+
 namespace ui {
 namespace screens {
 
@@ -9,7 +11,7 @@ namespace screens {
 class HomeScreen : public ui::Screen
 {
 public:
-    HomeScreen();
+    HomeScreen(JobManager& jobManager);
 };
 
 } // namespace screens

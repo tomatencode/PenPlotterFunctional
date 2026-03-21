@@ -2,6 +2,8 @@
 
 #include "../framework/screen/Screen.hpp"
 
+#include "jobManager/JobManager.hpp"
+
 namespace ui {
 namespace screens {
 
@@ -9,7 +11,7 @@ namespace screens {
 class FileDetailsScreen : public ui::Screen
 {
 public:
-    FileDetailsScreen(const String& filename);
+    FileDetailsScreen(const String& filename, JobManager& jobManager);
 };
 
 } // namespace screens
