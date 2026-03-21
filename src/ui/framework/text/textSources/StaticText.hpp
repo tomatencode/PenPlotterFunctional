@@ -13,14 +13,13 @@ public:
     StaticText(const char* str)
     {
         size_t len = strlen(str);
-        size_t i = 0;
 
         // Copy chars into internal glyph buffer
-        for (; i < len && i < MAX_LENGTH; i++)
+        for (size_t i = 0; i < len && i < MAX_LENGTH; i++)
             _glyphs[i] = Glyph(static_cast<uint8_t>(str[i]));
 
         // Add terminator
-        _glyphs[i] = GLYPH_TERMINATOR;
+        _glyphs[len] = GLYPH_TERMINATOR;
     }
 
     const Glyph* getGlyphs() const override

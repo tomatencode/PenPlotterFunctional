@@ -21,14 +21,13 @@ public:
     {
         const char* str = _func();
         size_t len = strlen(str);
-        size_t i = 0;
 
         // Copy chars into internal glyph buffer
-        for (; i < len && i < MAX_LENGTH - 1; i++)
-            _glyphs[i] = Glyph(static_cast<uint8_t>(str[i]));
+        for (size_t i = 0; i < len && i < MAX_LENGTH; i++)
+            _glyphs[i] = Glyph(str[i]);
 
         // Add terminator
-        _glyphs[i] = GLYPH_TERMINATOR;
+        _glyphs[len] = GLYPH_TERMINATOR;
         return _glyphs;
     }
 
