@@ -24,7 +24,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
-    Size desiredSize(const Size& available) const override;
+    bool canExpandHorizontally() const override { return true; }
 
 private:
     ProgressBarStyle _style;

@@ -55,9 +55,33 @@ Size VerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Size VerticalLayout::desiredSize(const Size& available) const
-{
-    return available;
+bool VerticalLayout::canExpandHorizontally() const {
+    // VerticalLayout can expand horizontally if any child can expand horizontally
+    for (size_t i = 0; i < childCount(); i++)
+    {
+        if (Widget* w = child(i))
+        {
+            if (w->canExpandHorizontally())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool VerticalLayout::canExpandVertically() const {
+    // VerticalLayout can expand vertically if any child can expand vertically or if spacing mode allows expansion
+    if (_style.spacingMode != SpacingMode::Fixed)
+        return true; // Spacing can expand to fill available space
+
+    for (size_t i = 0; i < childCount(); i++)
+    {
+        if (Widget* w = child(i))
+        {
+            if (w->canExpandVertically())
+                return true;
+        }
+    }
+    return false;
 }
 
 double VerticalLayout::getSpacing(uint16_t availableHeight) const
@@ -132,7 +156,11 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
             continue;
 
         Size minChildSize = childWidget->measure();
-        Size desiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
+        bool canExpandHorizontally = childWidget->canExpandHorizontally();
+
+        Size desiredChildSize = minChildSize;
+        if (canExpandHorizontally)
+            desiredChildSize.w = contentArea.w; // Fill available width
 
         Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
                           std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h - currentY))};

@@ -76,7 +76,11 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
             continue;
 
         Size minChildSize = childWidget->measure();
-        Size desiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
+        bool canExpandHorizontally = childWidget->canExpandHorizontally();
+
+        Size desiredChildSize = minChildSize;
+        if (canExpandHorizontally)
+            desiredChildSize.w = contentArea.w; // Fill available width
 
         Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
                           desiredChildSize.h}; // ScrollableVertical layout does not constrain height, only width
@@ -152,10 +156,22 @@ Size ScrollableVerticalLayout::measure() const
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Size ScrollableVerticalLayout::desiredSize(const Size& available) const
-{
-    // Scrollable layout desires to fill all available space to enable scrolling
-    return available;
+bool ScrollableVerticalLayout::canExpandHorizontally() const {
+    // ScrollableVerticalLayout can expand horizontally if any child can expand horizontally
+    for (size_t i = 0; i < childCount(); i++)
+    {
+        if (Widget* w = child(i))
+        {
+            if (w->canExpandHorizontally())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool ScrollableVerticalLayout::canExpandVertically() const {
+    // ScrollableVerticalLayout does not expand vertically because it scrolls instead
+    return false;
 }
 
 } // namespace widgets

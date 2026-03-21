@@ -56,9 +56,33 @@ Size HorizontalLayout::measure() const
     return Size{static_cast<uint8_t>(contentWidth), static_cast<uint8_t>(totalHeight)};
 }
 
-Size HorizontalLayout::desiredSize(const Size& available) const
-{
-    return available;
+bool HorizontalLayout::canExpandHorizontally() const {
+    // HorizontalLayout can expand horizontally if any child can expand horizontally or if spacing mode allows expansion
+    if (_style.spacingMode != SpacingMode::Fixed)
+        return true; // Spacing modes other than Fixed allow expansion to fill available space
+    
+    for (size_t i = 0; i < childCount(); i++)
+    {
+        if (Widget* w = child(i))
+        {
+            if (w->canExpandHorizontally())
+                return true;
+        }
+    }
+    return false;
+}
+
+bool HorizontalLayout::canExpandVertically() const {
+    // HorizontalLayout can expand vertically if any child can expand vertically
+    for (size_t i = 0; i < childCount(); i++)
+    {
+        if (Widget* w = child(i))
+        {
+            if (w->canExpandVertically())
+                return true;
+        }
+    }
+    return false;
 }
 
 double HorizontalLayout::getSpacing(uint16_t availableWidth) const
@@ -133,10 +157,14 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
             continue;
 
         Size minChildSize = childWidget->measure();
-        Size DesiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
+        bool canExpandVertically = childWidget->canExpandVertically();
 
-        Size childSize = {std::min(DesiredChildSize.w, static_cast<uint8_t>(contentArea.w - currentX)),
-                          std::min(DesiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
+        Size desiredChildSize = minChildSize;
+        if (canExpandVertically)
+            desiredChildSize.h = contentArea.h; // Fill available height
+
+        Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w - currentX)),
+                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
 
         // Calculate Y position based on vertical alignment
         int childY = contentArea.y;

@@ -14,11 +14,6 @@ Size ProgressBarWidget::measure() const
     return Size{2, 1}; // Minimum size to show empty bar: "[]"
 }
 
-Size ProgressBarWidget::desiredSize(const Size& available) const
-{
-    return Size{available.w, 1}; // Fill available width, but only 1 row high
-}
-
 void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
 {
     if (canvasBox.w == 0 || canvasBox.h == 0)

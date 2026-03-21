@@ -36,8 +36,12 @@ public:
         return _child ? _child->measure() : Size{0, 0};
     }
 
-    virtual Size desiredSize(const Size& available) const override {
-        return _child ? _child->desiredSize(available) : Size{0, 0};
+    virtual bool canExpandHorizontally() const override {
+        return _child ? _child->canExpandHorizontally() : false;
+    }
+
+    virtual bool canExpandVertically() const override {
+        return _child ? _child->canExpandVertically() : false;
     }
 private:
     std::unique_ptr<Widget> _child;
