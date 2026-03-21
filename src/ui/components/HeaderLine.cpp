@@ -12,29 +12,35 @@ HeaderLine::HeaderLine(const char* headerText, bool backButton,
     : Widget()
     , _layout(nullptr)
 {
-    LayoutStyle style = LayoutStyle();
+    HorizontalLayoutStyle style = HorizontalLayoutStyle();
     style.spacingMode = SpacingMode::SpaceBetween;
 
     if (backButton)
     {
-        _layout = make_layout<HorizontalLayout>(
+        _layout = make_widget<HorizontalLayout>(
             style,
-            make_widget<WifiIndicator>(),
-            make_widget<LabelWidget>(headerText),
-            make_widget<ButtonWidget>(
-                make_widget<LabelWidget>("Back"),
-                ButtonStyle(),
-                onBackPress
-            )
+            std::vector<std::unique_ptr<widgets::Widget>>{
+
+                make_widget<WifiIndicator>(),
+                make_widget<LabelWidget>(headerText),
+                make_widget<ButtonWidget>(
+                    make_widget<LabelWidget>("Back"),
+                    ButtonStyle(),
+                    onBackPress
+                )
+
+            }
         );
     }
     else
     {
-        _layout = make_layout<HorizontalLayout>(
+        _layout = make_widget<HorizontalLayout>(
             style,
-            make_widget<WifiIndicator>(),
-            make_widget<LabelWidget>(headerText),
-            make_widget<SpacerWidget>(1, 1)
+            std::vector<std::unique_ptr<widgets::Widget>>{
+                make_widget<WifiIndicator>(),
+                make_widget<LabelWidget>(headerText),
+                make_widget<SpacerWidget>(1, 1)
+            }
         );
     }
 }

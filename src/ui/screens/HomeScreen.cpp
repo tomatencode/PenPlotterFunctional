@@ -17,17 +17,17 @@ namespace screens {
 
 
 
-widgets::LayoutStyle HomeLayout()
+widgets::VerticalLayoutStyle HomeLayout()
 {
-    widgets::LayoutStyle style;
+    widgets::VerticalLayoutStyle style;
     style.horizontalAlign = widgets::HorizontalAlignment::Center;
     return style;
 }
 
 HomeScreen::HomeScreen()
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(HomeLayout(),
-        
+        widgets::make_widget<widgets::VerticalLayout>(HomeLayout(), std::vector<std::unique_ptr<widgets::Widget>>{
+    
             // Header with title and WiFi status
             widgets::make_widget<components::HeaderLine>("Pen Plotter", false),
 
@@ -53,6 +53,7 @@ HomeScreen::HomeScreen()
                     }
                 }
             )
+        }
         )
     )
 {

@@ -3,8 +3,8 @@
 namespace ui {
 namespace widgets {
 
-HorizontalLayout::HorizontalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
-    : LayoutWidget(std::move(children), style)
+HorizontalLayout::HorizontalLayout(const HorizontalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+    : LayoutWidget(std::move(children)), _style(style)
 {
 }
 
@@ -14,7 +14,28 @@ Size HorizontalLayout::measure() const
     if (count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
-    uint16_t contentWidth = getTotalWidth();
+    uint16_t contentWidth = 0;
+
+    for (size_t i = 0; i < count; i++)
+    {
+        if (Widget* w = child(i))
+            contentWidth += w->measure().w;
+    }
+    
+    // Add spacing based on mode
+    if (count > 1)
+    {
+        switch (_style.spacingMode)
+        {
+            case SpacingMode::Fixed:
+                contentWidth += (count - 1) * _style.spacing;
+                break;
+            // For even spacing modes, spacing is calculated dynamically in render()
+            default:
+                break;
+        }
+    }
+    
     uint16_t contentHeight = 0;
     
     // Find maximum height among children
@@ -29,43 +50,15 @@ Size HorizontalLayout::measure() const
     }
     
     // Add margins to get total size
-    uint16_t totalWidth = contentWidth + style().marginLeft + style().marginRight;
-    uint16_t totalHeight = contentHeight + style().marginTop + style().marginBottom;
+    uint16_t totalWidth = contentWidth + _style.marginLeft + _style.marginRight;
+    uint16_t totalHeight = contentHeight + _style.marginTop + _style.marginBottom;
     
-    return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
+    return Size{static_cast<uint8_t>(contentWidth), static_cast<uint8_t>(totalHeight)};
 }
 
 Size HorizontalLayout::desiredSize(const Size& available) const
 {
     return available;
-}
-
-uint16_t HorizontalLayout::getTotalWidth() const
-{
-    uint16_t totalWidth = 0;
-    const size_t count = childCount();
-
-    for (size_t i = 0; i < count; i++)
-    {
-        if (Widget* w = child(i))
-            totalWidth += w->measure().w;
-    }
-    
-    // Add spacing based on mode
-    if (count > 1)
-    {
-        switch (style().spacingMode)
-        {
-            case SpacingMode::Fixed:
-                totalWidth += (count - 1) * style().spacing;
-                break;
-            // For even spacing modes, spacing is calculated dynamically in render()
-            default:
-                break;
-        }
-    }
-    
-    return totalWidth;
 }
 
 double HorizontalLayout::getSpacing(uint16_t availableWidth) const
@@ -82,7 +75,7 @@ double HorizontalLayout::getSpacing(uint16_t availableWidth) const
     
     double remainingSpace = availableWidth - totalChildWidth;
     
-    switch (style().spacingMode)
+    switch (_style.spacingMode)
     {
         case SpacingMode::Even:
             // Distribute remaining space evenly between all gaps (including edges)
@@ -97,7 +90,7 @@ double HorizontalLayout::getSpacing(uint16_t availableWidth) const
             return remainingSpace / count;
             
         default: // Fixed
-            return style().spacing;
+            return _style.spacing;
     }
 }
 
@@ -109,10 +102,10 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
 
     // Apply margins to create content area
     Rect contentArea = {
-        static_cast<uint8_t>(canvasBox.x + style().marginLeft),
-        static_cast<uint8_t>(canvasBox.y + style().marginTop),
-        static_cast<uint8_t>(canvasBox.w - style().marginLeft - style().marginRight),
-        static_cast<uint8_t>(canvasBox.h - style().marginTop - style().marginBottom)
+        static_cast<uint8_t>(canvasBox.x + _style.marginLeft),
+        static_cast<uint8_t>(canvasBox.y + _style.marginTop),
+        static_cast<uint8_t>(canvasBox.w - _style.marginLeft - _style.marginRight),
+        static_cast<uint8_t>(canvasBox.h - _style.marginTop - _style.marginBottom)
     };
 
     // Calculate dynamic spacing if needed
@@ -123,11 +116,11 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
     int currentX = contentArea.x;
     
     // add initial spacing for even distribution modes
-    if (style().spacingMode == SpacingMode::Even) {
+    if (_style.spacingMode == SpacingMode::Even) {
         currentX += std::round(idealSpacing);
         spacingError += idealSpacing - std::round(idealSpacing);
     }
-    else if (style().spacingMode == SpacingMode::SpaceAround) {
+    else if (_style.spacingMode == SpacingMode::SpaceAround) {
         currentX += std::round(idealSpacing / 2);
         spacingError += (idealSpacing / 2) - std::round(idealSpacing / 2);
     }
@@ -147,7 +140,7 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
 
         // Calculate Y position based on vertical alignment
         int childY = contentArea.y;
-        switch (style().verticalAlign)
+        switch (_style.verticalAlign)
         {
             case VerticalAlignment::Middle:
                 childY += (contentArea.h - childSize.h) / 2;

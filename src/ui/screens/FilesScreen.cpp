@@ -12,17 +12,19 @@
 namespace ui {
 namespace screens {
 
-widgets::LayoutStyle FilesLayout()
+widgets::VerticalLayoutStyle FilesLayout()
 {
-    widgets::LayoutStyle style;
+    widgets::VerticalLayoutStyle style;
     style.horizontalAlign = widgets::HorizontalAlignment::Center;
     return style;
 }
 
 FilesScreen::FilesScreen()
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(FilesLayout(),
-        
+        widgets::make_widget<widgets::VerticalLayout>(
+        FilesLayout(),
+        std::vector<std::unique_ptr<widgets::Widget>>{
+
             // Header with title and WiFi status - includes a back button
             widgets::make_widget<components::HeaderLine>("Files", true, [this]() {
                 if (router()) {
@@ -30,7 +32,7 @@ FilesScreen::FilesScreen()
                 }
             })
             
-            
+        }
         )
     )
 {

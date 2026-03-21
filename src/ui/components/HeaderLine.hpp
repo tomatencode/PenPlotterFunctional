@@ -6,7 +6,6 @@
 #include "../framework/widgets/core/Widget.hpp"
 #include "../framework/widgets/core/Size.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
-#include "../framework/widgets/core/LayoutStyle.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
 #include "../framework/widgets/leaves/SpacerWidget.hpp"

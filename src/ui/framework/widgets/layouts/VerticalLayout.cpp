@@ -3,8 +3,8 @@
 namespace ui {
 namespace widgets {
 
-VerticalLayout::VerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const LayoutStyle& style)
-    : LayoutWidget(std::move(children), style)
+VerticalLayout::VerticalLayout(const VerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+    : LayoutWidget(std::move(children)), _style(style)
 {
 }
 
@@ -24,10 +24,10 @@ Size VerticalLayout::measure() const
     // Add spacing based on mode
     if (count > 1)
     {
-        switch (style().spacingMode)
+        switch (_style.spacingMode)
         {
             case SpacingMode::Fixed:
-                contentHeight += (count - 1) * style().spacing;
+                contentHeight += (count - 1) * _style.spacing;
                 break;
             // For even spacing modes, spacing is calculated dynamically in render()
             default:
@@ -49,8 +49,8 @@ Size VerticalLayout::measure() const
     }
     
     // Add margins to get total size
-    uint16_t totalWidth = contentWidth + style().marginLeft + style().marginRight;
-    uint16_t totalHeight = contentHeight + style().marginTop + style().marginBottom;
+    uint16_t totalWidth = contentWidth + _style.marginLeft + _style.marginRight;
+    uint16_t totalHeight = contentHeight + _style.marginTop + _style.marginBottom;
     
     return Size{static_cast<uint8_t>(totalWidth), static_cast<uint8_t>(totalHeight)};
 }
@@ -74,7 +74,7 @@ double VerticalLayout::getSpacing(uint16_t availableHeight) const
     
     double remainingSpace = availableHeight - totalChildHeight;
     
-    switch (style().spacingMode)
+    switch (_style.spacingMode)
     {
         case SpacingMode::Even:
             // Distribute remaining space evenly between all gaps (including edges)
@@ -89,7 +89,7 @@ double VerticalLayout::getSpacing(uint16_t availableHeight) const
             return remainingSpace / count;
             
         default: // Fixed
-            return style().spacing;
+            return _style.spacing;
     }
 }
 
@@ -101,10 +101,10 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
 
     // Apply margins to create content area
     Rect contentArea = {
-        static_cast<uint8_t>(canvasBox.x + style().marginLeft),
-        static_cast<uint8_t>(canvasBox.y + style().marginTop),
-        static_cast<uint8_t>(canvasBox.w - style().marginLeft - style().marginRight),
-        static_cast<uint8_t>(canvasBox.h - style().marginTop - style().marginBottom)
+        static_cast<uint8_t>(canvasBox.x + _style.marginLeft),
+        static_cast<uint8_t>(canvasBox.y + _style.marginTop),
+        static_cast<uint8_t>(canvasBox.w - _style.marginLeft - _style.marginRight),
+        static_cast<uint8_t>(canvasBox.h - _style.marginTop - _style.marginBottom)
     };
 
     // Calculate dynamic spacing if needed
@@ -115,11 +115,11 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
     int currentY = contentArea.y;
     
     // add initial spacing for even distribution modes
-    if (style().spacingMode == SpacingMode::Even) {
+    if (_style.spacingMode == SpacingMode::Even) {
         currentY += std::round(idealSpacing);
         spacingError += idealSpacing - std::round(idealSpacing);
     } 
-    else if (style().spacingMode == SpacingMode::SpaceAround) {
+    else if (_style.spacingMode == SpacingMode::SpaceAround) {
         currentY += std::round(idealSpacing / 2);
         spacingError += (idealSpacing / 2) - std::round(idealSpacing / 2);
     }
@@ -139,7 +139,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;
-        switch (style().horizontalAlign)
+        switch (_style.horizontalAlign)
         {
             case HorizontalAlignment::Center:
                 childX += (contentArea.w - childSize.w) / 2;
