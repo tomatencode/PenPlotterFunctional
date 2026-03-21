@@ -21,18 +21,13 @@ widgets::VerticalLayoutStyle FilesLayout()
 
 FilesScreen::FilesScreen()
     : Screen(
-        widgets::make_widget<widgets::VerticalLayout>(
-        FilesLayout(),
-        std::vector<std::unique_ptr<widgets::Widget>>{
-
-            // Header with title and WiFi status - includes a back button
+        widgets::make_layout<widgets::VerticalLayout>(
+            FilesLayout(),
             widgets::make_widget<components::HeaderLine>("Files", true, [this]() {
                 if (router()) {
                     router()->popScreen(); // Go back to the previous screen
                 }
             })
-            
-        }
         )
     )
 {

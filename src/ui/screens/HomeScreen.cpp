@@ -26,12 +26,10 @@ widgets::VerticalLayoutStyle HomeLayout()
 
 HomeScreen::HomeScreen()
     : Screen(
-        widgets::make_widget<widgets::VerticalLayout>(HomeLayout(), std::vector<std::unique_ptr<widgets::Widget>>{
-    
-            // Header with title and WiFi status
+        widgets::make_layout<widgets::VerticalLayout>(
+            HomeLayout(),
             widgets::make_widget<components::HeaderLine>("Pen Plotter", false),
 
-            // Plot button
             widgets::make_widget<widgets::ButtonWidget>(
                 widgets::make_widget<widgets::LabelWidget>("Plot"),
                 widgets::ButtonStyle(),
@@ -43,7 +41,6 @@ HomeScreen::HomeScreen()
                 }
             ),
 
-            // Settings button
             widgets::make_widget<widgets::ButtonWidget>(
                 widgets::make_widget<widgets::LabelWidget>("Settings"),
                 widgets::ButtonStyle(),
@@ -53,7 +50,6 @@ HomeScreen::HomeScreen()
                     }
                 }
             )
-        }
         )
     )
 {
