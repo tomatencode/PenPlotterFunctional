@@ -10,24 +10,12 @@ namespace ui {
 namespace widgets {
 
 struct ScrollableVerticalLayoutStyle {
-    uint8_t spacing = 0;
-    uint8_t marginLeft = 0;
-    uint8_t marginRight = 0;
-    uint8_t marginTop = 0;
-    uint8_t marginBottom = 0;
-
-    // Alignment - will be interpreted differently by horizontal vs vertical layouts
-    HorizontalAlignment horizontalAlign = HorizontalAlignment::Left;
-
-    constexpr ScrollableVerticalLayoutStyle() = default;
-
-    constexpr ScrollableVerticalLayoutStyle(HorizontalAlignment hAlign, uint8_t space = 0,
-                                            uint8_t mLeft = 0, uint8_t mRight = 0,
-                                            uint8_t mTop = 0, uint8_t mBottom = 0)
-        :   spacing(space),
-            marginLeft(mLeft), marginRight(mRight),
-            marginTop(mTop), marginBottom(mBottom),
-            horizontalAlign(hAlign) {}
+    HorizontalAlignment horizontalAlign;  // default: 0 = HorizontalAlignment::Left
+    uint8_t spacing;  // default: 0
+    uint8_t marginLeft;  // default: 0
+    uint8_t marginRight;  // default: 0
+    uint8_t marginTop;  // default: 0
+    uint8_t marginBottom;  // default: 0
 };
 
 class ScrollableVerticalLayout : public LayoutWidget
