@@ -40,7 +40,7 @@ void applicationManagerInit()
     // Initialize encoder
     encoder.begin();
 
-    fsInit();
+    storage::fsInit();
     uiManager.init();
     webInterface.init();
 

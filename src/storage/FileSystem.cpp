@@ -2,6 +2,8 @@
 
 #include <SPIFFS.h>
 
+namespace storage {
+
 bool fsInit()
 {
     if (!SPIFFS.begin(true))
@@ -53,3 +55,5 @@ File fsOpenWrite(const String& path)
 {
     return SPIFFS.open(path, "w");
 }
+
+} // namespace storage

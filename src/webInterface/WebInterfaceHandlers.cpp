@@ -5,7 +5,7 @@
 
 void WebInterface::handleFileList()
 {
-    auto files = fsListFiles();
+    auto files = storage::fsListFiles();
 
     String json = "[";
     for (size_t i = 0; i < files.size(); i++)
@@ -40,7 +40,7 @@ void WebInterface::handleStartJob()
 
     String filename = server.arg("file");
 
-    if (!fsExists(filename))
+    if (!storage::fsExists(filename))
     {
         server.send(404, "text/plain", "File not found");
         return;
@@ -66,9 +66,9 @@ void WebInterface::handleUpload()
         String path = "/" + upload.filename;
         Serial.printf("Upload start: %s\n", path.c_str());
 
-        if (fsExists(path)) fsDelete(path);
+        if (storage::fsExists(path)) storage::fsDelete(path);
 
-        File f = fsOpenWrite(path);
+        File f = storage::fsOpenWrite(path);
         if (!f)
             Serial.println("Failed to open file for writing");
 
@@ -77,7 +77,7 @@ void WebInterface::handleUpload()
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
         String path = "/" + upload.filename;
-        File f = fsOpenWrite(path);
+        File f = storage::fsOpenWrite(path);
         f.write(upload.buf, upload.currentSize);
         f.close();
     }
