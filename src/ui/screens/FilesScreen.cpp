@@ -27,7 +27,7 @@ FilesScreen::FilesScreen()
                 }
             }),
             widgets::make_widget<components::FileList>([this](const String& file) {
-                static FileDetailsScreen* detailsScreen = new FileDetailsScreen(file);
+                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file);
                 if (router()) {
                     router()->pushScreen(detailsScreen);
                 }
