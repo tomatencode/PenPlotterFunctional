@@ -10,19 +10,19 @@ namespace ui {
 namespace widgets {
 
 struct ScrollableVerticalLayoutStyle {
-    HorizontalAlignment horizontalAlign;  // default: 0 = HorizontalAlignment::Left
-    uint8_t spacing;  // default: 0
-    uint8_t marginLeft;  // default: 0
-    uint8_t marginRight;  // default: 0
-    uint8_t marginTop;  // default: 0
-    uint8_t marginBottom;  // default: 0
+    HorizontalAlignment horizontalAlign = HorizontalAlignment::Left;
+    uint8_t spacing = 0;
+    uint8_t marginLeft = 0;
+    uint8_t marginRight = 0;
+    uint8_t marginTop = 0;
+    uint8_t marginBottom = 0;
 };
 
 class ScrollableVerticalLayout : public LayoutWidget
 {
 public:
     // Constructor: takes ownership of the provided widgets
-    ScrollableVerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const ScrollableVerticalLayoutStyle& style = ScrollableVerticalLayoutStyle());
+    ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children);
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

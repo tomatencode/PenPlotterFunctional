@@ -5,7 +5,7 @@
 namespace ui {
 namespace widgets {
 
-ScrollableVerticalLayout::ScrollableVerticalLayout(std::vector<std::unique_ptr<Widget>>&& children, const ScrollableVerticalLayoutStyle& style)
+ScrollableVerticalLayout::ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
     : LayoutWidget(std::move(children)), _style(style)
 {
 }

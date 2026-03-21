@@ -18,11 +18,6 @@ struct ButtonStyle
     Glyph rightFocused = '<';
     Glyph leftPressed = '-';
     Glyph rightPressed = '-';
-    
-    ButtonStyle() = default;
-    ButtonStyle(Glyph ln, Glyph rn, Glyph lf, Glyph rf, Glyph lp, Glyph rp)
-        : leftNormal(ln), rightNormal(rn), leftFocused(lf), rightFocused(rf),
-          leftPressed(lp), rightPressed(rp) {}
 };
 
 class ButtonWidget : public SelectableWidget

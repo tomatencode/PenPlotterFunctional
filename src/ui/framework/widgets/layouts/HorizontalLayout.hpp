@@ -10,13 +10,13 @@ namespace ui {
 namespace widgets {
 
 struct HorizontalLayoutStyle {
-    SpacingMode spacingMode; // default:  0 = SpacingMode::Fixed
-    VerticalAlignment verticalAlign; // default: 0 = VerticalAlignment::Top
-    uint8_t spacing; // default: 0
-    uint8_t marginLeft; // default: 0
-    uint8_t marginRight; // default: 0
-    uint8_t marginTop; // default: 0
-    uint8_t marginBottom; // default: 0
+    SpacingMode spacingMode = SpacingMode::Fixed;
+    VerticalAlignment verticalAlign = VerticalAlignment::Top;
+    uint8_t spacing = 0;
+    uint8_t marginLeft = 0;
+    uint8_t marginRight = 0;
+    uint8_t marginTop = 0;
+    uint8_t marginBottom = 0;
 };
 
 class HorizontalLayout : public LayoutWidget
