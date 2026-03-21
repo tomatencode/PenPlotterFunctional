@@ -1,6 +1,9 @@
 #include "HomeScreen.hpp"
 
 // Include related screens to enable navigation
+#include "FilesScreen.hpp"
+
+// Include related screens to enable navigation
 #include "../framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -11,6 +14,8 @@
 
 namespace ui {
 namespace screens {
+
+
 
 widgets::LayoutStyle HomeLayout()
 {
@@ -32,7 +37,8 @@ HomeScreen::HomeScreen()
                 widgets::ButtonStyle(),
                 [this]() {
                     if (router()) {
-                        //router()->pushScreen(...); // Navigate to plotting screen (not implemented yet)
+                        static FilesScreen* filesScreen = new FilesScreen();
+                        router()->pushScreen(filesScreen);
                     }
                 }
             ),
