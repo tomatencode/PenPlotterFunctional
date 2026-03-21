@@ -13,13 +13,14 @@ namespace ui {
 class FunctionText : public TextSource
 {
 public:
-    using TextFunc = std::function<const char*()>;
+    using TextFunc = std::function<String()>;
 
     FunctionText(TextFunc func) : _func(std::move(func)) {}
 
     const Glyph* getGlyphs() const override
     {
-        const char* str = _func();
+        String text = _func();
+        const char* str = text.c_str();
         size_t len = strlen(str);
 
         // Copy chars into internal glyph buffer

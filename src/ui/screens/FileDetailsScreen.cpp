@@ -41,40 +41,66 @@ String shortFilename(const String& filename) {
     return filename;
 }
 
+std::unique_ptr<ui::TextSource> createFileSizeTextSource(const String& filename) {
+    return std::make_unique<FunctionText>([filename]() {
+        size_t size = storage::fsFileSize("/" + filename);
+        return "Size: " + formatFileSize(size);
+    });
+}
+
+std::unique_ptr<ui::TextSource> createPlotTimeTextSource(const String& filename) {
+    return std::make_unique<FunctionText>([filename]() {
+        // Placeholder: In a real implementation, you would calculate this based on file contents or metadata
+        size_t plotTimeSeconds = 120; // Example fixed time
+        return "Plot Time: " + formatPlotTime(plotTimeSeconds);
+    });
+}
+
 FileDetailsScreen::FileDetailsScreen(const String& filename)
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(
-            widgets::VerticalLayoutStyle{},
-            widgets::make_widget<components::HeaderLine>(shortFilename(filename).c_str(), true, [this]() {
-                if (router()) {
-                    router()->popScreen(); // Go back to the previous screen
-                }
-            }),
+        !storage::fsExists("/" + filename) ? (
+            widgets::make_layout<widgets::VerticalLayout>(
+                widgets::VerticalLayoutStyle{},
 
-            widgets::make_widget<widgets::LabelWidget>(std::unique_ptr<ui::TextSource>(new FunctionText([filename]() {
-                return "Size: 0 B"; // Placeholder, replace with actual file size if available
-            }))),
-
-            widgets::make_widget<widgets::LabelWidget>(std::unique_ptr<ui::TextSource>(new FunctionText([filename]() {
-                return ("Plot Time: " + formatPlotTime(100)).c_str(); // Placeholder, replace with actual plot time if available
-            }))),
-
-            widgets::make_layout<widgets::HorizontalLayout>(
-                widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
-
-                widgets::make_widget<widgets::ButtonWidget>(
-                    widgets::make_widget<widgets::LabelWidget>("Plot"),
-                    widgets::ButtonStyle(),
-                    [filename]() {
-                        // Handle plot file action
+                widgets::make_widget<components::HeaderLine>(shortFilename(filename).c_str(), true, [this]() {
+                    if (router()) {
+                        router()->popScreen(); // Go back to the previous screen
                     }
-                ),
-                widgets::make_widget<widgets::ButtonWidget>(
-                    widgets::make_widget<widgets::LabelWidget>("Delete"),
-                    widgets::ButtonStyle(),
-                    [filename]() {
-                        // Handle delete file action
+                }),
+
+                widgets::make_widget<widgets::LabelWidget>("This file does not exist!")
+            )
+            ) : (
+            widgets::make_layout<widgets::VerticalLayout>(
+                widgets::VerticalLayoutStyle{},
+
+                widgets::make_widget<components::HeaderLine>(shortFilename(filename).c_str(), true, [this]() {
+                    if (router()) {
+                        router()->popScreen(); // Go back to the previous screen
                     }
+                }),
+
+                widgets::make_widget<widgets::LabelWidget>(createFileSizeTextSource(filename)),
+
+                widgets::make_widget<widgets::LabelWidget>(createPlotTimeTextSource(filename)),
+
+                widgets::make_layout<widgets::HorizontalLayout>(
+                    widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+
+                    widgets::make_widget<widgets::ButtonWidget>(
+                        widgets::make_widget<widgets::LabelWidget>("Plot"),
+                        widgets::ButtonStyle(),
+                        [filename]() {
+                            // Handle plot file action
+                        }
+                    ),
+                    widgets::make_widget<widgets::ButtonWidget>(
+                        widgets::make_widget<widgets::LabelWidget>("Delete"),
+                        widgets::ButtonStyle(),
+                        [filename]() {
+                            // Handle delete file action
+                        }
+                    )
                 )
             )
         )
