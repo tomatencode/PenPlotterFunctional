@@ -135,7 +135,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
         Size desiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
 
         Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
-                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
+                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h - currentY))};
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;

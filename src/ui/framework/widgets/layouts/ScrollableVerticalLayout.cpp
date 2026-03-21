@@ -79,7 +79,7 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
         Size desiredChildSize = childWidget->desiredSize({contentArea.w, minChildSize.h});
 
         Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w)),
-                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
+                          desiredChildSize.h}; // ScrollableVertical layout does not constrain height, only width
 
         // Calculate X position based on horizontal alignment
         int childX = contentArea.x;

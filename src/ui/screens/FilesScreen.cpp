@@ -15,12 +15,12 @@ namespace ui {
 namespace screens {
 
 widgets::ButtonStyle fileButtonStyle = {
-    .leftNormal = ' ',
-    .rightNormal = ' ',
+    .leftNormal = GLYPH_NONE,
+    .rightNormal = GLYPH_NONE,
     .leftFocused = '>',
-    .rightFocused = ' ',
+    .rightFocused = GLYPH_NONE,
     .leftPressed = '-',
-    .rightPressed = ' '
+    .rightPressed = GLYPH_NONE
 };
 
 FilesScreen::FilesScreen()
@@ -36,27 +36,27 @@ FilesScreen::FilesScreen()
                 widgets::ScrollableVerticalLayoutStyle{},
                 widgets::make_widget<widgets::ButtonWidget>(
                     widgets::make_widget<widgets::LabelWidget>("File 1"),
-                    widgets::ButtonStyle(),
+                    fileButtonStyle,
                     []() { /* Handle File 1 action */ }
                 ),
                 widgets::make_widget<widgets::ButtonWidget>(
                     widgets::make_widget<widgets::LabelWidget>("File 2"),
-                    widgets::ButtonStyle(),
+                    fileButtonStyle,
                     []() { /* Handle File 2 action */ }
                 ),
                 widgets::make_widget<widgets::ButtonWidget>(
                     widgets::make_widget<widgets::LabelWidget>("File 3"),
-                    widgets::ButtonStyle(),
+                    fileButtonStyle,
                     []() { /* Handle File 3 action */ }
                 ),
                 widgets::make_widget<widgets::ButtonWidget>(
                     widgets::make_widget<widgets::LabelWidget>("File 4"),
-                    widgets::ButtonStyle(),
+                    fileButtonStyle,
                     []() { /* Handle File 4 action */ }
                 ),
                 widgets::make_widget<widgets::ButtonWidget>(
                     widgets::make_widget<widgets::LabelWidget>("File 5"),
-                    widgets::ButtonStyle(),
+                    fileButtonStyle,
                     []() { /* Handle File 5 action */ }
                 )
             )
