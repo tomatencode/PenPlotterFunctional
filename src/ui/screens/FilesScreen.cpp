@@ -15,6 +15,12 @@ namespace screens {
 widgets::VerticalLayoutStyle FilesLayout()
 {
     widgets::VerticalLayoutStyle style;
+    style.spacingMode = widgets::SpacingMode::Fixed;
+    style.spacing = 0;
+    style.marginLeft = 0;
+    style.marginRight = 0;
+    style.marginTop = 0;
+    style.marginBottom = 0;
     style.horizontalAlign = widgets::HorizontalAlignment::Center;
     return style;
 }
