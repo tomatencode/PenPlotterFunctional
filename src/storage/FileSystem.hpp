@@ -18,4 +18,6 @@ File fsOpenRead(const String& path);
 
 File fsOpenWrite(const String& path);
 
+size_t fsFileSize(const String& path);
+
 } // namespace storage

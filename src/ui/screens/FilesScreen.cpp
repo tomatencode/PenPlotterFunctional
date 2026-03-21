@@ -2,6 +2,7 @@
 
 // Include related screens to enable navigation
 #include "../framework/router/Router.hpp"
+#include "FileDetailsScreen.hpp"
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
@@ -25,8 +26,11 @@ FilesScreen::FilesScreen()
                     router()->popScreen(); // Go back to the previous screen
                 }
             }),
-            widgets::make_widget<components::FileList>([](const String& file) {
-                // Handle file selection - for now, do nothing
+            widgets::make_widget<components::FileList>([this](const String& file) {
+                static FileDetailsScreen* detailsScreen = new FileDetailsScreen(file);
+                if (router()) {
+                    router()->pushScreen(detailsScreen);
+                }
             })
         )
     )

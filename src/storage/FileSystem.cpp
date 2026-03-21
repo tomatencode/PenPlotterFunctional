@@ -56,4 +56,16 @@ File fsOpenWrite(const String& path)
     return SPIFFS.open(path, "w");
 }
 
+size_t fsFileSize(const String& path)
+{
+    File file = SPIFFS.open(path);
+    if (file)
+    {
+        size_t size = file.size();
+        file.close();
+        return size;
+    }
+    return 0;
+}
+
 } // namespace storage
