@@ -34,31 +34,7 @@ void LabelWidget::render(Renderer& r, Rect canvasBox)
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
-    const Glyph* srcGlyphs = _text->getGlyphs();
-
-    int maxWidth = canvasBox.w;
-
-    int textWidth = 0;
-    while (srcGlyphs[textWidth].code != GLYPH_TERMINATOR.code && textWidth < maxWidth)
-        textWidth++;
-
-    if (textWidth == 0)
-        return;
-
-    int renderTextWidth = std::min(textWidth, maxWidth);
-
-    Glyph renderGlyphs[LCD_COLS + 1];
-
-    for (int i = 0; i < renderTextWidth; i++)
-        renderGlyphs[i] = srcGlyphs[i];
-
-    // truncate indicator
-    if (textWidth > maxWidth && renderTextWidth > 0)
-        renderGlyphs[renderTextWidth - 1] = Glyph('.');
-
-    renderGlyphs[renderTextWidth] = GLYPH_TERMINATOR;
-
-    r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, renderGlyphs);
+    r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, _text->getGlyphs());
 }
 
 } // namespace widgets

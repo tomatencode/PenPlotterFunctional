@@ -16,7 +16,7 @@ public:
         size_t i = 0;
 
         // Copy chars into internal glyph buffer
-        for (; i < len && i < MAX_LENGTH - 1; i++)
+        for (; i < len && i < MAX_LENGTH; i++)
             _glyphs[i] = Glyph(static_cast<uint8_t>(str[i]));
 
         // Add terminator
