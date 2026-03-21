@@ -2,13 +2,12 @@
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
-#include <FS.h>
 
 // WiFi credentials
 static const char* SSID = "Thomas_Wifi";
 static const char* PASSWORD = "TotallyHarmless";
 
-WebInterface::WebInterface() : server(80) {}
+WebInterface::WebInterface(JobManager& jobManager) : _jobManager(jobManager), server(80) {}
 
 // Non-blocking
 void WebInterface::startWiFiConnection()

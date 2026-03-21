@@ -4,8 +4,6 @@
 #include "../framework/text/customChars.hpp"
 #include "../framework/widgets/Builder.hpp"
 
-extern WebInterface webInterface;
-
 namespace ui {
 namespace components {
 
@@ -18,7 +16,7 @@ WifiIndicator::WifiIndicator()
                 std::unique_ptr<FunctionGlyph>(
                     new FunctionGlyph([]() -> const Glyph* {
                         static Glyph glyphs[2] = {GLYPH_SPACE, GLYPH_TERMINATOR};
-                        glyphs[0] = webInterface.isWiFiConnected() ? Glyph(CustomChar::WifiSymbol) : Glyph(CustomChar::NoWifiSymbol);
+                        glyphs[0] = false ? Glyph(CustomChar::WifiSymbol) : Glyph(CustomChar::NoWifiSymbol); // TODO: replace 'false' with actual wifi status
                         return glyphs;
                     })
                 )

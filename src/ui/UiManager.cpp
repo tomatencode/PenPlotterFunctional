@@ -7,8 +7,8 @@
 
 namespace ui {
 
-UiManager::UiManager(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
-    : _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
+UiManager::UiManager(JobManager& jobManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
+    : _jobManager(jobManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
 
 void UiManager::init()

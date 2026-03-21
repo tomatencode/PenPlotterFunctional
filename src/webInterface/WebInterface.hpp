@@ -3,15 +3,19 @@
 #include <WebServer.h>
 #include <cstdint>
 
+#include "jobManager/JobManager.hpp"
+
 class WebInterface
 {
 public:
-    WebInterface();
+    WebInterface(JobManager& jobManager);
     void init();
     void update();
     bool isWiFiConnected() const;
 
 private:
+    JobManager& _jobManager;
+
     WebServer server;
     bool _wifiInitialized = false;
     bool _serverStarted = false;

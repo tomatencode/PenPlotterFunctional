@@ -1,5 +1,7 @@
 #pragma once
 
+#include "jobManager/JobManager.hpp"
+
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
 #include "hardware/buzzer/Buzzer.hpp"
@@ -14,24 +16,27 @@ namespace ui {
 class UiManager
 {
 public:
-    UiManager(LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(JobManager& jobManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
     void update();
 
 private:
-    // abstracted input reading to keep update() clean and focused on UI logic
-    InputState readInputs();
-
     // Core UI components
     Router _router;
     Renderer _renderer;
+
+    // References to shared services (not owned by UI)
+    JobManager& _jobManager;
 
     // References to hardware interfaces (not owned by UI)
     LcdDisplay& _display;
     RotaryEncoder& _encoder;
     Buzzer& _buzzer;
+
+    // abstracted input reading to keep update() clean and focused on UI logic
+    InputState readInputs();
 
     unsigned long _lastUpdateTime = 0;  // For non-blocking timing
 };

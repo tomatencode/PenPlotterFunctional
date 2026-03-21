@@ -1,5 +1,5 @@
 #include "WebInterface.hpp"
-#include "jobManager/JobManager.hpp"
+
 #include "storage/FileSystem.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 
@@ -20,13 +20,13 @@ void WebInterface::handleFileList()
 
 void WebInterface::handlePauseJob()
 {
-    jobManager.pause();
+    _jobManager.pause();
     server.send(200, "text/plain", "Job paused");
 }
 
 void WebInterface::handleResumeJob()
 {
-    jobManager.resume();
+    _jobManager.resume();
     server.send(200, "text/plain", "Job resumed");
 }
 
@@ -46,14 +46,14 @@ void WebInterface::handleStartJob()
         return;
     }
 
-    jobManager.start(filename);
+    _jobManager.start(filename);
 
     server.send(200, "text/plain", "Job started");
 }
 
 void WebInterface::handleAbortJob()
 {
-    jobManager.abort();
+    _jobManager.abort();
     server.send(200, "text/plain", "Job stopped");
 }
 

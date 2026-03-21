@@ -5,71 +5,66 @@
 #include "plottingManager/PlottingManager.hpp"
 #include "shared/SharedData.hpp"
 
-extern GCodeParser gcodeParser;
-extern std::vector<String> gcodeLines;
-
 TaskHandle_t motionTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
 
 /*
     CORE 1
     Motion execution task
-
-    This must stay deterministic and should never run
-    WiFi, filesystem or UI code.
 */
 void motionTask(void *parameter)
 {
-    Serial.print("Motion task running on core:");
+    Serial.print("Motion task running on core: ");
     Serial.println(xPortGetCoreID());
 
-    // Initialize all motion-related subsystems
-    plottingManagerInit();
+    PlottingManager* plottingManager =
+        static_cast<PlottingManager*>(parameter);
+
+    plottingManager->init();
 
     while (true)
     {
-        plottingManagerUpdate();
+        plottingManager->update();
+        taskYIELD();
     }
 }
 
 /*
     CORE 0
     System task
-
-    Handles:
-    - UI (encoder + LCD)
-    - Web interface (upload/list/start/stop jobs)
-    - Job manager (streams files to motion queue)
 */
 void systemTask(void *parameter)
 {
     Serial.print("System task running on core: ");
     Serial.println(xPortGetCoreID());
 
-    // Initialize all Core 0 subsystems
-    applicationManagerInit();
+    ApplicationManager* app =
+        static_cast<ApplicationManager*>(parameter);
+
+    app->init();
 
     while (true)
     {
-        // Non-blocking updates
-        applicationManagerUpdate();  // updates: web interface, UI, JobManager
+        app->update();
 
-        // Small delay to yield CPU, adjust if needed
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
 /*
-    Create all tasks and pin them to cores
+    Create all tasks
 */
 void startSystemTasks()
 {
+    static ApplicationManager appManager;
+    static PlottingManager plottingManager;
+
     // Motion task (CORE 1)
     xTaskCreatePinnedToCore(
         motionTask,
         "MotionTask",
         10000,
-        NULL,
+        &plottingManager,
         2,
         &motionTaskHandle,
         1);
@@ -79,7 +74,7 @@ void startSystemTasks()
         systemTask,
         "SystemTask",
         6000,
-        NULL,
+        &appManager,
         1,
         &systemTaskHandle,
         0);
