@@ -37,6 +37,8 @@ void FocusManager::handleInput(InputState& input)
     {
         prev();
     }
+
+    input.encoderDelta = 0; // Consume encoder input
 }
 
 // Move focus to the next widget
