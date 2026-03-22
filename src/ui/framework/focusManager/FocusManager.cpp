@@ -56,8 +56,7 @@ void FocusManager::next()
         if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
     }
     
-    if (_widgets[_index] != nullptr)
-        _widgets[_index]->focus();
+    _widgets[_index]->focus();
 }
 
 // Move focus to the previous widget
@@ -77,8 +76,23 @@ void FocusManager::prev()
         if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
     }
     
-    if (_widgets[_index] != nullptr)
         _widgets[_index]->focus();
+}
+
+void FocusManager::refresh() {
+    if (_widgets.empty()) return;
+    // if current invalid, skip
+    if (_index < _widgets.size() && _widgets[_index] && _widgets[_index]->isEnabled()) return;
+    if (_index < _widgets.size() && _widgets[_index]) _widgets[_index]->unfocus();
+
+    size_t startIndex = _index;
+    while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
+    {
+        _index = (_index + _widgets.size() - 1) % _widgets.size();
+        if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
+    }
+
+    _widgets[_index]->focus();
 }
 
 } // namespace ui

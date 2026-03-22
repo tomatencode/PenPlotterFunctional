@@ -17,6 +17,8 @@ public:
     // Forward input to the currently focused widget
     void handleInput(InputState& input);
 
+    void refresh();
+
 private:
     void next();
     void prev();
