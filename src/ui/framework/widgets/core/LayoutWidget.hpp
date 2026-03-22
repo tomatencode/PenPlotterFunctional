@@ -22,6 +22,21 @@ public:
         }
     }
 
+    // for dynamic layouts, allow adding/removing children after construction
+    virtual void addChild(std::unique_ptr<Widget> child) {
+        if (child)
+            child->setParent(this);
+        _ownedChildren.push_back(std::move(child));
+    }
+    virtual void clearChildren() {
+        _ownedChildren.clear();
+    }
+    virtual void removeChild(size_t index) {
+        if (index < _ownedChildren.size()) {
+            _ownedChildren.erase(_ownedChildren.begin() + index);
+        }
+    }
+
     // for traversal
     virtual size_t childCount() const override { return _ownedChildren.size(); }
     virtual Widget* child(size_t index) const override { 

@@ -25,27 +25,22 @@ widgets::ButtonStyle fileButtonStyle = {
 
 
 FileList::FileList(std::function<void(const String&)> onFileSelected)
-    : ContainerWidget( [onFileSelected]() -> std::unique_ptr<widgets::Widget> {
-
-        auto children = std::vector<std::unique_ptr<widgets::Widget>>{};
-        auto files = storage::fsListFiles();
-
-        for (const auto& file : files) {
-            auto label = widgets::make_widget<widgets::LabelWidget>(file.c_str());
-            auto button = widgets::make_widget<widgets::ButtonWidget>(
-                std::move(label),
-                fileButtonStyle,
-                [onFileSelected, file]() { onFileSelected(file); }
-            );
-            children.push_back(std::move(button));
-        }
-        
-        return std::make_unique<widgets::ScrollableVerticalLayout>(
-            widgets::ScrollableVerticalLayoutStyle{},
-            std::move(children)
-        );
-    }() )
+    : ContainerWidget(std::make_unique<widgets::ScrollableVerticalLayout>(
+        widgets::ScrollableVerticalLayoutStyle{},
+        std::vector<std::unique_ptr<widgets::Widget>>{}
+    )), _onFileSelected(std::move(onFileSelected))
 {
+    widgets::ScrollableVerticalLayout* layout = static_cast<widgets::ScrollableVerticalLayout*>(widgets::ContainerWidget::child(0));
+    auto files = storage::fsListFiles();
+    for (const auto& file : files) {
+        auto label = widgets::make_widget<widgets::LabelWidget>(file.c_str());
+        auto button = widgets::make_widget<widgets::ButtonWidget>(
+            std::move(label),
+            fileButtonStyle,
+            [this, file]() { _onFileSelected(file); }
+        );
+        layout->addChild(std::move(button));
+    }
 }
 
 } // namespace components

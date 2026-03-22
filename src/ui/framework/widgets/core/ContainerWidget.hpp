@@ -28,6 +28,12 @@ public:
         return nullptr;
     }
 
+    virtual void setChild(std::unique_ptr<Widget> newChild) {
+        if (newChild)
+            newChild->setParent(this);
+        _child = std::move(newChild);
+    }
+
     virtual void render(Renderer& r, Rect canvasBox) override {
         if (_child)
             _child->render(r, canvasBox);

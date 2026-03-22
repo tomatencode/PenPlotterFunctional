@@ -8,10 +8,13 @@
 namespace ui {
 namespace components {
 
-class FileList: public ui::widgets::ContainerWidget
+class FileList : public widgets::ContainerWidget
 {
 public:
     FileList(std::function<void(const String&)> onFileSelected);
+    void refresh();
+private:
+    std::function<void(const String&)> _onFileSelected;
 };
 
 } // namespace components
