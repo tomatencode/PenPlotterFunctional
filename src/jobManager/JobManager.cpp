@@ -9,22 +9,34 @@
 #include "systemServices/shared/Telemetry.hpp"
 
 
-JobManager::JobManager() : currentLineIndex(0) {}
+JobManager::JobManager() : currentJob(PlotJob()), _active(false) {}
 
 void JobManager::start(String filename)
 {
     Serial.println("Starting job: " + filename);
 
     motionCommand = MotionCommand::NONE; // Clear any existing motion commands
-    currentFile = storage::fsOpenRead(filename);
+    currentJob.file = storage::fsOpenRead(filename);
 
-    if (!currentFile)
+    if (!currentJob.file)
     {
         Serial.println("Failed to open file");
         return;
     }
 
-    currentLineIndex = 0;
+    currentJob.totalLines = 0;
+    while (currentJob.file.available())
+    {
+        currentJob.file.readStringUntil('\n'); // Read and discard lines to count them
+        currentJob.totalLines++;
+    }
+
+    // Close and reopen to reset read position
+    currentJob.file.close();
+    currentJob.file = storage::fsOpenRead(filename);
+
+    currentJob.currentBufferLine = 0;
+    _active = true;
 }
 
 void JobManager::pause()
@@ -44,8 +56,9 @@ void JobManager::abort()
     Serial.println("Aborting job");
     motionCommand = MotionCommand::ABORT;
     xQueueReset(gcodeQueue); // Clear any pending G-code commands
-    if (currentFile) currentFile.close();
-    currentLineIndex = 0;
+    if (currentJob.file) currentJob.file.close();
+    currentJob.currentBufferLine = 0;
+    _active = false;
 }
 
 bool JobManager::isJobPaused() const
@@ -55,18 +68,10 @@ bool JobManager::isJobPaused() const
 
 double JobManager::currentProgress() const
 {
-    if (!currentFile)
+    if (!currentJob.file || currentJob.totalLines == 0)
         return 0.0;
 
-    size_t totalBytes = currentFile.size();
-    size_t currentBytes = currentFile.position();
-
-    Serial.println("Calculating progress: " + String(currentBytes) + " / " + String(totalBytes));
-
-    if (totalBytes == 0)
-        return 0.0;
-
-    return static_cast<double>(currentBytes) / static_cast<double>(totalBytes);
+    return static_cast<double>(telemetry.currentLineNumber) / static_cast<double>(currentJob.totalLines);
 }
 
 void JobManager::jobManagerUpdate()
@@ -77,31 +82,25 @@ void JobManager::jobManagerUpdate()
         motionCommand = MotionCommand::NONE;
     }
 
-    if (!currentFile)
-        return;
-
-    if (!currentFile.available())
-    {
-        // Job finished
-        Serial.println("Job completed");
-        currentFile.close();
-    }
+    if (!_active) return; // No active job
+    if (!currentJob.file.available()) return; // No more lines to read
 
     // prefetch queue space
     UBaseType_t space = uxQueueSpacesAvailable(gcodeQueue);
 
-    for (UBaseType_t i = 0; i < space && currentFile.available(); i++)
+    for (UBaseType_t i = 0; i < space && currentJob.file.available(); i++)
     {
-        String line = currentFile.readStringUntil('\n');
+        String line = currentJob.file.readStringUntil('\n');
         line.trim();
+
+        currentJob.currentBufferLine++;
 
         // skip empty lines
         if (line.length() == 0)
             continue;
 
         GcodeMessage msg;
-
-        msg.lineNumber = currentLineIndex++;   // track job progress
+        msg.lineNumber = currentJob.currentBufferLine;
 
         line.toCharArray(msg.line, MAX_GCODE_LINE);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination

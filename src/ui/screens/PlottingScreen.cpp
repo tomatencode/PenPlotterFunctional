@@ -30,7 +30,9 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
 
             widgets::make_layout<widgets::HorizontalLayout>(
                 widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
-                widgets::make_widget<widgets::LabelWidget>("-?:??") // Placeholder for remaining time
+                widgets::make_widget<widgets::LabelWidget>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                    return String(jobManager.getCurrentLine()) + "/" + String(jobManager.getTotalLines());
+                })))
             ),
 
             widgets::make_layout<widgets::HorizontalLayout>(
@@ -62,6 +64,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
         )
     
 {
+    jobManager.abort(); // Ensure any existing job is stopped before starting a new one
     jobManager.start("/" + filename); // Start the job when the screen is created
 }
 
