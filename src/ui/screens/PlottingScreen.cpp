@@ -64,7 +64,6 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
         )
     
 {
-    jobManager.abort(); // Ensure any existing job is stopped before starting a new one
     jobManager.start("/" + filename); // Start the job when the screen is created
 }
 

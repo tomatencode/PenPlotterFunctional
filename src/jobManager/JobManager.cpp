@@ -13,6 +13,8 @@ JobManager::JobManager() : currentJob(PlotJob()), _active(false) {}
 
 void JobManager::start(String filename)
 {
+    abort(); // Ensure any existing job is stopped before starting a new one
+
     Serial.println("Starting job: " + filename);
 
     motionCommand = MotionCommand::NONE; // Clear any existing motion commands
