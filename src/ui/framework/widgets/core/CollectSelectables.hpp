@@ -8,7 +8,15 @@
 namespace ui {
 namespace widgets {
 
-void collectSelectables(Widget* w, std::vector<SelectableWidget*>& out);
+void collectSelectables(Widget* w, std::vector<SelectableWidget*>& out) {
+    if (!w) return;
+
+    if (w->isSelectable())
+        out.push_back(static_cast<SelectableWidget*>(w));
+
+    for (size_t i = 0; i < w->childCount(); i++)
+        collectSelectables(w->child(i), out);
+}
 
 } // namespace widgets
 } // namespace ui
