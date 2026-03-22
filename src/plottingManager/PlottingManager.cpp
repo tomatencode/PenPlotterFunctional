@@ -79,12 +79,9 @@ void PlottingManager::update()
 
     if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && motionCommand != MotionCommand::ABORT)
     {
-        telemetry.currentLineNumber = msg.lineNumber;
         telemetry.state = MotionState::RUNNING;
 
-        Serial.print("Executing line ");
-        Serial.print(msg.lineNumber);
-        Serial.print(": ");
+        Serial.print("Executing line: ");
         Serial.println(msg.line);
 
         gcodeParser.executeLine(msg.line);

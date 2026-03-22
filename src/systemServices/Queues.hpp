@@ -7,7 +7,6 @@ extern QueueHandle_t gcodeQueue;
 
 struct GcodeMessage
 {
-    uint32_t lineNumber;
     char line[MAX_GCODE_LINE];
 };
 

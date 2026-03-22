@@ -73,7 +73,12 @@ double JobManager::currentProgress() const
     if (!currentJob.file || currentJob.totalLines == 0)
         return 0.0;
 
-    return static_cast<double>(telemetry.currentLineNumber) / static_cast<double>(currentJob.totalLines);
+    return static_cast<double>(getCurrentLine()) / static_cast<double>(currentJob.totalLines);
+}
+
+uint16_t JobManager::getCurrentLine() const
+{
+    return currentJob.currentBufferLine - uxQueueMessagesWaiting(gcodeQueue);
 }
 
 void JobManager::jobManagerUpdate()
@@ -102,7 +107,6 @@ void JobManager::jobManagerUpdate()
             continue;
 
         GcodeMessage msg;
-        msg.lineNumber = currentJob.currentBufferLine;
 
         line.toCharArray(msg.line, MAX_GCODE_LINE);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination

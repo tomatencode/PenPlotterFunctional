@@ -24,8 +24,8 @@ public:
     double currentProgress() const;
 
     uint32_t getCurrentBufferLine() const { return currentJob.currentBufferLine; }
-    uint16_t getCurrentLine() const { return telemetry.currentLineNumber; }
     uint32_t getTotalLines() const { return currentJob.totalLines; }
+    uint16_t getCurrentLine() const;
 
     void jobManagerUpdate();
 private:

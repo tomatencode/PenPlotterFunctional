@@ -13,7 +13,5 @@ struct Telemetry
     float machineX;
     float machineY;
 
-    uint32_t currentLineNumber;
-
     MotionState state;
 };
