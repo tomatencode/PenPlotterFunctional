@@ -26,7 +26,7 @@ HomeScreen::HomeScreen(JobManager& jobManager)
                 widgets::ButtonStyle(),
                 [this, &jobManager]() {
                     if (router()) {
-                        static FilesScreen* filesScreen = new FilesScreen(jobManager);
+                        FilesScreen* filesScreen = new FilesScreen(jobManager);
                         router()->pushScreen(filesScreen);
                     }
                 }
