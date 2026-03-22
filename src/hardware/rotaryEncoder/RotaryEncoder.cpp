@@ -10,11 +10,9 @@ static const int8_t transitionTable[16] = {
 };
 
 RotaryEncoder::RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debounce)
+    : _dt(dt), _clk(clk), _sw(sw), _debounce(debounce), _state(0), _position_delta(0), _stepAccumulator(0),
+      _buttonPrsFlag(false), _buttonRelFlag(false), _lastButtonState(HIGH)
 {
-    _dt = dt;
-    _clk = clk;
-    _sw = sw;
-    _debounce = debounce;
 }
 
 void RotaryEncoder::begin()
