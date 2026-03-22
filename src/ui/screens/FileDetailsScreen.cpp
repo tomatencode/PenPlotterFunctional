@@ -13,6 +13,7 @@
 #include "../framework/widgets/layouts/VerticalLayout.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../framework/text/textSources/FunctionText.hpp"
+#include "../components/PressHoldButton.hpp"
 
 // include storage for file details
 #include "storage/FileSystem.hpp"
@@ -91,12 +92,16 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                             }
                         }
                     ),
-                    widgets::make_widget<widgets::ButtonWidget>(
+                    widgets::make_widget<components::PressHoldButton>(
                         widgets::make_widget<widgets::LabelWidget>("Delete"),
-                        widgets::ButtonStyle(),
-                        [filename]() {
-                            // Handle delete file action
-                        }
+                        components::PressHoldButtonStyle(),
+                        [filename, this]() {
+                            storage::fsDelete("/" + filename);
+                            if (router()) {
+                                router()->popScreen(); // Go back to the previous screen
+                            }
+                        },
+                        3000 // Hold time in milliseconds
                     )
                 )
             )

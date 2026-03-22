@@ -35,6 +35,8 @@ public:
     void render(Renderer& r, Rect canvasBox) override;
     void handleInput(InputState& input) override;
 
+    bool isPressed() const { return _isPressed; }
+
 private:
     Widget* _child;               // the child widget to render inside the button
     std::unique_ptr<Widget> _ownedChild;
