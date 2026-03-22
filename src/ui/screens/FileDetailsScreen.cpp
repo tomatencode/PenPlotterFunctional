@@ -101,7 +101,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                 )
             )
         )
-    )
+    , 1) // Start with the plot button focused
 {
 }
 

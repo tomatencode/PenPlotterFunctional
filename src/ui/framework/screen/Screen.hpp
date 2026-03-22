@@ -17,7 +17,7 @@ public:
     virtual ~Screen() = default;
 
     // Constructor: takes ownership of a single root widget
-    explicit Screen(std::unique_ptr<widgets::Widget> rootWidget);
+    explicit Screen(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused = 0);
 
     // Render the screen
     virtual void render(Renderer& r);
@@ -37,7 +37,7 @@ protected:
     Router* router() const;
 
     // Initialize the screen root after members are initialized
-    void initRoot(std::unique_ptr<widgets::Widget> rootWidget);
+    void initRoot(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused = 0);
 
 private:
     std::unique_ptr<widgets::Widget> root;

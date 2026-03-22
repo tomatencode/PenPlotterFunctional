@@ -4,10 +4,10 @@ namespace ui {
 
 FocusManager::FocusManager() : _widgets(), _index(0) {}
 
-void FocusManager::setWidgets(std::vector<ui::widgets::SelectableWidget*> widgets)
+void FocusManager::setWidgets(std::vector<ui::widgets::SelectableWidget*> widgets, uint8_t firstFocused)
 {
     _widgets = std::move(widgets);
-    _index = 0;
+    _index = firstFocused % _widgets.size(); // Ensure firstFocused is within bounds
 
     if (_widgets.empty())
         return;
@@ -16,7 +16,7 @@ void FocusManager::setWidgets(std::vector<ui::widgets::SelectableWidget*> widget
     while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
     {
         _index = (_index + 1) % _widgets.size();
-        if (_index == 0) return; // Avoid infinite loop if all widgets are null or hidden
+        if (_index == firstFocused % _widgets.size()) return; // Avoid infinite loop if all widgets are null or hidden
     }
 
     _widgets[_index]->focus();

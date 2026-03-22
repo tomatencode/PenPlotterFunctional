@@ -33,7 +33,7 @@ FilesScreen::FilesScreen(JobManager& jobManager)
                 }
             })
         )
-    )
+    , 1) // Start with the file list focused
 {
 }
 

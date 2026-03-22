@@ -12,7 +12,7 @@ public:
     FocusManager();
 
     // Set the list of selectable widgets for the current screen (moved in)
-    void setWidgets(std::vector<widgets::SelectableWidget*> widgets);
+    void setWidgets(std::vector<widgets::SelectableWidget*> widgets, uint8_t firstFocused = 0);
 
     // Forward input to the currently focused widget
     void handleInput(InputState& input);

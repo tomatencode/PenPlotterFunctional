@@ -4,10 +4,10 @@
 
 namespace ui {
 
-Screen::Screen(std::unique_ptr<widgets::Widget> rootWidget)
+Screen::Screen(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused)
     : Screen() // build base state then init
 {
-    initRoot(std::move(rootWidget));
+    initRoot(std::move(rootWidget), firstFocused);
 }
 
 Screen::Screen()
@@ -15,7 +15,7 @@ Screen::Screen()
 {
 }
 
-void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
+void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused)
 {
     root = std::move(rootWidget);
 
@@ -24,7 +24,7 @@ void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
     // Collect selectable widgets recursively from the root widget
     collectSelectables(root.get(), selectableWidgets);
 
-    focusManager.setWidgets(selectableWidgets);
+    focusManager.setWidgets(selectableWidgets, firstFocused);
 }
 
 Router* Screen::router() const
