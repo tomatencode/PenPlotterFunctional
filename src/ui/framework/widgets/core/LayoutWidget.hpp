@@ -22,6 +22,15 @@ public:
         }
     }
 
+    ~LayoutWidget() = default;
+
+    virtual void reload() override {
+        for (const auto& child : _ownedChildren) {
+            if (child)
+                child->reload();
+        }
+    }
+
     // for dynamic layouts, allow adding/removing children after construction
     virtual void addChild(std::unique_ptr<Widget> child) {
         if (child)

@@ -30,7 +30,16 @@ FileList::FileList(std::function<void(const String&)> onFileSelected)
         std::vector<std::unique_ptr<widgets::Widget>>{}
     )), _onFileSelected(std::move(onFileSelected))
 {
+    reload();
+}
+
+void FileList::reload() {
     widgets::ScrollableVerticalLayout* layout = static_cast<widgets::ScrollableVerticalLayout*>(widgets::ContainerWidget::child(0));
+
+    if (!layout) return;
+
+    layout->clearChildren();
+
     auto files = storage::fsListFiles();
     for (const auto& file : files) {
         auto label = widgets::make_widget<widgets::LabelWidget>(file.c_str());

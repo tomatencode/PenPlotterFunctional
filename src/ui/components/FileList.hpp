@@ -12,7 +12,7 @@ class FileList : public widgets::ContainerWidget
 {
 public:
     FileList(std::function<void(const String&)> onFileSelected);
-    void refresh();
+    void reload() override;
 private:
     std::function<void(const String&)> _onFileSelected;
 };

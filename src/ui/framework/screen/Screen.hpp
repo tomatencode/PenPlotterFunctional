@@ -22,26 +22,32 @@ public:
     // Render the screen
     virtual void render(Renderer& r);
 
+    virtual void reload();
+
     // Lifecycle hooks
     virtual void onEnter();
     virtual void onExit();
 
     // Access selectable widgets
-    virtual void handleInput(InputState& input);
+    virtual void handleInput(InputState& input) {
+        focusManager.handleInput(input);
+    }
 
 protected:
     // Allows derived screens to build their widget tree after construction
     Screen();
 
     // Provide access to the router for navigation from within a screen
-    Router* router() const;
+    Router* router() const { return _router; }
 
     // Initialize the screen root after members are initialized
-    void initRoot(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused = 0);
+    void initRoot(std::unique_ptr<widgets::Widget> rootWidget);
 
 private:
     std::unique_ptr<widgets::Widget> root;
     FocusManager focusManager;
+
+    uint8_t _firstFocused = 0; // Store first focused index for reloads
 
     Router* _router = nullptr;
     friend class Router;

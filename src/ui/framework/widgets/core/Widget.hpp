@@ -29,6 +29,8 @@ public:
         return true;
     }
 
+    virtual void reload() {};
+
     virtual size_t childCount() const { return 0; }
     virtual Widget* child(size_t) const { return nullptr; }
 

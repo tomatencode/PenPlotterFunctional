@@ -12,6 +12,8 @@ class FilesScreen : public ui::Screen
 {
 public:
     FilesScreen(JobManager& jobManager);
+
+    void onEnter() override;
 };
 
 } // namespace screens

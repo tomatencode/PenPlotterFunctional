@@ -37,5 +37,10 @@ FilesScreen::FilesScreen(JobManager& jobManager)
 {
 }
 
+void FilesScreen::onEnter() {
+    Screen::onEnter();
+    reload(); // Refresh file list each time we enter the screen
+}
+
 } // namespace screens
 } // namespace ui

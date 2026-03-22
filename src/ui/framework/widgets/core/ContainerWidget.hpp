@@ -20,6 +20,11 @@ public:
 
     ~ContainerWidget() = default;
 
+    virtual void reload() override {
+        if (_child)
+            _child->reload();
+    }
+
     virtual size_t childCount() const override { return _child ? 1 : 0; }
 
     virtual Widget* child(size_t index) const override {
