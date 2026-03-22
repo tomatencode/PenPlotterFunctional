@@ -10,14 +10,14 @@ VerticalLayout::VerticalLayout(const VerticalLayoutStyle& style, std::vector<std
 
 Size VerticalLayout::measure() const
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
     uint16_t contentHeight = 0;
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
             contentHeight += w->measure().h;
     }
     
@@ -40,7 +40,7 @@ Size VerticalLayout::measure() const
     // Find maximum width among children
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             Size childSize = w->measure();
             if (childSize.w > contentWidth)
@@ -57,9 +57,9 @@ Size VerticalLayout::measure() const
 
 bool VerticalLayout::canExpandHorizontally() const {
     // VerticalLayout can expand horizontally if any child can expand horizontally
-    for (size_t i = 0; i < childCount(); i++)
+    for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             if (w->canExpandHorizontally())
                 return true;
@@ -73,9 +73,9 @@ bool VerticalLayout::canExpandVertically() const {
     if (_style.spacingMode != SpacingMode::Fixed)
         return true; // Spacing can expand to fill available space
 
-    for (size_t i = 0; i < childCount(); i++)
+    for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             if (w->canExpandVertically())
                 return true;
@@ -86,13 +86,13 @@ bool VerticalLayout::canExpandVertically() const {
 
 double VerticalLayout::getSpacing(uint16_t availableHeight) const
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count < 1) return 0;
     
     uint16_t totalChildHeight = 0;
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
             totalChildHeight += w->measure().h;
     }
     
@@ -119,7 +119,7 @@ double VerticalLayout::getSpacing(uint16_t availableHeight) const
 
 void VerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing to render
 
@@ -151,7 +151,7 @@ void VerticalLayout::render(Renderer& r, Rect canvasBox)
     // Render each child
     for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = child(i);
+        Widget* childWidget = EnChild(i);
         if (childWidget == nullptr)
             continue;
 

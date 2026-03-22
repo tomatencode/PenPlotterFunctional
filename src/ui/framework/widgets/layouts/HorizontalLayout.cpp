@@ -10,7 +10,7 @@ HorizontalLayout::HorizontalLayout(const HorizontalLayoutStyle& style, std::vect
 
 Size HorizontalLayout::measure() const
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
@@ -18,7 +18,7 @@ Size HorizontalLayout::measure() const
 
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
             contentWidth += w->measure().w;
     }
     
@@ -41,7 +41,7 @@ Size HorizontalLayout::measure() const
     // Find maximum height among children
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             Size childSize = w->measure();
             if (childSize.h > contentHeight)
@@ -61,9 +61,9 @@ bool HorizontalLayout::canExpandHorizontally() const {
     if (_style.spacingMode != SpacingMode::Fixed)
         return true; // Spacing modes other than Fixed allow expansion to fill available space
     
-    for (size_t i = 0; i < childCount(); i++)
+    for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             if (w->canExpandHorizontally())
                 return true;
@@ -74,9 +74,9 @@ bool HorizontalLayout::canExpandHorizontally() const {
 
 bool HorizontalLayout::canExpandVertically() const {
     // HorizontalLayout can expand vertically if any child can expand vertically
-    for (size_t i = 0; i < childCount(); i++)
+    for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             if (w->canExpandVertically())
                 return true;
@@ -87,13 +87,13 @@ bool HorizontalLayout::canExpandVertically() const {
 
 double HorizontalLayout::getSpacing(uint16_t availableWidth) const
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count < 1) return 0;
     
     uint16_t totalChildWidth = 0;
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
             totalChildWidth += w->measure().w;
     }
     
@@ -120,7 +120,7 @@ double HorizontalLayout::getSpacing(uint16_t availableWidth) const
 
 void HorizontalLayout::render(Renderer& r, Rect canvasBox)
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing to render
 
@@ -152,7 +152,7 @@ void HorizontalLayout::render(Renderer& r, Rect canvasBox)
     // Render each child
     for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = child(i);
+        Widget* childWidget = EnChild(i);
         if (childWidget == nullptr)
             continue;
 

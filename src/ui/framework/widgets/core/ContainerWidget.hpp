@@ -15,15 +15,16 @@ public:
     ContainerWidget(std::unique_ptr<Widget>&& child)
         : _child(std::move(child))
     {
+        if (_child) _child->setParent(this);
     }
 
     ~ContainerWidget() = default;
 
-    virtual size_t childCount() const override { return _child ? _child->childCount() : 0; }
+    virtual size_t childCount() const override { return _child ? 1 : 0; }
 
     virtual Widget* child(size_t index) const override {
-        if (_child)
-            return _child->child(index);
+        if (_child && index == 0)
+            return _child.get();
         return nullptr;
     }
 

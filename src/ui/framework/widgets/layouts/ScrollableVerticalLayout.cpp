@@ -14,11 +14,11 @@ void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 {
     uint16_t childY = _style.marginTop; // Start at top margin
     // Find the focused child and ensure it's visible
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
 
     for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = child(i);
+        Widget* childWidget = EnChild(i);
         if (childWidget == nullptr) continue;
 
         if (childWidget->isSelectable())
@@ -50,7 +50,7 @@ void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 
 void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing to render
 
@@ -71,7 +71,7 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
     // Render each child
     for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = child(i);
+        Widget* childWidget = EnChild(i);
         if (childWidget == nullptr)
             continue;
 
@@ -121,14 +121,14 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 
 Size ScrollableVerticalLayout::measure() const
 {
-    const size_t count = childCount();
+    const size_t count = EnChildCount();
     if (count == 0) return Size{0, 0};
     
     // Calculate content size (excluding margins)
     uint16_t contentHeight = 0;
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
             contentHeight += w->measure().h;
     }
     
@@ -141,7 +141,7 @@ Size ScrollableVerticalLayout::measure() const
     // Find maximum width among children
     for (size_t i = 0; i < count; i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             Size childSize = w->measure();
             if (childSize.w > contentWidth)
@@ -158,9 +158,9 @@ Size ScrollableVerticalLayout::measure() const
 
 bool ScrollableVerticalLayout::canExpandHorizontally() const {
     // ScrollableVerticalLayout can expand horizontally if any child can expand horizontally
-    for (size_t i = 0; i < childCount(); i++)
+    for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = child(i))
+        if (Widget* w = EnChild(i))
         {
             if (w->canExpandHorizontally())
                 return true;

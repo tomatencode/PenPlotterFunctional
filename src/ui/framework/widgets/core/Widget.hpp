@@ -23,8 +23,19 @@ public:
 
     virtual bool isSelectable() const { return false; }
 
+    virtual bool isEnabled() const {
+        if (getParent())
+            return getParent()->isEnabled();
+        return true;
+    }
+
     virtual size_t childCount() const { return 0; }
     virtual Widget* child(size_t) const { return nullptr; }
+
+    Widget* getParent() const { return _parent; }
+    void setParent(Widget* parent) { _parent = parent; }
+private:
+    Widget* _parent = nullptr;
 };
 
 } // namespace widgets

@@ -23,7 +23,8 @@ void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
 
     // Collect selectable widgets recursively from the root widget
     collectSelectables(root.get(), selectableWidgets);
-    focusManager.setWidgets(std::move(selectableWidgets));
+
+    focusManager.setWidgets(selectableWidgets);
 }
 
 Router* Screen::router() const

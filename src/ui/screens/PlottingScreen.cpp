@@ -12,6 +12,7 @@
 #include "../framework/widgets/leaves/ButtonWidget.hpp"
 #include "../framework/widgets/leaves/LabelWidget.hpp"
 #include "../framework/widgets/leaves/ProgressBarWidget.hpp"
+#include "../framework/widgets/leaves/ConditionalWidget.hpp"
 
 #include "../framework/text/textSources/FunctionText.hpp"
 
@@ -38,26 +39,45 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
             widgets::make_layout<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                    widgets::make_widget<widgets::ButtonWidget>(
-                        widgets::make_widget<widgets::LabelWidget>(std::move(std::make_unique<FunctionText>([&jobManager]() {
-                            return jobManager.isJobPaused() ? "Resume" : "Pause";
-                        }))),
-                        widgets::ButtonStyle(),
-                        [&jobManager]() {
-                            if (jobManager.isJobPaused()) {
-                                jobManager.resume();
-                            } else {
-                                jobManager.pause();
+                    widgets::make_widget<widgets::ConditionalWidget>(
+                        [&jobManager]() { return (jobManager.getCurrentLine() != jobManager.getTotalLines()); },
+                        widgets::make_widget<widgets::ButtonWidget>(
+                            widgets::make_widget<widgets::LabelWidget>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                                return jobManager.isJobPaused() ? "Resume" : "Pause";
+                            }))),
+                            widgets::ButtonStyle(),
+                            [&jobManager]() {
+                                if (jobManager.isJobPaused()) {
+                                    jobManager.resume();
+                                } else {
+                                    jobManager.pause();
+                                }
                             }
-                        }
+                        )
                     ),
-                    widgets::make_widget<widgets::ButtonWidget>(
-                        widgets::make_widget<widgets::LabelWidget>("Abort"),
-                        widgets::ButtonStyle(),
-                        [this, &jobManager]() {
-                            jobManager.abort();
-                            router()->popScreen(); // Go back to the previous screen
-                        }
+
+                    widgets::make_widget<widgets::ConditionalWidget>(
+                        [&jobManager]() { return jobManager.getCurrentLine() != jobManager.getTotalLines(); },
+                        widgets::make_widget<widgets::ButtonWidget>(
+                            widgets::make_widget<widgets::LabelWidget>("Abort"),
+                            widgets::ButtonStyle(),
+                            [this, &jobManager]() {
+                                jobManager.abort();
+                                router()->popScreen(); // Go back to the previous screen
+                            }
+                        )
+                    ),
+
+                    widgets::make_widget<widgets::ConditionalWidget>(
+                        [&jobManager]() { return jobManager.getCurrentLine() == jobManager.getTotalLines(); },
+                        widgets::make_widget<widgets::ButtonWidget>(
+                            widgets::make_widget<widgets::LabelWidget>("Back to Files"),
+                            widgets::ButtonStyle(),
+                            [this, &jobManager]() {
+                                jobManager.abort();
+                                router()->popScreen(); // Go back to the previous screen
+                            }
+                        )
                     )
                 )
             )
