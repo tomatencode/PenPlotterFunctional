@@ -80,17 +80,24 @@ void RotaryEncoder::updateEncoder()
 
     uint8_t index = (_state << 2) | newState;
 
-    _stepAccumulator += transitionTable[index];
+    int8_t tempAcc = _stepAccumulator;
+    tempAcc += transitionTable[index];
 
     // Emit a full detent step if accumulator reaches 4
-    if (_stepAccumulator >= 4) {
-        _position_delta++;
-        _stepAccumulator -= 4;
+    if (tempAcc >= 4) {
+        int tempPos = _position_delta;
+        tempPos++;
+        _position_delta = tempPos;
+        tempAcc -= 4;
     } 
-    else if (_stepAccumulator <= -4) {
-        _position_delta--;
-        _stepAccumulator += 4; 
+    else if (tempAcc <= -4) {
+        int tempPos = _position_delta;
+        tempPos--;
+        _position_delta = tempPos;
+        tempAcc += 4;
     }
+
+    _stepAccumulator = tempAcc;
 
     _state = newState;
 }
