@@ -22,11 +22,11 @@ void PressHoldButton::handleInput(InputState& input)
 {
     if (!isFocused()) return;
 
-    if (input.buttonState.buttonPressed)
+    if (input.buttonPressed)
     {
         _pressStartTime = millis();
     }
-    else if (input.buttonState.buttonReleased)
+    else if (input.buttonReleased)
     {
         uint32_t pressDuration = millis() - _pressStartTime;
         if (pressDuration >= _holdTimeMs && _onHoldRelease)
@@ -35,8 +35,8 @@ void PressHoldButton::handleInput(InputState& input)
         }
     }
 
-    input.buttonState.buttonPressed = false; // consume press event
-    input.buttonState.buttonReleased = false; // consume release event
+    input.buttonPressed = false; // consume press event
+    input.buttonReleased = false; // consume release event
 
     // Call base class to handle visual state changes
     Button::handleInput(input);

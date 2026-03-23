@@ -17,6 +17,7 @@ public:
     // Forward input to the currently focused widget
     void handleInput(InputState& input);
 
+    // make sure selected widget is still enabled
     void refresh();
 
 private:
@@ -24,7 +25,7 @@ private:
     void prev();
 
     std::vector<widgets::Selectable*> _widgets; // Own storage for widgets
-    size_t _index = 0;                       // current focused widget index
+    size_t _selecedIndx = 0;                    // current focused widget index
 };
 
 } // namespace ui

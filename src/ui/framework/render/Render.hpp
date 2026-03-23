@@ -15,9 +15,9 @@ public:
     void init();
 
     void clearBuffer();
-    void drawGlyphsToBuffer(int x, int y, const GlyphString& s);
-    void drawTextToBuffer(int x, int y, const char* text);
 
+    void drawTextToBuffer(int x, int y, const char* text);
+    void drawGlyphsToBuffer(int x, int y, const GlyphString& s);
     void drawGlyphToBuffer(int x, int y, Glyph g);
 
     void renderToDisplay();

@@ -98,15 +98,15 @@ void Button::handleInput(InputState& input)
 {
     if (!isFocused()) return;
 
-    _isPressed = input.buttonState.buttonDown;
+    _isPressed = input.buttonDown;
 
-    if (input.buttonState.buttonPressed && _onPress)
+    if (input.buttonPressed && _onPress)
         _onPress();
 
-    if (input.buttonState.buttonReleased && _onRelease)
+    if (input.buttonReleased && _onRelease)
         _onRelease();
 
-    input.buttonState.buttonPressed = false; // consume press event
+    input.buttonPressed = false; // consume press event
 }
 
 void Button::onFocusGained()

@@ -42,7 +42,7 @@ public:
 private:
     int16_t _scrollOffset = 0;
 
-    // Find which child is focused and update scroll offset
+    // Find which child is focused and update scroll offset to ensure it's visible
     void updateScrollOffset(uint8_t visibleHeight);
 
     ScrollableVerticalLayoutStyle _style;

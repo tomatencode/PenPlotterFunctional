@@ -2,42 +2,12 @@
 
 namespace ui {
 
-Router::Router() : _stackCount(0) {}
-
-bool Router::isEmpty() const
-{
-    return _stackCount == 0;
-}
-
-bool Router::canPush() const
-{
-    return _stackCount < MAX_STACK;
-}
-
-bool Router::canPop() const
-{
-    return _stackCount > 0;
-}
-
-size_t Router::stackSize() const
-{
-    return _stackCount;
-}
-
-Screen* Router::top() const
-{
-    return _stackCount ? _stack[_stackCount - 1] : nullptr;
-}
 
 void Router::pushScreen(Screen* screen)
 {
     if (screen == nullptr) return;
-    if (!canPush()) return; // stack is full
 
-    if (!isEmpty())
-        top()->onExit();
-
-    _stack[_stackCount++] = screen;
+    _stack.push_back(screen);
     screen->setRouter(this);
     screen->onEnter();
 }
@@ -48,7 +18,7 @@ void Router::popScreen()
 
     top()->onExit();
     top()->setRouter(nullptr);
-    --_stackCount;
+    _stack.pop_back();
 
     if (canPop())
     {
@@ -59,17 +29,14 @@ void Router::popScreen()
 
 void Router::handleInput(InputState& input)
 {
-    if (_stackCount == 0) return;
-
-    // Forward input to top screen
-    _stack[_stackCount - 1]->handleInput(input);
+    if (_stack.empty()) return;
+    _stack.back()->handleInput(input);
 }
 
 void Router::render(Renderer& r)
 {
-    if (_stackCount == 0) return;
-
-    _stack[_stackCount - 1]->render(r);
+    if (_stack.empty()) return;
+    _stack.back()->render(r);
 }
 
 } // namespace ui

@@ -20,11 +20,6 @@ struct ValueSelectorStyle
     Glyph rightPressed = '-';
     Glyph leftEditing  = '>';
     Glyph rightEditing = '<';
-
-    ValueSelectorStyle() = default;
-    ValueSelectorStyle(Glyph ln, Glyph rn, Glyph lf, Glyph rf, Glyph lp, Glyph rp, Glyph le, Glyph re)
-        : leftNormal(ln), rightNormal(rn), leftFocused(lf), rightFocused(rf),
-          leftPressed(lp), rightPressed(rp), leftEditing(le), rightEditing(re) {}
 };
 
 // ValueSelector provides a focusable widget for +/− selection using rotary encoder and button.
@@ -144,14 +139,14 @@ public:
         if (!isFocused())
             return;
 
-        _isPressed = input.buttonState.buttonDown;
+        _isPressed = input.buttonDown;
 
-        if (input.buttonState.buttonPressed)
+        if (input.buttonPressed)
         {
             // Toggle edit mode on button press
             _isEditing = !_isEditing;
 
-            input.buttonState.buttonPressed = false; // consume the event so parent does not also act on it
+            input.buttonPressed = false; // consume the event so parent does not also act on it
         }
 
         if (_isEditing && input.encoderDelta != 0)
@@ -161,8 +156,8 @@ public:
         }
 
         // Keep buttonReleased consumed so parent does not also act on it
-        if (input.buttonState.buttonReleased)
-            input.buttonState.buttonReleased = false;
+        if (input.buttonReleased)
+            input.buttonReleased = false;
     }
 
 private:

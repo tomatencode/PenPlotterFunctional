@@ -15,7 +15,7 @@ public:
 
     virtual void render(Renderer& r, Rect canvasBox) = 0;
 
-    // measure() returns the minimum size needed to render the widget properly.
+    // minimum size needed to render the widget properly.
     virtual Size measure() const { return Size{0, 0}; }
 
     virtual bool canExpandHorizontally() const { return false; }
@@ -34,8 +34,10 @@ public:
     virtual size_t childCount() const { return 0; }
     virtual Widget* child(size_t) const { return nullptr; }
 
+    // for upstream widget tree traversal
     Widget* getParent() const { return _parent; }
     void setParent(Widget* parent) { _parent = parent; }
+    
 private:
     Widget* _parent = nullptr;
 };

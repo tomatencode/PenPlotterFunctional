@@ -32,7 +32,9 @@ public:
                 );
 
     Size measure() const override;
+
     void render(Renderer& r, Rect canvasBox) override;
+    
     void handleInput(InputState& input) override;
 
     bool isPressed() const { return _isPressed; }

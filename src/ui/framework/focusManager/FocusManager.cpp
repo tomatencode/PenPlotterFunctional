@@ -2,31 +2,31 @@
 
 namespace ui {
 
-FocusManager::FocusManager() : _widgets(), _index(0) {}
+FocusManager::FocusManager() : _widgets(), _selecedIndx(0) {}
 
 void FocusManager::setWidgets(std::vector<ui::widgets::Selectable*> widgets, uint8_t firstFocused)
 {
     _widgets = std::move(widgets);
-    _index = firstFocused % _widgets.size(); // Ensure firstFocused is within bounds
+    _selecedIndx = firstFocused % _widgets.size(); // Ensure firstFocused is within bounds
 
     if (_widgets.empty())
         return;
     
     // find the first enabled widget to focus on
-    while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
+    while (_widgets[_selecedIndx] == nullptr || !_widgets[_selecedIndx]->isEnabled())
     {
-        _index = (_index + 1) % _widgets.size();
-        if (_index == firstFocused % _widgets.size()) return; // Avoid infinite loop if all widgets are null or hidden
+        _selecedIndx = (_selecedIndx + 1) % _widgets.size();
+        if (_selecedIndx == firstFocused % _widgets.size()) return; // Avoid infinite loop if all widgets are null or hidden
     }
 
-    _widgets[_index]->focus();
+    _widgets[_selecedIndx]->focus();
 }
 
 void FocusManager::handleInput(InputState& input)
 {
-    if (_widgets.empty() || _widgets[_index] == nullptr) return;
+    if (_widgets.empty() || _widgets[_selecedIndx] == nullptr) return;
 
-    _widgets[_index]->handleInput(input);
+    _widgets[_selecedIndx]->handleInput(input);
 
     // Handle encoder rotation after focusable widget has processed input, allowing it to consume rotation if needed
     if (input.encoderDelta > 0)
@@ -46,19 +46,19 @@ void FocusManager::next()
 {
     if (_widgets.empty()) return;
 
-    if (_widgets[_index] != nullptr)
-        _widgets[_index]->unfocus();
+    if (_widgets[_selecedIndx] != nullptr)
+        _widgets[_selecedIndx]->unfocus();
     
-    _index = (_index + 1) % _widgets.size();
+    _selecedIndx = (_selecedIndx + 1) % _widgets.size();
 
-    size_t startIndex = _index;
-    while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
+    size_t startIndex = _selecedIndx;
+    while (_widgets[_selecedIndx] == nullptr || !_widgets[_selecedIndx]->isEnabled())
     {
-        _index = (_index + 1) % _widgets.size();
-        if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
+        _selecedIndx = (_selecedIndx + 1) % _widgets.size();
+        if (_selecedIndx == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
     }
     
-    _widgets[_index]->focus();
+    _widgets[_selecedIndx]->focus();
 }
 
 // Move focus to the previous widget
@@ -66,35 +66,36 @@ void FocusManager::prev()
 {
     if (_widgets.empty()) return;
 
-    if (_widgets[_index] != nullptr)
-        _widgets[_index]->unfocus();
+    if (_widgets[_selecedIndx] != nullptr)
+        _widgets[_selecedIndx]->unfocus();
 
-    _index = (_index + _widgets.size() - 1) % _widgets.size();
+    _selecedIndx = (_selecedIndx + _widgets.size() - 1) % _widgets.size();
     
-    size_t startIndex = _index;
-    while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
+    size_t startIndex = _selecedIndx;
+    while (_widgets[_selecedIndx] == nullptr || !_widgets[_selecedIndx]->isEnabled())
     {
-        _index = (_index + _widgets.size() - 1) % _widgets.size();
-        if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
+        _selecedIndx = (_selecedIndx + _widgets.size() - 1) % _widgets.size();
+        if (_selecedIndx == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
     }
     
-        _widgets[_index]->focus();
+        _widgets[_selecedIndx]->focus();
 }
 
 void FocusManager::refresh() {
     if (_widgets.empty()) return;
-    // if current invalid, skip
-    if (_index < _widgets.size() && _widgets[_index] && _widgets[_index]->isEnabled()) return;
-    if (_index < _widgets.size() && _widgets[_index]) _widgets[_index]->unfocus();
+    
+    // if current valid, skip
+    if (_selecedIndx < _widgets.size() && _widgets[_selecedIndx] && _widgets[_selecedIndx]->isEnabled()) return;
+    if (_selecedIndx < _widgets.size() && _widgets[_selecedIndx]) _widgets[_selecedIndx]->unfocus();
 
-    size_t startIndex = _index;
-    while (_widgets[_index] == nullptr || !_widgets[_index]->isEnabled())
+    size_t startIndex = _selecedIndx;
+    while (_widgets[_selecedIndx] == nullptr || !_widgets[_selecedIndx]->isEnabled())
     {
-        _index = (_index + _widgets.size() - 1) % _widgets.size();
-        if (_index == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
+        _selecedIndx = (_selecedIndx + _widgets.size() - 1) % _widgets.size();
+        if (_selecedIndx == startIndex) return; // Avoid infinite loop if all widgets are null or hidden
     }
 
-    _widgets[_index]->focus();
+    _widgets[_selecedIndx]->focus();
 }
 
 } // namespace ui

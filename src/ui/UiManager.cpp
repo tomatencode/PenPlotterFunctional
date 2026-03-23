@@ -43,9 +43,9 @@ ui::InputState UiManager::readInputs()
     ui::InputState state;
 
     state.encoderDelta = _encoder.getPositionDelta();
-    state.buttonState.buttonPressed = _encoder.buttonPressed();
-    state.buttonState.buttonReleased = _encoder.buttonReleased();
-    state.buttonState.buttonDown = _encoder.buttonDown();
+    state.buttonPressed = _encoder.buttonPressed();
+    state.buttonReleased = _encoder.buttonReleased();
+    state.buttonDown = _encoder.buttonDown();
 
     return state;
 }

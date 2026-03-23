@@ -10,6 +10,8 @@ class Selectable : public Widget
 {
 public:
     Selectable() {}
+    
+    ~Selectable() = default;
 
     virtual bool isSelectable() const override { return true; }
 

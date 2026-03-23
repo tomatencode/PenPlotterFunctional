@@ -7,14 +7,14 @@ namespace widgets {
 class ConditionalWidget : public Container
 {
 public:
-    // Takes ownership of the child widget.
+    // Takes ownership of the child widget
     ConditionalWidget(std::function<bool()> en, std::unique_ptr<Widget> child)
         : Container(std::move(child)), _enabledCallback(en)
     {}
 
     void render(Renderer& r, Rect canvasBox) override
     {
-        // shuld never happen
+        // shuld never happen be false
         if (_enabledCallback())
             Container::render(r, canvasBox);
     }

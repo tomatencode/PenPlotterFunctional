@@ -13,4 +13,5 @@ struct Glyph
 
 // Special “no glyph” sentinel for optional decorations
 constexpr Glyph GLYPH_NONE(255);
+
 } // namespace ui

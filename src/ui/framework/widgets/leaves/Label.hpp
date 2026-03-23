@@ -14,14 +14,15 @@ namespace widgets {
 class Label : public Widget
 {
 public:
+
+    // Static label
     Label(GlyphString glyphs);
 
+    // Dynamic label
     Label(std::function<GlyphString()> glyphFunc);
 
-    // Render the label within the given canvas
     void render(Renderer& r, Rect canvasBox) override;
 
-    // Return the preferred size of the label
     Size measure() const override;
 
 private:

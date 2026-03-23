@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include <cstddef>
 #include <cassert>
 #include "../screen/Screen.hpp"
@@ -11,24 +11,13 @@ namespace ui {
 class Router
 {
 public:
-    static constexpr size_t MAX_STACK = 8; // adjust for embedded memory limits
+    Router() {};
 
-    Router();
-
-    // Push a new screen onto the stack (current screen stays below)
-    // Returns false if the stack is full or screen is null.
     void pushScreen(Screen* screen);
-
-    // Pop the current screen from the stack
-    // Returns false if the stack is already empty.
     void popScreen();
 
-    // Query the stack for safe usage
-    bool isEmpty() const;
-    bool canPush() const;
-    bool canPop() const;
-    size_t stackSize() const;
-    Screen* top() const;
+    bool canPop() const { return !_stack.empty(); }
+    Screen* top() const { return _stack.empty() ? nullptr : _stack.back(); }
 
     // Forward input to the active screen
     void handleInput(InputState& input);
@@ -36,8 +25,7 @@ public:
     // Forward rendering to the active screen
     void render(Renderer& r);
 private:
-    std::array<Screen*, MAX_STACK> _stack;
-    size_t _stackCount;
+    std::vector<Screen*> _stack;
 };
 
 } // namespace ui
