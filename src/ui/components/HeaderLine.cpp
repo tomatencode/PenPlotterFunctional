@@ -2,9 +2,9 @@
 #include "../framework/widgets/Builder.hpp"
 
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
-#include "../framework/widgets/leaves/LabelWidget.hpp"
-#include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/widgets/leaves/SpacerWidget.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
+#include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Spacer.hpp"
 
 #include "WifiIndicator.hpp"
 

@@ -9,8 +9,8 @@
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
 #include "../framework/widgets/Builder.hpp"
-#include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/widgets/leaves/LabelWidget.hpp"
+#include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
 
 namespace ui {
 namespace screens {

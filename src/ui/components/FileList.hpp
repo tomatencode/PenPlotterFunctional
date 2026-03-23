@@ -3,7 +3,7 @@
 #include <functional>
 #include <memory>
 
-#include "../framework/widgets/core/ContainerWidget.hpp"
+#include "../framework/widgets/core/Container.hpp"
 
 namespace ui {
 namespace components {

@@ -1,5 +1,5 @@
 #include "ScrollableVerticalLayout.hpp"
-#include "../core/SelectableWidget.hpp"
+#include "../core/Selectable.hpp"
 #include <cassert>
 
 namespace ui {

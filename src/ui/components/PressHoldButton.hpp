@@ -3,7 +3,7 @@
 #include <functional>
 #include <memory>
 
-#include "../framework/widgets/leaves/ButtonWidget.hpp"
+#include "../framework/widgets/leaves/Button.hpp"
 
 namespace ui {
 namespace components {

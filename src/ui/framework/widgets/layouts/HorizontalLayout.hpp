@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "../core/LayoutWidget.hpp"
+#include "../core/Layout.hpp"
 #include "LayoutStyle.hpp"
 
 namespace ui {

@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include <vector>
-#include "../widgets/core/SelectableWidget.hpp"
+#include "../widgets/core/Selectable.hpp"
 
 namespace ui {
 

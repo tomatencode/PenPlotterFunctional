@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Widget.hpp"
-#include "SelectableWidget.hpp"
+#include "Selectable.hpp"
 
 namespace ui {
 namespace widgets {

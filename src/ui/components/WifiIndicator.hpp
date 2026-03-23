@@ -3,8 +3,8 @@
 #include <memory>
 
 #include "../framework/widgets/core/Widget.hpp"
-#include "../framework/widgets/core/ContainerWidget.hpp"
-#include "../framework/widgets/leaves/LabelWidget.hpp"
+#include "../framework/widgets/core/Container.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
 
 namespace ui {
 namespace components {

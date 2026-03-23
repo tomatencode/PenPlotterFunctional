@@ -1,8 +1,8 @@
 #include "FileList.hpp"
 
 #include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
-#include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/widgets/leaves/LabelWidget.hpp"
+#include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/Builder.hpp"
 
 #include "../../storage/FileSystem.hpp"
