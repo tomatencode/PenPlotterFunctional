@@ -18,7 +18,7 @@ struct ScrollableVerticalLayoutStyle {
     uint8_t marginBottom = 0;
 };
 
-class ScrollableVerticalLayout : public LayoutWidget
+class ScrollableVerticalLayout : public Layout
 {
 public:
     // Constructor: takes ownership of the provided widgets

@@ -3,18 +3,18 @@
 namespace ui {
 namespace widgets {
 
-ProgressBarWidget::ProgressBarWidget(ProgressBarStyle style, std::function<uint8_t()> getProgress)
+ProgressBar::ProgressBar(ProgressBarStyle style, std::function<uint8_t()> getProgress)
     : Widget(),
       _style(style),
       _getProgress(getProgress)
 {}
 
-Size ProgressBarWidget::measure() const
+Size ProgressBar::measure() const
 {
     return Size{2, 1}; // Minimum size to show empty bar: "[]"
 }
 
-void ProgressBarWidget::render(Renderer& r, Rect canvasBox)
+void ProgressBar::render(Renderer& r, Rect canvasBox)
 {
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible

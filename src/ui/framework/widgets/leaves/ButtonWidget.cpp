@@ -3,7 +3,7 @@
 namespace ui {
 namespace widgets {
 
-ButtonWidget::ButtonWidget(std::unique_ptr<Widget> child,
+Button::Button(std::unique_ptr<Widget> child,
                            ButtonStyle style,
                            std::function<void()> onPress,
                            std::function<void()> onRelease
@@ -16,7 +16,7 @@ ButtonWidget::ButtonWidget(std::unique_ptr<Widget> child,
       _isPressed(false)
 {}
 
-Size ButtonWidget::measure() const
+Size Button::measure() const
 {
     Size childSize = _child ? _child->measure() : Size{0, 0};
     uint8_t width = childSize.w;
@@ -38,7 +38,7 @@ Size ButtonWidget::measure() const
     return { width, static_cast<uint8_t>(1) };
 }
 
-void ButtonWidget::render(Renderer& r, Rect canvasBox)
+void Button::render(Renderer& r, Rect canvasBox)
 {
     // Button renders at the given canvasBox position, full width
     if (canvasBox.w == 0 || canvasBox.h == 0)
@@ -94,7 +94,7 @@ void ButtonWidget::render(Renderer& r, Rect canvasBox)
     }
 }
 
-void ButtonWidget::handleInput(InputState& input)
+void Button::handleInput(InputState& input)
 {
     if (!isFocused()) return;
 
@@ -109,12 +109,12 @@ void ButtonWidget::handleInput(InputState& input)
     input.buttonState.buttonPressed = false; // consume press event
 }
 
-void ButtonWidget::onFocusGained()
+void Button::onFocusGained()
 {
     // Optional: visual or sound feedback
 }
 
-void ButtonWidget::onFocusLost()
+void Button::onFocusLost()
 {
     _isPressed = false; // reset pressed state when losing focus
 }

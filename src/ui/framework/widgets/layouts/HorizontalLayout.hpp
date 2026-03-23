@@ -19,7 +19,7 @@ struct HorizontalLayoutStyle {
     uint8_t marginBottom = 0;
 };
 
-class HorizontalLayout : public LayoutWidget
+class HorizontalLayout : public Layout
 {
 public:
     // Constructor: takes ownership of the provided widgets

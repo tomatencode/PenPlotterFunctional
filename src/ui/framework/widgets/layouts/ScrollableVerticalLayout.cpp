@@ -6,7 +6,7 @@ namespace ui {
 namespace widgets {
 
 ScrollableVerticalLayout::ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
-    : LayoutWidget(std::move(children)), _style(style)
+    : Layout(std::move(children)), _style(style)
 {
 }
 
@@ -23,7 +23,7 @@ void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 
         if (childWidget->isSelectable())
         {
-            SelectableWidget* selectable = static_cast<SelectableWidget*>(childWidget);
+            Selectable* selectable = static_cast<Selectable*>(childWidget);
             if (selectable->isFocused())
             {
                 Size childSize = childWidget->measure();

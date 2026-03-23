@@ -35,7 +35,7 @@ struct ValueSelectorStyle
 // focused+editing -> >3<
 
 template <typename T>
-class ValueSelector : public SelectableWidget
+class ValueSelector : public Selectable
 {
 public:
     static std::string defaultToString(const T& value)

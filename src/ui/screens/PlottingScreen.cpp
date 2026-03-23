@@ -25,13 +25,13 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), false),
 
-            widgets::make_widget<widgets::ProgressBarWidget>(widgets::ProgressBarStyle{}, [&jobManager]() {
+            widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobManager]() {
                 return jobManager.currentProgress() * 100.0; // Convert to percentage
              }),
 
             widgets::make_layout<widgets::HorizontalLayout>(
                 widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
-                widgets::make_widget<widgets::LabelWidget>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                widgets::make_widget<widgets::Label>(std::move(std::make_unique<FunctionText>([&jobManager]() {
                     return String(jobManager.getCurrentLine()) + "/" + String(jobManager.getTotalLines());
                 })))
             ),
@@ -41,8 +41,8 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
 
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return (jobManager.getCurrentLine() != jobManager.getTotalLines()); },
-                        widgets::make_widget<widgets::ButtonWidget>(
-                            widgets::make_widget<widgets::LabelWidget>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                        widgets::make_widget<widgets::Button>(
+                            widgets::make_widget<widgets::Label>(std::move(std::make_unique<FunctionText>([&jobManager]() {
                                 return jobManager.isJobPaused() ? "Resume" : "Pause";
                             }))),
                             widgets::ButtonStyle(),
@@ -58,8 +58,8 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
 
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return jobManager.getCurrentLine() != jobManager.getTotalLines(); },
-                        widgets::make_widget<widgets::ButtonWidget>(
-                            widgets::make_widget<widgets::LabelWidget>("Abort"),
+                        widgets::make_widget<widgets::Button>(
+                            widgets::make_widget<widgets::Label>("Abort"),
                             widgets::ButtonStyle(),
                             [this, &jobManager]() {
                                 jobManager.abort();
@@ -70,8 +70,8 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
 
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return jobManager.getCurrentLine() == jobManager.getTotalLines(); },
-                        widgets::make_widget<widgets::ButtonWidget>(
-                            widgets::make_widget<widgets::LabelWidget>("Back to Files"),
+                        widgets::make_widget<widgets::Button>(
+                            widgets::make_widget<widgets::Label>("Back to Files"),
                             widgets::ButtonStyle(),
                             [this, &jobManager]() {
                                 jobManager.abort();

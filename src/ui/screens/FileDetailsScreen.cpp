@@ -63,7 +63,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     }
                 }),
 
-                widgets::make_widget<widgets::LabelWidget>("This file does not exist!")
+                widgets::make_widget<widgets::Label>("This file does not exist!")
             )
             ) : (
             widgets::make_layout<widgets::VerticalLayout>(
@@ -75,15 +75,15 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     }
                 }),
 
-                widgets::make_widget<widgets::LabelWidget>(createFileSizeTextSource(filename)),
+                widgets::make_widget<widgets::Label>(createFileSizeTextSource(filename)),
 
-                widgets::make_widget<widgets::LabelWidget>(createPlotTimeTextSource(filename)),
+                widgets::make_widget<widgets::Label>(createPlotTimeTextSource(filename)),
 
                 widgets::make_layout<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                    widgets::make_widget<widgets::ButtonWidget>(
-                        widgets::make_widget<widgets::LabelWidget>("Plot"),
+                    widgets::make_widget<widgets::Button>(
+                        widgets::make_widget<widgets::Label>("Plot"),
                         widgets::ButtonStyle(),
                         [filename, this, &jobManager]() {
                             PlottingScreen* plottingScreen = new PlottingScreen(filename, jobManager);
@@ -93,7 +93,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                         }
                     ),
                     widgets::make_widget<components::PressHoldButton>(
-                        widgets::make_widget<widgets::LabelWidget>("Delete"),
+                        widgets::make_widget<widgets::Label>("Delete"),
                         components::PressHoldButtonStyle(),
                         [filename, this]() {
                             storage::fsDelete("/" + filename);

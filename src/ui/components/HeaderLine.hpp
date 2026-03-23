@@ -8,7 +8,7 @@
 namespace ui {
 namespace components {
 
-class HeaderLine: public ui::widgets::ContainerWidget
+class HeaderLine: public ui::widgets::Container
 {
 public:
     HeaderLine(const char* headerText, bool backButton,

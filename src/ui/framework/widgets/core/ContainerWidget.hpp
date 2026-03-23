@@ -8,17 +8,17 @@
 namespace ui {
 namespace widgets {
 
-class ContainerWidget : public Widget
+class Container : public Widget
 {
 public:
     // Owning constructor: takes ownership of the widgets
-    ContainerWidget(std::unique_ptr<Widget>&& child)
+    Container(std::unique_ptr<Widget>&& child)
         : _child(std::move(child))
     {
         if (_child) _child->setParent(this);
     }
 
-    ~ContainerWidget() = default;
+    ~Container() = default;
 
     virtual void reload() override {
         if (_child)

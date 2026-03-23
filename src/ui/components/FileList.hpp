@@ -8,7 +8,7 @@
 namespace ui {
 namespace components {
 
-class FileList : public widgets::ContainerWidget
+class FileList : public widgets::Container
 {
 public:
     FileList(std::function<void(const String&)> onFileSelected);

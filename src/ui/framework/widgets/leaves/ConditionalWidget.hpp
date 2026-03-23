@@ -4,19 +4,19 @@
 namespace ui {
 namespace widgets {
 
-class ConditionalWidget : public ContainerWidget
+class ConditionalWidget : public Container
 {
 public:
     // Takes ownership of the child widget.
     ConditionalWidget(std::function<bool()> en, std::unique_ptr<Widget> child)
-        : ContainerWidget(std::move(child)), _enabledCallback(en)
+        : Container(std::move(child)), _enabledCallback(en)
     {}
 
     void render(Renderer& r, Rect canvasBox) override
     {
         // shuld never happen
         if (_enabledCallback())
-            ContainerWidget::render(r, canvasBox);
+            Container::render(r, canvasBox);
     }
 
     bool isEnabled() const override

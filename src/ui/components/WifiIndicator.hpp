@@ -9,7 +9,7 @@
 namespace ui {
 namespace components {
 
-class WifiIndicator: public ui::widgets::ContainerWidget
+class WifiIndicator: public ui::widgets::Container
 {
 public:
     WifiIndicator();

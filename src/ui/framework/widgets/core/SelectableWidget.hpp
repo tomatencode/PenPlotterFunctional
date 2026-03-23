@@ -6,10 +6,10 @@
 namespace ui {
 namespace widgets {
 
-class SelectableWidget : public Widget
+class Selectable : public Widget
 {
 public:
-    SelectableWidget() {}
+    Selectable() {}
 
     virtual bool isSelectable() const override { return true; }
 

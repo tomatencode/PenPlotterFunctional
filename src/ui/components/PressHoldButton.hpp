@@ -19,7 +19,7 @@ struct PressHoldButtonStyle {
     Glyph HoldCountdownEmpty = ' ';
 };
 
-class PressHoldButton: public ui::widgets::ButtonWidget
+class PressHoldButton: public ui::widgets::Button
 {
 public:
     PressHoldButton(std::unique_ptr<Widget> child, PressHoldButtonStyle style ,std::function<void()> onHoldRelease, uint16_t holdTimeMs = 3000);

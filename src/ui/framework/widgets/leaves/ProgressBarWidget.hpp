@@ -15,12 +15,12 @@ struct ProgressBarStyle
     Glyph rightBracket = ']';
 };
 
-class ProgressBarWidget : public Widget
+class ProgressBar : public Widget
 {
 public:
     // Construct a progress bar with specified width and height
     // getProgress: function pointer that returns progress 0-100
-    ProgressBarWidget(ProgressBarStyle style, std::function<uint8_t()> getProgress);
+    ProgressBar(ProgressBarStyle style, std::function<uint8_t()> getProgress);
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

@@ -19,7 +19,7 @@ struct VerticalLayoutStyle {
     uint8_t marginBottom = 0;
 };
 
-class VerticalLayout : public LayoutWidget
+class VerticalLayout : public Layout
 {
 public:
     // Constructor: takes ownership of the provided widgets

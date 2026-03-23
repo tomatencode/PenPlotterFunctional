@@ -25,7 +25,7 @@ widgets::ButtonStyle fileButtonStyle = {
 
 
 FileList::FileList(std::function<void(const String&)> onFileSelected)
-    : ContainerWidget(std::make_unique<widgets::ScrollableVerticalLayout>(
+    : Container(std::make_unique<widgets::ScrollableVerticalLayout>(
         widgets::ScrollableVerticalLayoutStyle{},
         std::vector<std::unique_ptr<widgets::Widget>>{}
     )), _onFileSelected(std::move(onFileSelected))
@@ -34,7 +34,7 @@ FileList::FileList(std::function<void(const String&)> onFileSelected)
 }
 
 void FileList::reload() {
-    widgets::ScrollableVerticalLayout* layout = static_cast<widgets::ScrollableVerticalLayout*>(widgets::ContainerWidget::child(0));
+    widgets::ScrollableVerticalLayout* layout = static_cast<widgets::ScrollableVerticalLayout*>(widgets::Container::child(0));
 
     if (!layout) return;
 
@@ -42,8 +42,8 @@ void FileList::reload() {
 
     auto files = storage::fsListFiles();
     for (const auto& file : files) {
-        auto label = widgets::make_widget<widgets::LabelWidget>(file.c_str());
-        auto button = widgets::make_widget<widgets::ButtonWidget>(
+        auto label = widgets::make_widget<widgets::Label>(file.c_str());
+        auto button = widgets::make_widget<widgets::Button>(
             std::move(label),
             fileButtonStyle,
             [this, file]() { _onFileSelected(file); }

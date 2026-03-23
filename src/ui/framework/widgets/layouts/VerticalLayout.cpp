@@ -4,7 +4,7 @@ namespace ui {
 namespace widgets {
 
 VerticalLayout::VerticalLayout(const VerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
-    : LayoutWidget(std::move(children)), _style(style)
+    : Layout(std::move(children)), _style(style)
 {
 }
 

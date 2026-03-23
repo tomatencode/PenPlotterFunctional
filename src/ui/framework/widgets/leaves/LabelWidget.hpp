@@ -8,14 +8,14 @@
 namespace ui {
 namespace widgets {
 
-class LabelWidget : public Widget
+class Label : public Widget
 {
 public:
     // Takes ownership of a text source.
-    LabelWidget(std::unique_ptr<TextSource> textSource);
+    Label(std::unique_ptr<TextSource> textSource);
 
     // Convenience constructors for common sources
-    LabelWidget(const char* text);
+    Label(const char* text);
 
     // Render the label within the given canvas
     void render(Renderer& r, Rect canvasBox) override;

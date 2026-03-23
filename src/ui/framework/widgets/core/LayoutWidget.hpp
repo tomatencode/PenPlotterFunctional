@@ -8,11 +8,11 @@
 namespace ui {
 namespace widgets {
 
-class LayoutWidget : public Widget
+class Layout : public Widget
 {
 public:
     // Owning constructor: takes ownership of the widgets
-    LayoutWidget(std::vector<std::unique_ptr<Widget>>&& ownedChildren)
+    Layout(std::vector<std::unique_ptr<Widget>>&& ownedChildren)
         : _ownedChildren(std::move(ownedChildren))
     {
         // Set parent pointers for children
@@ -22,7 +22,7 @@ public:
         }
     }
 
-    ~LayoutWidget() = default;
+    ~Layout() = default;
 
     virtual void reload() override {
         for (const auto& child : _ownedChildren) {

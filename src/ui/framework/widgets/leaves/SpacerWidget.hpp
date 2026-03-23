@@ -4,9 +4,9 @@
 namespace ui {
 namespace widgets {
 
-class SpacerWidget : public Widget {
+class Spacer : public Widget {
 public:
-    SpacerWidget(uint8_t width, uint8_t height);
+    Spacer(uint8_t width, uint8_t height);
     Size measure() const override;
     void render(Renderer& r, Rect canvasBox) override;  // Does nothing
 private:

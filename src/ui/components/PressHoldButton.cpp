@@ -4,7 +4,7 @@ namespace ui {
 namespace components {
 
 PressHoldButton::PressHoldButton(std::unique_ptr<Widget> child, PressHoldButtonStyle style ,std::function<void()> onHoldRelease, uint16_t holdTimeMs)
-    : ButtonWidget(std::move(child), widgets::ButtonStyle{
+    : Button(std::move(child), widgets::ButtonStyle{
         .leftNormal = style.leftNormal,
         .rightNormal = style.rightNormal,
         .leftFocused = style.leftFocused,
@@ -39,13 +39,13 @@ void PressHoldButton::handleInput(InputState& input)
     input.buttonState.buttonReleased = false; // consume release event
 
     // Call base class to handle visual state changes
-    ButtonWidget::handleInput(input);
+    Button::handleInput(input);
 }
 
 void PressHoldButton::render(Renderer& r, widgets::Rect canvasBox)
 {
     // Call base class to render button and child
-    ButtonWidget::render(r, canvasBox);
+    Button::render(r, canvasBox);
 
     // If button is pressed, draw hold countdown over the button
     if (!isFocused() || !isPressed()) return;
@@ -58,7 +58,7 @@ void PressHoldButton::render(Renderer& r, widgets::Rect canvasBox)
 
     // Calculate button width excluding decorations
     uint8_t buttonWidth = 0;
-    if (ButtonWidget::canExpandHorizontally())
+    if (Button::canExpandHorizontally())
         buttonWidth = canvasBox.w - 2; // Exclude decorations
     else
         buttonWidth = measure().w - 2; // Exclude decorations

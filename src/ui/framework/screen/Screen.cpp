@@ -20,7 +20,7 @@ void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
 {
     root = std::move(rootWidget);
 
-    std::vector<widgets::SelectableWidget*> selectableWidgets;
+    std::vector<widgets::Selectable*> selectableWidgets;
 
     // Collect selectable widgets recursively from the root widget
     collectSelectables(root.get(), selectableWidgets);
@@ -32,7 +32,7 @@ void Screen::reload() {
     if (root)
         root->reload();
 
-    std::vector<widgets::SelectableWidget*> selectableWidgets;
+    std::vector<widgets::Selectable*> selectableWidgets;
 
     // Collect selectable widgets recursively from the root widget
     collectSelectables(root.get(), selectableWidgets);

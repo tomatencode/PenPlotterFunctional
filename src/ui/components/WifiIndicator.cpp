@@ -11,8 +11,8 @@ using namespace widgets;
 
 
 WifiIndicator::WifiIndicator()
-    : ContainerWidget(
-        widgets::make_widget<LabelWidget>(
+    : Container(
+        widgets::make_widget<Label>(
                 std::unique_ptr<FunctionGlyph>(
                     new FunctionGlyph([]() -> const Glyph* {
                         static Glyph glyphs[2] = {GLYPH_SPACE, GLYPH_TERMINATOR};

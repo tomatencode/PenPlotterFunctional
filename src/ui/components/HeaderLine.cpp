@@ -16,18 +16,18 @@ using namespace widgets;
 
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          std::function<void()> onBackPress)
-    : ContainerWidget(
+    : Container(
         make_layout<HorizontalLayout>(
             HorizontalLayoutStyle{.spacingMode = SpacingMode::SpaceBetween},
             make_widget<WifiIndicator>(),
-            make_widget<LabelWidget>(headerText),
+            make_widget<Label>(headerText),
             backButton
-                ? make_widget<ButtonWidget>(
-                    make_widget<LabelWidget>("Back"),
+                ? make_widget<Button>(
+                    make_widget<Label>("Back"),
                     ButtonStyle(),
                     onBackPress
                   )
-                : make_widget<SpacerWidget>(1, 1)
+                : make_widget<Spacer>(1, 1)
         )
     )
 {

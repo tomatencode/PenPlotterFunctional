@@ -4,7 +4,7 @@
 namespace ui {
 namespace widgets {
 
-class SwitchWidget : public ContainerWidget
+class SwitchWidget : public Container
 {
 public:
     SwitchWidget(std::function<bool()> en, std::unique_ptr<Widget>&& child);

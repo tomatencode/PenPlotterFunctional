@@ -6,15 +6,15 @@
 namespace ui {
 namespace widgets {
 
-LabelWidget::LabelWidget(std::unique_ptr<TextSource> textSource)
+Label::Label(std::unique_ptr<TextSource> textSource)
     : _text(std::move(textSource))
 {}
 
-LabelWidget::LabelWidget(const char* text)
+Label::Label(const char* text)
     : _text(std::unique_ptr<TextSource>(new StaticText(text)))
 {}
 
-Size LabelWidget::measure() const
+Size Label::measure() const
 {
     const Glyph* glyphs = _text->getGlyphs();
     int width = 0;
@@ -29,7 +29,7 @@ Size LabelWidget::measure() const
     };
 }
 
-void LabelWidget::render(Renderer& r, Rect canvasBox)
+void Label::render(Renderer& r, Rect canvasBox)
 {
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return;

@@ -20,12 +20,12 @@ struct ButtonStyle
     Glyph rightPressed = '-';
 };
 
-class ButtonWidget : public SelectableWidget
+class Button : public Selectable
 {
 public:
     // Takes ownership of the child widget.
     // The child should be heap-allocated and not managed elsewhere.
-    ButtonWidget(std::unique_ptr<Widget> child,
+    Button(std::unique_ptr<Widget> child,
                  ButtonStyle style = ButtonStyle{},
                  std::function<void()> onPress = nullptr,
                  std::function<void()> onRelease = nullptr

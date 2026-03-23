@@ -4,7 +4,7 @@ namespace ui {
 
 FocusManager::FocusManager() : _widgets(), _index(0) {}
 
-void FocusManager::setWidgets(std::vector<ui::widgets::SelectableWidget*> widgets, uint8_t firstFocused)
+void FocusManager::setWidgets(std::vector<ui::widgets::Selectable*> widgets, uint8_t firstFocused)
 {
     _widgets = std::move(widgets);
     _index = firstFocused % _widgets.size(); // Ensure firstFocused is within bounds
