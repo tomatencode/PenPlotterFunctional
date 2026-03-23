@@ -41,7 +41,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), true, [this]() {
                     if (router()) {
                         router()->popScreen(); // Go back to the previous screen
                     }
@@ -53,7 +53,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), true, [this]() {
                     if (router()) {
                         router()->popScreen(); // Go back to the previous screen
                     }

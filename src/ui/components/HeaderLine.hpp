@@ -11,7 +11,7 @@ namespace components {
 class HeaderLine: public ui::widgets::Container
 {
 public:
-    HeaderLine(const char* headerText, bool backButton,
+    HeaderLine(String headerText, bool backButton,
                std::function<void()> onBackPress = nullptr);
 };
 

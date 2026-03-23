@@ -12,7 +12,7 @@
 namespace ui {
 namespace components {
 
-HeaderLine::HeaderLine(const char* headerText, bool backButton,
+HeaderLine::HeaderLine(String headerText, bool backButton,
                          std::function<void()> onBackPress)
     : Container(
         widgets::make_widget<widgets::HorizontalLayout>(

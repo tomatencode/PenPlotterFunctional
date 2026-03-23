@@ -21,7 +21,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), false),
+            widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), false),
 
             widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobManager]() {
                 return jobManager.currentProgress() * 100.0; // Convert to percentage
