@@ -7,12 +7,9 @@
 namespace ui {
 namespace components {
 
-using namespace widgets;
-
-
 WifiIndicator::WifiIndicator()
     : Container(
-        widgets::make_widget<Label>(
+        widgets::make_widget<widgets::Label>(
                 std::unique_ptr<FunctionGlyph>(
                     new FunctionGlyph([]() -> const Glyph* {
                         static Glyph glyphs[2] = {GLYPH_SPACE, GLYPH_TERMINATOR};

@@ -17,7 +17,7 @@ namespace screens {
 
 HomeScreen::HomeScreen(JobManager& jobManager)
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>("Pen Plotter", false),
 

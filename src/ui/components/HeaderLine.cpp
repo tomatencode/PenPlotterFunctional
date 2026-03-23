@@ -12,22 +12,20 @@
 namespace ui {
 namespace components {
 
-using namespace widgets;
-
 HeaderLine::HeaderLine(const char* headerText, bool backButton,
                          std::function<void()> onBackPress)
     : Container(
-        make_layout<HorizontalLayout>(
-            HorizontalLayoutStyle{.spacingMode = SpacingMode::SpaceBetween},
-            make_widget<WifiIndicator>(),
-            make_widget<Label>(headerText),
+        widgets::make_widget<widgets::HorizontalLayout>(
+            widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
+            widgets::make_widget<components::WifiIndicator>(),
+            widgets::make_widget<widgets::Label>(headerText),
             backButton
-                ? make_widget<Button>(
-                    make_widget<Label>("Back"),
-                    ButtonStyle(),
+                ? widgets::make_widget<widgets::Button>(
+                    widgets::make_widget<widgets::Label>("Back"),
+                    widgets::ButtonStyle(),
                     onBackPress
                   )
-                : make_widget<Spacer>(1, 1)
+                : widgets::make_widget<widgets::Spacer>(1, 1)
         )
     )
 {

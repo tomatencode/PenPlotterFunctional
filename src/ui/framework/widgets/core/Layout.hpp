@@ -11,9 +11,21 @@ namespace widgets {
 class Layout : public Widget
 {
 public:
-    // Owning constructor: takes ownership of the widgets
+    // Vector-based constructor: takes ownership of pre-built vector of widgets
     Layout(std::vector<std::unique_ptr<Widget>>&& ownedChildren)
         : _ownedChildren(std::move(ownedChildren))
+    {
+        // Set parent pointers for children
+        for (const auto& child : _ownedChildren) {
+            if (child)
+                child->setParent(this);
+        }
+    }
+
+    // Variadic constructor: takes individual widget pointers
+    template <typename... Children>
+    Layout(Children&&... children)
+        : _ownedChildren(make_children(std::forward<Children>(children)...))
     {
         // Set parent pointers for children
         for (const auto& child : _ownedChildren) {
@@ -78,6 +90,15 @@ public:
     }
 private:
     std::vector<std::unique_ptr<Widget>> _ownedChildren;
+
+    template <typename... Children>
+    std::vector<std::unique_ptr<Widget>> make_children(Children&&... children)
+    {
+        std::vector<std::unique_ptr<Widget>> v;
+        v.reserve(sizeof...(Children));
+        (void)std::initializer_list<int>{(v.push_back(std::forward<Children>(children)), 0)...};
+        return v;
+    }
 };
 
 } // namespace widgets

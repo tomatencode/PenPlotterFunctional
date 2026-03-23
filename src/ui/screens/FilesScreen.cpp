@@ -19,7 +19,7 @@ namespace screens {
 
 FilesScreen::FilesScreen(JobManager& jobManager)
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{},
             widgets::make_widget<components::HeaderLine>("Files", true, [this]() {
                 if (router()) {

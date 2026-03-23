@@ -22,8 +22,18 @@ struct VerticalLayoutStyle {
 class VerticalLayout : public Layout
 {
 public:
-    // Constructor: takes ownership of the provided widgets
-    VerticalLayout(const VerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children);
+    // Vector-based constructor (for pre-built child vectors)
+    VerticalLayout(const VerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+        : Layout(std::move(children)), _style(style)
+    {
+    }
+
+    // Variadic constructor (for individual widget arguments)
+    template <typename... Children>
+    VerticalLayout(const VerticalLayoutStyle& style, Children&&... children)
+        : Layout(std::forward<Children>(children)...), _style(style)
+    {
+    }
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;

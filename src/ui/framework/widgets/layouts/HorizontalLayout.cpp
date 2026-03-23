@@ -3,11 +3,6 @@
 namespace ui {
 namespace widgets {
 
-HorizontalLayout::HorizontalLayout(const HorizontalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
-    : Layout(std::move(children)), _style(style)
-{
-}
-
 Size HorizontalLayout::measure() const
 {
     const size_t count = EnChildCount();

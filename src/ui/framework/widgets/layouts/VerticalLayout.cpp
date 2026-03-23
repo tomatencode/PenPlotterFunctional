@@ -3,11 +3,6 @@
 namespace ui {
 namespace widgets {
 
-VerticalLayout::VerticalLayout(const VerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
-    : Layout(std::move(children)), _style(style)
-{
-}
-
 Size VerticalLayout::measure() const
 {
     const size_t count = EnChildCount();

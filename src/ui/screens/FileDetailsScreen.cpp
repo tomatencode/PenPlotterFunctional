@@ -54,7 +54,7 @@ std::unique_ptr<ui::TextSource> createPlotTimeTextSource(const String& filename)
 FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager)
     : Screen(
         !storage::fsExists("/" + filename) ? (
-            widgets::make_layout<widgets::VerticalLayout>(
+            widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
                 widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
@@ -66,7 +66,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                 widgets::make_widget<widgets::Label>("This file does not exist!")
             )
             ) : (
-            widgets::make_layout<widgets::VerticalLayout>(
+            widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
                 widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), true, [this]() {
@@ -79,7 +79,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
 
                 widgets::make_widget<widgets::Label>(createPlotTimeTextSource(filename)),
 
-                widgets::make_layout<widgets::HorizontalLayout>(
+                widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                     widgets::make_widget<widgets::Button>(

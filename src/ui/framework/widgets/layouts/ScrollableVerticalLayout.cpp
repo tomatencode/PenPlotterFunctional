@@ -5,11 +5,6 @@
 namespace ui {
 namespace widgets {
 
-ScrollableVerticalLayout::ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
-    : Layout(std::move(children)), _style(style)
-{
-}
-
 void ScrollableVerticalLayout::updateScrollOffset(uint8_t visibleHeight)
 {
     uint16_t childY = _style.marginTop; // Start at top margin

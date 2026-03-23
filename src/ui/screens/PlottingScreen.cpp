@@ -21,7 +21,7 @@ namespace screens {
 
 PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
     : Screen(
-        widgets::make_layout<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6).c_str(), false),
 
@@ -29,14 +29,14 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
                 return jobManager.currentProgress() * 100.0; // Convert to percentage
              }),
 
-            widgets::make_layout<widgets::HorizontalLayout>(
+            widgets::make_widget<widgets::HorizontalLayout>(
                 widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
                 widgets::make_widget<widgets::Label>(std::move(std::make_unique<FunctionText>([&jobManager]() {
                     return String(jobManager.getCurrentLine()) + "/" + String(jobManager.getTotalLines());
                 })))
             ),
 
-            widgets::make_layout<widgets::HorizontalLayout>(
+            widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                     widgets::make_widget<widgets::ConditionalWidget>(

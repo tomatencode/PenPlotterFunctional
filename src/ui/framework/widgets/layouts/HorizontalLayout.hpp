@@ -22,8 +22,18 @@ struct HorizontalLayoutStyle {
 class HorizontalLayout : public Layout
 {
 public:
-    // Constructor: takes ownership of the provided widgets
-    HorizontalLayout(const HorizontalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children);
+    // Vector-based constructor (for pre-built child vectors)
+    HorizontalLayout(const HorizontalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+        : Layout(std::move(children)), _style(style)
+    {
+    }
+
+    // Variadic constructor (for individual widget arguments)
+    template <typename... Children>
+    HorizontalLayout(const HorizontalLayoutStyle& style, Children&&... children)
+        : Layout(std::forward<Children>(children)...), _style(style)
+    {
+    }
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
