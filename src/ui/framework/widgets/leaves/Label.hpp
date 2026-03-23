@@ -1,9 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <functional>
+#include <variant>
 
 #include "../core/Widget.hpp"
-#include "../../text/TextSource.hpp"
+#include "../../text/Glyph.hpp"
+#include "../../text/GlyphString.hpp"
 
 namespace ui {
 namespace widgets {
@@ -11,11 +14,9 @@ namespace widgets {
 class Label : public Widget
 {
 public:
-    // Takes ownership of a text source.
-    Label(std::unique_ptr<TextSource> textSource);
+    Label(GlyphString glyphs);
 
-    // Convenience constructors for common sources
-    Label(const char* text);
+    Label(std::function<GlyphString()> glyphFunc);
 
     // Render the label within the given canvas
     void render(Renderer& r, Rect canvasBox) override;
@@ -24,7 +25,9 @@ public:
     Size measure() const override;
 
 private:
-    std::unique_ptr<TextSource> _text;
+    std::variant<GlyphString, std::function<GlyphString()>> _glyphs;
+
+    GlyphString getGlyphs() const;
 };
 
 } // namespace widgets

@@ -11,13 +11,6 @@ struct Glyph
     constexpr Glyph() : code(' ') {}
 };
 
-// Special terminator for glyph arrays
-constexpr Glyph GLYPH_TERMINATOR(255);
-
 // Special “no glyph” sentinel for optional decorations
-constexpr Glyph GLYPH_NONE(254);
-
-// Space glyph for clearingbuffers
-constexpr Glyph GLYPH_SPACE(' ');
-
+constexpr Glyph GLYPH_NONE(255);
 } // namespace ui

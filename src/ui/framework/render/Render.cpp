@@ -22,21 +22,20 @@ void Renderer::clearBuffer()
     {
         for (int x = 0; x < LCD_COLS; x++)
         {
-            _buffer[y][x] = GLYPH_SPACE;  // clear to space
+            _buffer[y][x] = ' ';  // clear to space
         }
     }
 }
 
-void Renderer::drawGlyphsToBuffer(int x, int y, const Glyph* glyphs)
+void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
 {
     if (y >= LCD_ROWS) return;
-
-    while (glyphs->code != GLYPH_TERMINATOR.code && x < LCD_COLS)
-    {
-        if (glyphs->code != GLYPH_NONE.code) // skip "no glyph"
-            _buffer[y][x] = *glyphs;
+    size_t i = 0;
+    while (i < s.size() && x < LCD_COLS) {
+        if (s[i].code != GLYPH_NONE.code)
+            _buffer[y][x] = s[i];
         x++;
-        glyphs++;
+        i++;
     }
 }
 

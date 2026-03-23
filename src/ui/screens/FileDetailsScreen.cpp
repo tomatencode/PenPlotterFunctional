@@ -12,7 +12,6 @@
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/layouts/VerticalLayout.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
-#include "../framework/text/textSources/FunctionText.hpp"
 #include "../components/PressHoldButton.hpp"
 
 // include storage for file details
@@ -34,21 +33,6 @@ String formatPlotTime(size_t seconds) {
     size_t mins = seconds / 60;
     size_t secs = seconds % 60;
     return String(mins) + "m " + String(secs) + "s";
-}
-
-std::unique_ptr<ui::TextSource> createFileSizeTextSource(const String& filename) {
-    return std::make_unique<FunctionText>([filename]() {
-        size_t size = storage::fsFileSize("/" + filename);
-        return "Size: " + formatFileSize(size);
-    });
-}
-
-std::unique_ptr<ui::TextSource> createPlotTimeTextSource(const String& filename) {
-    return std::make_unique<FunctionText>([filename]() {
-        // Placeholder: In a real implementation, you would calculate this based on file contents or metadata
-        size_t plotTimeSeconds = 120; // Example fixed time
-        return "Plot Time: " + formatPlotTime(plotTimeSeconds);
-    });
 }
 
 FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager)
@@ -75,9 +59,16 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     }
                 }),
 
-                widgets::make_widget<widgets::Label>(createFileSizeTextSource(filename)),
+                widgets::make_widget<widgets::Label>([filename]() {
+                    size_t size = storage::fsFileSize("/" + filename);
+                    return "Size: " + formatFileSize(size);
+                }),
 
-                widgets::make_widget<widgets::Label>(createPlotTimeTextSource(filename)),
+                widgets::make_widget<widgets::Label>([filename]() {
+                    // Placeholder: In a real implementation, you would calculate this based on file contents or metadata
+                    size_t plotTimeSeconds = 120; // Example fixed time
+                    return "Plot Time: " + formatPlotTime(plotTimeSeconds);
+                }),
 
                 widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},

@@ -3,6 +3,7 @@
 #include "hardware/display/LcdDisplay.hpp"
 #include "../text/CustomChars.hpp"
 #include "../text/Glyph.hpp"
+#include "../text/GlyphString.hpp"
 
 namespace ui {
 
@@ -14,7 +15,7 @@ public:
     void init();
 
     void clearBuffer();
-    void drawGlyphsToBuffer(int x, int y, const Glyph* glyphs);
+    void drawGlyphsToBuffer(int x, int y, const GlyphString& s);
     void drawTextToBuffer(int x, int y, const char* text);
 
     void drawGlyphToBuffer(int x, int y, Glyph g);

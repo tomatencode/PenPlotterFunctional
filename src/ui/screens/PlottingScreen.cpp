@@ -14,8 +14,6 @@
 #include "../framework/widgets/leaves/ProgressBar.hpp"
 #include "../framework/widgets/leaves/Conditional.hpp"
 
-#include "../framework/text/textSources/FunctionText.hpp"
-
 namespace ui {
 namespace screens {
 
@@ -31,9 +29,9 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
 
             widgets::make_widget<widgets::HorizontalLayout>(
                 widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
-                widgets::make_widget<widgets::Label>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                widgets::make_widget<widgets::Label>([&jobManager]() {
                     return String(jobManager.getCurrentLine()) + "/" + String(jobManager.getTotalLines());
-                })))
+                })
             ),
 
             widgets::make_widget<widgets::HorizontalLayout>(
@@ -42,9 +40,9 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return (jobManager.getCurrentLine() != jobManager.getTotalLines()); },
                         widgets::make_widget<widgets::Button>(
-                            widgets::make_widget<widgets::Label>(std::move(std::make_unique<FunctionText>([&jobManager]() {
+                            widgets::make_widget<widgets::Label>([&jobManager]() {
                                 return jobManager.isJobPaused() ? "Resume" : "Pause";
-                            }))),
+                            }),
                             widgets::ButtonStyle(),
                             [&jobManager]() {
                                 if (jobManager.isJobPaused()) {
