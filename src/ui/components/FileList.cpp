@@ -42,9 +42,8 @@ void FileList::reload() {
 
     auto files = storage::fsListFiles();
     for (const auto& file : files) {
-        auto label = widgets::make_widget<widgets::Label>(file.c_str());
         auto button = widgets::make_widget<widgets::Button>(
-            std::move(label),
+            file,
             fileButtonStyle,
             [this, file]() { _onFileSelected(file); }
         );

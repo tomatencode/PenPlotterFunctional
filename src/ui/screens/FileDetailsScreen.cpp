@@ -74,7 +74,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                     widgets::make_widget<widgets::Button>(
-                        widgets::make_widget<widgets::Label>("Plot"),
+                        "Plot",
                         widgets::ButtonStyle(),
                         [filename, this, &jobManager]() {
                             PlottingScreen* plottingScreen = new PlottingScreen(filename, jobManager);
@@ -84,7 +84,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                         }
                     ),
                     widgets::make_widget<components::PressHoldButton>(
-                        widgets::make_widget<widgets::Label>("Delete"),
+                        "Delete",
                         components::PressHoldButtonStyle(),
                         [filename, this]() {
                             storage::fsDelete("/" + filename);

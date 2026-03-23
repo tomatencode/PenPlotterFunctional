@@ -22,7 +22,7 @@ HomeScreen::HomeScreen(JobManager& jobManager)
             widgets::make_widget<components::HeaderLine>("Pen Plotter", false),
 
             widgets::make_widget<widgets::Button>(
-                widgets::make_widget<widgets::Label>("Plot"),
+                "Plot",
                 widgets::ButtonStyle(),
                 [this, &jobManager]() {
                     if (router()) {
@@ -33,7 +33,7 @@ HomeScreen::HomeScreen(JobManager& jobManager)
             ),
 
             widgets::make_widget<widgets::Button>(
-                widgets::make_widget<widgets::Label>("Settings"),
+                "Settings",
                 widgets::ButtonStyle(),
                 [this]() {
                     if (router()) {

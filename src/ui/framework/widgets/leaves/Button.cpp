@@ -3,22 +3,9 @@
 namespace ui {
 namespace widgets {
 
-Button::Button(std::unique_ptr<Widget> child,
-                           ButtonStyle style,
-                           std::function<void()> onPress,
-                           std::function<void()> onRelease
-                        )
-    : _child(child.get()),
-      _ownedChild(std::move(child)),
-      _style(style),
-      _onPress(std::move(onPress)),
-      _onRelease(std::move(onRelease)),
-      _isPressed(false)
-{}
-
 Size Button::measure() const
 {
-    Size childSize = _child ? _child->measure() : Size{0, 0};
+    Size childSize = _label->measure();
     uint8_t width = childSize.w;
     if (isFocused())
     {
@@ -69,23 +56,19 @@ void Button::render(Renderer& r, Rect canvasBox)
         x++;
     }
 
-    // Draw child if present
-    if (_child)
-    {
-        Size childSize = _child->measure();
+    Size childSize = _label->measure();
 
-        // Create a canvas for the child within the button
-        Rect childCanvas = {
-            static_cast<uint8_t>(x),
-            static_cast<uint8_t>(y),
-            static_cast<uint8_t>(std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x))),
-            1 // assume single-line height
-        };
+    // Create a canvas for the child within the button
+    Rect childCanvas = {
+        static_cast<uint8_t>(x),
+        static_cast<uint8_t>(y),
+        static_cast<uint8_t>(std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x))),
+        1 // assume single-line height
+    };
 
-        _child->render(r, childCanvas);
+    _label->render(r, childCanvas);
 
-        x += childSize.w;
-    }
+    x += childSize.w;
 
     // Draw right decoration
     if (right.code != GLYPH_NONE.code && canvasBox.w > 1)

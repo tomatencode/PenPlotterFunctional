@@ -3,21 +3,6 @@
 namespace ui {
 namespace components {
 
-PressHoldButton::PressHoldButton(std::unique_ptr<Widget> child, PressHoldButtonStyle style ,std::function<void()> onHoldRelease, uint16_t holdTimeMs)
-    : Button(std::move(child), widgets::ButtonStyle{
-        .leftNormal = style.leftNormal,
-        .rightNormal = style.rightNormal,
-        .leftFocused = style.leftFocused,
-        .rightFocused = style.rightFocused,
-        .leftPressed = style.leftPressed,
-        .rightPressed = style.rightPressed
-    }, nullptr, nullptr)
-    , _onHoldRelease(std::move(onHoldRelease))
-    , _holdTimeMs(holdTimeMs)
-    , _style(std::move(style))
-{
-}
-
 void PressHoldButton::handleInput(InputState& input)
 {
     if (!isFocused()) return;
@@ -76,7 +61,6 @@ void PressHoldButton::render(Renderer& r, widgets::Rect canvasBox)
         r.drawGlyphToBuffer(x + i, y, _style.HoldCountdownEmpty);
     }
 }
-
 
 } // namespace components
 } // namespace ui

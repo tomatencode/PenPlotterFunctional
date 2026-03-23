@@ -22,7 +22,20 @@ struct PressHoldButtonStyle {
 class PressHoldButton: public ui::widgets::Button
 {
 public:
-    PressHoldButton(std::unique_ptr<Widget> child, PressHoldButtonStyle style ,std::function<void()> onHoldRelease, uint16_t holdTimeMs = 3000);
+    template <typename TextType>
+    PressHoldButton(TextType text, PressHoldButtonStyle style, std::function<void()> onHoldRelease, uint16_t holdTimeMs = 3000)
+        : Button(text, widgets::ButtonStyle{
+            .leftNormal = style.leftNormal,
+            .rightNormal = style.rightNormal,
+            .leftFocused = style.leftFocused,
+            .rightFocused = style.rightFocused,
+            .leftPressed = style.leftPressed,
+            .rightPressed = style.rightPressed
+        }, nullptr, nullptr)
+        , _onHoldRelease(std::move(onHoldRelease))
+        , _holdTimeMs(holdTimeMs)
+        , _style(std::move(style))
+    {}
 
 private:
     std::function<void()> _onHoldRelease;

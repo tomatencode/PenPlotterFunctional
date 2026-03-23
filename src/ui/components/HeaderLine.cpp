@@ -21,7 +21,7 @@ HeaderLine::HeaderLine(const char* headerText, bool backButton,
             widgets::make_widget<widgets::Label>(headerText),
             backButton
                 ? widgets::make_widget<widgets::Button>(
-                    widgets::make_widget<widgets::Label>("Back"),
+                    "Back",
                     widgets::ButtonStyle(),
                     onBackPress
                   )

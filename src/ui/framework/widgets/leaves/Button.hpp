@@ -5,6 +5,7 @@
 
 #include "../core/Selectable.hpp"
 #include "../core/Widget.hpp"
+#include "Label.hpp"
 
 namespace ui {
 namespace widgets {
@@ -23,13 +24,18 @@ struct ButtonStyle
 class Button : public Selectable
 {
 public:
-    // Takes ownership of the child widget.
-    // The child should be heap-allocated and not managed elsewhere.
-    Button(std::unique_ptr<Widget> child,
-                 ButtonStyle style = ButtonStyle{},
-                 std::function<void()> onPress = nullptr,
-                 std::function<void()> onRelease = nullptr
-                );
+    // creates a Label
+    template <typename TextType>
+    Button(TextType text,
+        ButtonStyle style = ButtonStyle{},
+        std::function<void()> onPress = nullptr,
+        std::function<void()> onRelease = nullptr
+        )
+        : _label(std::make_unique<Label>(text)),
+        _style(style),
+        _onPress(std::move(onPress)),
+        _onRelease(std::move(onRelease))
+    {}
 
     Size measure() const override;
 
@@ -40,8 +46,7 @@ public:
     bool isPressed() const { return _isPressed; }
 
 private:
-    Widget* _child;               // the child widget to render inside the button
-    std::unique_ptr<Widget> _ownedChild;
+    std::unique_ptr<Label> _label;
     ButtonStyle _style;           // visual decorations
     std::function<void()> _onPress;
     std::function<void()> _onRelease;

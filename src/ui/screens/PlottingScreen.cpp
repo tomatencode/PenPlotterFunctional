@@ -40,9 +40,9 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return (jobManager.getCurrentLine() != jobManager.getTotalLines()); },
                         widgets::make_widget<widgets::Button>(
-                            widgets::make_widget<widgets::Label>([&jobManager]() {
+                            [&jobManager]() {
                                 return jobManager.isJobPaused() ? "Resume" : "Pause";
-                            }),
+                            },
                             widgets::ButtonStyle(),
                             [&jobManager]() {
                                 if (jobManager.isJobPaused()) {
@@ -57,7 +57,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return jobManager.getCurrentLine() != jobManager.getTotalLines(); },
                         widgets::make_widget<widgets::Button>(
-                            widgets::make_widget<widgets::Label>("Abort"),
+                            "Abort",
                             widgets::ButtonStyle(),
                             [this, &jobManager]() {
                                 jobManager.abort();
@@ -69,7 +69,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobManager]() { return jobManager.getCurrentLine() == jobManager.getTotalLines(); },
                         widgets::make_widget<widgets::Button>(
-                            widgets::make_widget<widgets::Label>("Back to Files"),
+                            "Back to Files",
                             widgets::ButtonStyle(),
                             [this, &jobManager]() {
                                 jobManager.abort();
