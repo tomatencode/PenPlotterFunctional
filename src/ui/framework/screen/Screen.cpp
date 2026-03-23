@@ -1,5 +1,4 @@
 #include "Screen.hpp"
-#include "../widgets/core/CollectSelectables.hpp"
 #include "../router/Router.hpp"
 
 namespace ui {
@@ -45,6 +44,16 @@ void Screen::render(Renderer& r)
     r.clearBuffer();
     focusManager.refresh();
     root->render(r, {0, 0, static_cast<uint8_t>(LCD_COLS), static_cast<uint8_t>(LCD_ROWS)});
+}
+
+void Screen::collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out) {
+    if (!w) return;
+
+    if (w->isSelectable())
+        out.push_back(static_cast<widgets::Selectable*>(w));
+
+    for (size_t i = 0; i < w->childCount(); i++)
+        collectSelectables(w->child(i), out);
 }
 
 void Screen::onEnter() {}

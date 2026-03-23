@@ -52,6 +52,8 @@ private:
     Router* _router = nullptr;
     friend class Router;
     void setRouter(Router* r) { _router = r; }
+
+    void collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out);
 };
 
 } // namespace ui
