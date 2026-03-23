@@ -4,7 +4,7 @@
 #include <sstream>
 #include <type_traits>
 
-#include "../core/SelectableWidget.hpp"
+#include "../core/Selectable.hpp"
 #include "../core/Widget.hpp"
 
 namespace ui {

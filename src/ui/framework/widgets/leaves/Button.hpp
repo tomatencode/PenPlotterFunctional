@@ -3,7 +3,7 @@
 #include <functional>
 #include <memory>
 
-#include "../core/SelectableWidget.hpp"
+#include "../core/Selectable.hpp"
 #include "../core/Widget.hpp"
 
 namespace ui {

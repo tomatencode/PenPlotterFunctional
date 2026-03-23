@@ -1,4 +1,4 @@
-#include "SpacerWidget.hpp"
+#include "Spacer.hpp"
 
 namespace ui {
 namespace widgets {

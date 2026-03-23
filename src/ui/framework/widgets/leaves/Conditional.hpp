@@ -1,5 +1,5 @@
 #pragma once
-#include "../core/ContainerWidget.hpp"
+#include "../core/Container.hpp"
 
 namespace ui {
 namespace widgets {

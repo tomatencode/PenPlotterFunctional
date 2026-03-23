@@ -1,4 +1,4 @@
-#include "ProgressBarWidget.hpp"
+#include "ProgressBar.hpp"
 
 namespace ui {
 namespace widgets {

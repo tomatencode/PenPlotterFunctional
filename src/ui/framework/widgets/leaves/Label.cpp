@@ -1,4 +1,4 @@
-#include "LabelWidget.hpp"
+#include "Label.hpp"
 #include "../../render/Render.hpp"
 #include "../../text/textSources/StaticText.hpp"
 #include "../../text/textSources/GlyphListText.hpp"

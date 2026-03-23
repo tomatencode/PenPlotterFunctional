@@ -9,10 +9,10 @@
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
 #include "../framework/widgets/Builder.hpp"
-#include "../framework/widgets/leaves/ButtonWidget.hpp"
-#include "../framework/widgets/leaves/LabelWidget.hpp"
-#include "../framework/widgets/leaves/ProgressBarWidget.hpp"
-#include "../framework/widgets/leaves/ConditionalWidget.hpp"
+#include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
+#include "../framework/widgets/leaves/ProgressBar.hpp"
+#include "../framework/widgets/leaves/Conditional.hpp"
 
 #include "../framework/text/textSources/FunctionText.hpp"
 

@@ -1,4 +1,4 @@
-#include "ButtonWidget.hpp"
+#include "Button.hpp"
 
 namespace ui {
 namespace widgets {
