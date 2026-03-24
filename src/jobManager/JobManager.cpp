@@ -65,14 +65,6 @@ bool JobManager::isJobPaused() const
     return ms.getCommand() == MotionCommand::PAUSE;
 }
 
-double JobManager::currentProgress() const
-{
-    if (!currentJob.file || currentJob.totalLines == 0)
-        return 0.0;
-
-    return static_cast<double>(getCurrentLine()) / static_cast<double>(currentJob.totalLines);
-}
-
 uint16_t JobManager::getCurrentLine() const
 {
     return currentJob.currentBufferLine - uxQueueMessagesWaiting(gcodeQueue);

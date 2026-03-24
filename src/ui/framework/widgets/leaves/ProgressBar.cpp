@@ -3,7 +3,7 @@
 namespace ui {
 namespace widgets {
 
-ProgressBar::ProgressBar(ProgressBarStyle style, std::function<uint8_t()> getProgress)
+ProgressBar::ProgressBar(ProgressBarStyle style, std::function<double()> getProgress)
     : Widget(),
       _style(style),
       _getProgress(getProgress)
@@ -26,9 +26,9 @@ void ProgressBar::render(Renderer& r, Rect canvasBox)
 
     // Calculate inner bar width (excluding brackets)
     uint8_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;
-    uint8_t progress = (_getProgress != nullptr) ? _getProgress() : 0;
-    progress = (progress > 100) ? 100 : progress;
-    uint8_t filledWidth = (innerWidth * progress) / 100;
+    double progress = (_getProgress != nullptr) ? _getProgress() : 0;
+    progress = std::min(std::max(progress, 0.0), 1.0); // Clamp to [0, 1]
+    uint8_t filledWidth = (innerWidth * progress);
 
     // Draw the progress bar
     for (uint8_t row = 0; row < barHeight; row++)

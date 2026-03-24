@@ -20,7 +20,7 @@ class ProgressBar : public Widget
 public:
     // Construct a progress bar with specified width and height
     // getProgress: function pointer that returns progress 0-100
-    ProgressBar(ProgressBarStyle style, std::function<uint8_t()> getProgress);
+    ProgressBar(ProgressBarStyle style, std::function<double()> getProgress);
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
@@ -28,7 +28,7 @@ public:
 
 private:
     ProgressBarStyle _style;
-    std::function<uint8_t()> _getProgress;  // Function object returning 0-100
+    std::function<double()> _getProgress;  // Function object returning 0-1
 };
 
 } // namespace widgets

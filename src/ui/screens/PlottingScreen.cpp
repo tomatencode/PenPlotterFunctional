@@ -17,6 +17,7 @@
 namespace ui {
 namespace screens {
 
+
 PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
@@ -24,7 +25,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager)
             widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), false),
 
             widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobManager]() {
-                return jobManager.currentProgress() * 100.0; // Convert to percentage
+                return static_cast<double>(jobManager.getCurrentLine()) / static_cast<double>(jobManager.getTotalLines());
              }),
 
             widgets::make_widget<widgets::HorizontalLayout>(

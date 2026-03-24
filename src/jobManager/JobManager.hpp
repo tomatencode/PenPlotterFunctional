@@ -21,9 +21,7 @@ public:
 
     bool isActive() const { return _active; }
     bool isJobPaused() const;
-    double currentProgress() const;
 
-    uint32_t getCurrentBufferLine() const { return currentJob.currentBufferLine; }
     uint32_t getTotalLines() const { return currentJob.totalLines; }
     uint16_t getCurrentLine() const;
 
