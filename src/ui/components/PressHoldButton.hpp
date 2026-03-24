@@ -23,7 +23,7 @@ class PressHoldButton: public ui::widgets::Button
 {
 public:
     template <typename TextType>
-    PressHoldButton(TextType text, PressHoldButtonStyle style, std::function<void()> onHoldRelease, uint16_t holdTimeMs = 3000)
+    PressHoldButton(TextType text, PressHoldButtonStyle style, std::function<void()> onHoldRelease, uint16_t holdTimeMs = 2000)
         : Button(text, widgets::ButtonStyle{
             .leftNormal = style.leftNormal,
             .rightNormal = style.rightNormal,

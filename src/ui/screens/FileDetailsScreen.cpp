@@ -87,7 +87,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                                 router()->popScreen(); // Go back to the previous screen
                             }
                         },
-                        3000 // Hold time in milliseconds
+                        2000 // Hold time in milliseconds
                     )
                 )
             )
