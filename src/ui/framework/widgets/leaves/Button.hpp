@@ -45,6 +45,13 @@ public:
 
     bool isPressed() const { return _isPressed; }
 
+    void reload() override {
+        Selectable::reload();
+        if (_label)
+            _label->reload();
+        _isPressed = false;
+    }
+
 private:
     std::unique_ptr<Label> _label;
     ButtonStyle _style;           // visual decorations

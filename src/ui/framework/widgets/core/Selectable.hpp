@@ -21,6 +21,11 @@ public:
 
     virtual void handleInput(InputState& input) = 0;
 
+    virtual void reload() override {
+        _focused = false;
+        onFocusLost();
+    }
+
 private:
     bool _focused = false;
 
