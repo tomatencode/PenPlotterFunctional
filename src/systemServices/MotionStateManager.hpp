@@ -27,6 +27,9 @@ public:
     }
     void setState(MotionState newState) {
         state.store(newState);
+        if (newState == MotionState::IDLE && command.load() == MotionCommand::ABORT) {
+            command.store(MotionCommand::NONE); // Clear abort command when we return to idle
+        }
     }
     std::pair<float, float> getMachinePos() const { return {machineX.load(), machineY.load()}; }
     MotionState getState() const { return state.load(); }

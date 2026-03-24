@@ -80,12 +80,6 @@ uint16_t JobManager::getCurrentLine() const
 
 void JobManager::update()
 {
-    // If an abort command was issued and the machine is now idle, clear the abort command
-    if (ms.getCommand() == MotionCommand::ABORT && ms.getState() == MotionState::IDLE)
-    {
-        ms.setCommand(MotionCommand::NONE);
-    }
-
     if (!_active) return; // No active job
     if (!currentJob.file.available()) return; // No more lines to read
 
