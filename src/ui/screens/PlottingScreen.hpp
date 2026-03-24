@@ -2,6 +2,7 @@
 
 #include "../framework/screen/Screen.hpp"
 
+#include "systemServices/MotionStateManager.hpp"
 #include "jobManager/JobManager.hpp"
 
 namespace ui {
@@ -11,7 +12,7 @@ namespace screens {
 class PlottingScreen : public ui::Screen
 {
 public:
-    PlottingScreen(const String& filename, JobManager& jobManager);
+    PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms);
 };
 
 } // namespace screens

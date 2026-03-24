@@ -3,18 +3,20 @@
 #include <WebServer.h>
 #include <cstdint>
 
+#include "systemServices/MotionStateManager.hpp"
 #include "jobManager/JobManager.hpp"
 
 class WebInterface
 {
 public:
-    WebInterface(JobManager& jobManager);
+    WebInterface(JobManager& jobManager, MotionStateManager& ms);
     void init();
     void update();
     bool isWiFiConnected() const;
 
 private:
     JobManager& _jobManager;
+    MotionStateManager& _ms;
 
     WebServer server;
     bool _wifiInitialized = false;

@@ -2,6 +2,7 @@
 
 #include "../framework/screen/Screen.hpp"
 
+#include "systemServices/MotionStateManager.hpp"
 #include "jobManager/JobManager.hpp"
 
 namespace ui {
@@ -11,7 +12,7 @@ namespace screens {
 class FilesScreen : public ui::Screen
 {
 public:
-    FilesScreen(JobManager& jobManager);
+    FilesScreen(JobManager& jobManager, MotionStateManager& ms);
 
     void onEnter() override;
 };

@@ -60,11 +60,6 @@ void JobManager::abort()
     _active = false;
 }
 
-bool JobManager::isJobPaused() const
-{
-    return ms.getCommand() == MotionCommand::PAUSE;
-}
-
 uint16_t JobManager::getCurrentLine() const
 {
     return currentJob.currentBufferLine - uxQueueMessagesWaiting(gcodeQueue);

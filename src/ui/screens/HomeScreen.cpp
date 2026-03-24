@@ -15,7 +15,7 @@
 namespace ui {
 namespace screens {
 
-HomeScreen::HomeScreen(JobManager& jobManager)
+HomeScreen::HomeScreen(JobManager& jobManager, MotionStateManager& ms)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
@@ -24,9 +24,9 @@ HomeScreen::HomeScreen(JobManager& jobManager)
             widgets::make_widget<widgets::Button>(
                 "Plot",
                 widgets::ButtonStyle(),
-                [this, &jobManager]() {
+                [this, &jobManager, &ms]() {
                     if (router()) {
-                        FilesScreen* filesScreen = new FilesScreen(jobManager);
+                        FilesScreen* filesScreen = new FilesScreen(jobManager, ms);
                         router()->pushScreen(filesScreen);
                     }
                 }

@@ -20,7 +20,6 @@ public:
     void abort();
 
     bool isActive() const { return _active; }
-    bool isJobPaused() const;
 
     uint32_t getTotalLines() const { return currentJob.totalLines; }
     uint16_t getCurrentLine() const;

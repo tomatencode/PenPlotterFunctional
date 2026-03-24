@@ -2,6 +2,8 @@
 
 #include "jobManager/JobManager.hpp"
 
+#include "systemServices/MotionStateManager.hpp"
+
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
 #include "hardware/buzzer/Buzzer.hpp"
@@ -15,7 +17,7 @@ namespace ui {
 class UiManager
 {
 public:
-    UiManager(JobManager& jobManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(JobManager& jobManager,MotionStateManager& ms, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
@@ -28,6 +30,7 @@ private:
 
     // References to shared services (not owned by UI)
     JobManager& _jobManager;
+    MotionStateManager& _ms;
 
     // References to hardware interfaces (not owned by UI)
     LcdDisplay& _display;

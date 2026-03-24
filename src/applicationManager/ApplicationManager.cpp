@@ -21,8 +21,8 @@ ApplicationManager::ApplicationManager(MotionStateManager& ms)
       encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       buzzer(BUZZER_PIN, 5),
       jobManager(ms),
-      webInterface(jobManager),
-      uiManager(jobManager, display, encoder, buzzer)
+      webInterface(jobManager, ms),
+      uiManager(jobManager, ms, display, encoder, buzzer)
 {
 }
 
