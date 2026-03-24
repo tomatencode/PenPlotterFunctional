@@ -27,7 +27,7 @@ public:
     uint32_t getTotalLines() const { return currentJob.totalLines; }
     uint16_t getCurrentLine() const;
 
-    void jobManagerUpdate();
+    void update();
 private:
     PlotJob currentJob;
     bool _active;

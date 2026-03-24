@@ -57,7 +57,7 @@ void ApplicationManager::init()
 void ApplicationManager::update()
 {
     webInterface.update();
-    jobManager.jobManagerUpdate();
+    jobManager.update();
     buzzer.update();
     uiManager.update();
 }

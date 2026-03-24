@@ -81,7 +81,7 @@ uint16_t JobManager::getCurrentLine() const
     return currentJob.currentBufferLine - uxQueueMessagesWaiting(gcodeQueue);
 }
 
-void JobManager::jobManagerUpdate()
+void JobManager::update()
 {
     // If an abort command was issued and the machine is now idle, clear the abort command
     if (motionCommand == MotionCommand::ABORT && telemetry.state == MotionState::IDLE)
