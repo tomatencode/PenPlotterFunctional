@@ -42,7 +42,7 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager, M
                         [&jobManager]() { return (jobManager.getCurrentLine() != jobManager.getTotalLines()); },
                         widgets::make_widget<widgets::Button>(
                             [&jobManager, &ms]() {
-                                return ms.getState() != MotionState::PAUSED ? "Resume" : "Pause";
+                                return ms.getState() == MotionState::PAUSED ? "Resume" : "Pause";
                             },
                             widgets::ButtonStyle(),
                             [&jobManager, &ms]() {
