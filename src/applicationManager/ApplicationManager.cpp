@@ -41,6 +41,8 @@ void ApplicationManager::init()
 
     uiManager.init();
     webInterface.init();
+
+    buzzer.playMelody(startupMelody);
 }
 
 void ApplicationManager::update()
