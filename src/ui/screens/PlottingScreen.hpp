@@ -12,7 +12,13 @@ namespace screens {
 class PlottingScreen : public ui::Screen
 {
 public:
-    PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms);
+    /**
+     * @param filename The name of the file to plot
+     * @param jobManager Reference to job manager
+     * @param ms Reference to motion state manager
+     * @param alreadyStarted If true, skips calling jobManager.start() (job already running from observer)
+     */
+    PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms, bool alreadyStarted = false);
 };
 
 } // namespace screens

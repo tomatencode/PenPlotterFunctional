@@ -2,6 +2,7 @@
 
 #include "framework/text/CustomChars.hpp"
 #include "screens/HomeScreen.hpp"
+#include "screens/PlottingScreen.hpp"
 
 #include <string>
 
@@ -18,6 +19,9 @@ void UiManager::init()
     // Start on the first screen
     static screens::HomeScreen homeScreen(_jobManager, _ms);
     _router.pushScreen(&homeScreen);
+
+    // Register as observer to be notified of job events
+    _jobManager.registerObserver(this);
 
     Serial.println("UI initialized.");
 }
@@ -48,6 +52,25 @@ ui::InputState UiManager::readInputs()
     state.buttonDown = _encoder.buttonDown();
 
     return state;
+}
+
+void UiManager::onJobEvent(const JobStatusUpdate& update)
+{
+    Serial.println("UI received job event: " + String(static_cast<int>(update.eventType)));
+    
+    if (update.eventType == JobEventType::STARTED) {
+        // Navigate to PlottingScreen when a job starts (from any source)
+        String displayFilename = _jobManager.getCurrentFile();
+        if (displayFilename.startsWith("/")) {
+            displayFilename = displayFilename.substring(1);
+        }
+        
+        // Create a new PlottingScreen with the current job info
+        // Pass alreadyStarted=true because the job was started by JobManager
+        static screens::PlottingScreen plottingScreen(displayFilename, _jobManager, _ms, true);
+        _router.pushScreen(&plottingScreen);
+        Serial.println("Navigated to PlottingScreen from observer");
+    }
 }
 
 } // namespace ui

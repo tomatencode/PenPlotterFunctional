@@ -18,7 +18,7 @@ namespace ui {
 namespace screens {
 
 
-PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms)
+PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms, bool alreadyStarted)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
@@ -83,7 +83,10 @@ PlottingScreen::PlottingScreen(const String& filename, JobManager& jobManager, M
         )
     
 {
-    jobManager.start("/" + filename); // Start the job when the screen is created
+    // Only start the job if it hasn't been started already (e.g., by WebInterface)
+    if (!alreadyStarted) {
+        jobManager.start("/" + filename);
+    }
 }
 
 } // namespace screens

@@ -23,6 +23,8 @@ void JobManager::start(String filename)
         return;
     }
 
+    currentJob.filename = filename;
+    currentJob.completed = false;
     currentJob.totalLines = 0;
     while (currentJob.file.available())
     {
@@ -36,18 +38,23 @@ void JobManager::start(String filename)
 
     currentJob.currentBufferLine = 0;
     _active = true;
+
+    // Notify observers that a job has started
+    notifyObservers(JobEventType::STARTED);
 }
 
 void JobManager::pause()
 {
     Serial.println("Pausing job");
     ms.setCommand(MotionCommand::PAUSE);
+    notifyObservers(JobEventType::PAUSED);
 }
 
 void JobManager::resume()
 {
     Serial.println("Resuming job");
     ms.setCommand(MotionCommand::NONE);
+    notifyObservers(JobEventType::RESUMED);
 }
 
 void JobManager::abort()
@@ -58,6 +65,8 @@ void JobManager::abort()
     if (currentJob.file) currentJob.file.close();
     currentJob.currentBufferLine = 0;
     _active = false;
+    currentJob.completed = false;
+    notifyObservers(JobEventType::ABORTED);
 }
 
 uint16_t JobManager::getCurrentLine() const
@@ -68,6 +77,19 @@ uint16_t JobManager::getCurrentLine() const
 void JobManager::update()
 {
     if (!_active) return; // No active job
+    
+    // Check for completion
+    if (!currentJob.file.available() && !currentJob.completed) {
+        if (uxQueueMessagesWaiting(gcodeQueue) == 0) {
+            // File is done and queue is empty - job is complete
+            currentJob.completed = true;
+            _active = false;
+            if (currentJob.file) currentJob.file.close();
+            notifyObservers(JobEventType::COMPLETED);
+            return;
+        }
+    }
+    
     if (!currentJob.file.available()) return; // No more lines to read
 
     // prefetch queue space
@@ -93,6 +115,43 @@ void JobManager::update()
         {
             // queue full, stop sending
             break;
+        }
+    }
+}
+
+void JobManager::registerObserver(JobObserver* observer)
+{
+    if (observer == nullptr) return;
+    
+    // Avoid duplicate registrations
+    for (auto obs : _observers) {
+        if (obs == observer) return;
+    }
+    
+    _observers.push_back(observer);
+    Serial.println("Observer registered. Total observers: " + String(_observers.size()));
+}
+
+void JobManager::unregisterObserver(JobObserver* observer)
+{
+    if (observer == nullptr) return;
+    
+    for (size_t i = 0; i < _observers.size(); i++) {
+        if (_observers[i] == observer) {
+            _observers.erase(_observers.begin() + i);
+            Serial.println("Observer unregistered. Total observers: " + String(_observers.size()));
+            return;
+        }
+    }
+}
+
+void JobManager::notifyObservers(JobEventType eventType)
+{
+    JobStatusUpdate update(eventType);
+    
+    for (auto observer : _observers) {
+        if (observer != nullptr) {
+            observer->onJobEvent(update);
         }
     }
 }
