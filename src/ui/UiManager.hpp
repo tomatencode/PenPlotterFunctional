@@ -25,7 +25,7 @@ public:
     void update();
 
     // JobObserver implementation
-    void onJobEvent(const JobStatusUpdate& update) override;
+    void onJobEvent(const JobEvent& event) override;
 
 private:
     // Core UI components

@@ -1,13 +1,16 @@
 #pragma once
-#include "JobStatusUpdate.hpp"
+
+enum class JobEvent {
+    STARTED = 0,
+    PAUSED = 1,
+    RESUMED = 2,
+    ABORTED = 3,
+    COMPLETED = 4
+};
 
 class JobObserver {
 public:
     virtual ~JobObserver() = default;
     
-    /**
-     * Called when a job event occurs (start, pause, resume, abort, complete)
-     * @param update Contains event type and job details
-     */
-    virtual void onJobEvent(const JobStatusUpdate& update) = 0;
+    virtual void onJobEvent(const JobEvent& event) = 0;
 };

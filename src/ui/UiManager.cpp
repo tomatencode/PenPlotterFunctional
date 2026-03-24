@@ -54,11 +54,11 @@ ui::InputState UiManager::readInputs()
     return state;
 }
 
-void UiManager::onJobEvent(const JobStatusUpdate& update)
+void UiManager::onJobEvent(const JobEvent& event)
 {
-    Serial.println("UI received job event: " + String(static_cast<int>(update.eventType)));
+    Serial.println("UI received job event: " + String(static_cast<int>(event)));
     
-    if (update.eventType == JobEventType::STARTED) {
+    if (event == JobEvent::STARTED) {
         // Navigate to PlottingScreen when a job starts (from any source)
         String displayFilename = _jobManager.getCurrentFile();
         if (displayFilename.startsWith("/")) {

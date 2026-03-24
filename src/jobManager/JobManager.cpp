@@ -40,21 +40,21 @@ void JobManager::start(String filename)
     _active = true;
 
     // Notify observers that a job has started
-    notifyObservers(JobEventType::STARTED);
+    notifyObservers(JobEvent::STARTED);
 }
 
 void JobManager::pause()
 {
     Serial.println("Pausing job");
     ms.setCommand(MotionCommand::PAUSE);
-    notifyObservers(JobEventType::PAUSED);
+    notifyObservers(JobEvent::PAUSED);
 }
 
 void JobManager::resume()
 {
     Serial.println("Resuming job");
     ms.setCommand(MotionCommand::NONE);
-    notifyObservers(JobEventType::RESUMED);
+    notifyObservers(JobEvent::RESUMED);
 }
 
 void JobManager::abort()
@@ -66,7 +66,7 @@ void JobManager::abort()
     currentJob.currentBufferLine = 0;
     _active = false;
     currentJob.completed = false;
-    notifyObservers(JobEventType::ABORTED);
+    notifyObservers(JobEvent::ABORTED);
 }
 
 uint16_t JobManager::getCurrentLine() const
@@ -85,7 +85,7 @@ void JobManager::update()
             currentJob.completed = true;
             _active = false;
             if (currentJob.file) currentJob.file.close();
-            notifyObservers(JobEventType::COMPLETED);
+            notifyObservers(JobEvent::COMPLETED);
             return;
         }
     }
@@ -145,13 +145,11 @@ void JobManager::unregisterObserver(JobObserver* observer)
     }
 }
 
-void JobManager::notifyObservers(JobEventType eventType)
+void JobManager::notifyObservers(JobEvent event)
 {
-    JobStatusUpdate update(eventType);
-    
     for (auto observer : _observers) {
         if (observer != nullptr) {
-            observer->onJobEvent(update);
+            observer->onJobEvent(event);
         }
     }
 }

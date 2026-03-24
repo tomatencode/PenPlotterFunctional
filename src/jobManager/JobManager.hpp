@@ -5,7 +5,6 @@
 
 #include "systemServices/MotionStateManager.hpp"
 #include "JobObserver.hpp"
-#include "JobStatusUpdate.hpp"
 
 struct PlotJob {
     File file = File();
@@ -45,5 +44,5 @@ private:
     MotionStateManager& ms;
 
     // Internal notification method
-    void notifyObservers(JobEventType eventType);
+    void notifyObservers(JobEvent event);
 };
