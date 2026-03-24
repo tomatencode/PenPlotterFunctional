@@ -4,7 +4,8 @@
 
 enum class FileEvent {
     ADDED = 0,
-    REMOVED = 1
+    UPDATED = 1,
+    REMOVED = 2
 };
 
 class FileObserver

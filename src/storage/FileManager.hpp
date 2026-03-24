@@ -2,6 +2,7 @@
 
 #include <FS.h>
 #include <vector>
+#include <Arduino.h>
 
 #include "FileObserver.hpp"
 
@@ -10,11 +11,12 @@ class FileManager
 public:
     FileManager();
 
-    // Initialize the file system (e.g., SD card)
+    // Initialize the file system
     bool init();
 
     // Register an observer to be notified of file events (e.g., file added, removed)
     void registerFileObserver(FileObserver* observer);
+    void unregisterFileObserver(FileObserver* observer);
 
     // List files in the root directory
     std::vector<String> listFiles();
@@ -33,6 +35,7 @@ public:
 
     // Get the size of a file
     size_t getFileSize(const String& path);
+
 private:
     std::vector<FileObserver*> _observers;
 
