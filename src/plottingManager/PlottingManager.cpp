@@ -1,10 +1,10 @@
 #include "PlottingManager.hpp"
 
+#include "config/pins.hpp"
 #include "systemServices/Queues.hpp"
-#include "systemServices/shared/SharedData.hpp"
 
-PlottingManager::PlottingManager()
-    :
+PlottingManager::PlottingManager(MotionStateManager& ms)
+    : ms(ms),
     driverSerial(1),
 
     rawDriverA(&driverSerial, R_SENSE, 0),
@@ -35,14 +35,15 @@ PlottingManager::PlottingManager()
 
     kinematics(STEPS_PER_MM),
 
-    motionSystem(axisA, axisB, kinematics),
+    motionSystem(axisA, axisB, kinematics, ms, MIN_FEATURE_SIZE_MM),
 
     gcodeParser(
         motionSystem,
         pen,
         homingController,
         FEED_RATE_DRAW_MM_PER_S,
-        FEED_RATE_TRAVEL_MM_PER_S
+        FEED_RATE_TRAVEL_MM_PER_S,
+        ms
     )
 {
 }
@@ -77,9 +78,9 @@ void PlottingManager::update()
 {
     GcodeMessage msg;
 
-    if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && motionCommand != MotionCommand::ABORT)
+    if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && ms.getCommand() != MotionCommand::ABORT)
     {
-        telemetry.state = MotionState::RUNNING;
+        ms.setState(MotionState::RUNNING);
 
         Serial.print("Executing line: ");
         Serial.println(msg.line);
@@ -88,6 +89,6 @@ void PlottingManager::update()
     }
     else
     {
-        telemetry.state = MotionState::IDLE;
+        ms.setState(MotionState::IDLE);
     }
 }

@@ -3,7 +3,6 @@
 #include "systemServices/Queues.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 #include "plottingManager/PlottingManager.hpp"
-#include "shared/SharedData.hpp"
 
 TaskHandle_t motionTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
@@ -56,8 +55,9 @@ void systemTask(void *parameter)
 */
 void startSystemTasks()
 {
-    static ApplicationManager appManager;
-    static PlottingManager plottingManager;
+    static MotionStateManager motionStateManager;
+    static ApplicationManager appManager(motionStateManager);
+    static PlottingManager plottingManager(motionStateManager);
 
     // Motion task (CORE 1)
     xTaskCreatePinnedToCore(

@@ -3,11 +3,12 @@
 #include "jobManager/JobManager.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "ui/UiManager.hpp"
+#include "systemServices/MotionStateManager.hpp"
 
 class ApplicationManager
 {
 public:
-    ApplicationManager();
+    ApplicationManager(MotionStateManager& ms);
     
     void init();
     void update();
@@ -22,4 +23,6 @@ private:
     JobManager jobManager;
     WebInterface webInterface;
     ui::UiManager uiManager;
+
+    MotionStateManager& ms;
 };

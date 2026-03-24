@@ -5,7 +5,6 @@
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
 #include "hardware/buzzer/Buzzer.hpp"
-#include "systemServices/shared/SharedData.hpp"
 
 #include "framework/render/Render.hpp"
 #include "framework/input/InputState.hpp"

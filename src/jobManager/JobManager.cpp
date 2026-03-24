@@ -4,12 +4,9 @@
 
 #include "storage/FileSystem.hpp"
 #include "systemServices/Queues.hpp"
-#include "systemServices/shared/SharedData.hpp"
-#include "systemServices/shared/MotionCommand.hpp"
-#include "systemServices/shared/Telemetry.hpp"
 
 
-JobManager::JobManager() : currentJob(PlotJob()), _active(false) {}
+JobManager::JobManager(MotionStateManager& ms) : currentJob(PlotJob()), _active(false), ms(ms) {}
 
 void JobManager::start(String filename)
 {
@@ -17,7 +14,7 @@ void JobManager::start(String filename)
 
     Serial.println("Starting job: " + filename);
 
-    motionCommand = MotionCommand::NONE; // Clear any existing motion commands
+    ms.setCommand(MotionCommand::NONE); // Clear any existing motion commands
     currentJob.file = storage::fsOpenRead(filename);
 
     if (!currentJob.file)
@@ -44,19 +41,19 @@ void JobManager::start(String filename)
 void JobManager::pause()
 {
     Serial.println("Pausing job");
-    motionCommand = MotionCommand::PAUSE;
+    ms.setCommand(MotionCommand::PAUSE);
 }
 
 void JobManager::resume()
 {
     Serial.println("Resuming job");
-    motionCommand = MotionCommand::NONE;
+    ms.setCommand(MotionCommand::NONE);
 }
 
 void JobManager::abort()
 {
     Serial.println("Aborting job");
-    motionCommand = MotionCommand::ABORT;
+    ms.setCommand(MotionCommand::ABORT);
     xQueueReset(gcodeQueue); // Clear any pending G-code commands
     if (currentJob.file) currentJob.file.close();
     currentJob.currentBufferLine = 0;
@@ -65,7 +62,7 @@ void JobManager::abort()
 
 bool JobManager::isJobPaused() const
 {
-    return motionCommand == MotionCommand::PAUSE;
+    return ms.getCommand() == MotionCommand::PAUSE;
 }
 
 double JobManager::currentProgress() const
@@ -84,9 +81,9 @@ uint16_t JobManager::getCurrentLine() const
 void JobManager::update()
 {
     // If an abort command was issued and the machine is now idle, clear the abort command
-    if (motionCommand == MotionCommand::ABORT && telemetry.state == MotionState::IDLE)
+    if (ms.getCommand() == MotionCommand::ABORT && ms.getState() == MotionState::IDLE)
     {
-        motionCommand = MotionCommand::NONE;
+        ms.setCommand(MotionCommand::NONE);
     }
 
     if (!_active) return; // No active job

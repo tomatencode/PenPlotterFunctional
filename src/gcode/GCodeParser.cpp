@@ -1,8 +1,8 @@
 #include "GCodeParser.hpp"
 
-GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel)
+GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionStateManager& ms)
         : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
-          _absolute(true) {}
+          _absolute(true), _ms(ms) {}
 
 void GCodeParser::executeLine(const std::string& line) {
     std::string cmd;

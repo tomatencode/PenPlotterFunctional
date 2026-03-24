@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <FS.h>
 
-#include "systemServices/shared/SharedData.hpp"
+#include "systemServices/MotionStateManager.hpp"
 
 struct PlotJob {
     File file = File();
@@ -12,7 +12,7 @@ struct PlotJob {
 
 class JobManager {
 public:
-    JobManager();
+    JobManager(MotionStateManager& ms);
 
     void start(String filename);
     void pause();
@@ -31,4 +31,6 @@ public:
 private:
     PlotJob currentJob;
     bool _active;
+
+    MotionStateManager& ms;
 };

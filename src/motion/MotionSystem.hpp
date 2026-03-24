@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+
+#include "systemServices/MotionStateManager.hpp"
 #include "CoreXYKinematics.hpp"
 #include "hardware/axis/StepperAxis.hpp"
 
@@ -9,7 +11,7 @@ using StepCallback = void(*)(bool direction);
 
 class MotionSystem {
     public:
-        MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, double min_feature_size_mm = 1.0);
+        MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionStateManager& ms, double min_feature_size_mm = 1.0);
 
         void moveToXY(
             const XYPos& targetPos,
@@ -42,4 +44,6 @@ class MotionSystem {
         StepperAxis& _axisB;
         CoreXYKinematics& _kinematics;
         double _min_feature_size_mm;
+
+        MotionStateManager& ms;
 };

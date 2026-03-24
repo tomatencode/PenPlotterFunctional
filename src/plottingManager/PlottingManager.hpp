@@ -10,13 +10,13 @@
 #include "motion/CoreXYKinematics.hpp"
 #include "motion/MotionSystem.hpp"
 #include "motion/HomingController.hpp"
-#include "config/pins.hpp"
+#include "systemServices/MotionStateManager.hpp"
 
 
 class PlottingManager
 {
 public:
-    PlottingManager();
+    PlottingManager(MotionStateManager& ms);
 
     void init();
     void update();
@@ -54,6 +54,7 @@ private:
 
     MotionSystem motionSystem;
 
-    // G-code parser
     GCodeParser gcodeParser;
+
+    MotionStateManager& ms;
 };
