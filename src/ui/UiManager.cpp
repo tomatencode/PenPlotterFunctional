@@ -8,8 +8,8 @@
 
 namespace ui {
 
-UiManager::UiManager(JobManager& jobManager, MotionStateManager& ms, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
-    : _jobManager(jobManager), _ms(ms), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
+UiManager::UiManager(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
+    : _jobManager(jobManager), _ms(ms), _fileManager(fileManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
 
 void UiManager::init()
@@ -17,7 +17,7 @@ void UiManager::init()
     _renderer.init();
 
     // Start on the first screen
-    static screens::HomeScreen homeScreen(_jobManager, _ms);
+    static screens::HomeScreen homeScreen(_jobManager, _ms, _fileManager);
     _router.pushScreen(&homeScreen);
 
     // Register as observer to be notified of job events

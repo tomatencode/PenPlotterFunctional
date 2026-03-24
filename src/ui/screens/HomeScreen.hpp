@@ -12,7 +12,7 @@ namespace screens {
 class HomeScreen : public ui::Screen
 {
 public:
-    HomeScreen(JobManager& jobManager, MotionStateManager& ms);
+    HomeScreen(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager);
 };
 
 } // namespace screens

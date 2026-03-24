@@ -5,8 +5,6 @@
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/Builder.hpp"
 
-#include "../../storage/FileSystem.hpp"
-
 #include <vector>
 #include <memory>
 
@@ -24,11 +22,13 @@ widgets::ButtonStyle fileButtonStyle = {
 };
 
 
-FileList::FileList(std::function<void(const String&)> onFileSelected)
+FileList::FileList(FileManager& fileManager, std::function<void(const String&)> onFileSelected)
     : Container(std::make_unique<widgets::ScrollableVerticalLayout>(
         widgets::ScrollableVerticalLayoutStyle{},
         std::vector<std::unique_ptr<widgets::Widget>>{}
-    )), _onFileSelected(std::move(onFileSelected))
+    )),
+    _fileManager(fileManager),
+    _onFileSelected(std::move(onFileSelected))
 {
     reload();
 }
@@ -40,7 +40,7 @@ void FileList::reload() {
 
     layout->clearChildren();
 
-    auto files = storage::fsListFiles();
+    auto files = _fileManager.listFiles();
     for (const auto& file : files) {
         auto button = widgets::make_widget<widgets::Button>(
             file,

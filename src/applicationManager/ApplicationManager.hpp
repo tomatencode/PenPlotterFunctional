@@ -2,6 +2,7 @@
 
 #include "jobManager/JobManager.hpp"
 #include "webInterface/WebInterface.hpp"
+#include "storage/FileManager.hpp"
 #include "ui/UiManager.hpp"
 #include "systemServices/MotionStateManager.hpp"
 
@@ -21,6 +22,7 @@ private:
     Buzzer buzzer;
 
     JobManager jobManager;
+    FileManager fileManager;
     WebInterface webInterface;
     ui::UiManager uiManager;
 

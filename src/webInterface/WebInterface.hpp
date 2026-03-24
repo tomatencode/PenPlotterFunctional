@@ -4,12 +4,16 @@
 #include <cstdint>
 
 #include "systemServices/MotionStateManager.hpp"
+#include "storage/FileManager.hpp"
 #include "jobManager/JobManager.hpp"
 
 class WebInterface
 {
 public:
-    WebInterface(JobManager& jobManager, MotionStateManager& ms);
+    WebInterface(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
+        : _jobManager(jobManager), _ms(ms), _fileManager(fileManager), server(80)
+    {}
+
     void init();
     void update();
     bool isWiFiConnected() const;
@@ -17,6 +21,8 @@ public:
 private:
     JobManager& _jobManager;
     MotionStateManager& _ms;
+    FileManager& _fileManager;
+
 
     WebServer server;
     bool _wifiInitialized = false;

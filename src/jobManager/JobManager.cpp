@@ -2,11 +2,8 @@
 
 #include <FS.h>
 
-#include "storage/FileSystem.hpp"
 #include "systemServices/Queues.hpp"
 
-
-JobManager::JobManager(MotionStateManager& ms) : currentJob(PlotJob()), _active(false), ms(ms) {}
 
 void JobManager::start(String filename)
 {
@@ -15,7 +12,7 @@ void JobManager::start(String filename)
     Serial.println("Starting job: " + filename);
 
     ms.setCommand(MotionCommand::NONE); // Clear any existing motion commands
-    currentJob.file = storage::fsOpenRead(filename);
+    currentJob.file = fileManager.openFileRead(filename);
 
     if (!currentJob.file)
     {
@@ -34,7 +31,7 @@ void JobManager::start(String filename)
 
     // Close and reopen to reset read position
     currentJob.file.close();
-    currentJob.file = storage::fsOpenRead(filename);
+    currentJob.file = fileManager.openFileRead(filename);
 
     currentJob.currentBufferLine = 0;
     _active = true;

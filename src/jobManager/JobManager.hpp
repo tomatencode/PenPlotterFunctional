@@ -3,6 +3,7 @@
 #include <FS.h>
 #include <vector>
 
+#include "storage/FileManager.hpp"
 #include "systemServices/MotionStateManager.hpp"
 #include "JobObserver.hpp"
 
@@ -16,7 +17,9 @@ struct PlotJob {
 
 class JobManager {
 public:
-    JobManager(MotionStateManager& ms);
+    JobManager(MotionStateManager& ms, FileManager& fileManager)
+        : currentJob(PlotJob()), _active(false), ms(ms), fileManager(fileManager)
+    {}
 
     // Job control
     void start(String filename);
@@ -42,6 +45,7 @@ private:
     std::vector<JobObserver*> _observers;
 
     MotionStateManager& ms;
+    FileManager& fileManager;
 
     // Internal notification method
     void notifyObservers(JobEvent event);

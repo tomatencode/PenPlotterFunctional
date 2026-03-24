@@ -1,11 +1,10 @@
 #include "WebInterface.hpp"
 
-#include "storage/FileSystem.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 
 void WebInterface::handleFileList()
 {
-    auto files = storage::fsListFiles();
+    auto files = _fileManager.listFiles();
 
     String json = "[";
     for (size_t i = 0; i < files.size(); i++)
@@ -40,7 +39,7 @@ void WebInterface::handleStartJob()
 
     String filename = server.arg("file");
 
-    if (!storage::fsExists(filename))
+    if (!_fileManager.fileExists(filename))
     {
         server.send(404, "text/plain", "File not found");
         return;
@@ -66,9 +65,10 @@ void WebInterface::handleUpload()
         String path = "/" + upload.filename;
         Serial.printf("Upload start: %s\n", path.c_str());
 
-        if (storage::fsExists(path)) storage::fsDelete(path);
+        if (_fileManager.fileExists(path))
+            _fileManager.deleteFile(path);
 
-        File f = storage::fsOpenWrite(path);
+        File f = _fileManager.openFileWrite(path);
         if (!f)
             Serial.println("Failed to open file for writing");
 
@@ -77,7 +77,7 @@ void WebInterface::handleUpload()
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
         String path = "/" + upload.filename;
-        File f = storage::fsOpenWrite(path);
+        File f = _fileManager.openFileWrite(path);
         f.write(upload.buf, upload.currentSize);
         f.close();
     }

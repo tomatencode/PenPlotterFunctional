@@ -17,7 +17,7 @@ namespace ui {
 namespace screens {
 
 
-FilesScreen::FilesScreen(JobManager& jobManager, MotionStateManager& ms)
+FilesScreen::FilesScreen(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{},
@@ -26,20 +26,26 @@ FilesScreen::FilesScreen(JobManager& jobManager, MotionStateManager& ms)
                     router()->popScreen(); // Go back to the previous screen
                 }
             }),
-            widgets::make_widget<components::FileList>([this, &jobManager, &ms](const String& file) {
-                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobManager, ms);
+            widgets::make_widget<components::FileList>(fileManager, [this, &jobManager, &ms, &fileManager](const String& file) {
+                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobManager, ms, fileManager);
                 if (router()) {
                     router()->pushScreen(detailsScreen);
                 }
             })
         )
-    , 1) // Start with the file list focused
+    , 1), _fileManager(fileManager)
 {
+    fileManager.registerFileObserver(this);
 }
 
-void FilesScreen::onEnter() {
-    Screen::onEnter();
-    reload(); // Refresh file list each time we enter the screen
+FilesScreen::~FilesScreen() {
+    _fileManager.unregisterFileObserver(this);
+}
+
+void FilesScreen::onFileEvent(FileEvent event, const String& path) {
+    if (event == FileEvent::ADDED || event == FileEvent::REMOVED) {
+        reload();
+    }
 }
 
 } // namespace screens

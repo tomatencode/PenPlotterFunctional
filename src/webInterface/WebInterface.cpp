@@ -7,8 +7,6 @@
 static const char* SSID = "Thomas_Wifi";
 static const char* PASSWORD = "TotallyHarmless";
 
-WebInterface::WebInterface(JobManager& jobManager, MotionStateManager& ms) : _jobManager(jobManager), _ms(ms), server(80) {}
-
 // Non-blocking
 void WebInterface::startWiFiConnection()
 {

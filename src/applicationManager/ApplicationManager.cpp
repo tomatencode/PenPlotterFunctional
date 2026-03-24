@@ -1,6 +1,6 @@
 #include "ApplicationManager.hpp"
 
-#include "storage/FileSystem.hpp"
+#include "storage/FileManager.hpp"
 #include "jobManager/JobManager.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "ui/UiManager.hpp"
@@ -20,9 +20,10 @@ ApplicationManager::ApplicationManager(MotionStateManager& ms)
       display(lcd),
       encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       buzzer(BUZZER_PIN, 5),
-      jobManager(ms),
-      webInterface(jobManager, ms),
-      uiManager(jobManager, ms, display, encoder, buzzer)
+      fileManager(),
+      jobManager(ms, fileManager),
+      webInterface(jobManager, ms, fileManager),
+      uiManager(jobManager, ms, fileManager, display, encoder, buzzer)
 {
 }
 
@@ -37,7 +38,7 @@ void ApplicationManager::init()
     buzzer.begin();
     encoder.begin();
 
-    storage::fsInit();
+    fileManager.init();
 
     uiManager.init();
     webInterface.init();

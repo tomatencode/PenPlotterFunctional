@@ -14,11 +14,6 @@
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../components/PressHoldButton.hpp"
 
-// include storage for file details
-#include "storage/FileSystem.hpp"
-
-
-
 namespace ui {
 namespace screens {
 
@@ -35,9 +30,9 @@ String formatPlotTime(size_t seconds) {
     return String(mins) + "m " + String(secs) + "s";
 }
 
-FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms)
+FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
     : Screen(
-        !storage::fsExists("/" + filename) ? (
+        !fileManager.fileExists("/" + filename) ? (
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
@@ -59,12 +54,12 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     }
                 }),
 
-                widgets::make_widget<widgets::Label>([filename]() {
-                    size_t size = storage::fsFileSize("/" + filename);
+                widgets::make_widget<widgets::Label>([filename, &fileManager]() {
+                    size_t size = fileManager.getFileSize("/" + filename);
                     return "Size: " + formatFileSize(size);
                 }),
 
-                widgets::make_widget<widgets::Label>([filename]() {
+                widgets::make_widget<widgets::Label>([]() {
                     // Placeholder: In a real implementation, you would calculate this based on file contents or metadata
                     size_t plotTimeSeconds = 120; // Example fixed time
                     return "Plot Time: " + formatPlotTime(plotTimeSeconds);
@@ -76,7 +71,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     widgets::make_widget<widgets::Button>(
                         "Plot",
                         widgets::ButtonStyle(),
-                        [filename, this, &jobManager, &ms]() {
+                        [this, filename, &jobManager, &ms]() {
                             PlottingScreen* plottingScreen = new PlottingScreen(filename, jobManager, ms);
                             if (router()) {
                                 router()->pushScreen(plottingScreen);
@@ -86,8 +81,8 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     widgets::make_widget<components::PressHoldButton>(
                         "Delete",
                         components::PressHoldButtonStyle(),
-                        [filename, this]() {
-                            storage::fsDelete("/" + filename);
+                        [this, filename, &fileManager]() {
+                            fileManager.deleteFile("/" + filename);
                             if (router()) {
                                 router()->popScreen(); // Go back to the previous screen
                             }
