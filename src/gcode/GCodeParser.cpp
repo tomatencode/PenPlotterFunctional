@@ -1,6 +1,6 @@
 #include "GCodeParser.hpp"
 
-GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionStateManager& ms)
+GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& ms)
         : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
           _absolute(true), _ms(ms) {}
 

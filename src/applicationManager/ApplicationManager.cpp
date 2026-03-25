@@ -14,7 +14,7 @@
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
-ApplicationManager::ApplicationManager(MotionStateManager& ms)
+ApplicationManager::ApplicationManager(MotionState& ms)
     : ms(ms),
       lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       display(lcd),

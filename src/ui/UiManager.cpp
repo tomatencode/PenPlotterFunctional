@@ -8,7 +8,7 @@
 
 namespace ui {
 
-UiManager::UiManager(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
+UiManager::UiManager(JobManager& jobManager, MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
     : _jobManager(jobManager), _ms(ms), _fileManager(fileManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
 

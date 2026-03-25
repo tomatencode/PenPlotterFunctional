@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "storage/FileManager.hpp"
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include "JobObserver.hpp"
 
 struct PlotJob {
@@ -17,7 +17,7 @@ struct PlotJob {
 
 class JobManager {
 public:
-    JobManager(MotionStateManager& ms, FileManager& fileManager)
+    JobManager(MotionState& ms, FileManager& fileManager)
         : currentJob(PlotJob()), _active(false), ms(ms), fileManager(fileManager)
     {}
 
@@ -44,7 +44,7 @@ private:
     bool _active;
     std::vector<JobObserver*> _observers;
 
-    MotionStateManager& ms;
+    MotionState& ms;
     FileManager& fileManager;
 
     // Internal notification method

@@ -15,7 +15,7 @@
 namespace ui {
 namespace screens {
 
-HomeScreen::HomeScreen(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
+HomeScreen::HomeScreen(JobManager& jobManager, MotionState& ms, FileManager& fileManager)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},

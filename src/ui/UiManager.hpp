@@ -3,7 +3,7 @@
 #include "jobManager/JobManager.hpp"
 #include "jobManager/JobObserver.hpp"
 
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 
 #include "hardware/display/LcdDisplay.hpp"
@@ -19,7 +19,7 @@ namespace ui {
 class UiManager : public JobObserver
 {
 public:
-    UiManager(JobManager& jobManager,MotionStateManager& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(JobManager& jobManager,MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
@@ -36,7 +36,7 @@ private:
 
     // References to shared services (not owned by UI)
     JobManager& _jobManager;
-    MotionStateManager& _ms;
+    MotionState& _ms;
     FileManager& _fileManager;
 
     // References to hardware interfaces (not owned by UI)

@@ -2,7 +2,7 @@
 
 #include "../framework/screen/Screen.hpp"
 
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include "jobManager/JobManager.hpp"
 
 namespace ui {
@@ -18,7 +18,7 @@ public:
      * @param ms Reference to motion state manager
      * @param alreadyStarted If true, skips calling jobManager.start() (job already running from observer)
      */
-    PlottingScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms, bool alreadyStarted = false);
+    PlottingScreen(const String& filename, JobManager& jobManager, MotionState& ms, bool alreadyStarted = false);
 };
 
 } // namespace screens

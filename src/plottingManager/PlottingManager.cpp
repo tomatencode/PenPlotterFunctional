@@ -3,7 +3,7 @@
 #include "config/pins.hpp"
 #include "systemServices/Queues.hpp"
 
-PlottingManager::PlottingManager(MotionStateManager& ms)
+PlottingManager::PlottingManager(MotionState& ms)
     : ms(ms),
     driverSerial(1),
 
@@ -80,7 +80,7 @@ void PlottingManager::update()
 
     if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && ms.getCommand() != MotionCommand::ABORT)
     {
-        ms.setState(MotionState::RUNNING);
+        ms.setState(MotionStateType::RUNNING);
 
         Serial.print("Executing line: ");
         Serial.println(msg.line);
@@ -89,6 +89,6 @@ void PlottingManager::update()
     }
     else
     {
-        ms.setState(MotionState::IDLE);
+        ms.setState(MotionStateType::IDLE);
     }
 }

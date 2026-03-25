@@ -30,7 +30,7 @@ String formatPlotTime(size_t seconds) {
     return String(mins) + "m " + String(secs) + "s";
 }
 
-FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
+FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager, MotionState& ms, FileManager& fileManager)
     : Screen(
         !fileManager.fileExists("/" + filename) ? (
             widgets::make_widget<widgets::VerticalLayout>(

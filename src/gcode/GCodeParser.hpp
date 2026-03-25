@@ -3,14 +3,14 @@
 #include "motion/MotionSystem.hpp"
 #include "hardware/pen/Pen.hpp"
 #include "motion/HomingController.hpp"
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include <string>
 #include <vector>
 #include <map>
 
 class GCodeParser {
 public:
-    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionStateManager& ms);
+    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& ms);
 
     void executeLine(const std::string& line);
 private:
@@ -20,7 +20,7 @@ private:
     double _feedRateTravel;
     bool _absolute;
     Pen& _pen;
-    MotionStateManager& _ms;
+    MotionState& _ms;
 
     // Helpers
     void handleG0G1(const std::map<char,double>& params);

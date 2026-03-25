@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 
-MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionStateManager& ms, double min_feature_size_mm)
+MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& ms, double min_feature_size_mm)
     : _axisA(axisA), _axisB(axisB), _kinematics(kinematics), _min_feature_size_mm(min_feature_size_mm), ms(ms) {}
 
 void MotionSystem::moveToXY(
@@ -61,12 +61,12 @@ void MotionSystem::moveToXY(
 
         // Check for motion commands
         if (ms.getCommand() == MotionCommand::PAUSE) {
-            ms.setState(MotionState::PAUSED);
+            ms.setState(MotionStateType::PAUSED);
             while (ms.getCommand() == MotionCommand::PAUSE)
             {
                 yield(); // for watchdog (idk if this is necessary)
             }
-            ms.setState(MotionState::RUNNING);
+            ms.setState(MotionStateType::RUNNING);
         }
         else if (ms.getCommand() == MotionCommand::ABORT)
         {

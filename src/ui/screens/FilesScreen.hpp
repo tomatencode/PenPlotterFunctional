@@ -2,7 +2,7 @@
 
 #include "../framework/screen/Screen.hpp"
 
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include "jobManager/JobManager.hpp"
 
 #include "storage/FileObserver.hpp"
@@ -14,7 +14,7 @@ namespace screens {
 class FilesScreen : public ui::Screen, public FileObserver
 {
 public:
-    FilesScreen(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager);
+    FilesScreen(JobManager& jobManager, MotionState& ms, FileManager& fileManager);
     ~FilesScreen();
 
     void onFileEvent(FileEvent event, const String& path) override;

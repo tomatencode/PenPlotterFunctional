@@ -17,7 +17,7 @@ namespace ui {
 namespace screens {
 
 
-FilesScreen::FilesScreen(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
+FilesScreen::FilesScreen(JobManager& jobManager, MotionState& ms, FileManager& fileManager)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{},

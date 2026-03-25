@@ -4,12 +4,12 @@
 #include "webInterface/WebInterface.hpp"
 #include "storage/FileManager.hpp"
 #include "ui/UiManager.hpp"
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 
 class ApplicationManager
 {
 public:
-    ApplicationManager(MotionStateManager& ms);
+    ApplicationManager(MotionState& ms);
     
     void init();
     void update();
@@ -26,5 +26,5 @@ private:
     WebInterface webInterface;
     ui::UiManager uiManager;
 
-    MotionStateManager& ms;
+    MotionState& ms;
 };

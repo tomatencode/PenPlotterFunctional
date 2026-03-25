@@ -3,14 +3,14 @@
 #include <WebServer.h>
 #include <cstdint>
 
-#include "systemServices/MotionStateManager.hpp"
+#include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 #include "jobManager/JobManager.hpp"
 
 class WebInterface
 {
 public:
-    WebInterface(JobManager& jobManager, MotionStateManager& ms, FileManager& fileManager)
+    WebInterface(JobManager& jobManager, MotionState& ms, FileManager& fileManager)
         : _jobManager(jobManager), _ms(ms), _fileManager(fileManager), server(80)
     {}
 
@@ -20,7 +20,7 @@ public:
 
 private:
     JobManager& _jobManager;
-    MotionStateManager& _ms;
+    MotionState& _ms;
     FileManager& _fileManager;
 
 

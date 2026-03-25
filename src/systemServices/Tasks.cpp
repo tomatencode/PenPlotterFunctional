@@ -55,7 +55,7 @@ void systemTask(void *parameter)
 */
 void startSystemTasks()
 {
-    static MotionStateManager motionStateManager;
+    static MotionState motionStateManager;
     static ApplicationManager appManager(motionStateManager);
     static PlottingManager plottingManager(motionStateManager);
 
