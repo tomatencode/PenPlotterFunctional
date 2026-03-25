@@ -1,7 +1,5 @@
 #include "WebInterface.hpp"
 
-#include "applicationManager/ApplicationManager.hpp"
-
 void WebInterface::handleFileList()
 {
     auto files = _fileManager.listFiles();
