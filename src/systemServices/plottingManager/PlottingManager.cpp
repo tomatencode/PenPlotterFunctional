@@ -4,8 +4,8 @@
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
 
-PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue)
-    : _motionState(ms),
+PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue)
+    : _motionState(motionState),
     gcodeQueue(gcodeQueue),
     _driverSerial(1),
 
@@ -37,7 +37,7 @@ PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& g
 
     _kinematics(STEPS_PER_MM),
 
-    _motionSystem(_axisA, _axisB, _kinematics, ms, MIN_FEATURE_SIZE_MM),
+    _motionSystem(_axisA, _axisB, _kinematics, motionState, MIN_FEATURE_SIZE_MM),
 
     _gcodeParser(
         _motionSystem,
@@ -45,7 +45,7 @@ PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& g
         _homingController,
         FEED_RATE_DRAW_MM_PER_S,
         FEED_RATE_TRAVEL_MM_PER_S,
-        ms
+        motionState
     )
 {
 }

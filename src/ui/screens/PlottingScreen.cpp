@@ -18,7 +18,7 @@ namespace ui {
 namespace screens {
 
 
-PlottingScreen::PlottingScreen(const String& filename, JobController& jobController, MotionState& ms, bool alreadyStarted)
+PlottingScreen::PlottingScreen(const String& filename, JobController& jobController, MotionState& motionState, bool alreadyStarted)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
@@ -41,12 +41,12 @@ PlottingScreen::PlottingScreen(const String& filename, JobController& jobControl
                     widgets::make_widget<widgets::ConditionalWidget>(
                         [&jobController]() { return (jobController.getCurrentLine() != jobController.getTotalLines()); },
                         widgets::make_widget<widgets::Button>(
-                            [&jobController, &ms]() {
-                                return ms.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                            [&jobController, &motionState]() {
+                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
                             },
                             widgets::ButtonStyle(),
-                            [&jobController, &ms]() {
-                                if (ms.getState() == MotionStateType::PAUSED) {
+                            [&jobController, &motionState]() {
+                                if (motionState.getState() == MotionStateType::PAUSED) {
                                     jobController.resume();
                                 } else {
                                     jobController.pause();

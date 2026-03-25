@@ -19,7 +19,7 @@ namespace ui {
 class UiManager : public JobObserver
 {
 public:
-    UiManager(JobController& jobController, MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(JobController& jobController, MotionState& motionState, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
@@ -36,7 +36,7 @@ private:
 
     // References to shared services (not owned by UI)
     JobController& _jobController;
-    MotionState& _ms;
+    MotionState& _motionState;
     FileManager& _fileManager;
 
     // References to hardware interfaces (not owned by UI)

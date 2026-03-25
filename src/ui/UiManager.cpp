@@ -8,8 +8,8 @@
 
 namespace ui {
 
-UiManager::UiManager(JobController& jobController, MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
-    : _jobController(jobController), _ms(ms), _fileManager(fileManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
+UiManager::UiManager(JobController& jobController, MotionState& motionState, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
+    : _jobController(jobController), _motionState(motionState), _fileManager(fileManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
 {}
 
 void UiManager::init()
@@ -17,7 +17,7 @@ void UiManager::init()
     _renderer.init();
 
     // Start on the first screen
-    static screens::HomeScreen homeScreen(_jobController, _ms, _fileManager);
+    static screens::HomeScreen homeScreen(_jobController, _motionState, _fileManager);
     _router.pushScreen(&homeScreen);
 
     // Register as observer to be notified of job events
@@ -62,7 +62,7 @@ void UiManager::onJobEvent(const JobEvent& event)
             displayFilename = displayFilename.substring(1);
         }
         
-        static screens::PlottingScreen plottingScreen(displayFilename, _jobController, _ms, true);
+        static screens::PlottingScreen plottingScreen(displayFilename, _jobController, _motionState, true);
         _router.pushScreen(&plottingScreen);
         Serial.println("Navigated to PlottingScreen from observer");
     }

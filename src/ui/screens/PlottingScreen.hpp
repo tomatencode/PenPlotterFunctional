@@ -12,7 +12,7 @@ namespace screens {
 class PlottingScreen : public ui::Screen
 {
 public:
-    PlottingScreen(const String& filename, JobController& jobController, MotionState& ms, bool alreadyStarted = false);
+    PlottingScreen(const String& filename, JobController& jobController, MotionState& motionState, bool alreadyStarted = false);
 };
 
 } // namespace screens

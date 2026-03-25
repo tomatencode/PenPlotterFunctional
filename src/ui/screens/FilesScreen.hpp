@@ -14,7 +14,7 @@ namespace screens {
 class FilesScreen : public ui::Screen, public FileObserver
 {
 public:
-    FilesScreen(JobController& jobController, MotionState& ms, FileManager& fileManager);
+    FilesScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager);
     ~FilesScreen();
 
     void onFileEvent(FileEvent event, const String& path) override;

@@ -18,7 +18,7 @@
 class PlottingManager
 {
 public:
-    PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue);
+    PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue);
 
     void init();
     void update();

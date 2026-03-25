@@ -10,8 +10,8 @@
 class WebInterface
 {
 public:
-    WebInterface(JobController& jobController, MotionState& ms, FileManager& fileManager)
-        : _jobController(jobController), _ms(ms), _fileManager(fileManager), server(80)
+    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager)
+        : _jobController(jobController), _motionState(motionState), _fileManager(fileManager), server(80)
     {}
 
     void init();
@@ -20,7 +20,7 @@ public:
 
 private:
     JobController& _jobController;
-    MotionState& _ms;
+    MotionState& _motionState;
     FileManager& _fileManager;
 
 

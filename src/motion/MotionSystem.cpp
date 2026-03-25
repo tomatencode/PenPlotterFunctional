@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 
-MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& ms, double min_feature_size_mm)
-    : _axisA(axisA), _axisB(axisB), _kinematics(kinematics), _min_feature_size_mm(min_feature_size_mm), ms(ms) {}
+MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& motionState, double min_feature_size_mm)
+    : _axisA(axisA), _axisB(axisB), _kinematics(kinematics), _min_feature_size_mm(min_feature_size_mm), motionState(motionState) {}
 
 void MotionSystem::moveToXY(
     const XYPos& targetPos,
@@ -60,15 +60,15 @@ void MotionSystem::moveToXY(
         }
 
         // Check for motion commands
-        if (ms.getCommand() == MotionCommand::PAUSE) {
-            ms.setState(MotionStateType::PAUSED);
-            while (ms.getCommand() == MotionCommand::PAUSE)
+        if (motionState.getCommand() == MotionCommand::PAUSE) {
+            motionState.setState(MotionStateType::PAUSED);
+            while (motionState.getCommand() == MotionCommand::PAUSE)
             {
                 yield(); // for watchdog (idk if this is necessary)
             }
-            ms.setState(MotionStateType::RUNNING);
+            motionState.setState(MotionStateType::RUNNING);
         }
-        else if (ms.getCommand() == MotionCommand::ABORT)
+        else if (motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
@@ -138,7 +138,7 @@ void MotionSystem::arcToXY(
         moveToXY({x, y}, mm_per_s); // Move to the calculated position
 
         // Check for abort
-        if (ms.getCommand() == MotionCommand::ABORT)
+        if (motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
@@ -191,7 +191,7 @@ void MotionSystem::quadraticBezierToXY(
         t0 = t1;
 
         // Check for abort
-        if (ms.getCommand() == MotionCommand::ABORT)
+        if (motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
@@ -269,7 +269,7 @@ void MotionSystem::cubicBezierToXY(
         t0 = t1;
 
         // Check for abort
-        if (ms.getCommand() == MotionCommand::ABORT)
+        if (motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }

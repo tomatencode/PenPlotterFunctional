@@ -10,7 +10,7 @@
 
 class GCodeParser {
 public:
-    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& ms);
+    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
 
     void executeLine(const std::string& line);
 private:
@@ -20,7 +20,7 @@ private:
     double _feedRateTravel;
     bool _absolute;
     Pen& _pen;
-    MotionState& _ms;
+    MotionState& _motionState;
 
     // Helpers
     void handleG0G1(const std::map<char,double>& params);
