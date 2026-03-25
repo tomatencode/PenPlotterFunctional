@@ -20,7 +20,7 @@ struct PlotJob {
 class JobManager {
 public:
     JobManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
-        : currentJob(PlotJob()), _active(false), ms(ms), gcodeQueue(gcodeQueue), fileManager(fileManager)
+        : _currentJob(PlotJob()), _active(false), _motionState(ms), _gcodeQueue(gcodeQueue), _fileManager(fileManager)
     {}
 
     // Job control
@@ -35,20 +35,20 @@ public:
 
     // Status queries
     bool isActive() const { return _active; }
-    String getCurrentFile() const { return currentJob.filename; }
-    uint32_t getTotalLines() const { return currentJob.totalLines; }
+    String getCurrentFile() const { return _currentJob.filename; }
+    uint32_t getTotalLines() const { return _currentJob.totalLines; }
     uint16_t getCurrentLine() const;
 
     void update();
 
 private:
-    PlotJob currentJob;
+    PlotJob _currentJob;
     bool _active;
     std::vector<JobObserver*> _observers;
 
-    MotionState& ms;
-    FileManager& fileManager;
-    FreeRtosQueue<GcodeMessage>& gcodeQueue;
+    MotionState& _motionState;
+    FileManager& _fileManager;
+    FreeRtosQueue<GcodeMessage>& _gcodeQueue;
 
     // Internal notification method
     void notifyObservers(JobEvent event);

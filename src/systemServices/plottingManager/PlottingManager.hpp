@@ -28,36 +28,36 @@ private:
     void configureDriver(TMC2209Driver& driver);
 
     // UART
-    HardwareSerial driverSerial;
+    HardwareSerial _driverSerial;
 
     // Servo
-    Servo penServo;
+    Servo _penServo;
 
     // Raw drivers
-    TMC2209Stepper rawDriverA;
-    TMC2209Stepper rawDriverB;
+    TMC2209Stepper _rawDriverA;
+    TMC2209Stepper _rawDriverB;
 
     // Driver abstraction
-    TMC2209Driver driverA;
-    TMC2209Driver driverB;
+    TMC2209Driver _driverA;
+    TMC2209Driver _driverB;
 
     // Motion hardware
-    Stepper stepA;
-    Stepper stepB;
+    Stepper _stepA;
+    Stepper _stepB;
 
-    StepperAxis axisA;
-    StepperAxis axisB;
+    StepperAxis _axisA;
+    StepperAxis _axisB;
 
-    ServoPen pen;
+    ServoPen _pen;
 
-    HomingController homingController;
+    HomingController _homingController;
 
-    CoreXYKinematics kinematics;
+    CoreXYKinematics _kinematics;
 
-    MotionSystem motionSystem;
+    MotionSystem _motionSystem;
 
-    GCodeParser gcodeParser;
+    GCodeParser _gcodeParser;
 
-    MotionState& ms;
+    MotionState& _motionState;
     FreeRtosQueue<GcodeMessage>& gcodeQueue;
 };

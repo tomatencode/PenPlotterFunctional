@@ -18,16 +18,16 @@ public:
 
 private:
 
-    LCD_I2C lcd;
-    LcdDisplay display;
-    RotaryEncoder encoder;
-    Buzzer buzzer;
+    LCD_I2C _lcd;
+    LcdDisplay _display;
+    RotaryEncoder _encoder;
+    Buzzer _buzzer;
 
-    JobManager jobManager;
-    FileManager fileManager;
-    WebInterface webInterface;
-    ui::UiManager uiManager;
+    JobManager _jobManager;
+    FileManager _fileManager;
+    WebInterface _webInterface;
+    ui::UiManager _uiManager;
 
-    MotionState& ms;
-    FreeRtosQueue<GcodeMessage>& gcodeQueue;
+    MotionState& _motionState;
+    FreeRtosQueue<GcodeMessage>& _gcodeQueue;
 };

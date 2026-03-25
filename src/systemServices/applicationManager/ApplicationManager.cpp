@@ -15,16 +15,16 @@
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
 ApplicationManager::ApplicationManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue)
-    : ms(ms),
-      gcodeQueue(gcodeQueue),
-      lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
-      display(lcd),
-      encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
-      buzzer(BUZZER_PIN, 5),
-      fileManager(),
-      jobManager(ms, gcodeQueue, fileManager),
-      webInterface(jobManager, ms, fileManager),
-      uiManager(jobManager, ms, fileManager, display, encoder, buzzer)
+    : _motionState(ms),
+      _gcodeQueue(gcodeQueue),
+      _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
+      _display(_lcd),
+      _encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
+      _buzzer(BUZZER_PIN, 5),
+      _fileManager(),
+      _jobManager(ms, gcodeQueue, _fileManager),
+      _webInterface(_jobManager, ms, _fileManager),
+      _uiManager(_jobManager, ms, _fileManager, _display, _encoder, _buzzer)
 {
 }
 
@@ -32,25 +32,25 @@ void ApplicationManager::init()
 {
     Wire.begin();
 
-    lcd.begin(&Wire);
-    lcd.display();
-    lcd.backlight();
+    _lcd.begin(&Wire);
+    _lcd.display();
+    _lcd.backlight();
 
-    buzzer.begin();
-    encoder.begin();
+    _buzzer.begin();
+    _encoder.begin();
 
-    fileManager.init();
+    _fileManager.init();
 
-    uiManager.init();
-    webInterface.init();
+    _uiManager.init();
+    _webInterface.init();
 
-    buzzer.playMelody(startupMelody);
+    _buzzer.playMelody(startupMelody);
 }
 
 void ApplicationManager::update()
 {
-    webInterface.update();
-    jobManager.update();
-    buzzer.update();
-    uiManager.update();
+    _webInterface.update();
+    _jobManager.update();
+    _buzzer.update();
+    _uiManager.update();
 }

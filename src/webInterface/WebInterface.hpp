@@ -27,9 +27,7 @@ private:
     WebServer server;
     bool _wifiInitialized = false;
     bool _serverStarted = false;
-    unsigned long _lastWiFiCheck = 0;
-    unsigned long _wifiStartTime = 0;
-    static const unsigned long WIFI_CONNECT_TIMEOUT = 30000; // 30 seconds max
+
 
     void handleFileList();
     void handlePauseJob();

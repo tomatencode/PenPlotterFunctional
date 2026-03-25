@@ -5,29 +5,29 @@
 #include "systemServices/GcodeMessage.hpp"
 
 PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue)
-    : ms(ms),
+    : _motionState(ms),
     gcodeQueue(gcodeQueue),
-    driverSerial(1),
+    _driverSerial(1),
 
-    rawDriverA(&driverSerial, R_SENSE, 0),
-    rawDriverB(&driverSerial, R_SENSE, 2),
+    _rawDriverA(&_driverSerial, R_SENSE, 0),
+    _rawDriverB(&_driverSerial, R_SENSE, 2),
 
-    driverA(rawDriverA),
-    driverB(rawDriverB),
+    _driverA(_rawDriverA),
+    _driverB(_rawDriverB),
 
-    stepA(STEP_PIN_A, DIR_PIN_A),
-    stepB(STEP_PIN_B, DIR_PIN_B),
+    _stepA(STEP_PIN_A, DIR_PIN_A),
+    _stepB(STEP_PIN_B, DIR_PIN_B),
 
-    axisA(stepA, driverA, true),
-    axisB(stepB, driverB, true),
+    _axisA(_stepA, _driverA, true),
+    _axisB(_stepB, _driverB, true),
 
-    pen(penServo, PEN_UP_ANGLE, PEN_DOWN_ANGLE),
+    _pen(_penServo, PEN_UP_ANGLE, PEN_DOWN_ANGLE),
 
-    homingController(
-        axisA,
-        axisB,
-        driverA,
-        driverB,
+    _homingController(
+        _axisA,
+        _axisB,
+        _driverA,
+        _driverB,
         HOMING_SPEED_STPS_PER_S,
         HOMING_STALLGUARD_THRESHOLD,
         HOMING_SG_CHECK_INTERVAL_MS,
@@ -35,14 +35,14 @@ PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& g
         HOMING_SG_START_TIMEOUT_MS
     ),
 
-    kinematics(STEPS_PER_MM),
+    _kinematics(STEPS_PER_MM),
 
-    motionSystem(axisA, axisB, kinematics, ms, MIN_FEATURE_SIZE_MM),
+    _motionSystem(_axisA, _axisB, _kinematics, ms, MIN_FEATURE_SIZE_MM),
 
-    gcodeParser(
-        motionSystem,
-        pen,
-        homingController,
+    _gcodeParser(
+        _motionSystem,
+        _pen,
+        _homingController,
         FEED_RATE_DRAW_MM_PER_S,
         FEED_RATE_TRAVEL_MM_PER_S,
         ms
@@ -62,16 +62,16 @@ void PlottingManager::init()
 {
     pinMode(SERVO_PIN, OUTPUT);
 
-    penServo.attach(SERVO_PIN);
-    pen.up();
+    _penServo.attach(SERVO_PIN);
+    _pen.up();
 
     pinMode(EN_PIN, OUTPUT);
     digitalWrite(EN_PIN, LOW);
 
-    driverSerial.begin(115200, SERIAL_8N1, DRIVER_RX_PIN, DRIVER_TX_PIN);
+    _driverSerial.begin(115200, SERIAL_8N1, DRIVER_RX_PIN, DRIVER_TX_PIN);
 
-    configureDriver(driverA);
-    configureDriver(driverB);
+    configureDriver(_driverA);
+    configureDriver(_driverB);
 
     Serial.println("Plotting manager initialized.");
 }
@@ -80,17 +80,17 @@ void PlottingManager::update()
 {
     auto msg = gcodeQueue.tryReceive(0);
 
-    if (msg.has_value() && ms.getCommand() != MotionCommand::ABORT)
+    if (msg.has_value() && _motionState.getCommand() != MotionCommand::ABORT)
     {
-        ms.setState(MotionStateType::RUNNING);
+        _motionState.setState(MotionStateType::RUNNING);
 
         Serial.print("Executing line: ");
         Serial.println(msg->line);
 
-        gcodeParser.executeLine(msg->line);
+        _gcodeParser.executeLine(msg->line);
     }
     else
     {
-        ms.setState(MotionStateType::IDLE);
+        _motionState.setState(MotionStateType::IDLE);
     }
 }

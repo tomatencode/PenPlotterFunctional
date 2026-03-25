@@ -14,7 +14,6 @@ void WebInterface::startWiFiConnection()
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
     WiFi.begin(SSID, PASSWORD);
-    _wifiStartTime = millis();
     _wifiInitialized = true;
 }
 
@@ -33,8 +32,8 @@ void WebInterface::checkWiFiStatus()
 
 void WebInterface::setupServer()
 {
-    if (_serverStarted) return; // Already set up
-    if (WiFi.status() != WL_CONNECTED) return; // Should not happen, but guard just in case
+    if (_serverStarted) return;
+    if (WiFi.status() != WL_CONNECTED) return;
 
     Serial.print("WiFi Connected! IP address: ");
     Serial.println(WiFi.localIP());

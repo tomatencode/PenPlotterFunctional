@@ -8,29 +8,29 @@ void JobManager::start(String filename)
 
     Serial.println("Starting job: " + filename);
 
-    ms.setCommand(MotionCommand::NONE); // Clear any existing motion commands
-    currentJob.file = fileManager.openFileRead(filename);
+    _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
+    _currentJob.file = _fileManager.openFileRead(filename);
 
-    if (!currentJob.file)
+    if (!_currentJob.file)
     {
         Serial.println("Failed to open file");
         return;
     }
 
-    currentJob.filename = filename;
-    currentJob.completed = false;
-    currentJob.totalLines = 0;
-    while (currentJob.file.available())
+    _currentJob.filename = filename;
+    _currentJob.completed = false;
+    _currentJob.totalLines = 0;
+    while (_currentJob.file.available())
     {
-        currentJob.file.readStringUntil('\n'); // Read and discard lines to count them
-        currentJob.totalLines++;
+        _currentJob.file.readStringUntil('\n'); // Read and discard lines to count them
+        _currentJob.totalLines++;
     }
 
     // Close and reopen to reset read position
-    currentJob.file.close();
-    currentJob.file = fileManager.openFileRead(filename);
+    _currentJob.file.close();
+    _currentJob.file = _fileManager.openFileRead(filename);
 
-    currentJob.currentBufferLine = 0;
+    _currentJob.currentBufferLine = 0;
     _active = true;
 
     // Notify observers that a job has started
@@ -40,32 +40,32 @@ void JobManager::start(String filename)
 void JobManager::pause()
 {
     Serial.println("Pausing job");
-    ms.setCommand(MotionCommand::PAUSE);
+    _motionState.setCommand(MotionCommand::PAUSE);
     notifyObservers(JobEvent::PAUSED);
 }
 
 void JobManager::resume()
 {
     Serial.println("Resuming job");
-    ms.setCommand(MotionCommand::NONE);
+    _motionState.setCommand(MotionCommand::NONE);
     notifyObservers(JobEvent::RESUMED);
 }
 
 void JobManager::abort()
 {
     Serial.println("Aborting job");
-    ms.setCommand(MotionCommand::ABORT);
-    gcodeQueue.clear(); // Clear any pending G-code commands
-    if (currentJob.file) currentJob.file.close();
-    currentJob.currentBufferLine = 0;
+    _motionState.setCommand(MotionCommand::ABORT);
+    _gcodeQueue.clear(); // Clear any pending G-code commands
+    if (_currentJob.file) _currentJob.file.close();
+    _currentJob.currentBufferLine = 0;
     _active = false;
-    currentJob.completed = false;
+    _currentJob.completed = false;
     notifyObservers(JobEvent::ABORTED);
 }
 
 uint16_t JobManager::getCurrentLine() const
 {
-    return currentJob.currentBufferLine - gcodeQueue.messagesWaiting();
+    return _currentJob.currentBufferLine - _gcodeQueue.messagesWaiting();
 }
 
 void JobManager::update()
@@ -73,28 +73,28 @@ void JobManager::update()
     if (!_active) return; // No active job
     
     // Check for completion
-    if (!currentJob.file.available() && !currentJob.completed) {
-        if (gcodeQueue.messagesWaiting() == 0) {
+    if (!_currentJob.file.available() && !_currentJob.completed) {
+        if (_gcodeQueue.messagesWaiting() == 0) {
             // File is done and queue is empty - job is complete
-            currentJob.completed = true;
+            _currentJob.completed = true;
             _active = false;
-            if (currentJob.file) currentJob.file.close();
+            if (_currentJob.file) _currentJob.file.close();
             notifyObservers(JobEvent::COMPLETED);
             return;
         }
     }
     
-    if (!currentJob.file.available()) return; // No more lines to read
+    if (!_currentJob.file.available()) return; // No more lines to read
 
     // prefetch queue space
-    UBaseType_t space = gcodeQueue.spacesAvailable();
+    UBaseType_t space = _gcodeQueue.spacesAvailable();
 
-    for (UBaseType_t i = 0; i < space && currentJob.file.available(); i++)
+    for (UBaseType_t i = 0; i < space && _currentJob.file.available(); i++)
     {
-        String line = currentJob.file.readStringUntil('\n');
+        String line = _currentJob.file.readStringUntil('\n');
         line.trim();
 
-        currentJob.currentBufferLine++;
+        _currentJob.currentBufferLine++;
 
         // skip empty lines
         if (line.length() == 0)
@@ -105,7 +105,7 @@ void JobManager::update()
         line.toCharArray(msg.line, MAX_GCODE_LINE);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
 
-        if (gcodeQueue.trySend(msg, 0))
+        if (_gcodeQueue.trySend(msg, 0))
         {
             // queue full, stop sending
             break;
