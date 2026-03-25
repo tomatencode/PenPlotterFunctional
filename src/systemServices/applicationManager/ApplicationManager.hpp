@@ -1,6 +1,6 @@
 #pragma once
 
-#include "jobManager/JobManager.hpp"
+#include "jobController/JobController.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "storage/FileManager.hpp"
 #include "ui/UiManager.hpp"
@@ -11,7 +11,7 @@
 class ApplicationManager
 {
 public:
-    ApplicationManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue);
+    ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue);
     
     void init();
     void update();
@@ -23,7 +23,7 @@ private:
     RotaryEncoder _encoder;
     Buzzer _buzzer;
 
-    JobManager _jobManager;
+    JobController _jobController;
     FileManager _fileManager;
     WebInterface _webInterface;
     ui::UiManager _uiManager;

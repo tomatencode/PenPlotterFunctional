@@ -3,7 +3,7 @@
 #include "../framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
-#include "jobManager/JobManager.hpp"
+#include "jobController/JobController.hpp"
 
 namespace ui {
 namespace screens {
@@ -12,7 +12,7 @@ namespace screens {
 class HomeScreen : public ui::Screen
 {
 public:
-    HomeScreen(JobManager& jobManager, MotionState& ms, FileManager& fileManager);
+    HomeScreen(JobController& jobController, MotionState& ms, FileManager& fileManager);
 };
 
 } // namespace screens

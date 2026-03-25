@@ -30,7 +30,7 @@ String formatPlotTime(size_t seconds) {
     return String(mins) + "m " + String(secs) + "s";
 }
 
-FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobManager, MotionState& ms, FileManager& fileManager)
+FileDetailsScreen::FileDetailsScreen(const String& filename, JobController& jobController, MotionState& ms, FileManager& fileManager)
     : Screen(
         !fileManager.fileExists("/" + filename) ? (
             widgets::make_widget<widgets::VerticalLayout>(
@@ -71,8 +71,8 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobManager& jobMana
                     widgets::make_widget<widgets::Button>(
                         "Plot",
                         widgets::ButtonStyle(),
-                        [this, filename, &jobManager, &ms]() {
-                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobManager, ms);
+                        [this, filename, &jobController, &ms]() {
+                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobController, ms);
                             if (router()) {
                                 router()->pushScreen(plottingScreen);
                             }

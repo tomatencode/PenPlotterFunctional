@@ -1,7 +1,7 @@
 #pragma once
 
-#include "jobManager/JobManager.hpp"
-#include "jobManager/JobObserver.hpp"
+#include "jobController/JobController.hpp"
+#include "jobController/JobObserver.hpp"
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
@@ -19,7 +19,7 @@ namespace ui {
 class UiManager : public JobObserver
 {
 public:
-    UiManager(JobManager& jobManager,MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiManager(JobController& jobController, MotionState& ms, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
 
     void init();
 
@@ -35,7 +35,7 @@ private:
     Router* _currentRouter = nullptr;  // Cached reference to router for navigation
 
     // References to shared services (not owned by UI)
-    JobManager& _jobManager;
+    JobController& _jobController;
     MotionState& _ms;
     FileManager& _fileManager;
 

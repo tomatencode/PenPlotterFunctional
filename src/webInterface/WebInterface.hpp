@@ -5,13 +5,13 @@
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
-#include "jobManager/JobManager.hpp"
+#include "jobController/JobController.hpp"
 
 class WebInterface
 {
 public:
-    WebInterface(JobManager& jobManager, MotionState& ms, FileManager& fileManager)
-        : _jobManager(jobManager), _ms(ms), _fileManager(fileManager), server(80)
+    WebInterface(JobController& jobController, MotionState& ms, FileManager& fileManager)
+        : _jobController(jobController), _ms(ms), _fileManager(fileManager), server(80)
     {}
 
     void init();
@@ -19,7 +19,7 @@ public:
     bool isWiFiConnected() const;
 
 private:
-    JobManager& _jobManager;
+    JobController& _jobController;
     MotionState& _ms;
     FileManager& _fileManager;
 

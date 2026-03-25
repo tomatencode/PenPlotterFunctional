@@ -3,7 +3,7 @@
 #include "../framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
-#include "jobManager/JobManager.hpp"
+#include "jobController/JobController.hpp"
 
 namespace ui {
 namespace screens {
@@ -12,13 +12,7 @@ namespace screens {
 class PlottingScreen : public ui::Screen
 {
 public:
-    /**
-     * @param filename The name of the file to plot
-     * @param jobManager Reference to job manager
-     * @param ms Reference to motion state manager
-     * @param alreadyStarted If true, skips calling jobManager.start() (job already running from observer)
-     */
-    PlottingScreen(const String& filename, JobManager& jobManager, MotionState& ms, bool alreadyStarted = false);
+    PlottingScreen(const String& filename, JobController& jobController, MotionState& ms, bool alreadyStarted = false);
 };
 
 } // namespace screens

@@ -4,7 +4,7 @@
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
-#include "jobManager/JobManager.hpp"
+#include "jobController/JobController.hpp"
 
 namespace ui {
 namespace screens {
@@ -13,7 +13,7 @@ namespace screens {
 class FileDetailsScreen : public ui::Screen
 {
 public:
-    FileDetailsScreen(const String& filename, JobManager& jobManager, MotionState& ms, FileManager& fileManager);
+    FileDetailsScreen(const String& filename, JobController& jobController, MotionState& ms, FileManager& fileManager);
 };
 
 } // namespace screens

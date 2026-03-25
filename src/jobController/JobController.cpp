@@ -1,8 +1,8 @@
-#include "JobManager.hpp"
+#include "JobController.hpp"
 
 #include <FS.h>
 
-void JobManager::start(String filename)
+void JobController::start(String filename)
 {
     abort(); // Ensure any existing job is stopped before starting a new one
 
@@ -37,21 +37,21 @@ void JobManager::start(String filename)
     notifyObservers(JobEvent::STARTED);
 }
 
-void JobManager::pause()
+void JobController::pause()
 {
     Serial.println("Pausing job");
     _motionState.setCommand(MotionCommand::PAUSE);
     notifyObservers(JobEvent::PAUSED);
 }
 
-void JobManager::resume()
+void JobController::resume()
 {
     Serial.println("Resuming job");
     _motionState.setCommand(MotionCommand::NONE);
     notifyObservers(JobEvent::RESUMED);
 }
 
-void JobManager::abort()
+void JobController::abort()
 {
     Serial.println("Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
@@ -63,12 +63,12 @@ void JobManager::abort()
     notifyObservers(JobEvent::ABORTED);
 }
 
-uint16_t JobManager::getCurrentLine() const
+uint16_t JobController::getCurrentLine() const
 {
     return _currentJob.currentBufferLine - _gcodeQueue.messagesWaiting();
 }
 
-void JobManager::update()
+void JobController::update()
 {
     if (!_active) return; // No active job
     
@@ -113,7 +113,7 @@ void JobManager::update()
     }
 }
 
-void JobManager::registerObserver(JobObserver* observer)
+void JobController::registerObserver(JobObserver* observer)
 {
     if (observer == nullptr) return;
     
@@ -126,7 +126,7 @@ void JobManager::registerObserver(JobObserver* observer)
     Serial.println("Observer registered. Total observers: " + String(_observers.size()));
 }
 
-void JobManager::unregisterObserver(JobObserver* observer)
+void JobController::unregisterObserver(JobObserver* observer)
 {
     if (observer == nullptr) return;
     
@@ -139,7 +139,7 @@ void JobManager::unregisterObserver(JobObserver* observer)
     }
 }
 
-void JobManager::notifyObservers(JobEvent event)
+void JobController::notifyObservers(JobEvent event)
 {
     for (auto observer : _observers) {
         if (observer != nullptr) {

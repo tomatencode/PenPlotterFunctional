@@ -17,9 +17,9 @@ struct PlotJob {
     bool completed = false;
 };
 
-class JobManager {
+class JobController {
 public:
-    JobManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
+    JobController(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
         : _currentJob(PlotJob()), _active(false), _motionState(ms), _gcodeQueue(gcodeQueue), _fileManager(fileManager)
     {}
 

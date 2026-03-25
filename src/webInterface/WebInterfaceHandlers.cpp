@@ -17,13 +17,13 @@ void WebInterface::handleFileList()
 
 void WebInterface::handlePauseJob()
 {
-    _jobManager.pause();
+    _jobController.pause();
     server.send(200, "text/plain", "Job paused");
 }
 
 void WebInterface::handleResumeJob()
 {
-    _jobManager.resume();
+    _jobController.resume();
     server.send(200, "text/plain", "Job resumed");
 }
 
@@ -43,14 +43,14 @@ void WebInterface::handleStartJob()
         return;
     }
 
-    _jobManager.start(filename);
+    _jobController.start(filename);
 
     server.send(200, "text/plain", "Job started");
 }
 
 void WebInterface::handleAbortJob()
 {
-    _jobManager.abort();
+    _jobController.abort();
     server.send(200, "text/plain", "Job stopped");
 }
 
