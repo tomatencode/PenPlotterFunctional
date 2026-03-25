@@ -5,11 +5,13 @@
 #include "storage/FileManager.hpp"
 #include "ui/UiManager.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/FreeRtosQueue.hpp"
+#include "systemServices/GcodeMessage.hpp"
 
 class ApplicationManager
 {
 public:
-    ApplicationManager(MotionState& ms);
+    ApplicationManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue);
     
     void init();
     void update();
@@ -27,4 +29,5 @@ private:
     ui::UiManager uiManager;
 
     MotionState& ms;
+    FreeRtosQueue<GcodeMessage>& gcodeQueue;
 };

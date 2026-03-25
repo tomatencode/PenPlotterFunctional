@@ -11,12 +11,14 @@
 #include "motion/MotionSystem.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/FreeRtosQueue.hpp"
+#include "systemServices/GcodeMessage.hpp"
 
 
 class PlottingManager
 {
 public:
-    PlottingManager(MotionState& ms);
+    PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue);
 
     void init();
     void update();
@@ -57,4 +59,5 @@ private:
     GCodeParser gcodeParser;
 
     MotionState& ms;
+    FreeRtosQueue<GcodeMessage>& gcodeQueue;
 };

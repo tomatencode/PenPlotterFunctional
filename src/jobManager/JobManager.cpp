@@ -2,9 +2,6 @@
 
 #include <FS.h>
 
-#include "systemServices/Queues.hpp"
-
-
 void JobManager::start(String filename)
 {
     abort(); // Ensure any existing job is stopped before starting a new one
@@ -58,7 +55,7 @@ void JobManager::abort()
 {
     Serial.println("Aborting job");
     ms.setCommand(MotionCommand::ABORT);
-    xQueueReset(gcodeQueue); // Clear any pending G-code commands
+    gcodeQueue.clear(); // Clear any pending G-code commands
     if (currentJob.file) currentJob.file.close();
     currentJob.currentBufferLine = 0;
     _active = false;
@@ -68,7 +65,7 @@ void JobManager::abort()
 
 uint16_t JobManager::getCurrentLine() const
 {
-    return currentJob.currentBufferLine - uxQueueMessagesWaiting(gcodeQueue);
+    return currentJob.currentBufferLine - gcodeQueue.messagesWaiting();
 }
 
 void JobManager::update()
@@ -77,7 +74,7 @@ void JobManager::update()
     
     // Check for completion
     if (!currentJob.file.available() && !currentJob.completed) {
-        if (uxQueueMessagesWaiting(gcodeQueue) == 0) {
+        if (gcodeQueue.messagesWaiting() == 0) {
             // File is done and queue is empty - job is complete
             currentJob.completed = true;
             _active = false;
@@ -90,7 +87,7 @@ void JobManager::update()
     if (!currentJob.file.available()) return; // No more lines to read
 
     // prefetch queue space
-    UBaseType_t space = uxQueueSpacesAvailable(gcodeQueue);
+    UBaseType_t space = gcodeQueue.spacesAvailable();
 
     for (UBaseType_t i = 0; i < space && currentJob.file.available(); i++)
     {
@@ -108,7 +105,7 @@ void JobManager::update()
         line.toCharArray(msg.line, MAX_GCODE_LINE);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
 
-        if (xQueueSend(gcodeQueue, &msg, 0) != pdTRUE)
+        if (gcodeQueue.trySend(msg, 0))
         {
             // queue full, stop sending
             break;

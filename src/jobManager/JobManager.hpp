@@ -5,6 +5,8 @@
 
 #include "storage/FileManager.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/FreeRtosQueue.hpp"
+#include "systemServices/GcodeMessage.hpp"
 #include "JobObserver.hpp"
 
 struct PlotJob {
@@ -17,8 +19,8 @@ struct PlotJob {
 
 class JobManager {
 public:
-    JobManager(MotionState& ms, FileManager& fileManager)
-        : currentJob(PlotJob()), _active(false), ms(ms), fileManager(fileManager)
+    JobManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
+        : currentJob(PlotJob()), _active(false), ms(ms), gcodeQueue(gcodeQueue), fileManager(fileManager)
     {}
 
     // Job control
@@ -46,6 +48,7 @@ private:
 
     MotionState& ms;
     FileManager& fileManager;
+    FreeRtosQueue<GcodeMessage>& gcodeQueue;
 
     // Internal notification method
     void notifyObservers(JobEvent event);

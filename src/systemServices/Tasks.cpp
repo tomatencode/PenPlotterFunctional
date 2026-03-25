@@ -1,6 +1,7 @@
 #include "Tasks.hpp"
 
-#include "systemServices/Queues.hpp"
+#include "FreeRtosQueue.hpp"
+#include "GcodeMessage.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 #include "plottingManager/PlottingManager.hpp"
 
@@ -55,9 +56,11 @@ void systemTask(void *parameter)
 */
 void startSystemTasks()
 {
-    static MotionState motionStateManager;
-    static ApplicationManager appManager(motionStateManager);
-    static PlottingManager plottingManager(motionStateManager);
+    size_t gcodeQueueSize = 32;
+    static FreeRtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
+    static MotionState motionState;
+    static ApplicationManager appManager(motionState, gcodeQueue);
+    static PlottingManager plottingManager(motionState, gcodeQueue);
 
     // Motion task (CORE 1)
     xTaskCreatePinnedToCore(

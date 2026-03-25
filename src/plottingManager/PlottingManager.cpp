@@ -1,10 +1,12 @@
 #include "PlottingManager.hpp"
 
 #include "config/pins.hpp"
-#include "systemServices/Queues.hpp"
+#include "systemServices/FreeRtosQueue.hpp"
+#include "systemServices/GcodeMessage.hpp"
 
-PlottingManager::PlottingManager(MotionState& ms)
+PlottingManager::PlottingManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue)
     : ms(ms),
+    gcodeQueue(gcodeQueue),
     driverSerial(1),
 
     rawDriverA(&driverSerial, R_SENSE, 0),
@@ -76,16 +78,16 @@ void PlottingManager::init()
 
 void PlottingManager::update()
 {
-    GcodeMessage msg;
+    auto msg = gcodeQueue.tryReceive(0);
 
-    if (xQueueReceive(gcodeQueue, &msg, 0) == pdTRUE && ms.getCommand() != MotionCommand::ABORT)
+    if (msg.has_value() && ms.getCommand() != MotionCommand::ABORT)
     {
         ms.setState(MotionStateType::RUNNING);
 
         Serial.print("Executing line: ");
-        Serial.println(msg.line);
+        Serial.println(msg->line);
 
-        gcodeParser.executeLine(msg.line);
+        gcodeParser.executeLine(msg->line);
     }
     else
     {

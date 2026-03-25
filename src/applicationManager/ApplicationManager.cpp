@@ -14,14 +14,15 @@
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
-ApplicationManager::ApplicationManager(MotionState& ms)
+ApplicationManager::ApplicationManager(MotionState& ms, FreeRtosQueue<GcodeMessage>& gcodeQueue)
     : ms(ms),
+      gcodeQueue(gcodeQueue),
       lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       display(lcd),
       encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       buzzer(BUZZER_PIN, 5),
       fileManager(),
-      jobManager(ms, fileManager),
+      jobManager(ms, gcodeQueue, fileManager),
       webInterface(jobManager, ms, fileManager),
       uiManager(jobManager, ms, fileManager, display, encoder, buzzer)
 {
