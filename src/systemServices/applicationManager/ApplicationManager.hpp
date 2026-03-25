@@ -1,12 +1,17 @@
 #pragma once
 
+#include <LCD-I2C.h>
 #include "jobController/JobController.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "storage/FileManager.hpp"
-#include "ui/UiManager.hpp"
+#include "ui/UiOrchestrator.hpp"
+#include "ui/InputMapper.hpp"
+#include "ui/framework/router/Router.hpp"
+#include "ui/framework/render/Render.hpp"
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
+
 
 class ApplicationManager
 {
@@ -26,7 +31,11 @@ private:
     JobController _jobController;
     FileManager _fileManager;
     WebInterface _webInterface;
-    ui::UiManager _uiManager;
+
+    ui::Router _router;
+    ui::Renderer _renderer;
+    ui::InputMapper _inputMapper;
+    ui::UiOrchestrator _UiOrchestrator;
 
     MotionState& _motionState;
     FreeRtosQueue<GcodeMessage>& _gcodeQueue;

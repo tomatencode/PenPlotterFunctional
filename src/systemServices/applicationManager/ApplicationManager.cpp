@@ -1,14 +1,5 @@
 #include "ApplicationManager.hpp"
 
-#include "storage/FileManager.hpp"
-#include "jobController/JobController.hpp"
-#include "webInterface/WebInterface.hpp"
-#include "ui/UiManager.hpp"
-
-#include <LCD-I2C.h>
-#include "hardware/display/LcdDisplay.hpp"
-#include "hardware/rotaryEncoder/RotaryEncoder.hpp"
-#include "hardware/buzzer/Buzzer.hpp"
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
 
@@ -24,9 +15,11 @@ ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<G
       _fileManager(),
       _jobController(_motionState, _gcodeQueue, _fileManager),
       _webInterface(_jobController, _motionState, _fileManager),
-      _uiManager(_jobController, _motionState, _fileManager, _display, _encoder, _buzzer)
-{
-}
+      _router(),
+      _renderer(_display),
+      _inputMapper(_encoder),
+      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, _motionState, _buzzer)
+{}
 
 void ApplicationManager::init()
 {
@@ -41,7 +34,7 @@ void ApplicationManager::init()
 
     _fileManager.init();
 
-    _uiManager.init();
+    _UiOrchestrator.init();
     _webInterface.init();
 
     _buzzer.playMelody(startupMelody);
@@ -52,5 +45,5 @@ void ApplicationManager::update()
     _webInterface.update();
     _jobController.update();
     _buzzer.update();
-    _uiManager.update();
+    _UiOrchestrator.update();
 }

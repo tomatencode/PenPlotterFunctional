@@ -1,4 +1,4 @@
-#include "UiManager.hpp"
+#include "UiOrchestrator.hpp"
 
 #include "framework/text/CustomChars.hpp"
 #include "screens/HomeScreen.hpp"
@@ -8,11 +8,7 @@
 
 namespace ui {
 
-UiManager::UiManager(JobController& jobController, MotionState& motionState, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer)
-    : _jobController(jobController), _motionState(motionState), _fileManager(fileManager), _display(display), _encoder(encoder), _buzzer(buzzer), _renderer(display), _router()
-{}
-
-void UiManager::init()
+void UiOrchestrator::init()
 {
     _renderer.init();
 
@@ -26,13 +22,13 @@ void UiManager::init()
     Serial.println("UI initialized.");
 }
 
-void UiManager::update()
+void UiOrchestrator::update()
 {
     // Simple non-blocking timing to limit update frequency (e.g., 20 FPS)
     unsigned long currentTime = millis();
     if (currentTime - _lastUpdateTime < 50) return;
 
-    InputState input = readInputs();
+    InputState input = _inputMapper.mapInputs();
     _router.handleInput(input);
 
     // render current screen to buffer
@@ -42,19 +38,7 @@ void UiManager::update()
     _renderer.renderToDisplay();
 }
 
-ui::InputState UiManager::readInputs()
-{
-    ui::InputState state;
-
-    state.encoderDelta = _encoder.getPositionDelta();
-    state.buttonPressed = _encoder.buttonPressed();
-    state.buttonReleased = _encoder.buttonReleased();
-    state.buttonDown = _encoder.buttonDown();
-
-    return state;
-}
-
-void UiManager::onJobEvent(const JobEvent& event)
+void UiOrchestrator::onJobEvent(const JobEvent& event)
 {
     if (event == JobEvent::STARTED) {
         String displayFilename = _jobController.getCurrentFile();
@@ -62,7 +46,7 @@ void UiManager::onJobEvent(const JobEvent& event)
             displayFilename = displayFilename.substring(1);
         }
         
-        static screens::PlottingScreen plottingScreen(displayFilename, _jobController, _motionState, true);
+        screens::PlottingScreen plottingScreen(displayFilename, _jobController, _motionState, true);
         _router.pushScreen(&plottingScreen);
         Serial.println("Navigated to PlottingScreen from observer");
     }

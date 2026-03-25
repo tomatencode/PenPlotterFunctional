@@ -3,6 +3,8 @@
 #include "jobController/JobController.hpp"
 #include "jobController/JobObserver.hpp"
 
+#include "InputMapper.hpp"
+
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 
@@ -16,10 +18,17 @@
 
 namespace ui {
 
-class UiManager : public JobObserver
+class UiOrchestrator : public JobObserver
 {
 public:
-    UiManager(JobController& jobController, MotionState& motionState, FileManager& fileManager, LcdDisplay& display, RotaryEncoder& encoder, Buzzer& buzzer);
+    UiOrchestrator(Router& router, Renderer& renderer, InputMapper& inputMapper, JobController& jobController, FileManager& fileManager, MotionState& motionState, Buzzer& buzzer)
+    : _router(router),
+      _renderer(renderer),
+      _inputMapper(inputMapper),
+      _jobController(jobController),
+      _fileManager(fileManager),
+      _motionState(motionState)
+    {}
 
     void init();
 
@@ -29,23 +38,13 @@ public:
     void onJobEvent(const JobEvent& event) override;
 
 private:
-    // Core UI components
-    Router _router;
-    Renderer _renderer;
-    Router* _currentRouter = nullptr;  // Cached reference to router for navigation
-
-    // References to shared services (not owned by UI)
+    Router& _router;
+    Renderer& _renderer;
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
+    InputMapper& _inputMapper;
 
-    // References to hardware interfaces (not owned by UI)
-    LcdDisplay& _display;
-    RotaryEncoder& _encoder;
-    Buzzer& _buzzer;
-
-    // abstracted input reading to keep update() clean and focused on UI logic
-    InputState readInputs();
 
     unsigned long _lastUpdateTime = 0;  // For non-blocking timing
 };
