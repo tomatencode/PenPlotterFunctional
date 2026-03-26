@@ -13,12 +13,12 @@ ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<G
       _encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       _buzzer(BUZZER_PIN, 5),
       _fileManager(),
-      _jobController(_motionState, _gcodeQueue, _fileManager),
-      _webInterface(_jobController, _motionState, _fileManager),
+      _jobController(motionState, gcodeQueue, _fileManager),
+      _webInterface(_jobController, motionState, _fileManager),
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
-      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, _motionState, _buzzer)
+      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer)
 {}
 
 void ApplicationManager::init()
