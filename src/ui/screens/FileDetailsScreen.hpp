@@ -13,7 +13,12 @@ namespace screens {
 class FileDetailsScreen : public ui::Screen
 {
 public:
-    FileDetailsScreen(const String& filename, JobController& jobController, MotionState& motionState, FileManager& fileManager);
+    FileDetailsScreen(const String& filename,
+                      JobController& jobController,
+                      MotionState& motionState,
+                      FileManager& fileManager,
+                      std::function<bool()> wifiStatusProvider
+    );
 };
 
 } // namespace screens

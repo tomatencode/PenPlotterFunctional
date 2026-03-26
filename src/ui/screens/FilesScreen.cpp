@@ -17,17 +17,17 @@ namespace ui {
 namespace screens {
 
 
-FilesScreen::FilesScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager)
+FilesScreen::FilesScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager, std::function<bool()> wifiStatusProvider)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{},
-            widgets::make_widget<components::HeaderLine>("Files", true, [this]() {
+            widgets::make_widget<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
                 if (router()) {
                     router()->popScreen(); // Go back to the previous screen
                 }
             }),
-            widgets::make_widget<components::FileList>(fileManager, [this, &jobController, &motionState, &fileManager](const String& file) {
-                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobController, motionState, fileManager);
+            widgets::make_widget<components::FileList>(fileManager, [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const String& file) {
+                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobController, motionState, fileManager, wifiStatusProvider);
                 if (router()) {
                     router()->pushScreen(detailsScreen);
                 }

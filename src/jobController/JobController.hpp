@@ -51,5 +51,5 @@ private:
     FreeRtosQueue<GcodeMessage>& _gcodeQueue;
 
     // Internal notification method
-    void notifyObservers(JobEvent event);
+    void notifyObservers(const JobEventType& event);
 };

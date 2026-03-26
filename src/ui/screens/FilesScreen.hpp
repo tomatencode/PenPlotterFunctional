@@ -14,7 +14,11 @@ namespace screens {
 class FilesScreen : public ui::Screen, public FileObserver
 {
 public:
-    FilesScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager);
+    FilesScreen(JobController& jobController,
+                MotionState& motionState,
+                FileManager& fileManager,
+                std::function<bool()> wifiStatusProvider
+            );
     ~FilesScreen();
 
     void onFileEvent(FileEvent event, const String& path) override;

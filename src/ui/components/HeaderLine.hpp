@@ -11,7 +11,8 @@ namespace components {
 class HeaderLine: public ui::widgets::Container
 {
 public:
-    HeaderLine(String headerText, bool backButton,
+    HeaderLine(String headerText,
+               std::function<bool()> WifiStatusProvider,
                std::function<void()> onBackPress = nullptr);
 };
 

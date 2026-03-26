@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "jobController/JobController.hpp"
 #include "jobController/JobObserver.hpp"
 
@@ -21,13 +23,23 @@ namespace ui {
 class UiOrchestrator : public JobObserver
 {
 public:
-    UiOrchestrator(Router& router, Renderer& renderer, InputMapper& inputMapper, JobController& jobController, FileManager& fileManager, MotionState& motionState, Buzzer& buzzer)
+    UiOrchestrator(Router& router,
+        Renderer& renderer,
+        InputMapper& inputMapper,
+        JobController& jobController,
+        FileManager& fileManager,
+        MotionState& motionState,
+        Buzzer& buzzer,
+        std::function<bool()> wifiStatusProvider
+    )
     : _router(router),
       _renderer(renderer),
       _inputMapper(inputMapper),
       _jobController(jobController),
       _fileManager(fileManager),
-      _motionState(motionState)
+      _motionState(motionState),
+      _buzzer(buzzer),
+      _wifiStatusProvider(wifiStatusProvider)
     {}
 
     void init();
@@ -35,7 +47,7 @@ public:
     void update();
 
     // JobObserver implementation
-    void onJobEvent(const JobEvent& event) override;
+    void onJobEvent(const JobEventType& event) override;
 
 private:
     Router& _router;
@@ -44,6 +56,8 @@ private:
     MotionState& _motionState;
     FileManager& _fileManager;
     InputMapper& _inputMapper;
+    Buzzer& _buzzer;
+    std::function<bool()> _wifiStatusProvider;
 
 
     unsigned long _lastUpdateTime = 0;  // For non-blocking timing

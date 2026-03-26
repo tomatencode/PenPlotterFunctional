@@ -30,17 +30,24 @@ String formatPlotTime(size_t seconds) {
     return String(mins) + "m " + String(secs) + "s";
 }
 
-FileDetailsScreen::FileDetailsScreen(const String& filename, JobController& jobController, MotionState& motionState, FileManager& fileManager)
+FileDetailsScreen::FileDetailsScreen(const String& filename,
+                                     JobController& jobController,
+                                     MotionState& motionState,
+                                     FileManager& fileManager,
+                                     std::function<bool()> wifiStatusProvider
+                                    )
     : Screen(
         !fileManager.fileExists("/" + filename) ? (
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), true, [this]() {
-                    if (router()) {
-                        router()->popScreen(); // Go back to the previous screen
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider,
+                    [this]() {
+                        if (router()) {
+                            router()->popScreen();
+                        }
                     }
-                }),
+                ),
 
                 widgets::make_widget<widgets::Label>("This file does not exist!")
             )
@@ -48,9 +55,9 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobController& jobC
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), true, [this]() {
+                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider, [this]() {
                     if (router()) {
-                        router()->popScreen(); // Go back to the previous screen
+                        router()->popScreen();
                     }
                 }),
 
@@ -71,8 +78,8 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobController& jobC
                     widgets::make_widget<widgets::Button>(
                         "Plot",
                         widgets::ButtonStyle(),
-                        [this, filename, &jobController, &motionState]() {
-                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobController, motionState);
+                        [this, filename, &jobController, &motionState, wifiStatusProvider]() {
+                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobController, motionState, wifiStatusProvider);
                             if (router()) {
                                 router()->pushScreen(plottingScreen);
                             }
@@ -84,7 +91,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename, JobController& jobC
                         [this, filename, &fileManager]() {
                             fileManager.deleteFile("/" + filename);
                             if (router()) {
-                                router()->popScreen(); // Go back to the previous screen
+                                router()->popScreen();
                             }
                         },
                         2000 // Hold time in milliseconds

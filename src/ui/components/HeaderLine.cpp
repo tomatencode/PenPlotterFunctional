@@ -12,14 +12,15 @@
 namespace ui {
 namespace components {
 
-HeaderLine::HeaderLine(String headerText, bool backButton,
-                         std::function<void()> onBackPress)
+HeaderLine::HeaderLine(String headerText,
+                       std::function<bool()> WifiStatusProvider,
+                       std::function<void()> onBackPress)
     : Container(
         widgets::make_widget<widgets::HorizontalLayout>(
             widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
-            widgets::make_widget<components::WifiIndicator>(),
+            widgets::make_widget<components::WifiIndicator>(WifiStatusProvider),
             widgets::make_widget<widgets::Label>(headerText),
-            backButton
+            onBackPress != nullptr
                 ? widgets::make_widget<widgets::Button>(
                     "Back",
                     widgets::ButtonStyle(),

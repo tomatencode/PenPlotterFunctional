@@ -15,18 +15,18 @@
 namespace ui {
 namespace screens {
 
-HomeScreen::HomeScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager)
+HomeScreen::HomeScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager, std::function<bool()> wifiStatusProvider)
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>("Pen Plotter", false),
+            widgets::make_widget<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
 
             widgets::make_widget<widgets::Button>(
                 "Plot",
                 widgets::ButtonStyle(),
-                [this, &jobController, &motionState, &fileManager]() {
+                [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
                     if (router()) {
-                        FilesScreen* filesScreen = new FilesScreen(jobController, motionState, fileManager);
+                        FilesScreen* filesScreen = new FilesScreen(jobController, motionState, fileManager, wifiStatusProvider);
                         router()->pushScreen(filesScreen);
                     }
                 }

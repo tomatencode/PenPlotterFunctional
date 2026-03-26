@@ -8,9 +8,14 @@ enum class JobEvent {
     COMPLETED = 4
 };
 
+struct JobEventType {
+    JobEvent type;
+    String filename;
+};
+
 class JobObserver {
 public:
     virtual ~JobObserver() = default;
     
-    virtual void onJobEvent(const JobEvent& event) = 0;
+    virtual void onJobEvent(const JobEventType& event) = 0;
 };

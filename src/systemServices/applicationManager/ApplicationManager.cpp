@@ -18,7 +18,11 @@ ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<G
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
-      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer)
+      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer,
+                        [this]() -> bool {
+                            return _webInterface.isWiFiConnected();
+                        }
+                    )
 {}
 
 void ApplicationManager::init()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include "../framework/widgets/core/Widget.hpp"
 #include "../framework/widgets/core/Container.hpp"
@@ -12,7 +13,7 @@ namespace components {
 class WifiIndicator: public ui::widgets::Container
 {
 public:
-    WifiIndicator();
+    WifiIndicator(std::function<bool()> wifiStatusProvider);
 };
 
 } // namespace components

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "../framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
@@ -12,7 +14,11 @@ namespace screens {
 class HomeScreen : public ui::Screen
 {
 public:
-    HomeScreen(JobController& jobController, MotionState& motionState, FileManager& fileManager);
+    HomeScreen(JobController& jobController,
+               MotionState& motionState,
+               FileManager& fileManager,
+               std::function<bool()> wifiStatusProvider
+               );
 };
 
 } // namespace screens

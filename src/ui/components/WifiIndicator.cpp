@@ -7,10 +7,10 @@
 namespace ui {
 namespace components {
 
-WifiIndicator::WifiIndicator()
+WifiIndicator::WifiIndicator(std::function<bool()> wifiStatusProvider)
     : Container(
-        widgets::make_widget<widgets::Label>([]() -> const GlyphString {
-            return false ? GlyphString({Glyph(CustomChar::WifiSymbol)}) : GlyphString({Glyph(CustomChar::NoWifiSymbol)}); // TODO: replace 'false' with actual wifi status
+        widgets::make_widget<widgets::Label>([wifiStatusProvider]() -> const GlyphString {
+            return wifiStatusProvider() ? GlyphString({Glyph(CustomChar::WifiSymbol)}) : GlyphString({Glyph(CustomChar::NoWifiSymbol)}); // TODO: replace 'false' with actual wifi status
         })
     )
 {

@@ -13,7 +13,7 @@ void UiOrchestrator::init()
     _renderer.init();
 
     // Start on the first screen
-    static screens::HomeScreen homeScreen(_jobController, _motionState, _fileManager);
+    static screens::HomeScreen homeScreen(_jobController, _motionState, _fileManager, _wifiStatusProvider);
     _router.pushScreen(&homeScreen);
 
     // Register as observer to be notified of job events
@@ -38,17 +38,21 @@ void UiOrchestrator::update()
     _renderer.renderToDisplay();
 }
 
-void UiOrchestrator::onJobEvent(const JobEvent& event)
+void UiOrchestrator::onJobEvent(const JobEventType& event)
 {
-    if (event == JobEvent::STARTED) {
+    if (event.type == JobEvent::STARTED) {
         String displayFilename = _jobController.getCurrentFile();
         if (displayFilename.startsWith("/")) {
             displayFilename = displayFilename.substring(1);
         }
+
+        // TODO: needs to check if already on plotting screen
         
-        screens::PlottingScreen plottingScreen(displayFilename, _jobController, _motionState, true);
+        /*
+        screens::PlottingScreen plottingScreen(_jobController, _motionState, _wifiStatusProvider);
         _router.pushScreen(&plottingScreen);
         Serial.println("Navigated to PlottingScreen from observer");
+        */
     }
 }
 

@@ -34,25 +34,27 @@ void JobController::start(String filename)
     _active = true;
 
     // Notify observers that a job has started
-    notifyObservers(JobEvent::STARTED);
+    notifyObservers({.type = JobEvent::STARTED, .filename = _currentJob.filename});
 }
 
 void JobController::pause()
 {
     Serial.println("Pausing job");
     _motionState.setCommand(MotionCommand::PAUSE);
-    notifyObservers(JobEvent::PAUSED);
+    notifyObservers({.type = JobEvent::PAUSED, .filename = _currentJob.filename});
 }
 
 void JobController::resume()
 {
     Serial.println("Resuming job");
     _motionState.setCommand(MotionCommand::NONE);
-    notifyObservers(JobEvent::RESUMED);
+    notifyObservers({.type = JobEvent::RESUMED, .filename = _currentJob.filename});
 }
 
 void JobController::abort()
 {
+    if (!_active) return; // No active job to abort
+
     Serial.println("Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
     _gcodeQueue.clear(); // Clear any pending G-code commands
@@ -60,7 +62,7 @@ void JobController::abort()
     _currentJob.currentBufferLine = 0;
     _active = false;
     _currentJob.completed = false;
-    notifyObservers(JobEvent::ABORTED);
+    notifyObservers({.type = JobEvent::ABORTED, .filename = _currentJob.filename});
 }
 
 uint16_t JobController::getCurrentLine() const
@@ -79,7 +81,7 @@ void JobController::update()
             _currentJob.completed = true;
             _active = false;
             if (_currentJob.file) _currentJob.file.close();
-            notifyObservers(JobEvent::COMPLETED);
+            notifyObservers({.type = JobEvent::COMPLETED, .filename = _currentJob.filename});
             return;
         }
     }
@@ -139,7 +141,7 @@ void JobController::unregisterObserver(JobObserver* observer)
     }
 }
 
-void JobController::notifyObservers(JobEvent event)
+void JobController::notifyObservers(const JobEventType& event)
 {
     for (auto observer : _observers) {
         if (observer != nullptr) {
