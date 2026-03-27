@@ -9,7 +9,8 @@ class ConditionalWidget : public Container
 public:
     // Takes ownership of the child widget
     ConditionalWidget(std::function<bool()> en, std::unique_ptr<Widget> child)
-        : Container(std::move(child)), _enabledCallback(en)
+        : Container(std::move(child)),
+          _enabledCallback(en)
     {}
 
     void render(Renderer& r, Rect canvasBox) override

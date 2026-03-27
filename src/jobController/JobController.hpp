@@ -14,7 +14,6 @@ struct PlotJob {
     uint32_t totalLines = 0;
     uint32_t currentBufferLine = 0;
     String filename = "";
-    bool completed = false;
 };
 
 class JobController {
@@ -51,6 +50,8 @@ private:
     FreeRtosQueue<GcodeMessage>& _gcodeQueue;
 
     std::vector<JobObserver*> _observers;
+
+    void endCurrentJob();
 
     // Internal notification method
     void notifyObservers(const JobEventType& event);

@@ -18,7 +18,6 @@ void JobController::start(String filename)
     }
 
     _currentJob.filename = filename;
-    _currentJob.completed = false;
     _currentJob.totalLines = 0;
     _currentJob.currentBufferLine = 0;
     _active = true;
@@ -59,15 +58,16 @@ void JobController::abort()
     Serial.println("Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
     _gcodeQueue.clear(); // Clear any pending G-code commands
-    if (_currentJob.file) _currentJob.file.close();
-    _currentJob.currentBufferLine = 0;
-    _active = false;
-    _currentJob.completed = false;
+
+    endCurrentJob();
+
     notifyObservers({.type = JobEvent::ABORTED, .filename = _currentJob.filename});
 }
 
 uint16_t JobController::getCurrentLine() const
 {
+    if (!_active) return 0;
+    if (_gcodeQueue.messagesWaiting() > _currentJob.currentBufferLine) return 0;
     return _currentJob.currentBufferLine - _gcodeQueue.messagesWaiting();
 }
 
@@ -76,15 +76,10 @@ void JobController::update()
     if (!_active) return; // No active job
     
     // Check for completion
-    if (!_currentJob.file.available() && !_currentJob.completed) {
-        if (_gcodeQueue.messagesWaiting() == 0) {
-            // File is done and queue is empty - job is complete
-            _currentJob.completed = true;
-            _active = false;
-            if (_currentJob.file) _currentJob.file.close();
-            notifyObservers({.type = JobEvent::COMPLETED, .filename = _currentJob.filename});
-            return;
-        }
+    if (!_currentJob.file.available() && _gcodeQueue.messagesWaiting() == 0) {
+        endCurrentJob();
+        notifyObservers({.type = JobEvent::COMPLETED, .filename = _currentJob.filename});
+        return;
     }
     
     if (!_currentJob.file.available()) return; // No more lines to read
@@ -114,6 +109,16 @@ void JobController::update()
             break;
         }
     }
+}
+
+void JobController::endCurrentJob()
+{
+    _active = false;
+    if (_currentJob.file) {
+        _currentJob.file.close();
+    }
+    _currentJob = PlotJob(); // Reset to default
+    Serial.println("Job ended");
 }
 
 void JobController::registerObserver(JobObserver* observer)
