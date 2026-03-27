@@ -41,18 +41,9 @@ void UiOrchestrator::update()
 void UiOrchestrator::onJobEvent(const JobEventType& event)
 {
     if (event.type == JobEvent::STARTED) {
-        String displayFilename = _jobController.getCurrentFile();
-        if (displayFilename.startsWith("/")) {
-            displayFilename = displayFilename.substring(1);
-        }
-
-        // TODO: needs to check if already on plotting screen
-        
-        /*
-        screens::PlottingScreen plottingScreen(_jobController, _motionState, _wifiStatusProvider);
-        _router.pushScreen(&plottingScreen);
+        screens::PlottingScreen* plottingScreen = new screens::PlottingScreen(_jobController, _motionState, _wifiStatusProvider);
+        _router.pushScreen(plottingScreen);
         Serial.println("Navigated to PlottingScreen from observer");
-        */
     }
 }
 

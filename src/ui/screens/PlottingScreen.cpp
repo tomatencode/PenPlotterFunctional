@@ -18,18 +18,16 @@ namespace ui {
 namespace screens {
 
 
-PlottingScreen::PlottingScreen(const String& filename,
-                               JobController& jobController,
+PlottingScreen::PlottingScreen(JobController& jobController,
                                MotionState& motionState,
                                std::function<bool()> wifiStatusProvider
                               )
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider),
+            widgets::make_widget<components::HeaderLine>(jobController.getCurrentFile().substring(0, jobController.getCurrentFile().length() - 6), wifiStatusProvider),
 
             widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
-                if (_jobOutdated) return 1.0; // Show full progress if a new job has started
                 if (jobController.getTotalLines() == 0) return 0.0; // Avoid division by zero
                 return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
              }),
@@ -37,7 +35,6 @@ PlottingScreen::PlottingScreen(const String& filename,
             widgets::make_widget<widgets::HorizontalLayout>(
                 widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
                 widgets::make_widget<widgets::Label>([&jobController, this]() {
-                    if (_jobOutdated) return String("New job started");
                     return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
                 })
             ),
@@ -46,7 +43,7 @@ PlottingScreen::PlottingScreen(const String& filename,
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                     widgets::make_widget<widgets::ConditionalWidget>(
-                        [this]() { return !_completed && !_jobOutdated; },
+                        [jobController]() { return jobController.isActive(); },
                         widgets::make_widget<widgets::Button>(
                             [&jobController, &motionState]() {
                                 return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
@@ -63,7 +60,7 @@ PlottingScreen::PlottingScreen(const String& filename,
                     ),
 
                     widgets::make_widget<widgets::ConditionalWidget>(
-                        [this]() { return !_completed; },
+                        [jobController]() { return jobController.isActive(); },
                         widgets::make_widget<widgets::Button>(
                             "Abort",
                             widgets::ButtonStyle(),
@@ -75,7 +72,7 @@ PlottingScreen::PlottingScreen(const String& filename,
                     ),
 
                     widgets::make_widget<widgets::ConditionalWidget>(
-                        [this]() { return _completed; },
+                        [jobController]() { return !jobController.isActive(); },
                         widgets::make_widget<widgets::Button>(
                             "Back to Files",
                             widgets::ButtonStyle(),
@@ -86,31 +83,13 @@ PlottingScreen::PlottingScreen(const String& filename,
                     )
                 )
             )
-        ), _filename(filename), _jobController(jobController), _completed(false), _jobOutdated(false)
+        )
 {
     jobController.registerObserver(this);
-
-    if (!jobController.isActive()) {
-        jobController.start("/" + filename);
-    }
 }
 
 void PlottingScreen::onJobEvent(const JobEventType& event) {
-    if (event.type == JobEvent::COMPLETED && event.filename == "/" + _filename) {
-        Serial.println("Job completed");
-        _completed = true;
-    }
-    if (event.type == JobEvent::STARTED && event.filename != "/" + _filename) {
-        Serial.println("New job started while on PlottingScreen");
-        _completed = true;
-        _jobOutdated = true;
-        if (router() && router()->top() == this) {  
-            router()->popScreen(); // Go back to the previous screen
-        }
-    }
-    else if (event.type == JobEvent::ABORTED && event.filename == "/" + _filename) {
-        Serial.println("Job aborted");
-        _completed = true;
+    if (event.type == JobEvent::ABORTED) {
         if (router() && router()->top() == this) {  
             router()->popScreen(); // Go back to the previous screen
         }

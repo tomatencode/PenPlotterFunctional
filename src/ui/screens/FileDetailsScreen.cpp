@@ -79,10 +79,9 @@ FileDetailsScreen::FileDetailsScreen(const String& filename,
                         "Plot",
                         widgets::ButtonStyle(),
                         [this, filename, &jobController, &motionState, wifiStatusProvider]() {
-                            PlottingScreen* plottingScreen = new PlottingScreen(filename, jobController, motionState, wifiStatusProvider);
-                            if (router()) {
-                                router()->pushScreen(plottingScreen);
-                            }
+                            jobController.start("/" + filename);
+                            // plotting screen will be pushed by the UiOrchestrator
+                            // when it receives the job started event
                         }
                     ),
                     widgets::make_widget<components::PressHoldButton>(
