@@ -13,6 +13,8 @@
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/ProgressBar.hpp"
 #include "../framework/widgets/leaves/Conditional.hpp"
+#include "../framework/widgets/layouts/VerticalLayout.hpp"
+#include "../framework/widgets/layouts/HorizontalLayout.hpp"
 
 namespace ui {
 namespace screens {
