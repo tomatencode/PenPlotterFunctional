@@ -28,7 +28,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(
-                jobController.getCurrentFile().substring(0, jobController.getCurrentFile().length() - 6),
+                "Plotting",
                 wifiStatusProvider
             ),
 
@@ -44,52 +44,49 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                 })
             ),
 
-            widgets::make_widget<widgets::HorizontalLayout>(
+            widgets::make_widget<widgets::ConditionalWidget>(
+                [jobController]() { return jobController.isActive(); },
+                widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                    widgets::make_widget<widgets::ConditionalWidget>(
-                        [jobController]() { return jobController.isActive(); },
-                        widgets::make_widget<widgets::Button>(
-                            [&jobController, &motionState]() {
-                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
-                            },
-                            widgets::ButtonStyle(),
-                            [&jobController, &motionState]() {
-                                if (motionState.getState() == MotionStateType::PAUSED) {
-                                    jobController.resume();
-                                } else {
-                                    jobController.pause();
-                                }
+                    widgets::make_widget<widgets::Button>(
+                        [&jobController, &motionState]() {
+                            return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                        },
+                        widgets::ButtonStyle(),
+                        [&jobController, &motionState]() {
+                            if (motionState.getState() == MotionStateType::PAUSED) {
+                                jobController.resume();
+                            } else {
+                                jobController.pause();
                             }
-                        )
+                        }
                     ),
 
-                    widgets::make_widget<widgets::ConditionalWidget>(
-                        [jobController]() { return jobController.isActive(); },
-                        widgets::make_widget<widgets::Button>(
-                            "Abort",
-                            widgets::ButtonStyle(),
-                            [this, &jobController]() {
-                                jobController.abort();
-                                // After aborting, the screen will automatically pop back
-                                // to the previous screen via the observer callback
-                            }
-                        )
-                    ),
-
-                    widgets::make_widget<widgets::ConditionalWidget>(
-                        [jobController]() { return !jobController.isActive(); },
-                        widgets::make_widget<widgets::Button>(
-                            "Back to Files",
-                            widgets::ButtonStyle(),
-                            [this, &jobController]() {
-                                router()->popScreen();
-                            }
-                        )
+                    widgets::make_widget<widgets::Button>(
+                        "Abort",
+                        widgets::ButtonStyle(),
+                        [this, &jobController]() {
+                            jobController.abort();
+                            // After aborting, the screen will automatically pop back
+                            // to the previous screen via the observer callback
+                        }
                     )
                 )
+            ),
+
+            widgets::make_widget<widgets::ConditionalWidget>(
+                [jobController]() { return !jobController.isActive(); },
+                widgets::make_widget<widgets::Button>(
+                    "Back to Files",
+                    widgets::ButtonStyle(),
+                    [this, &jobController]() {
+                        router()->popScreen();
+                    }
+                )
             )
-        ), _jobController(jobController)
+        )
+    ), _jobController(jobController)
 {
     jobController.registerObserver(this);
 }
