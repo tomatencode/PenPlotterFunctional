@@ -27,9 +27,9 @@ FilesScreen::FilesScreen(JobController& jobController, MotionState& motionState,
                 }
             }),
             widgets::make_widget<components::FileList>(fileManager, [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const String& file) {
-                FileDetailsScreen* detailsScreen = new FileDetailsScreen(file, jobController, motionState, fileManager, wifiStatusProvider);
+                auto detailsScreen = std::make_unique<screens::FileDetailsScreen>(file, jobController, motionState, fileManager, wifiStatusProvider);
                 if (router()) {
-                    router()->pushScreen(detailsScreen);
+                    router()->pushScreen(std::move(detailsScreen));
                 }
             })
         )

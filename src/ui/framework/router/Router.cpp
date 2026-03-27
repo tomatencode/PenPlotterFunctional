@@ -3,13 +3,13 @@
 namespace ui {
 
 
-void Router::pushScreen(Screen* screen)
+void Router::pushScreen(std::unique_ptr<Screen> screen)
 {
     if (screen == nullptr) return;
 
-    _stack.push_back(screen);
-    screen->setRouter(this);
-    screen->onEnter();
+    _stack.push_back(std::move(screen));
+    _stack.back()->setRouter(this);
+    _stack.back()->onEnter();
 }
 
 void Router::popScreen()

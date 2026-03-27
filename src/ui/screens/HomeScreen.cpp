@@ -26,8 +26,8 @@ HomeScreen::HomeScreen(JobController& jobController, MotionState& motionState, F
                 widgets::ButtonStyle(),
                 [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
                     if (router()) {
-                        FilesScreen* filesScreen = new FilesScreen(jobController, motionState, fileManager, wifiStatusProvider);
-                        router()->pushScreen(filesScreen);
+                        auto filesScreen = std::make_unique<screens::FilesScreen>(jobController, motionState, fileManager, wifiStatusProvider);
+                        router()->pushScreen(std::move(filesScreen));
                     }
                 }
             ),

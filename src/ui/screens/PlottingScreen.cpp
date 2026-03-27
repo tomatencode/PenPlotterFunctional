@@ -71,7 +71,8 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                             widgets::ButtonStyle(),
                             [this, &jobController]() {
                                 jobController.abort();
-                                router()->popScreen(); // Go back to the previous screen
+                                // After aborting, the screen will automatically pop back
+                                // to the previous screen via the observer callback
                             }
                         )
                     ),
@@ -82,7 +83,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                             "Back to Files",
                             widgets::ButtonStyle(),
                             [this, &jobController]() {
-                                router()->popScreen(); // Go back to the previous screen
+                                router()->popScreen();
                             }
                         )
                     )

@@ -13,8 +13,8 @@ void UiOrchestrator::init()
     _renderer.init();
 
     // Start on the first screen
-    static screens::HomeScreen homeScreen(_jobController, _motionState, _fileManager, _wifiStatusProvider);
-    _router.pushScreen(&homeScreen);
+    auto homeScreen = std::make_unique<screens::HomeScreen>(_jobController, _motionState, _fileManager, _wifiStatusProvider);
+    _router.pushScreen(std::move(homeScreen));
 
     // Register as observer to be notified of job events
     _jobController.registerObserver(this);
@@ -41,8 +41,8 @@ void UiOrchestrator::update()
 void UiOrchestrator::onJobEvent(const JobEventType& event)
 {
     if (event.type == JobEvent::STARTED) {
-        screens::PlottingScreen* plottingScreen = new screens::PlottingScreen(_jobController, _motionState, _wifiStatusProvider);
-        _router.pushScreen(plottingScreen);
+        auto plottingScreen = std::make_unique<screens::PlottingScreen>(_jobController, _motionState, _wifiStatusProvider);
+        _router.pushScreen(std::move(plottingScreen));
         Serial.println("Navigated to PlottingScreen from observer");
     }
 }
