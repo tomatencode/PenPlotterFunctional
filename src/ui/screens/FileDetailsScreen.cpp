@@ -79,7 +79,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename,
                         "Plot",
                         widgets::ButtonStyle(),
                         [this, filename, &jobController, &motionState, wifiStatusProvider]() {
-                            jobController.start("/" + filename);
+                            jobController.start(filename);
                             // plotting screen will be pushed by the UiOrchestrator
                             // when it receives the job started event
                         }

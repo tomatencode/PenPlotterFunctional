@@ -9,7 +9,7 @@ void JobController::start(String filename)
     Serial.println("Starting job: " + filename);
 
     _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
-    _currentJob.file = _fileManager.openFileRead(filename);
+    _currentJob.file = _fileManager.openFileRead(_plottingDirectory + "/" + filename);
 
     if (!_currentJob.file)
     {
@@ -20,21 +20,22 @@ void JobController::start(String filename)
     _currentJob.filename = filename;
     _currentJob.completed = false;
     _currentJob.totalLines = 0;
+    _currentJob.currentBufferLine = 0;
+    _active = true;
+
+    // Notify observers as fast as possible
+    notifyObservers({.type = JobEvent::STARTED, .filename = _currentJob.filename});
+
+    // Count total lines for progress tracking
     while (_currentJob.file.available())
     {
-        _currentJob.file.readStringUntil('\n'); // Read and discard lines to count them
+        _currentJob.file.readStringUntil('\n');
         _currentJob.totalLines++;
     }
 
     // Close and reopen to reset read position
     _currentJob.file.close();
-    _currentJob.file = _fileManager.openFileRead(filename);
-
-    _currentJob.currentBufferLine = 0;
-    _active = true;
-
-    // Notify observers that a job has started
-    notifyObservers({.type = JobEvent::STARTED, .filename = _currentJob.filename});
+    _currentJob.file = _fileManager.openFileRead(_plottingDirectory + "/" + filename);
 }
 
 void JobController::pause()

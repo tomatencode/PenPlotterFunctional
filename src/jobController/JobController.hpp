@@ -19,8 +19,8 @@ struct PlotJob {
 
 class JobController {
 public:
-    JobController(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
-        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager)
+    JobController(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, String plottingDirectory)
+        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _plottingDirectory(plottingDirectory)
     {}
 
     // Job control
@@ -44,11 +44,13 @@ public:
 private:
     PlotJob _currentJob;
     bool _active;
-    std::vector<JobObserver*> _observers;
+    String _plottingDirectory;
 
     MotionState& _motionState;
     FileManager& _fileManager;
     FreeRtosQueue<GcodeMessage>& _gcodeQueue;
+
+    std::vector<JobObserver*> _observers;
 
     // Internal notification method
     void notifyObservers(const JobEventType& event);

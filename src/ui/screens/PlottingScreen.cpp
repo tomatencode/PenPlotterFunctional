@@ -25,7 +25,10 @@ PlottingScreen::PlottingScreen(JobController& jobController,
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>(jobController.getCurrentFile().substring(0, jobController.getCurrentFile().length() - 6), wifiStatusProvider),
+            widgets::make_widget<components::HeaderLine>(
+                jobController.getCurrentFile().substring(0, jobController.getCurrentFile().length() - 6),
+                wifiStatusProvider
+            ),
 
             widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
                 if (jobController.getTotalLines() == 0) return 0.0; // Avoid division by zero
