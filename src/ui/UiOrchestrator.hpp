@@ -41,6 +41,10 @@ public:
       _buzzer(buzzer),
       _wifiStatusProvider(wifiStatusProvider)
     {}
+    
+    ~UiOrchestrator() {
+        _jobController.unregisterObserver(this);
+    }
 
     void init();
 

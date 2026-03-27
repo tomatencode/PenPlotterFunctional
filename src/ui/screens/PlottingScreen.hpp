@@ -14,8 +14,11 @@ class PlottingScreen : public ui::Screen, public JobObserver
 {
 public:
     PlottingScreen(JobController& jobController, MotionState& motionState, std::function<bool()> wifiStatusProvider);
+    ~PlottingScreen();
 
     void onJobEvent(const JobEventType& event) override;
+private:
+    JobController& _jobController;
 };
 
 } // namespace screens

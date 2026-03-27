@@ -88,9 +88,13 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                     )
                 )
             )
-        )
+        ), _jobController(jobController)
 {
     jobController.registerObserver(this);
+}
+
+PlottingScreen::~PlottingScreen() {
+    _jobController.unregisterObserver(this);
 }
 
 void PlottingScreen::onJobEvent(const JobEventType& event) {
