@@ -39,6 +39,8 @@ void JobController::start(String filename)
 
 void JobController::pause()
 {
+    if (!_active) return; // No active job to pause
+    
     Serial.println("Pausing job");
     _motionState.setCommand(MotionCommand::PAUSE);
     notifyObservers({.type = JobEvent::PAUSED, .filename = _currentJob.filename});
@@ -46,6 +48,8 @@ void JobController::pause()
 
 void JobController::resume()
 {
+    if (!_active) return; // No active job to resume
+
     Serial.println("Resuming job");
     _motionState.setCommand(MotionCommand::NONE);
     notifyObservers({.type = JobEvent::RESUMED, .filename = _currentJob.filename});
