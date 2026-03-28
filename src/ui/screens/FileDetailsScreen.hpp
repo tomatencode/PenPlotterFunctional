@@ -62,7 +62,10 @@ public:
                 widgets::make_widget<widgets::VerticalLayout>(
                     widgets::VerticalLayoutStyle{},
 
-                    widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider, [this]() {
+                    widgets::make_widget<components::HeaderLine>(
+                        filename.substring(0, filename.length() - 6),
+                        wifiStatusProvider,
+                        [this]() {
                         if (router()) {
                             router()->popScreen();
                         }
@@ -110,7 +113,12 @@ public:
 
                     widgets::make_widget<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),
-                        wifiStatusProvider
+                        wifiStatusProvider,
+                        [this]() {
+                            if (router()) {
+                                router()->popScreen();
+                            }
+                        }
                     ),
 
                     widgets::make_widget<widgets::Label>("File does not exist!")
