@@ -11,7 +11,9 @@ public:
     Conditional(std::function<bool()> en, bool lazy, std::unique_ptr<Widget> child)
         : Container(std::move(child)),
           _enabledCallback(en),
-          _lazy(lazy)
+          _lazy(lazy),
+          _valid(false),
+          _current(false)
     {}
 
     void render(Renderer& r, Rect canvasBox) override
@@ -28,18 +30,19 @@ public:
 
     void reload() override {
         Container::reload();
-        // Clear cache to force re-evaluation of enabled state on next render/measure
-        _current = false; // or some invalid state if T is not bool
+        _valid = false;
     }
 
 private:
     std::function<bool()> _enabledCallback;
     mutable bool _current;
+    mutable bool _valid;
     bool _lazy;
 
     bool getCurrentEnabled() const {
-        if (!_current || !_lazy) {
+        if (!_lazy || !_valid) {
             _current = _enabledCallback();
+            _valid = true;
         }
         return _current;
     }
