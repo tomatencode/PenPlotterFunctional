@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <memory>
+#include <concepts>
 
 #include "../core/Selectable.hpp"
 #include "../core/Widget.hpp"
@@ -26,6 +27,7 @@ class Button : public Selectable
 public:
     // creates a Label
     template <typename TextType>
+    requires std::constructible_from<Label, TextType>
     Button(TextType text,
         ButtonStyle style = ButtonStyle{},
         std::function<void()> onPress = nullptr,

@@ -28,7 +28,16 @@ PlottingScreen::PlottingScreen(JobController& jobController,
         widgets::make_widget<widgets::VerticalLayout>(
             widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(
-                "Plotting",
+                [&jobController]() {
+                    String filename = jobController.getCurrentFile();
+                    if (filename.endsWith(".gcode")) {
+                        filename = filename.substring(0, filename.length() - 6);
+                    }
+                    if (filename == "") {
+                        filename = "No Job";
+                    }
+                    return filename;
+                },
                 wifiStatusProvider
             ),
 
