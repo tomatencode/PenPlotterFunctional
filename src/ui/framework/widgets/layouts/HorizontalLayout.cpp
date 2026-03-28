@@ -3,207 +3,187 @@
 namespace ui {
 namespace widgets {
 
-Size HorizontalLayout::measure() const
+Rect HorizontalLayout::applyMargins(Rect box) const
 {
-    const size_t count = EnChildCount();
-    if (count == 0) return Size{0, 0};
-    
-    // Calculate content size (excluding margins)
-    uint16_t contentWidth = 0;
-
-    for (size_t i = 0; i < count; i++)
-    {
-        if (Widget* w = EnChild(i))
-            contentWidth += w->measure().w;
-    }
-    
-    // Add spacing based on mode
-    if (count > 1)
-    {
-        switch (_style.spacingMode)
-        {
-            case SpacingMode::Fixed:
-                contentWidth += (count - 1) * _style.spacing;
-                break;
-            // For even spacing modes, spacing is calculated dynamically in render()
-            default:
-                break;
-        }
-    }
-    
-    uint16_t contentHeight = 0;
-    
-    // Find maximum height among children
-    for (size_t i = 0; i < count; i++)
-    {
-        if (Widget* w = EnChild(i))
-        {
-            Size childSize = w->measure();
-            if (childSize.h > contentHeight)
-                contentHeight = childSize.h;
-        }
-    }
-    
-    // Add margins to get total size
-    uint16_t totalWidth = contentWidth + _style.marginLeft + _style.marginRight;
-    uint16_t totalHeight = contentHeight + _style.marginTop + _style.marginBottom;
-    
-    return Size{static_cast<uint8_t>(contentWidth), static_cast<uint8_t>(totalHeight)};
+    return {
+        static_cast<uint8_t>(box.x + _style.marginLeft),
+        static_cast<uint8_t>(box.y + _style.marginTop),
+        static_cast<uint8_t>(box.w - _style.marginLeft - _style.marginRight),
+        static_cast<uint8_t>(box.h - _style.marginTop - _style.marginBottom)
+    };
 }
 
-bool HorizontalLayout::canExpandHorizontally() const {
-    // HorizontalLayout can expand horizontally if any child can expand horizontally or if spacing mode allows expansion
-    if (_style.spacingMode != SpacingMode::Fixed)
-        return true; // Spacing modes other than Fixed allow expansion to fill available space
-    
+HorizontalLayout::Metrics HorizontalLayout::computeMetrics() const
+{
+    Metrics m;
+
     for (size_t i = 0; i < EnChildCount(); i++)
     {
-        if (Widget* w = EnChild(i))
-        {
-            if (w->canExpandHorizontally())
-                return true;
+        if (auto* w = EnChild(i)) {
+            Size s = w->measure();
+            m.totalWidth += s.w;
+            m.maxHeight = std::max(m.maxHeight, static_cast<uint16_t>(s.h));
         }
     }
-    return false;
+
+    return m;
 }
 
-bool HorizontalLayout::canExpandVertically() const {
-    // HorizontalLayout can expand vertically if any child can expand vertically
-    for (size_t i = 0; i < EnChildCount(); i++)
-    {
-        if (Widget* w = EnChild(i))
-        {
-            if (w->canExpandVertically())
-                return true;
-        }
-    }
-    return false;
-}
-
-double HorizontalLayout::getSpacing(uint16_t availableWidth) const
+double HorizontalLayout::computeSpacing(uint16_t availableWidth, uint16_t totalChildWidth, size_t count) const
 {
-    const size_t count = EnChildCount();
-    if (count < 1) return 0;
-    
-    uint16_t totalChildWidth = 0;
-    for (size_t i = 0; i < count; i++)
-    {
-        if (Widget* w = EnChild(i))
-            totalChildWidth += w->measure().w;
-    }
-    
-    double remainingSpace = availableWidth - totalChildWidth;
-    
+    if (count <= 1)
+        return (_style.spacingMode == SpacingMode::Fixed) ? _style.spacing : 0;
+
+    int remaining = static_cast<int>(availableWidth) - static_cast<int>(totalChildWidth);
+    remaining = std::max(0, remaining);
+
     switch (_style.spacingMode)
     {
         case SpacingMode::Even:
-            // Distribute remaining space evenly between all gaps (including edges)
-            return remainingSpace / (count + 1);
-            
+            return static_cast<double>(remaining) / (count + 1);
+
         case SpacingMode::SpaceBetween:
-            // Space between children only, no space at edges
-            return remainingSpace / (count - 1);
-            
+            return static_cast<double>(remaining) / (count - 1);
+
         case SpacingMode::SpaceAround:
-            // Space around each child, half at edges
-            return remainingSpace / count;
-            
-        default: // Fixed
+            return static_cast<double>(remaining) / count;
+
+        default:
             return _style.spacing;
     }
 }
 
-void HorizontalLayout::render(Renderer& r, Rect canvasBox)
+std::vector<HorizontalLayout::LayoutItem>
+HorizontalLayout::computeLayout(Rect contentArea) const
 {
+    std::vector<LayoutItem> result;
+
     const size_t count = EnChildCount();
-    if (count == 0 || canvasBox.w == 0 || canvasBox.h == 0)
-        return; // nothing to render
+    if (count == 0) return result;
 
-    // Apply margins to create content area
-    Rect contentArea = {
-        static_cast<uint8_t>(canvasBox.x + _style.marginLeft),
-        static_cast<uint8_t>(canvasBox.y + _style.marginTop),
-        static_cast<uint8_t>(canvasBox.w - _style.marginLeft - _style.marginRight),
-        static_cast<uint8_t>(canvasBox.h - _style.marginTop - _style.marginBottom)
-    };
+    Metrics m = computeMetrics();
+    double spacing = computeSpacing(contentArea.w, m.totalWidth, count);
 
-    // Calculate dynamic spacing if needed
-    double idealSpacing = getSpacing(contentArea.w);
-    double spacingError = 0.0; // For accumulating fractional spacing
-    
-    // Calculate starting X position
+    double spacingError = 0.0;
     int currentX = contentArea.x;
-    
-    // add initial spacing for even distribution modes
+
+    // initial offset
     if (_style.spacingMode == SpacingMode::Even) {
-        currentX += std::round(idealSpacing);
-        spacingError += idealSpacing - std::round(idealSpacing);
+        int s = std::round(spacing);
+        currentX += s;
+        spacingError += spacing - s;
     }
     else if (_style.spacingMode == SpacingMode::SpaceAround) {
-        currentX += std::round(idealSpacing / 2);
-        spacingError += (idealSpacing / 2) - std::round(idealSpacing / 2);
+        int s = std::round(spacing / 2);
+        currentX += s;
+        spacingError += (spacing / 2) - s;
     }
 
-    // Render each child
     for (size_t i = 0; i < count; i++)
     {
-        Widget* childWidget = EnChild(i);
-        if (childWidget == nullptr)
-            continue;
+        Widget* w = EnChild(i);
+        if (!w) continue;
 
-        Size minChildSize = childWidget->measure();
-        bool canExpandVertically = childWidget->canExpandVertically();
+        Size minSize = w->measure();
 
-        Size desiredChildSize = minChildSize;
-        if (canExpandVertically)
-            desiredChildSize.h = contentArea.h; // Fill available height
+        uint16_t width = minSize.w;
+        uint16_t height = w->canExpandVertically() ? contentArea.h : minSize.h;
 
-        Size childSize = {std::min(desiredChildSize.w, static_cast<uint8_t>(contentArea.w - currentX)),
-                          std::min(desiredChildSize.h, static_cast<uint8_t>(contentArea.h))};
-
-        // Calculate Y position based on vertical alignment
         int childY = contentArea.y;
+
         switch (_style.verticalAlign)
         {
             case VerticalAlignment::Middle:
-                childY += (contentArea.h - childSize.h) / 2;
+                childY += (contentArea.h - height) / 2;
                 break;
             case VerticalAlignment::Bottom:
-                childY += contentArea.h - childSize.h;
+                childY += contentArea.h - height;
                 break;
-            default: // Top
+            default:
                 break;
         }
 
-        // Create canvas for this child
-        // HorizontalLayout fills vertical space, so give child full available height
-        Rect childCanvas = {
+        Rect rect {
             static_cast<uint8_t>(currentX),
             static_cast<uint8_t>(childY),
-            childSize.w,
-            childSize.h
+            width,
+            height
         };
 
-        // Only render if child is within visible area
-        if (currentX < canvasBox.x + canvasBox.w)
-        {
-            childWidget->render(r, childCanvas);
-        }
+        result.push_back({w, rect});
 
-        // Move to next position
-        currentX += childSize.w + std::round(idealSpacing);
-        spacingError += idealSpacing - std::round(idealSpacing);
-        // If accumulated error exceeds 0.5 pixel, add extra spacing
-        if (spacingError >= 0.5)
-        {
+        int s = std::round(spacing);
+        currentX += width + s;
+        spacingError += spacing - s;
+
+        if (spacingError >= 0.5) {
             currentX += 1;
             spacingError -= 1.0;
-        } else if (spacingError <= -0.5)
-        {
+        }
+        else if (spacingError <= -0.5) {
             currentX -= 1;
             spacingError += 1.0;
         }
     }
+
+    return result;
+}
+
+Size HorizontalLayout::measure() const
+{
+    auto m = computeMetrics();
+
+    uint16_t width = m.totalWidth;
+    uint16_t height = m.maxHeight;
+
+    if (EnChildCount() > 1 && _style.spacingMode == SpacingMode::Fixed)
+        width += (EnChildCount() - 1) * _style.spacing;
+
+    width += _style.marginLeft + _style.marginRight;
+    height += _style.marginTop + _style.marginBottom;
+
+    return Size{
+        static_cast<uint8_t>(width),
+        static_cast<uint8_t>(height)
+    };
+}
+
+void HorizontalLayout::render(Renderer& r, Rect canvasBox)
+{
+    if (EnChildCount() == 0) return;
+
+    Rect content = applyMargins(canvasBox);
+
+    auto layout = computeLayout(content);
+
+    for (auto& item : layout)
+    {
+        if (item.widget)
+            item.widget->render(r, item.rect);
+    }
+}
+
+bool HorizontalLayout::canExpandHorizontally() const
+{
+    if (_style.spacingMode != SpacingMode::Fixed)
+        return true;
+
+    for (size_t i = 0; i < EnChildCount(); i++)
+        if (auto* w = EnChild(i))
+            if (w->canExpandHorizontally())
+                return true;
+
+    return false;
+}
+
+bool HorizontalLayout::canExpandVertically() const
+{
+    for (size_t i = 0; i < EnChildCount(); i++)
+        if (auto* w = EnChild(i))
+            if (w->canExpandVertically())
+                return true;
+
+    return false;
 }
 
 } // namespace widgets
