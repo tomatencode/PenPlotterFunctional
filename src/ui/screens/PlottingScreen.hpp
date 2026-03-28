@@ -65,7 +65,6 @@ public:
 
             widgets::make_widget<widgets::Switch<bool>>(
                 [&jobController]() { return jobController.isActive(); },
-                false,
                 [&]() {
                     std::map<bool, std::unique_ptr<widgets::Widget>> m;
                     m[true] = widgets::make_widget<widgets::HorizontalLayout>(
