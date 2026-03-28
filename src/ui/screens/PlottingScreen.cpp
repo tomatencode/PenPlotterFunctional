@@ -54,7 +54,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
             ),
 
             widgets::make_widget<widgets::Conditional>(
-                [jobController]() { return jobController.isActive(); },
+                [&jobController]() { return jobController.isActive(); },
                 widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
@@ -75,7 +75,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                     widgets::make_widget<widgets::Button>(
                         "Abort",
                         widgets::ButtonStyle(),
-                        [this, &jobController]() {
+                        [&jobController]() {
                             jobController.abort();
                             // After aborting, the screen will automatically pop back
                             // to the previous screen via the observer callback
@@ -85,7 +85,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
             ),
 
             widgets::make_widget<widgets::Conditional>(
-                [jobController]() { return !jobController.isActive(); },
+                [&jobController]() { return !jobController.isActive(); },
                 widgets::make_widget<widgets::Button>(
                     "Back to Files",
                     widgets::ButtonStyle(),
