@@ -9,6 +9,7 @@
 #include "../components/WifiIndicator.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Spacer.hpp"
+#include "../framework/widgets/leaves/Switch.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../framework/widgets/Builder.hpp"
 
@@ -29,13 +30,20 @@ public:
             widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
             widgets::make_widget<components::WifiIndicator>(WifiStatusProvider),
             widgets::make_widget<widgets::Label>(textProvider),
-            onBackPress != nullptr
-                ? widgets::make_widget<widgets::Button>(
-                    "Back",
-                    widgets::ButtonStyle(),
-                    onBackPress
-                  )
-                : widgets::make_widget<widgets::Spacer>(1, 1)
+            widgets::make_widget<widgets::Switch<bool>>(
+                [onBackPress]() { return onBackPress != nullptr; },
+                true, // lazy evaluation
+                [onBackPress]() {
+                    std::map<bool, std::unique_ptr<widgets::Widget>> m;
+                    m[true] = widgets::make_widget<widgets::Button>(
+                        "Back",
+                        widgets::ButtonStyle(),
+                        onBackPress
+                    );
+                    m[false] = widgets::make_widget<widgets::Spacer>(1, 1); // empty spacer when back button is not available
+                    return m;
+                }
+            )
         )
     )
     {}

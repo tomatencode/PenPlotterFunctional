@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+#include <map>
+
 #include "../framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
@@ -16,6 +19,7 @@
 #include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
+#include "../framework/widgets/leaves/Switch.hpp"
 #include "../framework/widgets/layouts/VerticalLayout.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../components/PressHoldButton.hpp"
@@ -50,65 +54,60 @@ public:
                       std::function<bool()> wifiStatusProvider
     )
     : Screen(
-        !fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename) ? (
-            widgets::make_widget<widgets::VerticalLayout>(
-                widgets::VerticalLayoutStyle{},
+        widgets::make_widget<widgets::Switch<bool>>(
+            [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
+            true, // lazy evaluation
+            [&]() {
+                std::map<bool, std::unique_ptr<widgets::Widget>> m;
+                m[true] = widgets::make_widget<widgets::VerticalLayout>(
+                    widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(
-                    filename.substring(0, filename.length() - 6),
-                    wifiStatusProvider,
-                    [this]() {
+                    widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider, [this]() {
                         if (router()) {
                             router()->popScreen();
                         }
-                    }
-                ),
+                    }),
 
-                widgets::make_widget<widgets::Label>("This file does not exist!")
-            )
-            ) : (
-            widgets::make_widget<widgets::VerticalLayout>(
-                widgets::VerticalLayoutStyle{},
+                    widgets::make_widget<widgets::Label>([filename, &fileManager]() {
+                        size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
+                        return "Size: " + formatFileSize(size);
+                    }),
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider, [this]() {
-                    if (router()) {
-                        router()->popScreen();
-                    }
-                }),
+                    widgets::make_widget<widgets::Label>([]() {
+                        size_t plotTimeSeconds = 120;
+                        return "Plot Time: " + formatPlotTime(plotTimeSeconds);
+                    }),
 
-                widgets::make_widget<widgets::Label>([filename, &fileManager]() {
-                    size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
-                    return "Size: " + formatFileSize(size);
-                }),
+                    widgets::make_widget<widgets::HorizontalLayout>(
+                        widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                widgets::make_widget<widgets::Label>([]() {
-                    size_t plotTimeSeconds = 120;
-                    return "Plot Time: " + formatPlotTime(plotTimeSeconds);
-                }),
-
-                widgets::make_widget<widgets::HorizontalLayout>(
-                    widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
-
-                    widgets::make_widget<widgets::Button>(
-                        "Plot",
-                        widgets::ButtonStyle(),
-                        [this, filename, &jobController, &motionState, wifiStatusProvider]() {
-                            jobController.start(filename);
-                        }
-                    ),
-                    widgets::make_widget<components::PressHoldButton>(
-                        "Delete",
-                        components::PressHoldButtonStyle(),
-                        [this, filename, &fileManager]() {
-                            fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
-                            if (router()) {
-                                router()->popScreen();
+                        widgets::make_widget<widgets::Button>(
+                            "Plot",
+                            widgets::ButtonStyle(),
+                            [this, filename, &jobController, &motionState, wifiStatusProvider]() {
+                                jobController.start(filename);
                             }
-                        },
-                        2000
+                        ),
+                        widgets::make_widget<components::PressHoldButton>(
+                            "Delete",
+                            components::PressHoldButtonStyle(),
+                            [this, filename, &fileManager]() {
+                                fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
+                                if (router()) {
+                                    router()->popScreen();
+                                }
+                            },
+                            2000
+                        )
                     )
-                )
-            )
+                );
+                m[false] = widgets::make_widget<widgets::VerticalLayout>(
+                    widgets::VerticalLayoutStyle{},
+
+                    widgets::make_widget<widgets::Label>("File does not exist!")
+                );
+                return m;
+            }
         )
     , 1)
     {}
