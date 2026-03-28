@@ -57,9 +57,9 @@ public:
         widgets::make_widget<widgets::Switch<bool>>(
             [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
             true, // lazy evaluation
-            [&]() {
-                std::map<bool, std::unique_ptr<widgets::Widget>> m;
-                m[true] = widgets::make_widget<widgets::VerticalLayout>(
+            std::make_unique<widgets::Switch<bool>::Branch>(
+                true, 
+                widgets::make_widget<widgets::VerticalLayout>(
                     widgets::VerticalLayoutStyle{},
 
                     widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider, [this]() {
@@ -100,17 +100,29 @@ public:
                             2000
                         )
                     )
-                );
-                m[false] = widgets::make_widget<widgets::VerticalLayout>(
+                )
+            ),
+
+            widgets::make_widget<widgets::Switch<bool>::Branch>(
+                false,
+                widgets::make_widget<widgets::VerticalLayout>(
                     widgets::VerticalLayoutStyle{},
 
+                    widgets::make_widget<components::HeaderLine>(
+                        filename.substring(0, filename.length() - 6),
+                        wifiStatusProvider
+                    ),
+
                     widgets::make_widget<widgets::Label>("File does not exist!")
-                );
-                return m;
-            }
+                )
+            )
         )
     , 1)
     {}
+
+    void onEnter() override {
+        reload();
+    }
 };
 
 } // namespace screens

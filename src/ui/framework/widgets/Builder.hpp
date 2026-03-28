@@ -16,7 +16,7 @@ concept WidgetDerived = std::is_base_of_v<Widget, T>;
 
 template <WidgetDerived T, typename... Args>
 requires std::constructible_from<T, Args...>
-std::unique_ptr<Widget> make_widget(Args&&... args) {
+std::unique_ptr<T> make_widget(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 

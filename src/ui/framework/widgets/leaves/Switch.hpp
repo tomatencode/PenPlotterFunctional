@@ -3,8 +3,9 @@
 #include "../core/Widget.hpp"
 #include "../core/Container.hpp"
 #include <functional>
-#include <map>
+#include <vector>
 #include <memory>
+#include <concepts>
 
 namespace ui {
 namespace widgets {
@@ -13,12 +14,52 @@ template <typename T>
 class Switch : public Widget
 {
 public:
-    Switch(std::function<T()> selector, bool lazy, std::function<std::map<T, std::unique_ptr<Widget>>()> branchesFactory)
-        : _selector(selector), _branches(), _lazy(lazy)
+
+    class Branch : public Container
     {
-        auto branchesMap = branchesFactory();
-        for (auto& [key, widget] : branchesMap) {
-            _branches[key] = std::make_unique<Branch>(std::move(widget));
+    public:
+        Branch(T value, std::unique_ptr<Widget> child)
+            : Container(std::move(child)), _value(value)
+        {
+        }
+
+        void enable() {
+            _enabled = true;
+        }
+
+        void disable() {
+            _enabled = false;
+        }
+
+        bool isEnabled() const override {
+            return _enabled;
+        }
+
+        T getValue() const {
+            return _value;
+        }
+    private:
+        bool _enabled = false;
+        T _value;
+    };
+
+    template<typename... Branches>
+    requires (std::same_as<std::unique_ptr<Branch>, std::decay_t<Branches>> && ...)
+    Switch(std::function<T()> selector, bool lazy, Branches&&... branches)
+        : _selector(selector),
+        _branches(makeBranches(std::forward<Branches>(branches)...)),
+        _lazy(lazy)
+    {
+        for (auto& branch : _branches) {
+            branch->setParent(this);
+        }
+    }
+
+    Switch(std::function<T()> selector, bool lazy, std::vector<std::unique_ptr<Branch>> branches)
+        : _selector(selector), _branches(branches), _lazy(lazy)
+    {
+        for (auto& branch : _branches) {
+            branch->setParent(this);
         }
     }
 
@@ -65,13 +106,12 @@ public:
     Widget* child(size_t index) const override
     {
         if (index >= _branches.size()) return nullptr;
-        auto it = _branches.begin();
-        std::advance(it, index);
-        return it->second.get();
+        
+        return _branches[index].get();
     }
 
     void reload() override {
-        for (auto& [key, branch] : _branches) {
+        for (auto& branch : _branches) {
             if (branch)
                 branch->reload();
         }
@@ -80,33 +120,8 @@ public:
     }
 
 private:
-
-    class Branch : public Container
-    {
-    public:
-        Branch(std::unique_ptr<Widget> child)
-            : Container(std::move(child))
-        {
-        }
-
-        void enable() {
-            _enabled = true;
-        }
-
-        void disable() {
-            _enabled = false;
-        }
-
-        bool isEnabled() const override {
-            return _enabled;
-        }
-        
-    private:
-        bool _enabled = false;
-    };
-
     std::function<T()> _selector;
-    std::map<T, std::unique_ptr<Branch>> _branches;
+    std::vector<std::unique_ptr<Branch>> _branches;
     bool _lazy;
 
     // Caching
@@ -121,21 +136,27 @@ private:
         if (value != _currentValue) {
             _currentValue = value;
 
-            auto it = _branches.find(value);
-            if (it != _branches.end()) {
-                _current = it->second.get();
-                _current->enable();
-            } else {
-                _current = nullptr;
-            }
-            // Disable all other branches
-            for (auto& [key, branch] : _branches) {
-                if (branch.get() != _current) {
+            for (auto& branch : _branches) {
+                if (branch->getValue() == value) {
+                    branch->enable();
+                    _current = branch.get();
+                    break;
+                }
+                else {
                     branch->disable();
                 }
             }
         }
         return _current;
+    }
+
+    template<typename... Branches>
+    std::vector<std::unique_ptr<Branch>> makeBranches(Branches&&... branches)
+    {
+        std::vector<std::unique_ptr<Branch>> v;
+        v.reserve(sizeof...(branches));
+        (v.push_back(std::forward<Branches>(branches)), ...);
+        return v;
     }
 };
 

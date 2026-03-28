@@ -33,16 +33,18 @@ public:
             widgets::make_widget<widgets::Switch<bool>>(
                 [onBackPress]() { return onBackPress != nullptr; },
                 true, // lazy evaluation
-                [onBackPress]() {
-                    std::map<bool, std::unique_ptr<widgets::Widget>> m;
-                    m[true] = widgets::make_widget<widgets::Button>(
+                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                    true,
+                    widgets::make_widget<widgets::Button>(
                         "Back",
                         widgets::ButtonStyle(),
                         onBackPress
-                    );
-                    m[false] = widgets::make_widget<widgets::Spacer>(1, 1); // empty spacer when back button is not available
-                    return m;
-                }
+                    )
+                ),
+                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                    false,
+                    widgets::make_widget<widgets::Spacer>(1, 1)
+                )
             )
         )
     )

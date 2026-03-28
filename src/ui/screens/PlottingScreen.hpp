@@ -62,13 +62,12 @@ public:
                     return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
                 })
             ),
-
             widgets::make_widget<widgets::Switch<bool>>(
                 [&jobController]() { return jobController.isActive(); },
-                false, // eger evaluation
-                [&]() {
-                    std::map<bool, std::unique_ptr<widgets::Widget>> m;
-                    m[true] = widgets::make_widget<widgets::HorizontalLayout>(
+                false,  // eager evaluation
+                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                    true,
+                    widgets::make_widget<widgets::HorizontalLayout>(
                         widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                         widgets::make_widget<widgets::Button>(
@@ -92,16 +91,18 @@ public:
                                 jobController.abort();
                             }
                         )
-                    );
-                    m[false] = widgets::make_widget<widgets::Button>(
+                    )
+                ),
+                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                    false,
+                    widgets::make_widget<widgets::Button>(
                         "Back to Files",
                         widgets::ButtonStyle(),
                         [this, &jobController]() {
                             router()->popScreen();
                         }
-                    );
-                    return m;
-                }
+                    )
+                )
             )
         )
     ), _jobController(jobController)
