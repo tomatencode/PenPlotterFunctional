@@ -53,7 +53,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                 })
             ),
 
-            widgets::make_widget<widgets::ConditionalWidget>(
+            widgets::make_widget<widgets::Conditional>(
                 [jobController]() { return jobController.isActive(); },
                 widgets::make_widget<widgets::HorizontalLayout>(
                     widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
@@ -84,7 +84,7 @@ PlottingScreen::PlottingScreen(JobController& jobController,
                 )
             ),
 
-            widgets::make_widget<widgets::ConditionalWidget>(
+            widgets::make_widget<widgets::Conditional>(
                 [jobController]() { return !jobController.isActive(); },
                 widgets::make_widget<widgets::Button>(
                     "Back to Files",

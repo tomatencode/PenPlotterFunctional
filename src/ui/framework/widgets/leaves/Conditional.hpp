@@ -4,11 +4,11 @@
 namespace ui {
 namespace widgets {
 
-class ConditionalWidget : public Container
+class Conditional : public Container
 {
 public:
     // Takes ownership of the child widget
-    ConditionalWidget(std::function<bool()> en, std::unique_ptr<Widget> child)
+    Conditional(std::function<bool()> en, std::unique_ptr<Widget> child)
         : Container(std::move(child)),
           _enabledCallback(en)
     {}
