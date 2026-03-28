@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <utility>
-#include <type_traits>
+#include <concepts>
 
 #include "core/Widget.hpp"
 
@@ -15,7 +15,7 @@ template <typename T>
 concept WidgetDerived = std::is_base_of_v<Widget, T>;
 
 template <WidgetDerived T, typename... Args>
-requires std::is_constructible_v<T, Args...>
+requires std::constructible_from<T, Args...>
 std::unique_ptr<Widget> make_widget(Args&&... args) {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
