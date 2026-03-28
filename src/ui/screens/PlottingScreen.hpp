@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <map>
 
 #include "../framework/screen/Screen.hpp"
 
@@ -19,6 +20,7 @@
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/ProgressBar.hpp"
 #include "../framework/widgets/leaves/Conditional.hpp"
+#include "../framework/widgets/leaves/Switch.hpp"
 #include "../framework/widgets/layouts/VerticalLayout.hpp"
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 
@@ -61,44 +63,45 @@ public:
                 })
             ),
 
-            widgets::make_widget<widgets::Conditional>(
+            widgets::make_widget<widgets::Switch<bool>>(
                 [&jobController]() { return jobController.isActive(); },
-                widgets::make_widget<widgets::HorizontalLayout>(
-                    widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+                false,
+                [&]() {
+                    std::map<bool, std::unique_ptr<widgets::Widget>> m;
+                    m[true] = widgets::make_widget<widgets::HorizontalLayout>(
+                        widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                    widgets::make_widget<widgets::Button>(
-                        [&jobController, &motionState]() {
-                            return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
-                        },
-                        widgets::ButtonStyle(),
-                        [&jobController, &motionState]() {
-                            if (motionState.getState() == MotionStateType::PAUSED) {
-                                jobController.resume();
-                            } else {
-                                jobController.pause();
+                        widgets::make_widget<widgets::Button>(
+                            [&jobController, &motionState]() {
+                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                            },
+                            widgets::ButtonStyle(),
+                            [&jobController, &motionState]() {
+                                if (motionState.getState() == MotionStateType::PAUSED) {
+                                    jobController.resume();
+                                } else {
+                                    jobController.pause();
+                                }
                             }
-                        }
-                    ),
+                        ),
 
-                    widgets::make_widget<widgets::Button>(
-                        "Abort",
+                        widgets::make_widget<widgets::Button>(
+                            "Abort",
+                            widgets::ButtonStyle(),
+                            [&jobController]() {
+                                jobController.abort();
+                            }
+                        )
+                    );
+                    m[false] = widgets::make_widget<widgets::Button>(
+                        "Back to Files",
                         widgets::ButtonStyle(),
-                        [&jobController]() {
-                            jobController.abort();
+                        [this, &jobController]() {
+                            router()->popScreen();
                         }
-                    )
-                )
-            ),
-
-            widgets::make_widget<widgets::Conditional>(
-                [&jobController]() { return !jobController.isActive(); },
-                widgets::make_widget<widgets::Button>(
-                    "Back to Files",
-                    widgets::ButtonStyle(),
-                    [this, &jobController]() {
-                        router()->popScreen();
-                    }
-                )
+                    );
+                    return m;
+                }
             )
         )
     ), _jobController(jobController)
