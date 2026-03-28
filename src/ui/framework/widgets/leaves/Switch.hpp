@@ -32,7 +32,7 @@ public:
         }
 
         bool isEnabled() const override {
-            return _enabled;
+            return Container::isEnabled() && _enabled;
         }
 
         T getValue() const {
@@ -48,7 +48,8 @@ public:
     Switch(std::function<T()> selector, bool lazy, Branches&&... branches)
         : _selector(selector),
         _branches(makeBranches(std::forward<Branches>(branches)...)),
-        _lazy(lazy)
+        _lazy(lazy),
+        _cacheValid(false)
     {
         for (auto& branch : _branches) {
             branch->setParent(this);
@@ -56,7 +57,10 @@ public:
     }
 
     Switch(std::function<T()> selector, bool lazy, std::vector<std::unique_ptr<Branch>> branches)
-        : _selector(selector), _branches(branches), _lazy(lazy)
+        : _selector(selector),
+        _branches(std::move(branches)),
+        _lazy(lazy),
+        _cacheValid(false)
     {
         for (auto& branch : _branches) {
             branch->setParent(this);
@@ -115,8 +119,8 @@ public:
             if (branch)
                 branch->reload();
         }
-        // Clear cache to force re-evaluation of selector on next render/measure
-        _current = nullptr;
+
+        _cacheValid = false;
     }
 
 private:
@@ -126,10 +130,13 @@ private:
 
     // Caching
     mutable Branch* _current = nullptr;
-    mutable T _currentValue;
+    mutable T _currentValue = T{};
+    mutable bool _cacheValid;
 
     Branch* getCurrentWidget() const {
-        if (_lazy && _current) return _current;
+        if (_lazy && _cacheValid) return _current;
+
+        _cacheValid = true;
 
         T value = _selector();
         
