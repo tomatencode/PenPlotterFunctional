@@ -1,6 +1,6 @@
 #include "WebInterface.hpp"
 
-#include "config/ui_config.hpp"
+#include "config/job_config.hpp"
 
 void WebInterface::handleFileList()
 {
@@ -39,7 +39,7 @@ void WebInterface::handleStartJob()
 
     String filename = server.arg("file");
 
-    if (!_fileManager.fileExists(String(PLOTTING_DIRECTORY) + '/' + filename))
+    if (!_fileManager.fileExists(PLOTTING_DIRECTORY + '/' + filename))
     {
         server.send(404, "text/plain", "File not found");
         return;
