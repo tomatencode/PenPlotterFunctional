@@ -13,8 +13,8 @@ template <typename T>
 class Switch : public Widget
 {
 public:
-    Switch(std::function<T()> selector, std::function<std::map<T, std::unique_ptr<Widget>>()> branchesFactory)
-        : _selector(selector), _branches()
+    Switch(std::function<T()> selector, bool lazy, std::function<std::map<T, std::unique_ptr<Widget>>()> branchesFactory)
+        : _selector(selector), _branches(), _lazy(lazy)
     {
         auto branchesMap = branchesFactory();
         for (auto& [key, widget] : branchesMap) {
@@ -70,6 +70,15 @@ public:
         return it->second.get();
     }
 
+    void reload() override {
+        for (auto& [key, branch] : _branches) {
+            if (branch)
+                branch->reload();
+        }
+        // Clear cache to force re-evaluation of selector on next render/measure
+        _current = nullptr;
+    }
+
 private:
 
     class Branch : public Container
@@ -98,12 +107,15 @@ private:
 
     std::function<T()> _selector;
     std::map<T, std::unique_ptr<Branch>> _branches;
+    bool _lazy;
 
     // Caching
     mutable Branch* _current = nullptr;
     mutable T _currentValue;
 
     Branch* getCurrentWidget() const {
+        if (_lazy && _current) return _current;
+
         T value = _selector();
         
         if (value != _currentValue) {
