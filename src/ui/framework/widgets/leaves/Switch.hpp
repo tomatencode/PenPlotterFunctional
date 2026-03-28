@@ -2,6 +2,7 @@
 
 #include "../core/Widget.hpp"
 #include "../core/Container.hpp"
+#include "Conditional.hpp"
 #include <functional>
 #include <vector>
 #include <memory>
@@ -15,11 +16,16 @@ class Switch : public Widget
 {
 public:
 
-    class Branch : public Container
+    class Branch : public Conditional
     {
     public:
         Branch(T value, std::unique_ptr<Widget> child)
-            : Container(std::move(child)), _value(value)
+            : Conditional(
+                [this]() { return this->_enabled; },
+                false, // eger evaluation
+                std::move(child)
+            ),
+            _value(value)
         {
         }
 
@@ -29,10 +35,6 @@ public:
 
         void disable() {
             _enabled = false;
-        }
-
-        bool isEnabled() const override {
-            return Container::isEnabled() && _enabled;
         }
 
         T getValue() const {
