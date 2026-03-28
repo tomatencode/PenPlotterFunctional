@@ -18,8 +18,8 @@ public:
     void registerFileObserver(FileObserver* observer);
     void unregisterFileObserver(FileObserver* observer);
 
-    // List files in the root directory
-    std::vector<String> listFiles();
+    // List files in a directory
+    std::vector<String> listFiles(const String& directory);
 
     // Check if a file exists
     bool fileExists(const String& path);

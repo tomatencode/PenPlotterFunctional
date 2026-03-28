@@ -16,11 +16,11 @@ bool FileManager::init()
     return true;
 }
 
-std::vector<String> FileManager::listFiles()
+std::vector<String> FileManager::listFiles(const String& directory)
 {
     std::vector<String> files;
 
-    File root = SPIFFS.open("/");
+    File root = SPIFFS.open(directory);
 
     File file = root.openNextFile();
 

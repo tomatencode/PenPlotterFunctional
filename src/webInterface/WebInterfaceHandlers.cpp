@@ -4,7 +4,7 @@
 
 void WebInterface::handleFileList()
 {
-    auto files = _fileManager.listFiles();
+    auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
 
     String json = "[";
     for (size_t i = 0; i < files.size(); i++)

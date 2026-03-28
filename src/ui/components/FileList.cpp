@@ -5,6 +5,8 @@
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/Builder.hpp"
 
+#include "config/job_config.hpp"
+
 #include <vector>
 #include <memory>
 
@@ -40,7 +42,7 @@ void FileList::reload() {
 
     layout->clearChildren();
 
-    auto files = _fileManager.listFiles();
+    auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
     for (const auto& file : files) {
         auto button = widgets::make_widget<widgets::Button>(
             file,
