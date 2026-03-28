@@ -14,6 +14,8 @@
 #include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../components/PressHoldButton.hpp"
 
+#include "config/job_config.hpp"
+
 namespace ui {
 namespace screens {
 
@@ -37,11 +39,13 @@ FileDetailsScreen::FileDetailsScreen(const String& filename,
                                      std::function<bool()> wifiStatusProvider
                                     )
     : Screen(
-        !fileManager.fileExists("/" + filename) ? (
+        !fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename) ? (
             widgets::make_widget<widgets::VerticalLayout>(
                 widgets::VerticalLayoutStyle{},
 
-                widgets::make_widget<components::HeaderLine>(filename.substring(0, filename.length() - 6), wifiStatusProvider,
+                widgets::make_widget<components::HeaderLine>(
+                    filename.substring(0, filename.length() - 6),
+                    wifiStatusProvider,
                     [this]() {
                         if (router()) {
                             router()->popScreen();
@@ -62,7 +66,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename,
                 }),
 
                 widgets::make_widget<widgets::Label>([filename, &fileManager]() {
-                    size_t size = fileManager.getFileSize("/" + filename);
+                    size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
                     return "Size: " + formatFileSize(size);
                 }),
 
@@ -88,7 +92,7 @@ FileDetailsScreen::FileDetailsScreen(const String& filename,
                         "Delete",
                         components::PressHoldButtonStyle(),
                         [this, filename, &fileManager]() {
-                            fileManager.deleteFile("/" + filename);
+                            fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
                             if (router()) {
                                 router()->popScreen();
                             }

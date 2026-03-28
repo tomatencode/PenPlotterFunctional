@@ -2,6 +2,7 @@
 
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
+#include "config/job_config.hpp"
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
