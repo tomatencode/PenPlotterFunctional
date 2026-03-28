@@ -10,6 +10,7 @@
 
 // Include related screens to enable navigation
 #include "FilesScreen.hpp"
+#include "SettingsScreen.hpp"
 #include "../framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -41,7 +42,7 @@ public:
                 widgets::ButtonStyle(),
                 [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
                     if (router()) {
-                        auto filesScreen = std::make_unique<screens::FilesScreen>(jobController, motionState, fileManager, wifiStatusProvider);
+                        auto filesScreen = std::make_unique<FilesScreen>(jobController, motionState, fileManager, wifiStatusProvider);
                         router()->pushScreen(std::move(filesScreen));
                     }
                 }
@@ -50,9 +51,10 @@ public:
             widgets::make_widget<widgets::Button>(
                 "Settings",
                 widgets::ButtonStyle(),
-                [this]() {
+                [this, &fileManager, wifiStatusProvider]() {
                     if (router()) {
-                        //router()->pushScreen(...);
+                        auto settingsScreen = std::make_unique<SettingsScreen>(fileManager, wifiStatusProvider);
+                        router()->pushScreen(std::move(settingsScreen));
                     }
                 }
             )
