@@ -131,7 +131,6 @@ void JobController::registerObserver(JobObserver* observer)
     }
     
     _observers.push_back(observer);
-    Serial.println("Observer registered. Total observers: " + String(_observers.size()));
 }
 
 void JobController::unregisterObserver(JobObserver* observer)
@@ -141,7 +140,6 @@ void JobController::unregisterObserver(JobObserver* observer)
     for (size_t i = 0; i < _observers.size(); i++) {
         if (_observers[i] == observer) {
             _observers.erase(_observers.begin() + i);
-            Serial.println("Observer unregistered. Total observers: " + String(_observers.size()));
             return;
         }
     }
