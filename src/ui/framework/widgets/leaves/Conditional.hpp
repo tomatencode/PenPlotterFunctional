@@ -25,7 +25,7 @@ public:
 
     bool isEnabled() const override
     {
-        return getCurrentEnabled();
+        return Container::isEnabled() && getCurrentEnabled();
     }
 
     void reload() override {
