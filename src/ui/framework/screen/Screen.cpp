@@ -4,56 +4,31 @@
 namespace ui {
 
 Screen::Screen(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused)
-    : Screen() // build base state then init
-{
-    _firstFocused = firstFocused;
-    initRoot(std::move(rootWidget));
-}
+    : _root(std::move(rootWidget)),
+      _focusManager(_root.get(), firstFocused)
+{}
 
 Screen::Screen()
-    : root(nullptr), focusManager(), _firstFocused(0)
-{
-}
+    : _root(nullptr), _focusManager(nullptr)
+{}
 
-void Screen::initRoot(std::unique_ptr<widgets::Widget> rootWidget)
-{
-    root = std::move(rootWidget);
-
-    std::vector<widgets::Selectable*> selectableWidgets;
-
-    // Collect selectable widgets recursively from the root widget
-    collectSelectables(root.get(), selectableWidgets);
-
-    focusManager.setWidgets(selectableWidgets, _firstFocused);
+void Screen::setRoot(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused) {
+    _root = std::move(rootWidget);
+    _focusManager.setRoot(_root.get(), firstFocused);
 }
 
 void Screen::reload() {
-    if (root)
-        root->reload();
-
-    std::vector<widgets::Selectable*> selectableWidgets;
-
-    // Collect selectable widgets recursively from the root widget
-    collectSelectables(root.get(), selectableWidgets);
-
-    focusManager.setWidgets(selectableWidgets, _firstFocused);
+    if (_root)
+        _root->reload();
+    
+    _focusManager.refresh();
 }
 
 void Screen::render(Renderer& r)
 {
     r.clearBuffer();
-    focusManager.refresh();
-    root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
-}
-
-void Screen::collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out) {
-    if (!w) return;
-
-    if (w->isSelectable())
-        out.push_back(static_cast<widgets::Selectable*>(w));
-
-    for (size_t i = 0; i < w->childCount(); i++)
-        collectSelectables(w->child(i), out);
+    _focusManager.refresh();
+    _root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
 void Screen::onEnter() {}

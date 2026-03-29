@@ -1,6 +1,7 @@
 #include "FileList.hpp"
 
 #include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Spacer.hpp"
 
 #include "../styles/ButtonStyles.hpp"
 
@@ -19,15 +20,20 @@ FileList::FileList(FileManager& fileManager,
       _fileManager(fileManager),
       _onFileSelected(std::move(onFileSelected))
 {
+    _fileManager.registerFileObserver(this);
+    
     auto layout = std::make_unique<widgets::ScrollableVerticalLayout>(
-        widgets::ScrollableVerticalLayoutStyle{},
-        std::vector<std::unique_ptr<widgets::Widget>>{}
+        widgets::ScrollableVerticalLayoutStyle{}
     );
 
     _layout = layout.get();
     setChild(std::move(layout));
 
     reload();
+}
+
+FileList::~FileList() {
+    _fileManager.unregisterFileObserver(this);
 }
 
 void FileList::reload() {
@@ -43,6 +49,12 @@ void FileList::reload() {
             [this, file]() { _onFileSelected(file); }
         );
         _layout->addChild(std::move(button));
+    }
+}
+
+void FileList::onFileEvent(FileEvent event, const String& path) {
+    if (event == FileEvent::ADDED || event == FileEvent::REMOVED) {
+        reload();
     }
 }
 

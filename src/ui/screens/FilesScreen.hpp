@@ -23,7 +23,7 @@
 namespace ui {
 namespace screens {
 
-class FilesScreen : public Screen, public FileObserver
+class FilesScreen : public Screen
 {
 public:
     FilesScreen(JobController& jobController,
@@ -48,23 +48,8 @@ public:
                 }
             })
         )
-    , 1), _fileManager(fileManager)
-    {
-        fileManager.registerFileObserver(this);
-    }
-
-    ~FilesScreen() {
-        _fileManager.unregisterFileObserver(this);
-    }
-
-    void onFileEvent(FileEvent event, const String& path) override {
-        if (event == FileEvent::ADDED || event == FileEvent::REMOVED) {
-            reload();
-        }
-    }
-
-private:
-    FileManager& _fileManager;
+    , 1)
+    {}
 };
 
 } // namespace screens

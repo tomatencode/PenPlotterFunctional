@@ -31,7 +31,7 @@ public:
 
     // Access selectable widgets
     virtual void handleInput(InputState& input) {
-        focusManager.handleInput(input);
+        _focusManager.handleInput(input);
     }
 
 protected:
@@ -41,19 +41,13 @@ protected:
     // Provide access to the router for navigation from within a screen
     Router* router() const { return _router; }
 
-    // Initialize the screen root after members are initialized
-    void initRoot(std::unique_ptr<widgets::Widget> rootWidget);
+    void setRoot(std::unique_ptr<widgets::Widget> rootWidget, uint8_t firstFocused = 0);
 
 private:
-    std::unique_ptr<widgets::Widget> root;
-    FocusManager focusManager;
-
-    uint8_t _firstFocused = 0; // Store first focused index for reloads
+    std::unique_ptr<widgets::Widget> _root;
+    FocusManager _focusManager;
 
     Router* _router = nullptr;
-
-    // Helper to collect selectable widgets for focus manager
-    void collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out);
 };
 
 } // namespace ui

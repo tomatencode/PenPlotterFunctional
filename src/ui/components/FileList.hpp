@@ -11,15 +11,20 @@
 namespace ui {
 namespace components {
 
-class FileList : public widgets::Container
+class FileList : public widgets::Container, public FileObserver
 {
 public:
     FileList(FileManager& fileManager, std::function<void(const String&)> onFileSelected);
+    ~FileList();
+
     void reload();
+    
 private:
     FileManager& _fileManager;
     std::function<void(const String&)> _onFileSelected;
     widgets::ScrollableVerticalLayout* _layout;
+
+    void onFileEvent(FileEvent event, const String& path) override;
 };
 
 } // namespace components

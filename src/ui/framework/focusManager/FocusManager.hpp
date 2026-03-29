@@ -9,23 +9,24 @@ namespace ui {
 class FocusManager
 {
 public:
-    FocusManager();
+    FocusManager(widgets::Widget* root, size_t initialFocusIndex = 0);
 
-    // Set the list of selectable widgets for the current screen (moved in)
-    void setWidgets(std::vector<widgets::Selectable*> widgets, uint8_t firstFocused = 0);
+    void setRoot(widgets::Widget* root, size_t initialFocusIndex = 0);
 
     // Forward input to the currently focused widget
     void handleInput(InputState& input);
 
     // make sure selected widget is still enabled
     void refresh();
-
 private:
+
     void next();
     void prev();
 
-    std::vector<widgets::Selectable*> _widgets; // Own storage for widgets
-    size_t _selecedIndx = 0;                    // current focused widget index
+    size_t _focusedIndx = 0;
+    widgets::Widget* _root = nullptr;
+
+    void collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out);
 };
 
 } // namespace ui

@@ -275,6 +275,9 @@ LinearLayout::computeLayout(Rect content) const
 
 void LinearLayout::render(Renderer& r, Rect canvasBox)
 {
+    if (EnChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
+        return;
+
     Rect content = applyMargins(canvasBox);
     auto layout = computeLayout(content);
 
