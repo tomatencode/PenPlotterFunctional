@@ -26,17 +26,14 @@ struct LinearLayoutStyle {
 class LinearLayout : public Layout
 {
 public:
-    LinearLayout(const Axis primaryAxis,
+    LinearLayout(Axis axis,
                  const LinearLayoutStyle& style,
-                 std::vector<std::unique_ptr<Widget>>&& children
-                )
-        : Layout(std::move(children)), _style(style), _primaryAxis(primaryAxis)
-    {}
+                 std::vector<std::unique_ptr<Widget>>&& children)
+        : Layout(std::move(children)), _axis(axis), _style(style) {}
 
     template <typename... Children>
-    LinearLayout(const Axis primaryAxis, const LinearLayoutStyle& style, Children&&... children)
-        : Layout(std::forward<Children>(children)...), _style(style), _primaryAxis(primaryAxis)
-    {}
+    LinearLayout(Axis axis, const LinearLayoutStyle& style, Children&&... children)
+        : Layout(std::forward<Children>(children)...), _axis(axis), _style(style) {}
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
@@ -44,11 +41,11 @@ public:
     bool canExpandVertically() const override;
 
 private:
-    struct ChildInfo {
+    struct Child {
         Widget* widget;
-        uint16_t minWidth;
-        uint16_t width;
-        uint16_t height;
+        uint16_t minPrimary;
+        uint16_t finalPrimary;
+        uint16_t secondary;
         bool expand;
         bool locked = false;
     };
@@ -58,26 +55,28 @@ private:
         Rect rect;
     };
 
-    struct SpacingInfo {
-        double between;
-        double around;
+    struct Spacing {
+        double between = 0;
+        double leading = 0;
     };
 
 private:
-
+    // helpers
     Rect applyMargins(Rect box) const;
 
-    SpacingInfo computeSpacing(uint16_t availableSpace,
-                               uint16_t totalChildSize,
-                               size_t count) const;
+    uint16_t primarySize(Size s) const;
+    uint16_t secondarySize(Size s) const;
 
-    std::vector<LayoutItem> computeLayout(Rect contentArea) const;
+    uint16_t availablePrimary(Rect r) const;
+    uint16_t availableSecondary(Rect r) const;
 
-    std::vector<ChildInfo> expandExpandableChildren(std::vector<ChildInfo> children,
-                                                    uint16_t availableSpace) const;
+    Spacing computeSpacing(uint16_t available, uint16_t total, size_t count) const;
+    void distributeExpansion(std::vector<Child>& children, uint16_t available) const;
+
+    std::vector<LayoutItem> computeLayout(Rect content) const;
 
 private:
-    Axis _primaryAxis;
+    Axis _axis;
     LinearLayoutStyle _style;
 };
 
