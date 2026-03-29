@@ -15,7 +15,6 @@
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
-#include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
@@ -33,12 +32,12 @@ public:
                std::function<bool()> wifiStatusProvider
                )
     : Screen(
-        widgets::make_widget<widgets::LinearLayout>(
+        std::make_unique<widgets::LinearLayout>(
             widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
+            std::make_unique<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
 
-            widgets::make_widget<widgets::Button>(
+            std::make_unique<widgets::Button>(
                 "Plot",
                 widgets::ButtonStyle(),
                 [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
@@ -49,7 +48,7 @@ public:
                 }
             ),
 
-            widgets::make_widget<widgets::Button>(
+            std::make_unique<widgets::Button>(
                 "Settings",
                 widgets::ButtonStyle(),
                 [this, &fileManager, wifiStatusProvider]() {

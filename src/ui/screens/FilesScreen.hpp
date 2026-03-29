@@ -15,7 +15,6 @@
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
 #include "../components/FileList.hpp"
-#include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
@@ -33,15 +32,16 @@ public:
                 std::function<bool()> wifiStatusProvider
             )
     : Screen(
-        widgets::make_widget<widgets::LinearLayout>(
+        std::make_unique<widgets::LinearLayout>(
             widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{},
-            widgets::make_widget<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
+            std::make_unique<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
                 if (router()) {
                     router()->popScreen();
                 }
             }),
-            widgets::make_widget<components::FileList>(fileManager, [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const String& file) {
+            std::make_unique<components::FileList>(fileManager,
+                [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const String& file) {
                 auto detailsScreen = std::make_unique<FileDetailsScreen>(file, jobController, motionState, fileManager, wifiStatusProvider);
                 if (router()) {
                     router()->pushScreen(std::move(detailsScreen));

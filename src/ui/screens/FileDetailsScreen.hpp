@@ -16,7 +16,6 @@
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
 #include "../components/FileList.hpp"
-#include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
@@ -52,16 +51,16 @@ public:
                       std::function<bool()> wifiStatusProvider
     )
     : Screen(
-        widgets::make_widget<widgets::Switch<bool>>(
+        std::make_unique<widgets::Switch<bool>>(
             [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
             true, // lazy evaluation
             std::make_unique<widgets::Switch<bool>::Branch>(
                 true, 
-                widgets::make_widget<widgets::LinearLayout>(
+                std::make_unique<widgets::LinearLayout>(
                     widgets::Axis::Vertical,
                     widgets::LinearLayoutStyle{},
 
-                    widgets::make_widget<components::HeaderLine>(
+                    std::make_unique<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),
                         wifiStatusProvider,
                         [this]() {
@@ -70,28 +69,28 @@ public:
                         }
                     }),
 
-                    widgets::make_widget<widgets::Label>([filename, &fileManager]() {
+                    std::make_unique<widgets::Label>([filename, &fileManager]() {
                         size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
                         return "Size: " + formatFileSize(size);
                     }),
 
-                    widgets::make_widget<widgets::Label>([]() {
+                    std::make_unique<widgets::Label>([]() {
                         size_t plotTimeSeconds = 120;
                         return "Plot Time: " + formatPlotTime(plotTimeSeconds);
                     }),
 
-                    widgets::make_widget<widgets::LinearLayout>(
+                    std::make_unique<widgets::LinearLayout>(
                         widgets::Axis::Horizontal,
                         widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                        widgets::make_widget<widgets::Button>(
+                        std::make_unique<widgets::Button>(
                             "Plot",
                             widgets::ButtonStyle(),
                             [this, filename, &jobController, &motionState, wifiStatusProvider]() {
                                 jobController.start(filename);
                             }
                         ),
-                        widgets::make_widget<components::PressHoldButton>(
+                        std::make_unique<components::PressHoldButton>(
                             "Delete",
                             components::PressHoldButtonStyle(),
                             [this, filename, &fileManager]() {
@@ -106,13 +105,13 @@ public:
                 )
             ),
 
-            widgets::make_widget<widgets::Switch<bool>::Branch>(
+            std::make_unique<widgets::Switch<bool>::Branch>(
                 false,
-                widgets::make_widget<widgets::LinearLayout>(
+                std::make_unique<widgets::LinearLayout>(
                     widgets::Axis::Vertical,
                     widgets::LinearLayoutStyle{},
 
-                    widgets::make_widget<components::HeaderLine>(
+                    std::make_unique<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),
                         wifiStatusProvider,
                         [this]() {
@@ -122,7 +121,7 @@ public:
                         }
                     ),
 
-                    widgets::make_widget<widgets::Label>("File does not exist!")
+                    std::make_unique<widgets::Label>("File does not exist!")
                 )
             )
         )

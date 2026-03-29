@@ -11,7 +11,6 @@
 #include "../framework/widgets/leaves/Spacer.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
-#include "../framework/widgets/Builder.hpp"
 
 namespace ui {
 namespace components {
@@ -26,25 +25,25 @@ public:
                std::function<void()> onBackPress = nullptr
               )
     : Container(
-        widgets::make_widget<widgets::LinearLayout>(
+        std::make_unique<widgets::LinearLayout>(
             widgets::Axis::Horizontal,
             widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
-            widgets::make_widget<components::WifiIndicator>(WifiStatusProvider),
-            widgets::make_widget<widgets::Label>(textProvider),
-            widgets::make_widget<widgets::Switch<bool>>(
+            std::make_unique<components::WifiIndicator>(WifiStatusProvider),
+            std::make_unique<widgets::Label>(textProvider),
+            std::make_unique<widgets::Switch<bool>>(
                 [onBackPress]() { return onBackPress != nullptr; },
                 true, // lazy evaluation
-                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
-                    widgets::make_widget<widgets::Button>(
+                    std::make_unique<widgets::Button>(
                         "Back",
                         widgets::ButtonStyle(),
                         onBackPress
                     )
                 ),
-                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                std::make_unique<widgets::Switch<bool>::Branch>(
                     false,
-                    widgets::make_widget<widgets::Spacer>(1, 1)
+                    std::make_unique<widgets::Spacer>(1, 1)
                 )
             )
         )

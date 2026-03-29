@@ -14,7 +14,6 @@
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
-#include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
@@ -29,11 +28,11 @@ public:
                    std::function<bool()> wifiStatusProvider
                   )
     : Screen(
-        widgets::make_widget<widgets::LinearLayout>(
+        std::make_unique<widgets::LinearLayout>(
             widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
 
-            widgets::make_widget<components::HeaderLine>(
+            std::make_unique<components::HeaderLine>(
                 "Settings",
                 wifiStatusProvider,
                 [this]() {
@@ -43,15 +42,15 @@ public:
                 }
             ),
 
-            widgets::make_widget<widgets::LinearLayout>(
+            std::make_unique<widgets::LinearLayout>(
                 widgets::Axis::Horizontal,
                 widgets::LinearLayoutStyle{},
 
-                widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
+                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
                     return 1.0;
                 }),
 
-                widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
+                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
                     return 1.0;
                 })
             )

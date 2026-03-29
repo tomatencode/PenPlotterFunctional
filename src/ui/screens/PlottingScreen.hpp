@@ -15,7 +15,6 @@
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
-#include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/ProgressBar.hpp"
@@ -33,10 +32,10 @@ public:
                    std::function<bool()> wifiStatusProvider
                   )
     : Screen(
-        widgets::make_widget<widgets::LinearLayout>(
+        std::make_unique<widgets::LinearLayout>(
             widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
-            widgets::make_widget<components::HeaderLine>(
+            std::make_unique<components::HeaderLine>(
                 [&jobController]() {
                     String filename = jobController.getCurrentFile();
                     if (filename.endsWith(".gcode")) {
@@ -50,25 +49,25 @@ public:
                 wifiStatusProvider
             ),
 
-            widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
+            std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
                 if (jobController.getTotalLines() == 0) return 0.0;
                 return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
             }),
 
-            widgets::make_widget<widgets::Label>([&jobController, this]() {
+            std::make_unique<widgets::Label>([&jobController, this]() {
                 return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
             }),
 
-            widgets::make_widget<widgets::Switch<bool>>(
+            std::make_unique<widgets::Switch<bool>>(
                 [&jobController]() { return jobController.isActive(); },
                 false,  // eager evaluation
-                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
-                    widgets::make_widget<widgets::LinearLayout>(
+                    std::make_unique<widgets::LinearLayout>(
                         widgets::Axis::Horizontal,
                         widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
-                        widgets::make_widget<widgets::Button>(
+                        std::make_unique<widgets::Button>(
                             [&jobController, &motionState]() {
                                 return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
                             },
@@ -82,7 +81,7 @@ public:
                             }
                         ),
 
-                        widgets::make_widget<widgets::Button>(
+                        std::make_unique<widgets::Button>(
                             "Abort",
                             widgets::ButtonStyle(),
                             [&jobController]() {
@@ -91,9 +90,9 @@ public:
                         )
                     )
                 ),
-                widgets::make_widget<widgets::Switch<bool>::Branch>(
+                std::make_unique<widgets::Switch<bool>::Branch>(
                     false,
-                    widgets::make_widget<widgets::Button>(
+                    std::make_unique<widgets::Button>(
                         "Back to Files",
                         widgets::ButtonStyle(),
                         [this, &jobController]() {

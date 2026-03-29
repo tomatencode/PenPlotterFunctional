@@ -3,7 +3,6 @@
 #include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/Builder.hpp"
 
 #include "config/job_config.hpp"
 
@@ -44,7 +43,7 @@ void FileList::reload() {
 
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
     for (const auto& file : files) {
-        auto button = widgets::make_widget<widgets::Button>(
+        auto button = std::make_unique<widgets::Button>(
             file,
             fileButtonStyle,
             [this, file]() { _onFileSelected(file); }
