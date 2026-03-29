@@ -17,6 +17,8 @@ void FocusManager::handleInput(InputState& input)
     std::vector<widgets::Selectable*> selectableWidgets;
     collectSelectables(_root, selectableWidgets);
 
+    refresh(selectableWidgets);
+
     if (selectableWidgets.empty() || selectableWidgets[_focusedIndx] == nullptr) return;
 
     selectableWidgets[_focusedIndx]->handleInput(input);
@@ -81,9 +83,13 @@ void FocusManager::prev()
 }
 
 void FocusManager::refresh() {
-
     std::vector<widgets::Selectable*> selectableWidgets;
     collectSelectables(_root, selectableWidgets);
+
+    refresh(selectableWidgets);
+}
+
+void FocusManager::refresh(std::vector<widgets::Selectable*> selectableWidgets) {
 
     if (selectableWidgets.empty()) return;
     

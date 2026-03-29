@@ -16,9 +16,9 @@ public:
     // Forward input to the currently focused widget
     void handleInput(InputState& input);
 
-    // make sure selected widget is still enabled
     void refresh();
 private:
+    void refresh(std::vector<widgets::Selectable*> selectableWidgets);
 
     void next();
     void prev();

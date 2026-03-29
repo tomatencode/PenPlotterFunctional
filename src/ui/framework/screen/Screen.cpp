@@ -27,7 +27,6 @@ void Screen::reload() {
 void Screen::render(Renderer& r)
 {
     r.clearBuffer();
-    _focusManager.refresh();
     _root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
