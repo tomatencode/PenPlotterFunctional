@@ -4,6 +4,8 @@
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 
+#include "../styles/ButtonStyles.hpp"
+
 #include "config/job_config.hpp"
 
 #include <vector>
@@ -12,16 +14,6 @@
 
 namespace ui {
 namespace components {
-
-widgets::ButtonStyle fileButtonStyle = {
-    .leftNormal = GLYPH_NONE,
-    .rightNormal = GLYPH_NONE,
-    .leftFocused = '>',
-    .rightFocused = GLYPH_NONE,
-    .leftPressed = '-',
-    .rightPressed = GLYPH_NONE
-};
-
 
 FileList::FileList(FileManager& fileManager, std::function<void(const String&)> onFileSelected)
     : Container(std::make_unique<widgets::ScrollableVerticalLayout>(
@@ -45,7 +37,7 @@ void FileList::reload() {
     for (const auto& file : files) {
         auto button = std::make_unique<widgets::Button>(
             file,
-            fileButtonStyle,
+            ui::styles::listButtonStyle,
             [this, file]() { _onFileSelected(file); }
         );
         layout->addChild(std::move(button));
