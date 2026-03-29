@@ -19,33 +19,32 @@ void ProgressBar::render(Renderer& r, Rect canvasBox)
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    int x = canvasBox.x;
-    int y = canvasBox.y;
-    uint8_t barWidth = canvasBox.w;
-    uint8_t barHeight = canvasBox.h;
+    uint16_t x = canvasBox.x;
+    uint16_t y = canvasBox.y;
+    uint16_t barWidth = canvasBox.w;
+    uint16_t barHeight = canvasBox.h;
 
     // Calculate inner bar width (excluding brackets)
-    uint8_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;
-    double progress = (_getProgress != nullptr) ? _getProgress() : 0;
+    uint16_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;
+    double progress = (_getProgress) ? _getProgress() : 0;
     progress = std::min(std::max(progress, 0.0), 1.0); // Clamp to [0, 1]
-    uint8_t filledWidth = (innerWidth * progress);
+    uint16_t filledWidth = (innerWidth * progress);
 
-    // Draw the progress bar
-    for (uint8_t row = 0; row < barHeight; row++)
+    // Draw opening bracket
+    r.drawGlyphToBuffer(x, y, _style.leftBracket);
+
+    // Draw filled and empty portions
+    for (uint16_t col = 0; col < innerWidth; col++)
     {
-        // Draw opening bracket
-        r.drawGlyphToBuffer(x, y + row, _style.leftBracket);
-
-        // Draw filled and empty portions
-        for (uint8_t col = 0; col < innerWidth; col++)
-        {
-            Glyph g = (col < filledWidth) ? _style.filledGlyph : _style.emptyGlyph;
-            r.drawGlyphToBuffer(x + 1 + col, y + row, g);
-        }
-
-        // Draw closing bracket
-        r.drawGlyphToBuffer(x + barWidth - 1, y + row, _style.rightBracket);
+        r.drawGlyphToBuffer(
+            x + 1 + col,
+            y,
+            (col < filledWidth) ? _style.filledGlyph : _style.emptyGlyph
+        );
     }
+
+    // Draw closing bracket
+    r.drawGlyphToBuffer(x + barWidth - 1, y, _style.rightBracket);
 }
 
 } // namespace widgets

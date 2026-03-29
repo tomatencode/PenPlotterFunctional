@@ -31,49 +31,59 @@ void Button::render(Renderer& r, Rect canvasBox)
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    int x = canvasBox.x;
-    int y = canvasBox.y;
+    uint16_t x = canvasBox.x;
+    uint16_t y = canvasBox.y;
 
     // Choose decorations based on state
-    Glyph left  = _style.leftNormal;
-    Glyph right = _style.rightNormal;
+    Glyph leftDecorator  = _style.leftNormal;
+    Glyph rightDecorator = _style.rightNormal;
 
     if (_isPressed)
     {
-        left  = _style.leftPressed;
-        right = _style.rightPressed;
+        leftDecorator  = _style.leftPressed;
+        rightDecorator = _style.rightPressed;
     }
     else if (isFocused())
     {
-        left  = _style.leftFocused;
-        right = _style.rightFocused;
+        leftDecorator  = _style.leftFocused;
+        rightDecorator = _style.rightFocused;
     }
 
     // Draw left decoration
-    if (left.code != GLYPH_NONE.code && canvasBox.w > 0)
+    if (leftDecorator.code != GLYPH_NONE.code && canvasBox.w > 0)
     {
-        r.drawGlyphToBuffer(x, y, left);
+        r.drawGlyphToBuffer(x, y, leftDecorator);
         x++;
     }
 
-    Size childSize = _label->measure();
+    Size labelSize = _label->measure();
+
+    if (labelSize.h > 1)
+        Serial.println("Warning: Button label height exceeds 1, clipping will occur");
+    
+    uint16_t decorationWidth = 0;
+    if (leftDecorator.code != GLYPH_NONE.code) decorationWidth++;
+    if (rightDecorator.code != GLYPH_NONE.code) decorationWidth++;
+
+    int remainingWidth = static_cast<int>(canvasBox.w) - static_cast<int>(decorationWidth);
+    uint16_t finalWidth = std::min<uint16_t>(labelSize.w, remainingWidth);
 
     // Create a canvas for the child within the button
     Rect childCanvas = {
         x,
         y,
-        std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x)),
-        1 // assume single-line height
+        finalWidth,
+        1
     };
 
     _label->render(r, childCanvas);
 
-    x += childSize.w;
+    x += labelSize.w;
 
     // Draw right decoration
-    if (right.code != GLYPH_NONE.code && canvasBox.w > 1)
+    if (rightDecorator.code != GLYPH_NONE.code && canvasBox.w > 1)
     {
-        r.drawGlyphToBuffer(x, y, right);
+        r.drawGlyphToBuffer(x, y, rightDecorator);
     }
 }
 
