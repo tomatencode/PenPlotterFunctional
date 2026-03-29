@@ -21,8 +21,6 @@ void ScrollableVerticalLayout::updateScrollOffset(
 
             if (selectable->isFocused())
             {
-                Serial.println("Focused child at offset " + String(currentY) + " with offset " + String(_scrollOffset));
-
                 int top = currentY;
                 int bottom = currentY + child.size.h;
 
