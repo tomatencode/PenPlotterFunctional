@@ -23,36 +23,43 @@ uint16_t LinearLayout::secondarySize(Size s) const {
     return (_axis == Axis::Horizontal) ? s.h : s.w;
 }
 
-uint16_t LinearLayout::availablePrimary(Rect r) const {
+uint16_t LinearLayout::PrimaryPos(Rect r) const {
+    return (_axis == Axis::Horizontal) ? r.x : r.y;
+}
+uint16_t LinearLayout::SecondaryPos(Rect r) const {
+    return (_axis == Axis::Horizontal) ? r.y : r.x;
+}
+
+uint16_t LinearLayout::availablePrimarySpace(Rect r) const {
     return (_axis == Axis::Horizontal) ? r.w : r.h;
 }
 
-uint16_t LinearLayout::availableSecondary(Rect r) const {
+uint16_t LinearLayout::availableSecondarySpace(Rect r) const {
     return (_axis == Axis::Horizontal) ? r.h : r.w;
 }
 
 // ---------- Spacing ----------
 
 LinearLayout::Spacing
-LinearLayout::computeSpacing(uint16_t available, uint16_t total, size_t count) const
+LinearLayout::computeSpacing(uint16_t available, uint16_t total, size_t childCount) const
 {
-    if (count <= 1)
+    if (childCount <= 1)
         return {double(_style.spacing), 0};
 
-    int remaining = std::max(0, int(available) - int(total));
+    uint16_t remaining = std::max(0, static_cast<int>(available) - static_cast<int>(total));
 
     switch (_style.spacingMode)
     {
         case SpacingMode::Even:
-            return {double(remaining) / (count + 1),
-                    double(remaining) / (count + 1)};
+            return {static_cast<double>(remaining) / (childCount + 1),
+                    static_cast<double>(remaining) / (childCount + 1)};
 
         case SpacingMode::SpaceBetween:
-            return {double(remaining) / (count - 1), 0};
+            return {static_cast<double>(remaining) / (childCount - 1), 0};
 
         case SpacingMode::SpaceAround:
-            return {double(remaining) / count,
-                    double(remaining) / (2 * count)};
+            return {static_cast<double>(remaining) / childCount,
+                    static_cast<double>(remaining) / (2 * childCount)};
 
         default:
             return {double(_style.spacing), 0};
@@ -61,87 +68,90 @@ LinearLayout::computeSpacing(uint16_t available, uint16_t total, size_t count) c
 
 // ---------- Expansion ----------
 
-void LinearLayout::distributeExpansion(std::vector<Child>& children,
+void LinearLayout::distributeExpansion(std::vector<ChildInfo>& children,
                                        uint16_t available) const
 {
-    uint16_t fixed = 0;
-    int expandable = 0;
+    uint16_t fixedSize = 0;
+    uint16_t expandableCount = 0;
 
     for (auto& c : children) {
-        if (c.expand) expandable++;
-        else fixed += c.minPrimary;
+        if (c.canExpand) expandableCount++;
+        else fixedSize += c.minPrimarySize;
     }
 
-    if (expandable == 0) return;
+    if (expandableCount == 0) return;
 
-    int remaining = std::max(0, int(available) - int(fixed) - int(_style.spacing) * int(children.size() - 1));
 
-    int target = remaining / expandable;
+    uint16_t totalSpacing = _style.spacing * (children.size() - 1);
+    uint16_t remainingSpace = std::max(
+        0,
+        static_cast<int>(available) - static_cast<int>(fixedSize) - static_cast<int>(totalSpacing)
+    );
 
+    uint16_t targetSize = remainingSpace / expandableCount;
+
+    // solve for equal expansion, while respecting minimum sizes
     bool changed = true;
-
-    while (changed && expandable > 0)
+    while (changed && expandableCount > 0)
     {
         changed = false;
 
-        for (auto& c : children)
+        for (auto& child : children)
         {
-            if (!c.expand || c.locked) continue;
+            if (!child.canExpand || child.expansionLocked) continue;
 
-            if (c.minPrimary > target)
+            if (child.minPrimarySize > targetSize)
             {
-                c.finalPrimary = c.minPrimary;
-                c.locked = true;
+                child.finalPrimarySize = child.minPrimarySize;
+                child.expansionLocked = true;
 
-                remaining -= c.finalPrimary;
-                expandable--;
+                remainingSpace -= child.finalPrimarySize;
+                expandableCount--;
 
                 changed = true;
             }
         }
 
-        if (expandable > 0)
-            target = remaining / expandable;
+        if (expandableCount > 0)
+            targetSize = remainingSpace / expandableCount;
     }
 
     for (auto& c : children)
-        if (c.expand && !c.locked)
-            c.finalPrimary = target;
+        if (c.canExpand && !c.expansionLocked)
+            c.finalPrimarySize = targetSize;
 }
 
-std::optional<Rect> LinearLayout::computeChildRect(const Child& c, Rect content, int childStart) const
+std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect content, uint16_t childStart) const
 {
-    int start = (_axis == Axis::Horizontal) ? content.x : content.y;
-    int end   = (_axis == Axis::Horizontal)
-            ? (content.x + content.w)
-            : (content.y + content.h);
+    uint16_t start = PrimaryPos(content);
+    uint16_t end = start + availablePrimarySpace(content);
 
-    int childEnd = childStart + c.finalPrimary;
+    uint16_t childEnd = childStart + c.finalPrimarySize;
 
     // Child is at least partially visible - clamp to visible bounds
-    int clampedStart = std::max(childStart, start);
-    int clampedEnd = std::min(childEnd, end);
-    int clampedSize = clampedEnd - clampedStart;
+    uint16_t clampedStart = std::max(childStart, start);
+    uint16_t clampedEnd = std::min(childEnd, end);
+    uint16_t clampedSize = clampedEnd - clampedStart;
 
     if (clampedSize <= 0)
         return std::nullopt;
 
     // Calculate secondary axis position
-    int secondaryPos = (_axis == Axis::Horizontal) ? content.y : content.x;
+    uint16_t secondaryPos = SecondaryPos(content);
 
     if (_axis == Axis::Horizontal)
     {
         if (_style.verticalAlign == VerticalAlignment::Middle)
-            secondaryPos += (content.h - c.secondary) / 2;
+            secondaryPos += (content.h - c.secondarySize) / 2;
         else if (_style.verticalAlign == VerticalAlignment::Bottom)
-            secondaryPos += content.h - c.secondary;
+            secondaryPos += content.h - c.secondarySize;
     }
     else
     {
         if (_style.horizontalAlign == HorizontalAlignment::Center)
-            secondaryPos += (content.w - c.secondary) / 2;
+            secondaryPos += (content.w - c.secondarySize) / 2;
         else if (_style.horizontalAlign == HorizontalAlignment::Right)
-            secondaryPos += content.w - c.secondary;
+            secondaryPos += content.w - c.secondarySize;
     }
 
     if (_axis == Axis::Horizontal)
@@ -150,7 +160,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const Child& c, Rect content,
             static_cast<uint16_t>(clampedStart),
             static_cast<uint16_t>(secondaryPos),
             static_cast<uint16_t>(clampedSize),
-            static_cast<uint16_t>(c.secondary)
+            static_cast<uint16_t>(c.secondarySize)
         });
     }
     else
@@ -158,7 +168,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const Child& c, Rect content,
         return std::make_optional(Rect{
             static_cast<uint16_t>(secondaryPos),
             static_cast<uint16_t>(clampedStart),
-            static_cast<uint16_t>(c.secondary),
+            static_cast<uint16_t>(c.secondarySize),
             static_cast<uint16_t>(clampedSize)
         });
     }
@@ -171,80 +181,80 @@ LinearLayout::computeLayout(Rect content) const
 {
     std::vector<LayoutItem> result;
 
-    const size_t count = EnChildCount();
-    if (count == 0) return result;
+    const size_t childCount = EnChildCount();
+    if (childCount == 0) return result;
 
-    std::vector<Child> children;
-    children.reserve(count);
+    std::vector<ChildInfo> children;
+    children.reserve(childCount);
 
     // 1. Collect children
-    for (size_t i = 0; i < count; i++)
+    for (size_t i = 0; i < childCount; i++)
     {
-        if (auto* w = EnChild(i))
+        if (auto* child = EnChild(i))
         {
-            Size s = w->measure();
+            Size s = child->measure();
 
             bool expandPrimary = (_axis == Axis::Horizontal)
-                ? w->canExpandHorizontally()
-                : w->canExpandVertically();
+                ? child->canExpandHorizontally()
+                : child->canExpandVertically();
 
             bool expandSecondary = (_axis == Axis::Horizontal)
-                ? w->canExpandVertically()
-                : w->canExpandHorizontally();
+                ? child->canExpandVertically()
+                : child->canExpandHorizontally();
 
-            uint16_t p = primarySize(s);
-            uint16_t s2 = expandSecondary ? availableSecondary(content) : secondarySize(s);
+            uint16_t primSize = primarySize(s);
+            uint16_t secSize = expandSecondary ? availableSecondarySpace(content) : secondarySize(s);
 
-            children.push_back({w, p, p, s2, expandPrimary});
+            children.push_back({child, primSize, primSize, secSize, expandPrimary});
         }
     }
 
     // 2. Compute total size
-    uint16_t total = 0;
-    for (auto& c : children) total += c.finalPrimary;
+    uint16_t totalOccupiedSpace = 0;
+    for (auto& c : children) totalOccupiedSpace += c.finalPrimarySize;
 
-    uint16_t available = availablePrimary(content);
+    uint16_t availableSpace = availablePrimarySpace(content);
 
     // 3. Expansion OR spacing
-    bool hasExpand = std::any_of(children.begin(), children.end(),
-                                 [](auto& c){ return c.expand; });
+    bool hasExpandeble = std::any_of(children.begin(), children.end(),
+                                 [](auto& c){ return c.canExpand; });
 
     Spacing spacing;
-
-    if (hasExpand)
-    {
-        distributeExpansion(children, available);
-        spacing = {double(_style.spacing), 0};
+    if (hasExpandeble) {
+        distributeExpansion(children, availableSpace);
+        spacing = {static_cast<double>(_style.spacing), 0};
     }
-    else
-    {
-        spacing = computeSpacing(available, total, children.size());
+    else {
+        spacing = computeSpacing(availableSpace, totalOccupiedSpace, childCount);
     }
 
     // 4. Positioning
-    int start = (_axis == Axis::Horizontal) ? content.x : content.y;
+    uint16_t start = PrimaryPos(content);
 
-    int pos = start + spacing.leading;
+    uint16_t pos = start + spacing.leading;
 
     double spacingError = 0;
 
-    for (size_t i = 0; i < children.size(); i++)
+    for (size_t i = 0; i < childCount; i++)
     {
-        auto& c = children[i];
+        auto& child = children[i];
 
-        int childStart = pos;
-        auto rect = computeChildRect(c, content, childStart);
+        uint16_t childStart = pos;
+        auto rect = computeChildRect(child, content, childStart);
 
         if (rect.has_value())
-            result.push_back({c.widget, rect.value()});
+            result.push_back({child.widget, rect.value()});
 
+        
         // Advance position along primary axis
-        pos += c.finalPrimary;
+        pos += child.finalPrimarySize;
+        if (pos > start + availableSpace)
+            break; // no more space for additional children
 
         // Add spacing between children (if not the last child)
-        if (i + 1 < children.size())
+        if (i + 1 < childCount)
         {
-            int spacingAmount = std::round(spacing.between);
+            uint16_t spacingAmount = std::round(spacing.between);
             pos += spacingAmount;
 
             spacingError += spacing.between - spacingAmount;

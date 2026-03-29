@@ -17,11 +17,11 @@ struct LinearLayoutStyle {
     VerticalAlignment verticalAlign = VerticalAlignment::Top;
     HorizontalAlignment horizontalAlign = HorizontalAlignment::Left;
 
-    uint8_t spacing = 0;
-    uint8_t marginLeft = 0;
-    uint8_t marginRight = 0;
-    uint8_t marginTop = 0;
-    uint8_t marginBottom = 0;
+    uint16_t spacing = 0;
+    uint16_t marginLeft = 0;
+    uint16_t marginRight = 0;
+    uint16_t marginTop = 0;
+    uint16_t marginBottom = 0;
 };
 
 class LinearLayout : public Layout
@@ -42,13 +42,13 @@ public:
     bool canExpandVertically() const override;
 
 private:
-    struct Child {
+    struct ChildInfo {
         Widget* widget;
-        uint16_t minPrimary;
-        uint16_t finalPrimary;
-        uint16_t secondary;
-        bool expand;
-        bool locked = false;
+        uint16_t minPrimarySize;
+        uint16_t finalPrimarySize;
+        uint16_t secondarySize;
+        bool canExpand;
+        bool expansionLocked = false;
     };
 
     struct LayoutItem {
@@ -68,12 +68,14 @@ private:
     uint16_t primarySize(Size s) const;
     uint16_t secondarySize(Size s) const;
 
-    uint16_t availablePrimary(Rect r) const;
-    uint16_t availableSecondary(Rect r) const;
+    uint16_t PrimaryPos(Rect r) const;
+    uint16_t SecondaryPos(Rect r) const;
+    uint16_t availablePrimarySpace(Rect r) const;
+    uint16_t availableSecondarySpace(Rect r) const;
 
     Spacing computeSpacing(uint16_t available, uint16_t total, size_t count) const;
-    void distributeExpansion(std::vector<Child>& children, uint16_t available) const;
-    std::optional<Rect> computeChildRect(const Child& c, Rect content, int childStart) const;
+    void distributeExpansion(std::vector<ChildInfo>& children, uint16_t available) const;
+    std::optional<Rect> computeChildRect(const ChildInfo& c, Rect content, uint16_t childStart) const;
 
     std::vector<LayoutItem> computeLayout(Rect content) const;
 
