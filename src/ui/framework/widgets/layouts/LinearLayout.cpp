@@ -6,10 +6,10 @@ namespace widgets {
 Rect LinearLayout::applyMargins(Rect box) const
 {
     return {
-        uint8_t(box.x + _style.marginLeft),
-        uint8_t(box.y + _style.marginTop),
-        uint8_t(box.w - _style.marginLeft - _style.marginRight),
-        uint8_t(box.h - _style.marginTop - _style.marginBottom)
+        box.x + _style.marginLeft,
+        box.y + _style.marginTop,
+        box.w - _style.marginLeft - _style.marginRight,
+        box.h - _style.marginTop - _style.marginBottom
     };
 }
 
@@ -146,20 +146,20 @@ std::optional<Rect> LinearLayout::computeChildRect(const Child& c, Rect content,
 
     if (_axis == Axis::Horizontal)
     {
-        return std::make_optional<Rect>({
-            uint8_t(clampedStart),
-            uint8_t(secondaryPos),
-            uint8_t(clampedSize),
-            uint8_t(c.secondary)
+        return std::make_optional(Rect{
+            static_cast<uint16_t>(clampedStart),
+            static_cast<uint16_t>(secondaryPos),
+            static_cast<uint16_t>(clampedSize),
+            static_cast<uint16_t>(c.secondary)
         });
     }
     else
     {
-        return std::make_optional<Rect>({
-            uint8_t(secondaryPos),
-            uint8_t(clampedStart),
-            uint8_t(c.secondary),
-            uint8_t(clampedSize)
+        return std::make_optional(Rect{
+            static_cast<uint16_t>(secondaryPos),
+            static_cast<uint16_t>(clampedStart),
+            static_cast<uint16_t>(c.secondary),
+            static_cast<uint16_t>(clampedSize)
         });
     }
 }
@@ -293,7 +293,7 @@ Size LinearLayout::measure() const
     w += _style.marginLeft + _style.marginRight;
     h += _style.marginTop + _style.marginBottom;
 
-    return {uint8_t(w), uint8_t(h)};
+    return {w, h};
 }
 
 bool LinearLayout::canExpandHorizontally() const

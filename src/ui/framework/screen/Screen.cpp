@@ -43,7 +43,7 @@ void Screen::render(Renderer& r)
 {
     r.clearBuffer();
     focusManager.refresh();
-    root->render(r, {0, 0, static_cast<uint8_t>(LCD_COLS), static_cast<uint8_t>(LCD_ROWS)});
+    root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
 void Screen::collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out) {

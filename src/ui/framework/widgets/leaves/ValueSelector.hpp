@@ -73,7 +73,7 @@ public:
         else
             width += ((_style.leftNormal.code != GLYPH_NONE.code) ? 1 : 0) + ((_style.rightNormal.code != GLYPH_NONE.code) ? 1 : 0);
 
-        return { static_cast<uint8_t>(width), 1 };
+        return { width, 1 };
     }
 
     void render(Renderer& r, Rect canvasBox) override

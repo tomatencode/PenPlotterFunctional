@@ -44,10 +44,10 @@ void ScrollableVerticalLayout::updateScrollOffset(
 Rect ScrollableVerticalLayout::applyMargins(Rect box) const
 {
     return {
-        static_cast<uint8_t>(box.x + _style.marginLeft),
-        static_cast<uint8_t>(box.y + _style.marginTop),
-        static_cast<uint8_t>(box.w - _style.marginLeft - _style.marginRight),
-        static_cast<uint8_t>(box.h - _style.marginTop - _style.marginBottom)
+        box.x + _style.marginLeft,
+        box.y + _style.marginTop,
+        box.w - _style.marginLeft - _style.marginRight,
+        box.h - _style.marginTop - _style.marginBottom
     };
 }
 
@@ -110,9 +110,9 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
         int x = computeChildX(width, content);
 
         Rect rect = {
-            static_cast<uint8_t>(x),
-            static_cast<uint8_t>(currentY),
-            static_cast<uint8_t>(width),
+            x,
+            currentY,
+            width,
             child.size.h
         };
 
@@ -148,8 +148,8 @@ Size ScrollableVerticalLayout::measure() const
         totalHeight += (children.size() - 1) * _style.spacing;
 
     return {
-        static_cast<uint8_t>(maxWidth + _style.marginLeft + _style.marginRight),
-        static_cast<uint8_t>(totalHeight + _style.marginTop + _style.marginBottom)
+        maxWidth + _style.marginLeft + _style.marginRight,
+        totalHeight + _style.marginTop + _style.marginBottom
     };
 }
 

@@ -22,7 +22,7 @@ Size Button::measure() const
         if (_style.leftNormal.code != GLYPH_NONE.code) width++;
         if (_style.rightNormal.code != GLYPH_NONE.code) width++;
     }
-    return { width, static_cast<uint8_t>(1) };
+    return { width, 1 };
 }
 
 void Button::render(Renderer& r, Rect canvasBox)
@@ -60,9 +60,9 @@ void Button::render(Renderer& r, Rect canvasBox)
 
     // Create a canvas for the child within the button
     Rect childCanvas = {
-        static_cast<uint8_t>(x),
-        static_cast<uint8_t>(y),
-        static_cast<uint8_t>(std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x))),
+        x,
+        y,
+        std::min<int>(childSize.w, canvasBox.w - (x - canvasBox.x)),
         1 // assume single-line height
     };
 

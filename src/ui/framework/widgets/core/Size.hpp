@@ -7,8 +7,8 @@ namespace widgets {
 
 struct Size
 {
-    uint8_t w;
-    uint8_t h;
+    uint16_t w;
+    uint16_t h;
 };
 
 } // namespace widgets
