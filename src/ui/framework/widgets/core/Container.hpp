@@ -11,7 +11,11 @@ namespace widgets {
 class Container : public Widget
 {
 public:
-    // Owning constructor: takes ownership of the widgets
+
+    Container()
+        : _child(nullptr)
+    {}
+
     Container(std::unique_ptr<Widget>&& child)
         : _child(std::move(child))
     {
