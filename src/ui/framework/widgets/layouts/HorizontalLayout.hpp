@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 #include "../core/Layout.hpp"
 #include "LayoutStyle.hpp"
@@ -13,6 +14,7 @@ namespace widgets {
 struct HorizontalLayoutStyle {
     SpacingMode spacingMode = SpacingMode::Fixed;
     VerticalAlignment verticalAlign = VerticalAlignment::Top;
+
     uint8_t spacing = 0;
     uint8_t marginLeft = 0;
     uint8_t marginRight = 0;
@@ -23,7 +25,8 @@ struct HorizontalLayoutStyle {
 class HorizontalLayout : public Layout
 {
 public:
-    HorizontalLayout(const HorizontalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+    HorizontalLayout(const HorizontalLayoutStyle& style,
+                     std::vector<std::unique_ptr<Widget>>&& children)
         : Layout(std::move(children)), _style(style)
     {}
 
@@ -38,21 +41,38 @@ public:
     bool canExpandVertically() const override;
 
 private:
+    struct ChildInfo {
+        Widget* widget;
+        uint16_t minWidth;
+        uint16_t width;
+        uint16_t height;
+        bool expand;
+        bool locked = false;
+    };
+
     struct LayoutItem {
         Widget* widget;
         Rect rect;
     };
 
-    struct Metrics {
-        uint16_t totalWidth = 0;
-        uint16_t maxHeight = 0;
+    struct SpacingInfo {
+        double between;
+        double around;
     };
 
+private:
     Rect applyMargins(Rect box) const;
-    Metrics computeMetrics() const;
-    double computeSpacing(uint16_t availableWidth, uint16_t totalChildWidth, size_t count) const;
+
+    SpacingInfo computeSpacing(uint16_t availableWidth,
+                               uint16_t totalChildWidth,
+                               size_t count) const;
+
     std::vector<LayoutItem> computeLayout(Rect contentArea) const;
 
+    std::vector<ChildInfo> expandExpandableChildren(std::vector<ChildInfo> children,
+                                                    uint16_t availableWidth) const;
+
+private:
     HorizontalLayoutStyle _style;
 };
 
