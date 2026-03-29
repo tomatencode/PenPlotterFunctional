@@ -30,7 +30,7 @@ public:
                   )
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
-            widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
 
             widgets::make_widget<components::HeaderLine>(
                 "Settings",
@@ -40,6 +40,18 @@ public:
                         router()->popScreen();
                     }
                 }
+            ),
+
+            widgets::make_widget<widgets::HorizontalLayout>(
+                widgets::LinearLayoutStyle{},
+
+                widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
+                    return 1.0;
+                }),
+
+                widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
+                    return 1.0;
+                })
             )
         )
     )

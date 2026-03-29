@@ -27,7 +27,7 @@ public:
               )
     : Container(
         widgets::make_widget<widgets::HorizontalLayout>(
-            widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
+            widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
             widgets::make_widget<components::WifiIndicator>(WifiStatusProvider),
             widgets::make_widget<widgets::Label>(textProvider),
             widgets::make_widget<widgets::Switch<bool>>(

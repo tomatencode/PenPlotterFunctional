@@ -60,7 +60,7 @@ public:
             std::make_unique<widgets::Switch<bool>::Branch>(
                 true, 
                 widgets::make_widget<widgets::VerticalLayout>(
-                    widgets::VerticalLayoutStyle{},
+                    widgets::LinearLayoutStyle{},
 
                     widgets::make_widget<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),
@@ -82,7 +82,7 @@ public:
                     }),
 
                     widgets::make_widget<widgets::HorizontalLayout>(
-                        widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+                        widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                         widgets::make_widget<widgets::Button>(
                             "Plot",
@@ -109,7 +109,7 @@ public:
             widgets::make_widget<widgets::Switch<bool>::Branch>(
                 false,
                 widgets::make_widget<widgets::VerticalLayout>(
-                    widgets::VerticalLayoutStyle{},
+                    widgets::LinearLayoutStyle{},
 
                     widgets::make_widget<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),

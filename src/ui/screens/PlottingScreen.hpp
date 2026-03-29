@@ -36,7 +36,7 @@ public:
                   )
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
-            widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(
                 [&jobController]() {
                     String filename = jobController.getCurrentFile();
@@ -57,7 +57,7 @@ public:
              }),
 
             widgets::make_widget<widgets::HorizontalLayout>(
-                widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
+                widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
                 widgets::make_widget<widgets::Label>([&jobController, this]() {
                     return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
                 })
@@ -68,7 +68,7 @@ public:
                 widgets::make_widget<widgets::Switch<bool>::Branch>(
                     true,
                     widgets::make_widget<widgets::HorizontalLayout>(
-                        widgets::HorizontalLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+                        widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                         widgets::make_widget<widgets::Button>(
                             [&jobController, &motionState]() {

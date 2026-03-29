@@ -34,7 +34,7 @@ public:
                )
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
-            widgets::VerticalLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
 
             widgets::make_widget<widgets::Button>(

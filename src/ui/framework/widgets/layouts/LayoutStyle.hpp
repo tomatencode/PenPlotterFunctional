@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 namespace ui {
 namespace widgets {
 
@@ -22,6 +20,11 @@ enum class VerticalAlignment {
     Top,
     Middle,
     Bottom
+};
+
+enum class Axis {
+    Horizontal,
+    Vertical
 };
 
 } // namespace widgets

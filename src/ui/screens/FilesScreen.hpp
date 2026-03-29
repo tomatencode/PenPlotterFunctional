@@ -34,7 +34,7 @@ public:
             )
     : Screen(
         widgets::make_widget<widgets::VerticalLayout>(
-            widgets::VerticalLayoutStyle{},
+            widgets::LinearLayoutStyle{},
             widgets::make_widget<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
                 if (router()) {
                     router()->popScreen();
