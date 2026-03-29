@@ -53,15 +53,12 @@ public:
             widgets::make_widget<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
                 if (jobController.getTotalLines() == 0) return 0.0;
                 return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
-             }),
+            }),
 
-            widgets::make_widget<widgets::LinearLayout>(
-                widgets::Axis::Horizontal,
-                widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
-                widgets::make_widget<widgets::Label>([&jobController, this]() {
-                    return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
-                })
-            ),
+            widgets::make_widget<widgets::Label>([&jobController, this]() {
+                return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
+            }),
+
             widgets::make_widget<widgets::Switch<bool>>(
                 [&jobController]() { return jobController.isActive(); },
                 false,  // eager evaluation
