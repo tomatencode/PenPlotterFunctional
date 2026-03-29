@@ -21,18 +21,15 @@ struct ScrollableVerticalLayoutStyle {
 class ScrollableVerticalLayout : public Layout
 {
 public:
-    // Vector-based constructor (for pre-built child vectors)
-    ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, std::vector<std::unique_ptr<Widget>>&& children)
+    ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style,
+                             std::vector<std::unique_ptr<Widget>>&& children)
         : Layout(std::move(children)), _style(style)
-    {
-    }
+    {}
 
-    // Variadic constructor (for individual widget arguments)
     template <typename... Children>
     ScrollableVerticalLayout(const ScrollableVerticalLayoutStyle& style, Children&&... children)
         : Layout(std::forward<Children>(children)...), _style(style)
-    {
-    }
+    {}
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
@@ -40,11 +37,23 @@ public:
     bool canExpandVertically() const override;
 
 private:
+    struct ChildInfo {
+        Widget* widget;
+        Size size;
+    };
+
+private:
+    Rect applyMargins(Rect box) const;
+
+    std::vector<ChildInfo> collectChildren() const;
+
+    void updateScrollOffset(const std::vector<ChildInfo>& children,
+                            uint16_t visibleHeight);
+
+    int computeChildX(uint16_t childWidth, const Rect& area) const;
+
+private:
     int16_t _scrollOffset = 0;
-
-    // Find which child is focused and update scroll offset to ensure it's visible
-    void updateScrollOffset(uint8_t visibleHeight);
-
     ScrollableVerticalLayoutStyle _style;
 };
 
