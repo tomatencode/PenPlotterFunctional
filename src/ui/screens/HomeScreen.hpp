@@ -59,7 +59,7 @@ public:
                 }
             )
         )
-    )
+    , 1) // Start with Plot button focused
     {}
 };
 
