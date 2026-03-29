@@ -69,37 +69,58 @@ public:
                         }
                     }),
 
-                    std::make_unique<widgets::Label>([filename, &fileManager]() {
-                        size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
-                        return "Size: " + formatFileSize(size);
-                    }),
-
-                    std::make_unique<widgets::Label>([]() {
-                        size_t plotTimeSeconds = 120;
-                        return "Plot Time: " + formatPlotTime(plotTimeSeconds);
-                    }),
+                    std::make_unique<widgets::Spacer>(1, 1),
 
                     std::make_unique<widgets::LinearLayout>(
                         widgets::Axis::Horizontal,
-                        widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+                        widgets::LinearLayoutStyle{
+                            .spacingMode = widgets::SpacingMode::SpaceBetween,
+                            .marginLeft = 1,
+                            .marginRight = 1
+                        },
 
-                        std::make_unique<widgets::Button>(
-                            "Plot",
-                            widgets::ButtonStyle(),
-                            [this, filename, &jobController, &motionState, wifiStatusProvider]() {
-                                jobController.start(filename);
-                            }
-                        ),
-                        std::make_unique<components::PressHoldButton>(
-                            "Delete",
-                            components::PressHoldButtonStyle(),
-                            [this, filename, &fileManager]() {
-                                fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
-                                if (router()) {
-                                    router()->popScreen();
-                                }
+                        std::make_unique<widgets::LinearLayout>(
+                            widgets::Axis::Vertical,
+                            widgets::LinearLayoutStyle{
+                                .horizontalAlign = widgets::HorizontalAlignment::Center
                             },
-                            2000
+                            
+                            std::make_unique<widgets::Button>(
+                                "Plot",
+                                widgets::ButtonStyle(),
+                                [this, filename, &jobController, &motionState, wifiStatusProvider]() {
+                                    jobController.start(filename);
+                                }
+                            ),
+                            std::make_unique<components::PressHoldButton>(
+                                "Delete",
+                                components::PressHoldButtonStyle(),
+                                [this, filename, &fileManager]() {
+                                    fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
+                                    if (router()) {
+                                        router()->popScreen();
+                                    }
+                                },
+                                2000, // 2 second hold time
+                                500 // 500ms release animation
+                            )
+                        ),
+                        
+                        std::make_unique<widgets::LinearLayout>(
+                            widgets::Axis::Vertical,
+                            widgets::LinearLayoutStyle{
+                                .horizontalAlign = widgets::HorizontalAlignment::Center,
+                            },
+
+                            std::make_unique<widgets::Label>([filename, &fileManager]() {
+                                size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
+                                return formatFileSize(size);
+                            }),
+
+                            std::make_unique<widgets::Label>([]() {
+                                size_t plotTimeSeconds = 120;
+                                return formatPlotTime(plotTimeSeconds);
+                            })
                         )
                     )
                 )
