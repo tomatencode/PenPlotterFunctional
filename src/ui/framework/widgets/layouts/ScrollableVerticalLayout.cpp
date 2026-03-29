@@ -9,7 +9,7 @@ void ScrollableVerticalLayout::updateScrollOffset(
     const std::vector<ChildInfo>& children,
     uint16_t visibleHeight)
 {
-    int currentY = _style.marginTop;
+    uint16_t currentY = _style.marginTop;
 
     for (const auto& child : children)
     {
@@ -21,8 +21,8 @@ void ScrollableVerticalLayout::updateScrollOffset(
 
             if (selectable->isFocused())
             {
-                int top = currentY;
-                int bottom = currentY + child.size.h;
+                uint16_t top = currentY;
+                uint16_t bottom = currentY + child.size.h;
 
                 if (top < _scrollOffset)
                 {
@@ -71,7 +71,7 @@ ScrollableVerticalLayout::collectChildren() const
     return result;
 }
 
-int ScrollableVerticalLayout::computeChildX(uint16_t width, const Rect& area) const
+uint16_t ScrollableVerticalLayout::computeChildX(uint16_t width, const Rect& area) const
 {
     switch (_style.horizontalAlign)
     {
@@ -107,23 +107,22 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
             ? content.w
             : std::min(child.size.w, content.w);
 
-        int x = computeChildX(width, content);
-
-        Rect rect = {
-            x,
-            currentY,
-            width,
-            child.size.h
-        };
-
-        // visibility check (cleaner)
         bool visible =
             currentY + child.size.h > canvasBox.y &&
             currentY < canvasBox.y + canvasBox.h;
 
-        if (visible)
-            widget->render(r, rect);
+        if (visible) {
+            uint16_t x = computeChildX(width, content);
 
+            Rect rect = {
+                x,
+                currentY,
+                width,
+                child.size.h
+            };
+
+            widget->render(r, rect);
+        }
         currentY += child.size.h + _style.spacing;
     }
 }
@@ -156,8 +155,8 @@ Size ScrollableVerticalLayout::measure() const
 bool ScrollableVerticalLayout::canExpandHorizontally() const
 {
     for (size_t i = 0; i < EnChildCount(); i++)
-        if (auto* w = EnChild(i))
-            if (w->canExpandHorizontally())
+        if (auto* child = EnChild(i))
+            if (child->canExpandHorizontally())
                 return true;
 
     return false;

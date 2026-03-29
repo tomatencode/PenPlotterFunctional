@@ -11,11 +11,11 @@ namespace widgets {
 
 struct ScrollableVerticalLayoutStyle {
     HorizontalAlignment horizontalAlign = HorizontalAlignment::Left;
-    uint8_t spacing = 0;
-    uint8_t marginLeft = 0;
-    uint8_t marginRight = 0;
-    uint8_t marginTop = 0;
-    uint8_t marginBottom = 0;
+    uint16_t spacing = 0;
+    uint16_t marginLeft = 0;
+    uint16_t marginRight = 0;
+    uint16_t marginTop = 0;
+    uint16_t marginBottom = 0;
 };
 
 class ScrollableVerticalLayout : public Layout
@@ -50,7 +50,7 @@ private:
     void updateScrollOffset(const std::vector<ChildInfo>& children,
                             uint16_t visibleHeight);
 
-    int computeChildX(uint16_t childWidth, const Rect& area) const;
+    uint16_t computeChildX(uint16_t childWidth, const Rect& area) const;
 
 private:
     int16_t _scrollOffset = 0;
