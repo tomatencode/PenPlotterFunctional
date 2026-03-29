@@ -109,6 +109,61 @@ void LinearLayout::distributeExpansion(std::vector<Child>& children,
             c.finalPrimary = target;
 }
 
+std::optional<Rect> LinearLayout::computeChildRect(const Child& c, Rect content, int childStart) const
+{
+    int start = (_axis == Axis::Horizontal) ? content.x : content.y;
+    int end   = (_axis == Axis::Horizontal)
+            ? (content.x + content.w)
+            : (content.y + content.h);
+
+    int childEnd = childStart + c.finalPrimary;
+
+    // Child is at least partially visible - clamp to visible bounds
+    int clampedStart = std::max(childStart, start);
+    int clampedEnd = std::min(childEnd, end);
+    int clampedSize = clampedEnd - clampedStart;
+
+    if (clampedSize <= 0)
+        return std::nullopt;
+
+    // Calculate secondary axis position
+    int secondaryPos = (_axis == Axis::Horizontal) ? content.y : content.x;
+
+    if (_axis == Axis::Horizontal)
+    {
+        if (_style.verticalAlign == VerticalAlignment::Middle)
+            secondaryPos += (content.h - c.secondary) / 2;
+        else if (_style.verticalAlign == VerticalAlignment::Bottom)
+            secondaryPos += content.h - c.secondary;
+    }
+    else
+    {
+        if (_style.horizontalAlign == HorizontalAlignment::Center)
+            secondaryPos += (content.w - c.secondary) / 2;
+        else if (_style.horizontalAlign == HorizontalAlignment::Right)
+            secondaryPos += content.w - c.secondary;
+    }
+
+    if (_axis == Axis::Horizontal)
+    {
+        return std::make_optional<Rect>({
+            uint8_t(clampedStart),
+            uint8_t(secondaryPos),
+            uint8_t(clampedSize),
+            uint8_t(c.secondary)
+        });
+    }
+    else
+    {
+        return std::make_optional<Rect>({
+            uint8_t(secondaryPos),
+            uint8_t(clampedStart),
+            uint8_t(c.secondary),
+            uint8_t(clampedSize)
+        });
+    }
+}
+
 // ---------- Layout ----------
 
 std::vector<LinearLayout::LayoutItem>
@@ -168,97 +223,34 @@ LinearLayout::computeLayout(Rect content) const
 
     // 4. Positioning
     int start = (_axis == Axis::Horizontal) ? content.x : content.y;
-    int end   = (_axis == Axis::Horizontal)
-            ? (content.x + content.w)
-            : (content.y + content.h);
 
     int pos = start + spacing.leading;
 
-    double error = 0;
+    double spacingError = 0;
 
     for (size_t i = 0; i < children.size(); i++)
     {
         auto& c = children[i];
 
-        int secPos = (_axis == Axis::Horizontal) ? content.y : content.x;
-
-        // alignment (unchanged)
-        if (_axis == Axis::Horizontal)
-        {
-            if (_style.verticalAlign == VerticalAlignment::Middle)
-                secPos += (content.h - c.secondary) / 2;
-            else if (_style.verticalAlign == VerticalAlignment::Bottom)
-                secPos += content.h - c.secondary;
-        }
-        else
-        {
-            if (_style.horizontalAlign == HorizontalAlignment::Center)
-                secPos += (content.w - c.secondary) / 2;
-            else if (_style.horizontalAlign == HorizontalAlignment::Right)
-                secPos += content.w - c.secondary;
-        }
-
         int childStart = pos;
-        int childEnd   = pos + c.finalPrimary;
+        auto rect = computeChildRect(c, content, childStart);
 
-        // SKIP completely off-screen children
-        if (childEnd <= start)
-        {
-            pos += c.finalPrimary;
-            continue;
-        }
+        if (rect.has_value())
+            result.push_back({c.widget, rect.value()});
 
-        if (childStart >= end)
-        {
-            break; // nothing else visible
-        }
-
-        // CLAMP visible part
-        int visibleStart = std::max(childStart, start);
-        int visibleEnd   = std::min(childEnd, end);
-
-        int visibleSize = visibleEnd - visibleStart;
-
-        if (visibleSize <= 0)
-        {
-            pos += c.finalPrimary;
-            continue;
-        }
-
-        Rect rect;
-
-        if (_axis == Axis::Horizontal)
-        {
-            rect = {
-                uint8_t(visibleStart),
-                uint8_t(secPos),
-                uint8_t(visibleSize),
-                uint8_t(c.secondary)
-            };
-        }
-        else
-        {
-            rect = {
-                uint8_t(secPos),
-                uint8_t(visibleStart),
-                uint8_t(c.secondary),
-                uint8_t(visibleSize)
-            };
-        }
-
-        result.push_back({c.widget, rect});
-
+        // Advance position along primary axis
         pos += c.finalPrimary;
 
+        // Add spacing between children (if not the last child)
         if (i + 1 < children.size())
         {
-            int s = std::round(spacing.between);
-            pos += s;
+            int spacingAmount = std::round(spacing.between);
+            pos += spacingAmount;
 
-            error += spacing.between - s;
+            spacingError += spacing.between - spacingAmount;
 
-            if (error >= 0.5) { pos++; error -= 1.0; }
-            else if (error <= -0.5) { pos--; error += 1.0; }
+            if (spacingError >= 0.5) { pos++; spacingError -= 1.0; }
+            else if (spacingError <= -0.5) { pos--; spacingError += 1.0; }
         }
     }
 

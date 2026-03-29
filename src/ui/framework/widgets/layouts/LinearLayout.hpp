@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 #include "../core/Layout.hpp"
 #include "LayoutStyle.hpp"
@@ -72,6 +73,7 @@ private:
 
     Spacing computeSpacing(uint16_t available, uint16_t total, size_t count) const;
     void distributeExpansion(std::vector<Child>& children, uint16_t available) const;
+    std::optional<Rect> computeChildRect(const Child& c, Rect content, int childStart) const;
 
     std::vector<LayoutItem> computeLayout(Rect content) const;
 
