@@ -10,7 +10,7 @@
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Spacer.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
-#include "../framework/widgets/layouts/HorizontalLayout.hpp"
+#include "../framework/widgets/layouts/LinearLayout.hpp"
 #include "../framework/widgets/Builder.hpp"
 
 namespace ui {
@@ -26,7 +26,8 @@ public:
                std::function<void()> onBackPress = nullptr
               )
     : Container(
-        widgets::make_widget<widgets::HorizontalLayout>(
+        widgets::make_widget<widgets::LinearLayout>(
+            widgets::Axis::Horizontal,
             widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
             widgets::make_widget<components::WifiIndicator>(WifiStatusProvider),
             widgets::make_widget<widgets::Label>(textProvider),

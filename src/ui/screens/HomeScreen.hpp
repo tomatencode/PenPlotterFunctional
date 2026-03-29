@@ -18,7 +18,7 @@
 #include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/layouts/VerticalLayout.hpp"
+#include "../framework/widgets/layouts/LinearLayout.hpp"
 
 namespace ui {
 namespace screens {
@@ -33,7 +33,8 @@ public:
                std::function<bool()> wifiStatusProvider
                )
     : Screen(
-        widgets::make_widget<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::LinearLayout>(
+            widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
 

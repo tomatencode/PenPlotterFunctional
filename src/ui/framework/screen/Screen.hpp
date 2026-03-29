@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "../widgets/layouts/VerticalLayout.hpp"
+#include "../widgets/layouts/LinearLayout.hpp"
 #include "../focusManager/FocusManager.hpp"
 
 namespace ui {

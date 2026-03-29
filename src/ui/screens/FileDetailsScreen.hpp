@@ -20,8 +20,6 @@
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
-#include "../framework/widgets/layouts/VerticalLayout.hpp"
-#include "../framework/widgets/layouts/HorizontalLayout.hpp"
 #include "../components/PressHoldButton.hpp"
 
 #include "config/job_config.hpp"
@@ -59,7 +57,8 @@ public:
             true, // lazy evaluation
             std::make_unique<widgets::Switch<bool>::Branch>(
                 true, 
-                widgets::make_widget<widgets::VerticalLayout>(
+                widgets::make_widget<widgets::LinearLayout>(
+                    widgets::Axis::Vertical,
                     widgets::LinearLayoutStyle{},
 
                     widgets::make_widget<components::HeaderLine>(
@@ -81,7 +80,8 @@ public:
                         return "Plot Time: " + formatPlotTime(plotTimeSeconds);
                     }),
 
-                    widgets::make_widget<widgets::HorizontalLayout>(
+                    widgets::make_widget<widgets::LinearLayout>(
+                        widgets::Axis::Horizontal,
                         widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                         widgets::make_widget<widgets::Button>(
@@ -108,7 +108,8 @@ public:
 
             widgets::make_widget<widgets::Switch<bool>::Branch>(
                 false,
-                widgets::make_widget<widgets::VerticalLayout>(
+                widgets::make_widget<widgets::LinearLayout>(
+                    widgets::Axis::Vertical,
                     widgets::LinearLayoutStyle{},
 
                     widgets::make_widget<components::HeaderLine>(

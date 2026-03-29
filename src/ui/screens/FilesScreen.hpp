@@ -18,7 +18,7 @@
 #include "../framework/widgets/Builder.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/layouts/VerticalLayout.hpp"
+#include "../framework/widgets/layouts/LinearLayout.hpp"
 #include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 
 namespace ui {
@@ -33,7 +33,8 @@ public:
                 std::function<bool()> wifiStatusProvider
             )
     : Screen(
-        widgets::make_widget<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::LinearLayout>(
+            widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{},
             widgets::make_widget<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
                 if (router()) {

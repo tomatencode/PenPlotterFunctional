@@ -21,8 +21,6 @@
 #include "../framework/widgets/leaves/ProgressBar.hpp"
 #include "../framework/widgets/leaves/Conditional.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
-#include "../framework/widgets/layouts/VerticalLayout.hpp"
-#include "../framework/widgets/layouts/HorizontalLayout.hpp"
 
 namespace ui {
 namespace screens {
@@ -35,7 +33,8 @@ public:
                    std::function<bool()> wifiStatusProvider
                   )
     : Screen(
-        widgets::make_widget<widgets::VerticalLayout>(
+        widgets::make_widget<widgets::LinearLayout>(
+            widgets::Axis::Vertical,
             widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
             widgets::make_widget<components::HeaderLine>(
                 [&jobController]() {
@@ -56,7 +55,8 @@ public:
                 return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
              }),
 
-            widgets::make_widget<widgets::HorizontalLayout>(
+            widgets::make_widget<widgets::LinearLayout>(
+                widgets::Axis::Horizontal,
                 widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::Even},
                 widgets::make_widget<widgets::Label>([&jobController, this]() {
                     return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
@@ -67,7 +67,8 @@ public:
                 false,  // eager evaluation
                 widgets::make_widget<widgets::Switch<bool>::Branch>(
                     true,
-                    widgets::make_widget<widgets::HorizontalLayout>(
+                    widgets::make_widget<widgets::LinearLayout>(
+                        widgets::Axis::Horizontal,
                         widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
 
                         widgets::make_widget<widgets::Button>(
