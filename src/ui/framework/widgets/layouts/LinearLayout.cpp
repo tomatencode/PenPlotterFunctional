@@ -167,8 +167,12 @@ LinearLayout::computeLayout(Rect content) const
     }
 
     // 4. Positioning
-    int pos = (_axis == Axis::Horizontal) ? content.x : content.y;
-    pos += spacing.leading;
+    int start = (_axis == Axis::Horizontal) ? content.x : content.y;
+    int end   = (_axis == Axis::Horizontal)
+            ? (content.x + content.w)
+            : (content.y + content.h);
+
+    int pos = start + spacing.leading;
 
     double error = 0;
 
@@ -178,7 +182,7 @@ LinearLayout::computeLayout(Rect content) const
 
         int secPos = (_axis == Axis::Horizontal) ? content.y : content.x;
 
-        // alignment
+        // alignment (unchanged)
         if (_axis == Axis::Horizontal)
         {
             if (_style.verticalAlign == VerticalAlignment::Middle)
@@ -194,14 +198,53 @@ LinearLayout::computeLayout(Rect content) const
                 secPos += content.w - c.secondary;
         }
 
+        int childStart = pos;
+        int childEnd   = pos + c.finalPrimary;
+
+        // SKIP completely off-screen children
+        if (childEnd <= start)
+        {
+            pos += c.finalPrimary;
+            continue;
+        }
+
+        if (childStart >= end)
+        {
+            break; // nothing else visible
+        }
+
+        // CLAMP visible part
+        int visibleStart = std::max(childStart, start);
+        int visibleEnd   = std::min(childEnd, end);
+
+        int visibleSize = visibleEnd - visibleStart;
+
+        if (visibleSize <= 0)
+        {
+            pos += c.finalPrimary;
+            continue;
+        }
+
         Rect rect;
 
         if (_axis == Axis::Horizontal)
-            rect = {uint8_t(pos), uint8_t(secPos),
-                    uint8_t(c.finalPrimary), uint8_t(c.secondary)};
+        {
+            rect = {
+                uint8_t(visibleStart),
+                uint8_t(secPos),
+                uint8_t(visibleSize),
+                uint8_t(c.secondary)
+            };
+        }
         else
-            rect = {uint8_t(secPos), uint8_t(pos),
-                    uint8_t(c.secondary), uint8_t(c.finalPrimary)};
+        {
+            rect = {
+                uint8_t(secPos),
+                uint8_t(visibleStart),
+                uint8_t(c.secondary),
+                uint8_t(visibleSize)
+            };
+        }
 
         result.push_back({c.widget, rect});
 
