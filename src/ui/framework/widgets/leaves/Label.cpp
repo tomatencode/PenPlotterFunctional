@@ -25,8 +25,8 @@ Size Label::measure() const
 {
     auto glyphs = getGlyphs();
     return {
-        glyphs.size(), // width based on glyph count,
-        1 // single line height
+        static_cast<uint16_t>(glyphs.size()),
+        1
     };
 }
 
