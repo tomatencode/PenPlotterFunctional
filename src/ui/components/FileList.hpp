@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "../framework/widgets/core/Container.hpp"
+#include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 
 #include "storage/FileManager.hpp"
 
@@ -18,6 +19,7 @@ public:
 private:
     FileManager& _fileManager;
     std::function<void(const String&)> _onFileSelected;
+    widgets::ScrollableVerticalLayout* _layout;
 };
 
 } // namespace components

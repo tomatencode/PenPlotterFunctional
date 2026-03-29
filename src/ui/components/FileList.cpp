@@ -1,8 +1,6 @@
 #include "FileList.hpp"
 
-#include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
 
 #include "../styles/ButtonStyles.hpp"
 
@@ -15,23 +13,27 @@
 namespace ui {
 namespace components {
 
-FileList::FileList(FileManager& fileManager, std::function<void(const String&)> onFileSelected)
-    : Container(std::make_unique<widgets::ScrollableVerticalLayout>(
+FileList::FileList(FileManager& fileManager,
+                   std::function<void(const String&)> onFileSelected)
+    : Container(),
+      _fileManager(fileManager),
+      _onFileSelected(std::move(onFileSelected))
+{
+    auto layout = std::make_unique<widgets::ScrollableVerticalLayout>(
         widgets::ScrollableVerticalLayoutStyle{},
         std::vector<std::unique_ptr<widgets::Widget>>{}
-    )),
-    _fileManager(fileManager),
-    _onFileSelected(std::move(onFileSelected))
-{
+    );
+
+    _layout = layout.get();
+    setChild(std::move(layout));
+
     reload();
 }
 
 void FileList::reload() {
-    widgets::ScrollableVerticalLayout* layout = static_cast<widgets::ScrollableVerticalLayout*>(widgets::Container::child(0));
+    if (!_layout) return;
 
-    if (!layout) return;
-
-    layout->clearChildren();
+    _layout->clearChildren();
 
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
     for (const auto& file : files) {
@@ -40,7 +42,7 @@ void FileList::reload() {
             ui::styles::listButtonStyle,
             [this, file]() { _onFileSelected(file); }
         );
-        layout->addChild(std::move(button));
+        _layout->addChild(std::move(button));
     }
 }
 
