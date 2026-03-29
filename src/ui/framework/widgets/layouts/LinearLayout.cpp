@@ -5,11 +5,15 @@ namespace widgets {
 
 Rect LinearLayout::applyMargins(Rect box) const
 {
+    auto safeSub = [](int a, int b) {
+        return std::max(0, a - b);
+    };
+
     return {
-        box.x + _style.marginLeft,
-        box.y + _style.marginTop,
-        box.w - _style.marginLeft - _style.marginRight,
-        box.h - _style.marginTop - _style.marginBottom
+        static_cast<uint16_t>(box.x + _style.marginLeft),
+        static_cast<uint16_t>(box.y + _style.marginTop),
+        static_cast<uint16_t>(safeSub(box.w, _style.marginLeft + _style.marginRight)),
+        static_cast<uint16_t>(safeSub(box.h, _style.marginTop + _style.marginBottom))
     };
 }
 
