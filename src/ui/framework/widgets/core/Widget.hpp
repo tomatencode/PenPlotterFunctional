@@ -15,7 +15,6 @@ public:
 
     virtual void render(Renderer& r, Rect canvasBox) = 0;
 
-    // minimum size needed to render the widget properly.
     virtual Size measure() const { return Size{0, 0}; }
 
     virtual bool canExpandHorizontally() const { return false; }
@@ -23,16 +22,10 @@ public:
 
     virtual bool isSelectable() const { return false; }
 
-    virtual bool isEnabled() const {
-        if (getParent())
-            return getParent()->isEnabled();
-        return true;
-    }
-
     virtual void reload() {};
 
-    virtual size_t childCount() const { return 0; }
-    virtual Widget* child(size_t) const { return nullptr; }
+    virtual size_t getChildCount() const { return 0; }
+    virtual Widget* getChild(size_t) const { return nullptr; }
 
     // for upstream widget tree traversal
     Widget* getParent() const { return _parent; }

@@ -2,11 +2,9 @@
 
 #include "../core/Widget.hpp"
 #include "../core/Container.hpp"
-#include "Conditional.hpp"
 #include <functional>
 #include <vector>
 #include <memory>
-#include <concepts>
 
 namespace ui {
 namespace widgets {
@@ -16,15 +14,11 @@ class Switch : public Widget
 {
 public:
 
-    class Branch : public Conditional
+    class Branch : public Container
     {
     public:
         Branch(T value, std::unique_ptr<Widget> child)
-            : Conditional(
-                [this]() { return this->_enabled; },
-                false, // eger evaluation
-                std::move(child)
-            ),
+            : Container(std::move(child)),
             _value(value)
         {
         }
@@ -104,16 +98,18 @@ public:
         return false;
     }
 
-    size_t childCount() const override
+    size_t getChildCount() const override
     {
-        return _branches.size();
+        if (auto current = getCurrentWidget()) {
+            return 1;
+        }
+        return 0;
     }
 
-    Widget* child(size_t index) const override
+    Widget* getChild(size_t index) const override
     {
-        if (index >= _branches.size()) return nullptr;
-        
-        return _branches[index].get();
+        if (index != 0) return nullptr;
+        return getCurrentWidget();
     }
 
     void reload() override {

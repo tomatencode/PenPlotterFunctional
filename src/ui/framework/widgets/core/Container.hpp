@@ -29,9 +29,9 @@ public:
             _child->reload();
     }
 
-    virtual size_t childCount() const override { return _child ? 1 : 0; }
+    virtual size_t getChildCount() const override { return _child ? 1 : 0; }
 
-    virtual Widget* child(size_t index) const override {
+    virtual Widget* getChild(size_t index) const override {
         if (_child && index == 0)
             return _child.get();
         return nullptr;

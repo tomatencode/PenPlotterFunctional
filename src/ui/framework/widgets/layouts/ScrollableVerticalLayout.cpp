@@ -59,11 +59,11 @@ std::vector<ScrollableVerticalLayout::ChildInfo>
 ScrollableVerticalLayout::collectChildren() const
 {
     std::vector<ChildInfo> result;
-    result.reserve(EnChildCount());
+    result.reserve(getChildCount());
 
-    for (size_t i = 0; i < EnChildCount(); i++)
+    for (size_t i = 0; i < getChildCount(); i++)
     {
-        if (auto* w = EnChild(i))
+        if (auto* w = getChild(i))
         {
             result.push_back({
                 w,
@@ -92,7 +92,7 @@ uint16_t ScrollableVerticalLayout::computeChildX(uint16_t width, const Rect& are
 
 void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 {
-    if (EnChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
+    if (getChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
     Rect content = applyMargins(canvasBox);
@@ -158,8 +158,8 @@ Size ScrollableVerticalLayout::measure() const
 
 bool ScrollableVerticalLayout::canExpandHorizontally() const
 {
-    for (size_t i = 0; i < EnChildCount(); i++)
-        if (auto* child = EnChild(i))
+    for (size_t i = 0; i < getChildCount(); i++)
+        if (auto* child = getChild(i))
             if (child->canExpandHorizontally())
                 return true;
 

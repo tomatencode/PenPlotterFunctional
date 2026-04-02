@@ -185,7 +185,7 @@ LinearLayout::computeLayout(Rect content) const
 {
     std::vector<LayoutItem> result;
 
-    const size_t childCount = EnChildCount();
+    const size_t childCount = getChildCount();
     if (childCount == 0) return result;
 
     std::vector<ChildInfo> children;
@@ -194,7 +194,7 @@ LinearLayout::computeLayout(Rect content) const
     // 1. Collect children
     for (size_t i = 0; i < childCount; i++)
     {
-        if (auto* child = EnChild(i))
+        if (auto* child = getChild(i))
         {
             Size s = child->measure();
 
@@ -275,7 +275,7 @@ LinearLayout::computeLayout(Rect content) const
 
 void LinearLayout::render(Renderer& r, Rect canvasBox)
 {
-    if (EnChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
+    if (getChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
     Rect content = applyMargins(canvasBox);
@@ -291,9 +291,9 @@ Size LinearLayout::measure() const
     uint16_t primary = 0;
     uint16_t secondary = 0;
 
-    for (size_t i = 0; i < EnChildCount(); i++)
+    for (size_t i = 0; i < getChildCount(); i++)
     {
-        if (auto* w = EnChild(i))
+        if (auto* w = getChild(i))
         {
             Size s = w->measure();
             primary += primarySize(s);
@@ -301,8 +301,8 @@ Size LinearLayout::measure() const
         }
     }
 
-    if (EnChildCount() > 1 && _style.spacingMode == SpacingMode::Fixed)
-        primary += (EnChildCount() - 1) * _style.spacing;
+    if (getChildCount() > 1 && _style.spacingMode == SpacingMode::Fixed)
+        primary += (getChildCount() - 1) * _style.spacing;
 
     uint16_t w = (_axis == Axis::Horizontal) ? primary : secondary;
     uint16_t h = (_axis == Axis::Horizontal) ? secondary : primary;
@@ -318,8 +318,8 @@ bool LinearLayout::canExpandHorizontally() const
     if (_axis == Axis::Horizontal && _style.spacingMode != SpacingMode::Fixed)
         return true;
 
-    for (size_t i = 0; i < EnChildCount(); i++)
-        if (auto* w = EnChild(i))
+    for (size_t i = 0; i < getChildCount(); i++)
+        if (auto* w = getChild(i))
             if (w->canExpandHorizontally())
                 return true;
 
@@ -331,8 +331,8 @@ bool LinearLayout::canExpandVertically() const
     if (_axis == Axis::Vertical && _style.spacingMode != SpacingMode::Fixed)
         return true;
 
-    for (size_t i = 0; i < EnChildCount(); i++)
-        if (auto* w = EnChild(i))
+    for (size_t i = 0; i < getChildCount(); i++)
+        if (auto* w = getChild(i))
             if (w->canExpandVertically())
                 return true;
 

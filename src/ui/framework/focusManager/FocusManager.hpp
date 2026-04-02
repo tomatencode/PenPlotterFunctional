@@ -25,6 +25,7 @@ private:
 
     size_t _focusedIndx = 0;
     widgets::Widget* _root = nullptr;
+    std::vector<widgets::Selectable*> _cachedSelectables;
 
     void collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out);
 };

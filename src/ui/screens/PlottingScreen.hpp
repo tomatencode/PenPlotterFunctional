@@ -18,7 +18,6 @@
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/leaves/ProgressBar.hpp"
-#include "../framework/widgets/leaves/Conditional.hpp"
 #include "../framework/widgets/leaves/Switch.hpp"
 
 namespace ui {
