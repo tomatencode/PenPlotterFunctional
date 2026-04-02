@@ -4,7 +4,7 @@
 #include <sstream>
 #include <type_traits>
 
-#include "../core/Selectable.hpp"
+#include "../core/ISelectable.hpp"
 #include "../core/Widget.hpp"
 
 namespace ui {
@@ -30,7 +30,7 @@ struct ValueSelectorStyle
 // focused+editing -> >3<
 
 template <typename T>
-class ValueSelector : public Selectable
+class ValueSelector : public Widget, public ISelectable
 {
 public:
     static std::string defaultToString(const T& value)
@@ -54,8 +54,9 @@ public:
         , _onChange(std::move(onChange))
         , _ToString(ToString ? std::move(ToString) : defaultToString)
         , _style(style)
-    {
-    }
+    {}
+
+    ISelectable* tryGetSelectable() override { return this; }
 
     const T& value() const { return _value; }
 
@@ -156,6 +157,12 @@ public:
             updateValueByEncoderDelta(input.encoderDelta);
             input.encoderDelta = 0; // consume rotation while editing
         }
+    }
+
+    void reload() override {
+        ISelectable::reload();
+        _isEditing = false;
+        _isPressed = false;
     }
 
 private:

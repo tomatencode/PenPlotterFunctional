@@ -4,7 +4,7 @@
 #include <memory>
 #include <concepts>
 
-#include "../core/Selectable.hpp"
+#include "../core/ISelectable.hpp"
 #include "../core/Widget.hpp"
 #include "Label.hpp"
 
@@ -22,7 +22,7 @@ struct ButtonStyle
     Glyph rightPressed = '-';
 };
 
-class Button : public Selectable
+class Button : public Widget, public ISelectable
 {
 public:
     // creates a Label
@@ -45,10 +45,12 @@ public:
     
     void handleInput(InputState& input) override;
 
+    ISelectable* tryGetSelectable() override { return this; }
+
     bool isPressed() const { return _isPressed; }
 
     void reload() override {
-        Selectable::reload();
+        ISelectable::reload();
         if (_label)
             _label->reload();
         _isPressed = false;
