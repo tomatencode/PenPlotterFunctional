@@ -17,6 +17,7 @@
 #include "../components/ColabsibleElement.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
+#include "../framework/widgets/leaves/ValueSelector.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
 
 namespace ui {
@@ -49,9 +50,17 @@ public:
                         .label = "Wifi Settings"
                     },
                     std::make_unique<widgets::LinearLayout>(
-                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
-                        std::make_unique<widgets::Label>("Wifi settings would go here"),
-                        std::make_unique<widgets::Label>("...")
+                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal},
+                        std::make_unique<widgets::Label>("Wifi: "),
+
+                        std::make_unique<widgets::ValueSelector<bool>>(
+                            widgets::ValueSelectorProps<bool>{
+                                .initialValue = false,
+                                .next = [](const bool& value) { return !value; },
+                                .prev = [](const bool& value) { return !value; },
+                                .toString = [](const bool& value) { return value ? "On" : "Off"; },
+                            }
+                        )
                     )
                 ),
 

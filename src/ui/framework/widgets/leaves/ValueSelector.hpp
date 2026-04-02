@@ -6,20 +6,21 @@
 
 #include "../core/ISelectable.hpp"
 #include "../core/Widget.hpp"
+#include "../../text/GlyphStringProvider.hpp"
 
 namespace ui {
 namespace widgets {
 
 struct ValueSelectorStyle
 {
-    Glyph leftNormal   = GLYPH_NONE;
-    Glyph rightNormal  = GLYPH_NONE;
-    Glyph leftFocused  = '<';
-    Glyph rightFocused = '>';
-    Glyph leftPressed  = '-';
-    Glyph rightPressed = '-';
-    Glyph leftEditing  = '>';
-    Glyph rightEditing = '<';
+    GlyphStringProvider leftNormal   = {};
+    GlyphStringProvider rightNormal  = {};
+    GlyphStringProvider leftFocused  = '<';
+    GlyphStringProvider rightFocused = '>';
+    GlyphStringProvider leftPressed  = '-';
+    GlyphStringProvider rightPressed = '-';
+    GlyphStringProvider leftEditing  = '>';
+    GlyphStringProvider rightEditing = '<';
 };
 
 template <typename T>
@@ -66,19 +67,22 @@ public:
 
     Size measure() const override
     {
-        std::string text = _ToString(_value);
+        std::string text = _toString(_value);
         int width = static_cast<int>(text.size());
 
         if (_isEditing)
-            width += ((_style.leftEditing.code != GLYPH_NONE.code) ? 1 : 0) + ((_style.rightEditing.code != GLYPH_NONE.code) ? 1 : 0);
+            width += _style.leftEditing.size() + _style.rightEditing.size();
         else if (_isPressed)
-            width += ((_style.leftPressed.code != GLYPH_NONE.code) ? 1 : 0) + ((_style.rightPressed.code != GLYPH_NONE.code) ? 1 : 0);
+            width += _style.leftPressed.size() + _style.rightPressed.size();
         else if (isFocused())
-            width += ((_style.leftFocused.code != GLYPH_NONE.code) ? 1 : 0) + ((_style.rightFocused.code != GLYPH_NONE.code) ? 1 : 0);
+            width += _style.leftFocused.size() + _style.rightFocused.size();
         else
-            width += ((_style.leftNormal.code != GLYPH_NONE.code) ? 1 : 0) + ((_style.rightNormal.code != GLYPH_NONE.code) ? 1 : 0);
+            width += _style.leftNormal.size() + _style.rightNormal.size();
 
-        return { width, 1 };
+        return {
+            static_cast<uint16_t>(width),
+            1
+        };
     }
 
     void render(Renderer& r, Rect canvasBox) override
@@ -86,28 +90,28 @@ public:
         if (canvasBox.w == 0 || canvasBox.h == 0)
             return;
 
-        Glyph leftDecorator = GLYPH_NONE;
-        Glyph rightDecorator = GLYPH_NONE;
+        GlyphString leftDecorator = {};
+        GlyphString rightDecorator = {};
 
         if (_isPressed)
         {
-            leftDecorator = _style.leftPressed;
-            rightDecorator = _style.rightPressed;
+            leftDecorator = _style.leftPressed.getGlyphs();
+            rightDecorator = _style.rightPressed.getGlyphs();
         }
         else if (_isEditing)
         {
-            leftDecorator = _style.leftEditing;
-            rightDecorator = _style.rightEditing;
+            leftDecorator = _style.leftEditing.getGlyphs();
+            rightDecorator = _style.rightEditing.getGlyphs();
         }
         else if (isFocused())
         {
-            leftDecorator = _style.leftFocused;
-            rightDecorator = _style.rightFocused;
+            leftDecorator = _style.leftFocused.getGlyphs();
+            rightDecorator = _style.rightFocused.getGlyphs();
         }
         else
         {
-            leftDecorator = _style.leftNormal;
-            rightDecorator = _style.rightNormal;
+            leftDecorator = _style.leftNormal.getGlyphs();
+            rightDecorator = _style.rightNormal.getGlyphs();
         }
 
         uint16_t x = canvasBox.x;
@@ -115,17 +119,12 @@ public:
 
         std::string text = _toString(_value);
 
-        uint16_t decorationWidth = 0;
-        if (leftDecorator.code != GLYPH_NONE.code) decorationWidth++;
-        if (rightDecorator.code != GLYPH_NONE.code) decorationWidth++;
+        uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 
         int textWidth = static_cast<int>(canvasBox.w) - static_cast<int>(decorationWidth);
 
-        if (leftDecorator.code != GLYPH_NONE.code && canvasBox.w > 0)
-        {
-            r.drawGlyphToBuffer(x, y, leftDecorator);
-            x++;
-        }
+        r.drawGlyphsToBuffer(x, y, leftDecorator);
+        x += leftDecorator.size();
 
         if (textWidth > 0)
         {
@@ -136,10 +135,7 @@ public:
             x += static_cast<uint16_t>(text.size());
         }
 
-        if (rightDecorator.code != GLYPH_NONE.code && canvasBox.w >= decorationWidth)
-        {
-            r.drawGlyphToBuffer(x, y, rightDecorator);
-        }
+        r.drawGlyphsToBuffer(x, y, rightDecorator);
     }
 
     void handleInput(InputState& input) override
@@ -183,11 +179,10 @@ private:
 
     void updateValueByEncoderDelta(int delta)
     {
-        if (delta > 0)
+        if (delta > 0 && _next)
             _value = _next(_value);
-        else if (delta < 0)
+        else if (delta < 0 && _prev)
             _value = _prev(_value);
-
         if (delta != 0 && _onChange)
             _onChange(_value);
     }
