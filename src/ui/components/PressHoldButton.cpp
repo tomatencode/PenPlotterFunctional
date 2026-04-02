@@ -82,13 +82,13 @@ void PressHoldButton::render(Renderer& r, widgets::Rect canvasBox)
     for (uint8_t i = 0; i < fillWidth; i++)
     {
         if (_inRelAnimation)
-            r.drawGlyphToBuffer(x + i, y, _style.HoldReleaseAnimation);
+            r.drawGlyphsToBuffer(x + i, y, _style.HoldReleaseAnimation);
         else
-            r.drawGlyphToBuffer(x + i, y, _style.HoldCountdownFilled);
+            r.drawGlyphsToBuffer(x + i, y, _style.HoldCountdownFilled);
     }
     for (uint8_t i = fillWidth; i < buttonWidth; i++)
     {
-        r.drawGlyphToBuffer(x + i, y, _style.HoldCountdownEmpty);
+        r.drawGlyphsToBuffer(x + i, y, _style.HoldCountdownEmpty);
     }
 }
 

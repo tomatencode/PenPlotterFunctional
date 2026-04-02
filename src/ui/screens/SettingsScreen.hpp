@@ -18,8 +18,6 @@
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
-#include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
-
 
 namespace ui {
 namespace screens {
@@ -31,8 +29,8 @@ public:
                    std::function<bool()> wifiStatusProvider
                   )
     : Screen(
-        std::make_unique<widgets::ScrollableVerticalLayout>(
-            widgets::ScrollableVerticalLayoutStyle{},
+        std::make_unique<widgets::LinearLayout>(
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
             std::make_unique<components::HeaderLine>(
                 "Settings",
@@ -44,25 +42,28 @@ public:
                 }
             ),
 
-            std::make_unique<components::CollabsibleElement>(
-                components::CollabsibleElementProps{
-                    .label = "Wifi Settings"
-                },
-                std::make_unique<widgets::LinearLayout>(
-                    widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
-                    std::make_unique<widgets::Label>("Wifi settings would go here"),
-                    std::make_unique<widgets::Label>("...")
-                )
-            ),
+            std::make_unique<widgets::ScrollableVerticalLayout>(
+                widgets::ScrollableVerticalLayoutStyle{},
+                std::make_unique<components::CollabsibleElement>(
+                    components::CollabsibleElementProps{
+                        .label = "Wifi Settings"
+                    },
+                    std::make_unique<widgets::LinearLayout>(
+                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
+                        std::make_unique<widgets::Label>("Wifi settings would go here"),
+                        std::make_unique<widgets::Label>("...")
+                    )
+                ),
 
-            std::make_unique<components::CollabsibleElement>(
-                components::CollabsibleElementProps{
-                    .label = "PLotting Settings"
-                },
-                std::make_unique<widgets::LinearLayout>(
-                    widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
-                    std::make_unique<widgets::Label>("Plotting settings would go here"),
-                    std::make_unique<widgets::Label>("...")
+                std::make_unique<components::CollabsibleElement>(
+                    components::CollabsibleElementProps{
+                        .label = "PLotting Settings"
+                    },
+                    std::make_unique<widgets::LinearLayout>(
+                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
+                        std::make_unique<widgets::Label>("Plotting settings would go here"),
+                        std::make_unique<widgets::Label>("...")
+                    )
                 )
             )
         )

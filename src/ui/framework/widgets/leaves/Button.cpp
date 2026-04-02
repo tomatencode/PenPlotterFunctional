@@ -9,18 +9,15 @@ Size Button::measure() const
     uint8_t width = childSize.w;
     if (isFocused())
     {
-        if (_props.style.leftFocused.code != GLYPH_NONE.code) width++;
-        if (_props.style.rightFocused.code != GLYPH_NONE.code) width++;
+        width += _props.style.leftFocused.size() + _props.style.rightFocused.size();
     }
     else if (_isPressed)
     {
-        if (_props.style.leftPressed.code != GLYPH_NONE.code) width++;
-        if (_props.style.rightPressed.code != GLYPH_NONE.code) width++;
+        width += _props.style.leftPressed.size() + _props.style.rightPressed.size();
     }
     else
     {
-        if (_props.style.leftNormal.code != GLYPH_NONE.code) width++;
-        if (_props.style.rightNormal.code != GLYPH_NONE.code) width++;
+        width += _props.style.leftNormal.size() + _props.style.rightNormal.size();
     }
     return { width, 1 };
 }
@@ -35,35 +32,30 @@ void Button::render(Renderer& r, Rect canvasBox)
     uint16_t y = canvasBox.y;
 
     // Choose decorations based on state
-    Glyph leftDecorator  = _props.style.leftNormal;
-    Glyph rightDecorator = _props.style.rightNormal;
+    GlyphString leftDecorator  = _props.style.leftNormal.getGlyphs();
+    GlyphString rightDecorator = _props.style.rightNormal.getGlyphs();
 
     if (_isPressed)
     {
-        leftDecorator  = _props.style.leftPressed;
-        rightDecorator = _props.style.rightPressed;
+        leftDecorator  = _props.style.leftPressed.getGlyphs();
+        rightDecorator = _props.style.rightPressed.getGlyphs();
     }
     else if (isFocused())
     {
-        leftDecorator  = _props.style.leftFocused;
-        rightDecorator = _props.style.rightFocused;
+        leftDecorator  = _props.style.leftFocused.getGlyphs();
+        rightDecorator = _props.style.rightFocused.getGlyphs();
     }
 
     // Draw left decoration
-    if (leftDecorator.code != GLYPH_NONE.code && canvasBox.w > 0)
-    {
-        r.drawGlyphToBuffer(x, y, leftDecorator);
-        x++;
-    }
+    r.drawGlyphsToBuffer(x, y, leftDecorator);
+    x += leftDecorator.size();
 
     Size ChildSize = Container::measure();
 
     if (ChildSize.h > 1)
         Serial.println("Warning: Button label height exceeds 1, clipping will occur");
     
-    uint16_t decorationWidth = 0;
-    if (leftDecorator.code != GLYPH_NONE.code) decorationWidth++;
-    if (rightDecorator.code != GLYPH_NONE.code) decorationWidth++;
+    uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 
     int remainingWidth = static_cast<int>(canvasBox.w) - static_cast<int>(decorationWidth);
     uint16_t finalWidth = std::min<uint16_t>(ChildSize.w, remainingWidth);
@@ -81,10 +73,7 @@ void Button::render(Renderer& r, Rect canvasBox)
     x += ChildSize.w;
 
     // Draw right decoration
-    if (rightDecorator.code != GLYPH_NONE.code && canvasBox.w > 1)
-    {
-        r.drawGlyphToBuffer(x, y, rightDecorator);
-    }
+    r.drawGlyphsToBuffer(x, y, rightDecorator);
 }
 
 void Button::handleInput(InputState& input)

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <Arduino.h>
 #include "Glyph.hpp"
 
 namespace ui {
@@ -9,7 +10,10 @@ class GlyphString {
 public:
     GlyphString() {}
 
-    // New: initializer list of Glyph
+    GlyphString(Glyph glyph)
+        : _data(1, glyph)
+    {}
+
     GlyphString(std::initializer_list<Glyph> glyphs)
         : _data(glyphs)
     {}

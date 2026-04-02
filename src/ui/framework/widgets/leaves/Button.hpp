@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 
+#include "../../text/GlyphStringProvider.hpp"
 #include "../core/ISelectable.hpp"
 #include "../core/Container.hpp"
 #include "Label.hpp"
@@ -12,17 +13,17 @@ namespace widgets {
 
 struct ButtonStyle
 {
-    Glyph leftNormal   = '[';
-    Glyph rightNormal  = ']';
-    Glyph leftFocused  = '>';
-    Glyph rightFocused = '<';
-    Glyph leftPressed  = '-';
-    Glyph rightPressed = '-';
+    GlyphStringProvider leftNormal   = "[";
+    GlyphStringProvider rightNormal  = "]";
+    GlyphStringProvider leftFocused  = ">";
+    GlyphStringProvider rightFocused = "<";
+    GlyphStringProvider leftPressed  = "-";
+    GlyphStringProvider rightPressed = "-";
 };
 
 struct ButtonProps
 {
-    ButtonStyle style          = {};
+    ButtonStyle style = {};
     std::function<void()> onPress   = nullptr;
     std::function<void()> onRelease = nullptr;
 };

@@ -10,6 +10,8 @@
 #include "../framework/widgets/leaves/Spacer.hpp"
 #include "../framework/widgets/leaves/Conditional.hpp"
 
+#include "../framework/text/DynamicGlyphString.hpp"
+
 #include "../framework/text/GlyphString.hpp"
 #include "../framework/text/CustomChars.hpp"
 
@@ -35,12 +37,22 @@ public:
             std::make_unique<widgets::Button>(
                 widgets::ButtonProps{
                     .style = {
-                        .leftNormal = _expanded ? CustomChar::CollapsibleExpanded : '>',
-                        .rightNormal = GLYPH_NONE,
-                        .leftFocused = _expanded ? '-' : '+',
-                        .rightFocused = GLYPH_NONE,
-                        .leftPressed = _expanded ? '-' : '+',
-                        .rightPressed = GLYPH_NONE
+                        .leftNormal   = DynamicGlyphString(
+                            [this]() -> GlyphString {
+                            return _expanded ? "-" : "+";
+                        }),
+                        .rightNormal  = GlyphString{},
+
+                        .leftFocused  = DynamicGlyphString([this]() -> GlyphString {
+                            return _expanded ? Glyph(CustomChar::CollapsibleExpanded) : '>';
+                        }),
+                        .rightFocused = GlyphString{},
+
+                        .leftPressed  = DynamicGlyphString(
+                            [this]() -> GlyphString {
+                                return _expanded ? Glyph(CustomChar::CollapsibleExpanded) : '>';
+                            }),
+                        .rightPressed = GlyphString{}
                     },
                     .onPress = [this]() {
                         _expanded = !_expanded;

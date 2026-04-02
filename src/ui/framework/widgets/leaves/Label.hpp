@@ -1,12 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <functional>
-#include <variant>
 
 #include "../core/Widget.hpp"
 #include "../../text/Glyph.hpp"
-#include "../../text/GlyphString.hpp"
+#include "../../text/GlyphStringProvider.hpp"
 
 namespace ui {
 namespace widgets {
@@ -15,20 +13,27 @@ class Label : public Widget
 {
 public:
 
-    // Static label
-    Label(GlyphString glyphs);
+    Label(GlyphStringProvider glyphs)
+        : _glyphs(std::move(glyphs))
+    {}
 
-    // Dynamic label
-    Label(std::function<GlyphString()> glyphFunc);
+    void render(Renderer& r, Rect canvasBox) override {
+        if (canvasBox.w == 0 || canvasBox.h == 0)
+            return;
 
-    void render(Renderer& r, Rect canvasBox) override;
+        auto glyphs = _glyphs.getGlyphs();
+        r.drawGlyphsToBuffer(canvasBox.x, canvasBox.y, glyphs);
+    };
 
-    Size measure() const override;
+    Size measure() const override {
+        return {
+            static_cast<uint16_t>(_glyphs.size()),
+            1
+        };
+    };
 
 private:
-    std::variant<GlyphString, std::function<GlyphString()>> _glyphs;
-
-    GlyphString getGlyphs() const;
+    GlyphStringProvider _glyphs;
 };
 
 } // namespace widgets

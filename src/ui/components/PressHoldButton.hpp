@@ -10,15 +10,15 @@ namespace ui {
 namespace components {
 
 struct PressHoldButtonStyle {
-    Glyph leftNormal = '[';
-    Glyph rightNormal = ']';
-    Glyph leftFocused = '>';
-    Glyph rightFocused = '<';
-    Glyph leftPressed = '-';
-    Glyph rightPressed = '-';
-    Glyph HoldCountdownFilled = '=';
-    Glyph HoldCountdownEmpty = ' ';
-    Glyph HoldReleaseAnimation = '-';
+    GlyphStringProvider leftNormal = "[";
+    GlyphStringProvider rightNormal = "]";
+    GlyphStringProvider leftFocused = ">";
+    GlyphStringProvider rightFocused = "<";
+    GlyphStringProvider leftPressed = "-";
+    GlyphStringProvider rightPressed = "-";
+    GlyphString HoldCountdownFilled = "=";
+    GlyphString HoldCountdownEmpty = " ";
+    GlyphString HoldReleaseAnimation = "-";
 };
 
 class PressHoldButton: public ui::widgets::Button

@@ -6,12 +6,12 @@ namespace ui {
 namespace styles {
 
 inline widgets::ButtonStyle listButtonStyle = {
-    .leftNormal = GLYPH_NONE,
-    .rightNormal = GLYPH_NONE,
-    .leftFocused = '>',
-    .rightFocused = GLYPH_NONE,
-    .leftPressed = '-',
-    .rightPressed = GLYPH_NONE
+    .leftNormal = GlyphString{},
+    .rightNormal = GlyphString{},
+    .leftFocused = GlyphString('>'),
+    .rightFocused = GlyphString{},
+    .leftPressed = GlyphString('-'),
+    .rightPressed = GlyphString{}
 };
 
 } // namespace styles
