@@ -66,7 +66,7 @@ public:
 
                 std::make_unique<components::CollabsibleElement>(
                     components::CollabsibleElementProps{
-                        .label = "PLotting Settings"
+                        .label = "Plotting Settings"
                     },
                     std::make_unique<widgets::LinearLayout>(
                         widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
