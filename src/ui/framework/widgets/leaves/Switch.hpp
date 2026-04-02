@@ -9,6 +9,18 @@
 namespace ui {
 namespace widgets {
 
+enum SwitchEvaluationMode
+{
+    Eager,
+    Lazy
+};
+
+struct SwitchProps
+{
+    std::function<bool()> selector;
+    SwitchEvaluationMode evaluationMode = SwitchEvaluationMode::Eager;
+};
+
 template <typename T>
 class Switch : public Widget
 {
@@ -41,17 +53,17 @@ public:
 
     template<typename... Branches>
     requires (std::same_as<std::unique_ptr<Branch>, std::decay_t<Branches>> && ...)
-    Switch(std::function<T()> selector, bool lazy, Branches&&... branches)
-        : _selector(selector),
+    Switch(SwitchProps props, Branches&&... branches)
+        : _selector(props.selector),
         _branches(makeBranches(std::forward<Branches>(branches)...)),
-        _lazy(lazy),
+        _evaluationMode(props.evaluationMode),
         _cacheValid(false)
     {}
 
-    Switch(std::function<T()> selector, bool lazy, std::vector<std::unique_ptr<Branch>> branches)
-        : _selector(selector),
+    Switch(SwitchProps props, std::vector<std::unique_ptr<Branch>> branches)
+        : _selector(props.selector),
         _branches(std::move(branches)),
-        _lazy(lazy),
+        _evaluationMode(props.evaluationMode),
         _cacheValid(false)
     {}
 
@@ -116,7 +128,7 @@ public:
 private:
     std::function<T()> _selector;
     std::vector<std::unique_ptr<Branch>> _branches;
-    bool _lazy;
+    SwitchEvaluationMode _evaluationMode;
 
     // Caching
     mutable Branch* _current = nullptr;
@@ -124,7 +136,7 @@ private:
     mutable bool _cacheValid;
 
     Branch* getCurrentWidget() const {
-        if (_lazy && _cacheValid) return _current;
+        if (_evaluationMode == SwitchEvaluationMode::Lazy && _cacheValid) return _current;
 
         _cacheValid = true;
 

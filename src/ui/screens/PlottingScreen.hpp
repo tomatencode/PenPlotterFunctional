@@ -59,8 +59,10 @@ public:
             }),
 
             std::make_unique<widgets::Switch<bool>>(
-                [&jobController]() { return jobController.isActive(); },
-                false,  // eager evaluation
+                widgets::SwitchProps{
+                    .selector = [&jobController]() { return jobController.isActive(); },
+                    .evaluationMode = widgets::SwitchEvaluationMode::Eager
+                },
                 std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
                     std::make_unique<widgets::LinearLayout>(

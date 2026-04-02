@@ -52,8 +52,10 @@ public:
     )
     : Screen(
         std::make_unique<widgets::Switch<bool>>(
-            [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
-            true, // lazy evaluation
+            widgets::SwitchProps{
+                .selector = [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
+                .evaluationMode = widgets::SwitchEvaluationMode::Lazy
+            },
             std::make_unique<widgets::Switch<bool>::Branch>(
                 true, 
                 std::make_unique<widgets::LinearLayout>(

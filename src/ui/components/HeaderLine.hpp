@@ -30,8 +30,10 @@ public:
             std::make_unique<components::WifiIndicator>(WifiStatusProvider),
             std::make_unique<widgets::Label>(textProvider),
             std::make_unique<widgets::Switch<bool>>(
-                [onBackPress]() { return onBackPress != nullptr; },
-                true, // lazy evaluation
+                widgets::SwitchProps{
+                    .selector = [onBackPress]() { return onBackPress != nullptr; },
+                    .evaluationMode = widgets::SwitchEvaluationMode::Lazy
+                },
                 std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
                     std::make_unique<widgets::Button>(
