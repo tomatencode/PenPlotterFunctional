@@ -7,6 +7,8 @@
 namespace ui {
 namespace widgets {
 
+class ISelectable; // forward declaration
+
 class Widget
 {
 public:
@@ -20,7 +22,7 @@ public:
     virtual bool canExpandHorizontally() const { return false; }
     virtual bool canExpandVertically() const { return false; }
 
-    virtual bool isSelectable() const { return false; }
+    virtual ISelectable* tryGetSelectable() { return nullptr; }
 
     virtual void reload() {};
 

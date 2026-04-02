@@ -15,10 +15,8 @@ void ScrollableVerticalLayout::updateScrollOffset(
     {
         auto* widget = child.widget;
 
-        if (widget->isSelectable())
+        if (auto* selectable = widget->tryGetSelectable())
         {
-            auto* selectable = static_cast<Selectable*>(widget);
-
             if (selectable->isFocused())
             {
                 uint16_t top = currentY;

@@ -1,19 +1,19 @@
 #pragma once
 
 #include "Widget.hpp"
-#include "../../input/InputState.hpp"
+#include "ISelectable.hpp"
 
 namespace ui {
 namespace widgets {
 
-class Selectable : public Widget
+class Selectable : public Widget, public ISelectable
 {
 public:
     Selectable() {}
     
     ~Selectable() = default;
 
-    virtual bool isSelectable() const override { return true; }
+    ISelectable* tryGetSelectable() override { return this; }
 
     virtual void focus() { _focused = true; onFocusGained(); }
     virtual void unfocus() { _focused = false; onFocusLost(); }

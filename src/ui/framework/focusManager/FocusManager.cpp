@@ -61,7 +61,7 @@ void FocusManager::prev() {
 }
 
 void FocusManager::refresh() {
-    std::vector<widgets::Selectable*> widgets;
+    std::vector<widgets::ISelectable*> widgets;
     collectSelectables(_root, widgets);
 
     _cachedSelectables = widgets;
@@ -79,11 +79,11 @@ void FocusManager::refresh() {
         current->focus();
 }
 
-void FocusManager::collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out) {
+void FocusManager::collectSelectables(widgets::Widget* w, std::vector<widgets::ISelectable*>& out) {
     if (!w) return;
 
-    if (w->isSelectable())
-        out.push_back(static_cast<widgets::Selectable*>(w));
+    if (auto* sel = w->tryGetSelectable())
+        out.push_back(sel);
 
     for (size_t i = 0; i < w->getChildCount(); i++)
         collectSelectables(w->getChild(i), out);

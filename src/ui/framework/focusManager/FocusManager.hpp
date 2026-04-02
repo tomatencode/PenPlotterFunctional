@@ -2,7 +2,8 @@
 
 #include <cstddef>
 #include <vector>
-#include "../widgets/core/Selectable.hpp"
+#include "../widgets/core/Widget.hpp"
+#include "../widgets/core/ISelectable.hpp"
 
 namespace ui {
 
@@ -18,16 +19,16 @@ public:
 
     void refresh();
 private:
-    void refresh(std::vector<widgets::Selectable*> selectableWidgets);
+    void refresh(std::vector<widgets::ISelectable*> selectableWidgets);
 
     void next();
     void prev();
 
     size_t _focusedIndx = 0;
     widgets::Widget* _root = nullptr;
-    std::vector<widgets::Selectable*> _cachedSelectables;
+    std::vector<widgets::ISelectable*> _cachedSelectables;
 
-    void collectSelectables(widgets::Widget* w, std::vector<widgets::Selectable*>& out);
+    void collectSelectables(widgets::Widget* w, std::vector<widgets::ISelectable*>& out);
 };
 
 } // namespace ui
