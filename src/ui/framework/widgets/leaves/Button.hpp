@@ -10,30 +10,31 @@
 namespace ui {
 namespace widgets {
 
-// Optional: simple style for button decorations
 struct ButtonStyle
 {
-    Glyph leftNormal  = '[';
-    Glyph rightNormal = ']';
-    Glyph leftFocused = '>';
+    Glyph leftNormal   = '[';
+    Glyph rightNormal  = ']';
+    Glyph leftFocused  = '>';
     Glyph rightFocused = '<';
-    Glyph leftPressed = '-';
+    Glyph leftPressed  = '-';
     Glyph rightPressed = '-';
+};
+
+struct ButtonProps
+{
+    ButtonStyle style          = {};
+    std::function<void()> onPress   = nullptr;
+    std::function<void()> onRelease = nullptr;
 };
 
 class Button : public Container, public ISelectable
 {
 public:
 
-    Button(ButtonStyle style = ButtonStyle{},
-           std::function<void()> onPress = nullptr,
-           std::function<void()> onRelease = nullptr,
-           std::unique_ptr<Widget> child = nullptr
-          )
+    Button(ButtonProps props = {},
+           std::unique_ptr<Widget> child = nullptr)
         : Container(std::move(child)),
-          _style(style),
-          _onPress(std::move(onPress)),
-          _onRelease(std::move(onRelease))
+          _props(std::move(props))
     {}
 
     Size measure() const override;
@@ -53,9 +54,7 @@ public:
     }
 
 private:
-    ButtonStyle _style;           // visual decorations
-    std::function<void()> _onPress;
-    std::function<void()> _onRelease;
+    ButtonProps _props;
 
     bool _isPressed = false;
 

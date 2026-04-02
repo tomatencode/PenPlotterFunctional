@@ -44,9 +44,11 @@ void FileList::reload() {
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
     for (const auto& file : files) {
         auto button = std::make_unique<widgets::Button>(
-            file,
-            ui::styles::listButtonStyle,
-            [this, file]() { _onFileSelected(file); }
+            widgets::ButtonProps{
+                .style = ui::styles::listButtonStyle,
+                .onPress = [this, file]() { _onFileSelected(file); }
+            },
+            std::make_unique<widgets::Label>(file.substring(0, file.length() - 6))
         );
         _layout->addChild(std::move(button));
     }

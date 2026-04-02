@@ -33,8 +33,7 @@ public:
             )
     : Screen(
         std::make_unique<widgets::LinearLayout>(
-            widgets::Axis::Vertical,
-            widgets::LinearLayoutStyle{},
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
             std::make_unique<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
                 if (router()) {
                     router()->popScreen();

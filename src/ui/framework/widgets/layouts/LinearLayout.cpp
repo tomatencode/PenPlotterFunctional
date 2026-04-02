@@ -20,26 +20,26 @@ Rect LinearLayout::applyMargins(Rect box) const
 // ---------- Axis helpers ----------
 
 uint16_t LinearLayout::primarySize(Size s) const {
-    return (_axis == Axis::Horizontal) ? s.w : s.h;
+    return (_style.axis == Axis::Horizontal) ? s.w : s.h;
 }
 
 uint16_t LinearLayout::secondarySize(Size s) const {
-    return (_axis == Axis::Horizontal) ? s.h : s.w;
+    return (_style.axis == Axis::Horizontal) ? s.h : s.w;
 }
 
 uint16_t LinearLayout::PrimaryPos(Rect r) const {
-    return (_axis == Axis::Horizontal) ? r.x : r.y;
+    return (_style.axis == Axis::Horizontal) ? r.x : r.y;
 }
 uint16_t LinearLayout::SecondaryPos(Rect r) const {
-    return (_axis == Axis::Horizontal) ? r.y : r.x;
+    return (_style.axis == Axis::Horizontal) ? r.y : r.x;
 }
 
 uint16_t LinearLayout::availablePrimarySpace(Rect r) const {
-    return (_axis == Axis::Horizontal) ? r.w : r.h;
+    return (_style.axis == Axis::Horizontal) ? r.w : r.h;
 }
 
 uint16_t LinearLayout::availableSecondarySpace(Rect r) const {
-    return (_axis == Axis::Horizontal) ? r.h : r.w;
+    return (_style.axis == Axis::Horizontal) ? r.h : r.w;
 }
 
 // ---------- Spacing ----------
@@ -143,7 +143,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect cont
     // Calculate secondary axis position
     uint16_t secondaryPos = SecondaryPos(content);
 
-    if (_axis == Axis::Horizontal)
+    if (_style.axis == Axis::Horizontal)
     {
         if (_style.verticalAlign == VerticalAlignment::Middle)
             secondaryPos += (content.h - c.secondarySize) / 2;
@@ -158,7 +158,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect cont
             secondaryPos += content.w - c.secondarySize;
     }
 
-    if (_axis == Axis::Horizontal)
+    if (_style.axis == Axis::Horizontal)
     {
         return std::make_optional(Rect{
             static_cast<uint16_t>(clampedStart),
@@ -198,11 +198,11 @@ LinearLayout::computeLayout(Rect content) const
         {
             Size s = child->measure();
 
-            bool expandPrimary = (_axis == Axis::Horizontal)
+            bool expandPrimary = (_style.axis == Axis::Horizontal)
                 ? child->canExpandHorizontally()
                 : child->canExpandVertically();
 
-            bool expandSecondary = (_axis == Axis::Horizontal)
+            bool expandSecondary = (_style.axis == Axis::Horizontal)
                 ? child->canExpandVertically()
                 : child->canExpandHorizontally();
 
@@ -304,8 +304,8 @@ Size LinearLayout::measure() const
     if (getChildCount() > 1 && _style.spacingMode == SpacingMode::Fixed)
         primary += (getChildCount() - 1) * _style.spacing;
 
-    uint16_t w = (_axis == Axis::Horizontal) ? primary : secondary;
-    uint16_t h = (_axis == Axis::Horizontal) ? secondary : primary;
+    uint16_t w = (_style.axis == Axis::Horizontal) ? primary : secondary;
+    uint16_t h = (_style.axis == Axis::Horizontal) ? secondary : primary;
 
     w += _style.marginLeft + _style.marginRight;
     h += _style.marginTop + _style.marginBottom;
@@ -315,7 +315,7 @@ Size LinearLayout::measure() const
 
 bool LinearLayout::canExpandHorizontally() const
 {
-    if (_axis == Axis::Horizontal && _style.spacingMode != SpacingMode::Fixed)
+    if (_style.axis == Axis::Horizontal && _style.spacingMode != SpacingMode::Fixed)
         return true;
 
     for (size_t i = 0; i < getChildCount(); i++)
@@ -328,7 +328,7 @@ bool LinearLayout::canExpandHorizontally() const
 
 bool LinearLayout::canExpandVertically() const
 {
-    if (_axis == Axis::Vertical && _style.spacingMode != SpacingMode::Fixed)
+    if (_style.axis == Axis::Vertical && _style.spacingMode != SpacingMode::Fixed)
         return true;
 
     for (size_t i = 0; i < getChildCount(); i++)

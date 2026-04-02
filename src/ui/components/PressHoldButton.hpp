@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "../framework/widgets/leaves/Button.hpp"
+#include "../framework/widgets/leaves/Label.hpp"
 
 namespace ui {
 namespace components {
@@ -25,14 +26,19 @@ class PressHoldButton: public ui::widgets::Button
 public:
     template <typename TextType>
     PressHoldButton(TextType text, PressHoldButtonStyle style, std::function<void()> onHoldRelease, uint16_t holdTimeMs = 2000, uint16_t relAnimationTimeMs = 500)
-        : Button(text, widgets::ButtonStyle{
-            .leftNormal = style.leftNormal,
-            .rightNormal = style.rightNormal,
-            .leftFocused = style.leftFocused,
-            .rightFocused = style.rightFocused,
-            .leftPressed = style.leftPressed,
-            .rightPressed = style.rightPressed
-          }, nullptr, nullptr),
+        : Button(
+            widgets::ButtonProps{
+                .style = widgets::ButtonStyle{
+                    .leftNormal   = style.leftNormal,
+                    .rightNormal  = style.rightNormal,
+                    .leftFocused  = style.leftFocused,
+                    .rightFocused = style.rightFocused,
+                    .leftPressed  = style.leftPressed,
+                    .rightPressed = style.rightPressed
+                }
+            },
+            std::make_unique<widgets::Label>(text)
+          ),
           _onHoldRelease(std::move(onHoldRelease)),
           _holdTimeMs(holdTimeMs),
           _relAnimationTimeMs(relAnimationTimeMs),

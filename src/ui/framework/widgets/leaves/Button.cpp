@@ -9,18 +9,18 @@ Size Button::measure() const
     uint8_t width = childSize.w;
     if (isFocused())
     {
-        if (_style.leftFocused.code != GLYPH_NONE.code) width++;
-        if (_style.rightFocused.code != GLYPH_NONE.code) width++;
+        if (_props.style.leftFocused.code != GLYPH_NONE.code) width++;
+        if (_props.style.rightFocused.code != GLYPH_NONE.code) width++;
     }
     else if (_isPressed)
     {
-        if (_style.leftPressed.code != GLYPH_NONE.code) width++;
-        if (_style.rightPressed.code != GLYPH_NONE.code) width++;
+        if (_props.style.leftPressed.code != GLYPH_NONE.code) width++;
+        if (_props.style.rightPressed.code != GLYPH_NONE.code) width++;
     }
     else
     {
-        if (_style.leftNormal.code != GLYPH_NONE.code) width++;
-        if (_style.rightNormal.code != GLYPH_NONE.code) width++;
+        if (_props.style.leftNormal.code != GLYPH_NONE.code) width++;
+        if (_props.style.rightNormal.code != GLYPH_NONE.code) width++;
     }
     return { width, 1 };
 }
@@ -35,18 +35,18 @@ void Button::render(Renderer& r, Rect canvasBox)
     uint16_t y = canvasBox.y;
 
     // Choose decorations based on state
-    Glyph leftDecorator  = _style.leftNormal;
-    Glyph rightDecorator = _style.rightNormal;
+    Glyph leftDecorator  = _props.style.leftNormal;
+    Glyph rightDecorator = _props.style.rightNormal;
 
     if (_isPressed)
     {
-        leftDecorator  = _style.leftPressed;
-        rightDecorator = _style.rightPressed;
+        leftDecorator  = _props.style.leftPressed;
+        rightDecorator = _props.style.rightPressed;
     }
     else if (isFocused())
     {
-        leftDecorator  = _style.leftFocused;
-        rightDecorator = _style.rightFocused;
+        leftDecorator  = _props.style.leftFocused;
+        rightDecorator = _props.style.rightFocused;
     }
 
     // Draw left decoration
@@ -93,11 +93,11 @@ void Button::handleInput(InputState& input)
 
     _isPressed = input.buttonDown;
 
-    if (input.buttonPressed && _onPress)
-        _onPress();
+    if (input.buttonPressed && _props.onPress)
+        _props.onPress();
 
-    if (input.buttonReleased && _onRelease)
-        _onRelease();
+    if (input.buttonReleased && _props.onRelease)
+        _props.onRelease();
 
     input.buttonPressed = false; // consume press event
 }

@@ -22,6 +22,17 @@ struct ValueSelectorStyle
     Glyph rightEditing = '<';
 };
 
+template <typename T>
+struct ValueSelectorProps
+{
+    T initialValue                                = {};
+    std::function<T(T)> next                      = nullptr;
+    std::function<T(T)> prev                      = nullptr;
+    std::function<void(const T&)> onChange        = nullptr;
+    std::function<std::string(const T&)> toString = nullptr;
+    ValueSelectorStyle style                      = {};
+};
+
 // ValueSelector provides a focusable widget for +/− selection using rotary encoder and button.
 // Typical styles:
 // not focused -> 3
@@ -40,20 +51,13 @@ public:
         return ss.str();
     }
 
-    ValueSelector(
-        T initialValue,
-        std::function<T(T)> next,
-        std::function<T(T)> prev,
-        std::function<void(const T&)> onChange = nullptr,
-        std::function<std::string(const T&)> ToString = nullptr,
-        ValueSelectorStyle style = ValueSelectorStyle{}
-    )
-        : _value(initialValue)
-        , _next(std::move(next))
-        , _prev(std::move(prev))
-        , _onChange(std::move(onChange))
-        , _ToString(ToString ? std::move(ToString) : defaultToString)
-        , _style(style)
+    ValueSelector(ValueSelectorProps<T> props)
+        : _value(std::move(props.initialValue))
+        , _next(std::move(props.next))
+        , _prev(std::move(props.prev))
+        , _onChange(std::move(props.onChange))
+        , _toString(props.toString ? std::move(props.toString) : defaultToString)
+        , _style(std::move(props.style))
     {}
 
     ISelectable* tryGetSelectable() override { return this; }
@@ -109,7 +113,7 @@ public:
         uint16_t x = canvasBox.x;
         uint16_t y = canvasBox.y;
 
-        std::string text = _ToString(_value);
+        std::string text = _toString(_value);
 
         uint16_t decorationWidth = 0;
         if (leftDecorator.code != GLYPH_NONE.code) decorationWidth++;
@@ -170,7 +174,7 @@ private:
     std::function<T(T)> _next;
     std::function<T(T)> _prev;
     std::function<void(const T&)> _onChange;
-    std::function<std::string(const T&)> _ToString;
+    std::function<std::string(const T&)> _toString;
 
     bool _isEditing = false;
     bool _isPressed = false;

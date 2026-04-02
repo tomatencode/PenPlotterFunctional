@@ -33,30 +33,31 @@ public:
                )
     : Screen(
         std::make_unique<widgets::LinearLayout>(
-            widgets::Axis::Vertical,
-            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
             std::make_unique<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
 
             std::make_unique<widgets::Button>(
-                "Plot",
-                widgets::ButtonStyle(),
-                [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
-                    if (router()) {
-                        auto filesScreen = std::make_unique<FilesScreen>(jobController, motionState, fileManager, wifiStatusProvider);
-                        router()->pushScreen(std::move(filesScreen));
+                widgets::ButtonProps{
+                    .onPress = [this, &jobController, &motionState, &fileManager, wifiStatusProvider]() {
+                        if (router()) {
+                            auto filesScreen = std::make_unique<FilesScreen>(jobController, motionState, fileManager, wifiStatusProvider);
+                            router()->pushScreen(std::move(filesScreen));
+                        }
                     }
-                }
+                },
+                std::make_unique<widgets::Label>("Plot")
             ),
 
             std::make_unique<widgets::Button>(
-                "Settings",
-                widgets::ButtonStyle(),
-                [this, &fileManager, wifiStatusProvider]() {
-                    if (router()) {
-                        auto settingsScreen = std::make_unique<SettingsScreen>(fileManager, wifiStatusProvider);
-                        router()->pushScreen(std::move(settingsScreen));
+                widgets::ButtonProps{
+                    .onPress = [this, &fileManager, wifiStatusProvider]() {
+                        if (router()) {
+                            auto settingsScreen = std::make_unique<SettingsScreen>(fileManager, wifiStatusProvider);
+                            router()->pushScreen(std::move(settingsScreen));
+                        }
                     }
-                }
+                },
+                std::make_unique<widgets::Label>("Settings")
             )
         )
     , 0) // Start with Plot button focused

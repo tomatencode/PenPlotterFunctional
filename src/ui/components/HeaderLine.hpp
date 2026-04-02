@@ -26,8 +26,7 @@ public:
               )
     : Container(
         std::make_unique<widgets::LinearLayout>(
-            widgets::Axis::Horizontal,
-            widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceBetween},
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal, .spacingMode = widgets::SpacingMode::SpaceBetween},
             std::make_unique<components::WifiIndicator>(WifiStatusProvider),
             std::make_unique<widgets::Label>(textProvider),
             std::make_unique<widgets::Switch<bool>>(
@@ -36,9 +35,8 @@ public:
                 std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
                     std::make_unique<widgets::Button>(
-                        "Back",
-                        widgets::ButtonStyle(),
-                        onBackPress
+                        widgets::ButtonProps{.onPress = onBackPress},
+                        std::make_unique<widgets::Label>("Back")
                     )
                 ),
                 std::make_unique<widgets::Switch<bool>::Branch>(

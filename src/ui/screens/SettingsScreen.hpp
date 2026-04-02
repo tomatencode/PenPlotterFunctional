@@ -29,8 +29,7 @@ public:
                   )
     : Screen(
         std::make_unique<widgets::LinearLayout>(
-            widgets::Axis::Vertical,
-            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
 
             std::make_unique<components::HeaderLine>(
                 "Settings",
@@ -43,15 +42,14 @@ public:
             ),
 
             std::make_unique<widgets::LinearLayout>(
-                widgets::Axis::Horizontal,
-                widgets::LinearLayoutStyle{},
+                widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal},
 
-                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
-                    return 1.0;
+                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
+                    .getProgress = []() { return 1.0; }
                 }),
 
-                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, []() {
-                    return 1.0;
+                std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
+                    .getProgress = []() { return 1.0; }
                 })
             )
         )

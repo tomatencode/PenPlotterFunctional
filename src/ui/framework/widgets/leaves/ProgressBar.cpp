@@ -3,10 +3,9 @@
 namespace ui {
 namespace widgets {
 
-ProgressBar::ProgressBar(ProgressBarStyle style, std::function<double()> getProgress)
+ProgressBar::ProgressBar(ProgressBarProps props)
     : Widget(),
-      _style(style),
-      _getProgress(getProgress)
+      _props(std::move(props))
 {}
 
 Size ProgressBar::measure() const
@@ -26,12 +25,12 @@ void ProgressBar::render(Renderer& r, Rect canvasBox)
 
     // Calculate inner bar width (excluding brackets)
     uint16_t innerWidth = (barWidth > 2) ? (barWidth - 2) : 0;
-    double progress = (_getProgress) ? _getProgress() : 0;
+    double progress = (_props.getProgress) ? _props.getProgress() : 0;
     progress = std::min(std::max(progress, 0.0), 1.0); // Clamp to [0, 1]
     uint16_t filledWidth = (innerWidth * progress);
 
     // Draw opening bracket
-    r.drawGlyphToBuffer(x, y, _style.leftBracket);
+    r.drawGlyphToBuffer(x, y, _props.style.leftBracket);
 
     // Draw filled and empty portions
     for (uint16_t col = 0; col < innerWidth; col++)
@@ -39,12 +38,12 @@ void ProgressBar::render(Renderer& r, Rect canvasBox)
         r.drawGlyphToBuffer(
             x + 1 + col,
             y,
-            (col < filledWidth) ? _style.filledGlyph : _style.emptyGlyph
+            (col < filledWidth) ? _props.style.filledGlyph : _props.style.emptyGlyph
         );
     }
 
     // Draw closing bracket
-    r.drawGlyphToBuffer(x + barWidth - 1, y, _style.rightBracket);
+    r.drawGlyphToBuffer(x + barWidth - 1, y, _props.style.rightBracket);
 }
 
 } // namespace widgets

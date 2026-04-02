@@ -32,8 +32,7 @@ public:
                   )
     : Screen(
         std::make_unique<widgets::LinearLayout>(
-            widgets::Axis::Vertical,
-            widgets::LinearLayoutStyle{.horizontalAlign = widgets::HorizontalAlignment::Center},
+            widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
             std::make_unique<components::HeaderLine>(
                 [&jobController]() {
                     String filename = jobController.getCurrentFile();
@@ -48,9 +47,11 @@ public:
                 wifiStatusProvider
             ),
 
-            std::make_unique<widgets::ProgressBar>(widgets::ProgressBarStyle{}, [&jobController, this]() {
-                if (jobController.getTotalLines() == 0) return 0.0;
-                return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
+            std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
+                .getProgress = [&jobController, this]() {
+                    if (jobController.getTotalLines() == 0) return 0.0;
+                    return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
+                }
             }),
 
             std::make_unique<widgets::Label>([&jobController, this]() {
@@ -63,40 +64,38 @@ public:
                 std::make_unique<widgets::Switch<bool>::Branch>(
                     true,
                     std::make_unique<widgets::LinearLayout>(
-                        widgets::Axis::Horizontal,
-                        widgets::LinearLayoutStyle{.spacingMode = widgets::SpacingMode::SpaceAround},
+                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal, .spacingMode = widgets::SpacingMode::SpaceAround},
 
                         std::make_unique<widgets::Button>(
-                            [&jobController, &motionState]() {
-                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
-                            },
-                            widgets::ButtonStyle(),
-                            [&jobController, &motionState]() {
-                                if (motionState.getState() == MotionStateType::PAUSED) {
-                                    jobController.resume();
-                                } else {
-                                    jobController.pause();
+                            widgets::ButtonProps{
+                                .onPress = [&jobController, &motionState]() {
+                                    if (motionState.getState() == MotionStateType::PAUSED) {
+                                        jobController.resume();
+                                    } else {
+                                        jobController.pause();
+                                    }
                                 }
-                            }
+                            },
+                            std::make_unique<widgets::Label>([&jobController, &motionState]() {
+                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                            })
                         ),
 
                         std::make_unique<widgets::Button>(
-                            "Abort",
-                            widgets::ButtonStyle(),
-                            [&jobController]() {
-                                jobController.abort();
-                            }
+                            widgets::ButtonProps{
+                                .onPress = [&jobController]() { jobController.abort(); }
+                            },
+                            std::make_unique<widgets::Label>("Abort")
                         )
                     )
                 ),
                 std::make_unique<widgets::Switch<bool>::Branch>(
                     false,
                     std::make_unique<widgets::Button>(
-                        "Back to Files",
-                        widgets::ButtonStyle(),
-                        [this, &jobController]() {
-                            router()->popScreen();
-                        }
+                        widgets::ButtonProps{
+                            .onPress = [this]() { router()->popScreen(); }
+                        },
+                        std::make_unique<widgets::Label>("Back to Files")
                     )
                 )
             )

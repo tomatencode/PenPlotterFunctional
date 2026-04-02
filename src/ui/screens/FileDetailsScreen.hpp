@@ -57,8 +57,7 @@ public:
             std::make_unique<widgets::Switch<bool>::Branch>(
                 true, 
                 std::make_unique<widgets::LinearLayout>(
-                    widgets::Axis::Vertical,
-                    widgets::LinearLayoutStyle{},
+                    widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
                     std::make_unique<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),
@@ -72,25 +71,26 @@ public:
                     std::make_unique<widgets::Spacer>(1, 1),
 
                     std::make_unique<widgets::LinearLayout>(
-                        widgets::Axis::Horizontal,
                         widgets::LinearLayoutStyle{
+                            .axis = widgets::Axis::Horizontal,
                             .spacingMode = widgets::SpacingMode::SpaceBetween,
                             .marginLeft = 1,
                             .marginRight = 1
                         },
 
                         std::make_unique<widgets::LinearLayout>(
-                            widgets::Axis::Vertical,
                             widgets::LinearLayoutStyle{
+                                .axis = widgets::Axis::Vertical,
                                 .horizontalAlign = widgets::HorizontalAlignment::Center
                             },
                             
                             std::make_unique<widgets::Button>(
-                                "Plot",
-                                widgets::ButtonStyle(),
-                                [this, filename, &jobController, &motionState, wifiStatusProvider]() {
-                                    jobController.start(filename);
-                                }
+                                widgets::ButtonProps{
+                                    .onPress = [filename, &jobController]() {
+                                        jobController.start(filename);
+                                    }
+                                },
+                                std::make_unique<widgets::Label>("Plot")
                             ),
                             std::make_unique<components::PressHoldButton>(
                                 "Delete",
@@ -107,8 +107,8 @@ public:
                         ),
                         
                         std::make_unique<widgets::LinearLayout>(
-                            widgets::Axis::Vertical,
                             widgets::LinearLayoutStyle{
+                                .axis = widgets::Axis::Vertical,
                                 .horizontalAlign = widgets::HorizontalAlignment::Center,
                             },
 
@@ -129,8 +129,7 @@ public:
             std::make_unique<widgets::Switch<bool>::Branch>(
                 false,
                 std::make_unique<widgets::LinearLayout>(
-                    widgets::Axis::Vertical,
-                    widgets::LinearLayoutStyle{},
+                    widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
                     std::make_unique<components::HeaderLine>(
                         filename.substring(0, filename.length() - 6),

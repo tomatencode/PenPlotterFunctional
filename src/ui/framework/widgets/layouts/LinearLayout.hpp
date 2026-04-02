@@ -13,6 +13,7 @@ namespace ui {
 namespace widgets {
 
 struct LinearLayoutStyle {
+    Axis axis           = Axis::Vertical;
     SpacingMode spacingMode = SpacingMode::Fixed;
     VerticalAlignment verticalAlign = VerticalAlignment::Top;
     HorizontalAlignment horizontalAlign = HorizontalAlignment::Left;
@@ -27,14 +28,13 @@ struct LinearLayoutStyle {
 class LinearLayout : public Layout
 {
 public:
-    LinearLayout(Axis axis,
-                 const LinearLayoutStyle& style,
+    LinearLayout(const LinearLayoutStyle& style,
                  std::vector<std::unique_ptr<Widget>>&& children)
-        : Layout(std::move(children)), _axis(axis), _style(style) {}
+        : Layout(std::move(children)), _style(style) {}
 
     template <typename... Children>
-    LinearLayout(Axis axis, const LinearLayoutStyle& style, Children&&... children)
-        : Layout(std::forward<Children>(children)...), _axis(axis), _style(style) {}
+    LinearLayout(const LinearLayoutStyle& style, Children&&... children)
+        : Layout(std::forward<Children>(children)...), _style(style) {}
 
     void render(Renderer& r, Rect canvasBox) override;
     Size measure() const override;
@@ -80,7 +80,6 @@ private:
     std::vector<LayoutItem> computeLayout(Rect content) const;
 
 private:
-    Axis _axis;
     LinearLayoutStyle _style;
 };
 
