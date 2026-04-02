@@ -19,30 +19,46 @@ class Conditional : public Container
 public:
     Conditional(ConditionalProps props, std::unique_ptr<Widget> child)
         : Container(std::move(child)),
-          _props(std::move(props)),
-          _child(std::move(child))
+          _props(std::move(props))
     {}
 
     void render(Renderer& r, Rect canvasBox) override {
-        bool conditionValue = _props.condition();
-        if (conditionValue != _lastConditionValue) {
-            _lastConditionValue = conditionValue;
-            
-            if (!conditionValue) {
-                // Condition is false, remove child
-                setChild(nullptr);
-            } else if (conditionValue && !getChild(0)) {
-                // Condition is true and child is not set, add child back
-                setChild(std::move(_child));
-            }
-        }
-        Container::render(r, canvasBox);
+        if (_props.condition())
+            Container::render(r, canvasBox);
+    }
+
+    Size measure() const override {
+        if (_props.condition())
+            return Container::measure();
+        return Size{0, 0};
+    }
+
+    bool canExpandHorizontally() const override {
+        if (_props.condition())
+            return Container::canExpandHorizontally();
+        return false;
+    }
+
+    bool canExpandVertically() const override {
+        if (_props.condition())
+            return Container::canExpandVertically();
+        return false;
+    }
+
+    size_t getChildCount() const override {
+        if (_props.condition())
+            return Container::getChildCount();
+        return 0;
+    }
+
+    Widget* getChild(size_t index) const override {
+        if (_props.condition())
+            return Container::getChild(index);
+        return nullptr;
     }
 
 private:
     ConditionalProps _props;
-    std::unique_ptr<Widget> _child;
-    bool _lastConditionValue = false;
 };
 
 } // namespace widgets
