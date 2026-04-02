@@ -5,7 +5,7 @@ namespace widgets {
 
 Size Button::measure() const
 {
-    Size childSize = _label->measure();
+    Size childSize = Container::measure();
     uint8_t width = childSize.w;
     if (isFocused())
     {
@@ -56,9 +56,9 @@ void Button::render(Renderer& r, Rect canvasBox)
         x++;
     }
 
-    Size labelSize = _label->measure();
+    Size ChildSize = Container::measure();
 
-    if (labelSize.h > 1)
+    if (ChildSize.h > 1)
         Serial.println("Warning: Button label height exceeds 1, clipping will occur");
     
     uint16_t decorationWidth = 0;
@@ -66,7 +66,7 @@ void Button::render(Renderer& r, Rect canvasBox)
     if (rightDecorator.code != GLYPH_NONE.code) decorationWidth++;
 
     int remainingWidth = static_cast<int>(canvasBox.w) - static_cast<int>(decorationWidth);
-    uint16_t finalWidth = std::min<uint16_t>(labelSize.w, remainingWidth);
+    uint16_t finalWidth = std::min<uint16_t>(ChildSize.w, remainingWidth);
 
     // Create a canvas for the child within the button
     Rect childCanvas = {
@@ -76,9 +76,9 @@ void Button::render(Renderer& r, Rect canvasBox)
         1
     };
 
-    _label->render(r, childCanvas);
+    Container::render(r, childCanvas);
 
-    x += labelSize.w;
+    x += ChildSize.w;
 
     // Draw right decoration
     if (rightDecorator.code != GLYPH_NONE.code && canvasBox.w > 1)

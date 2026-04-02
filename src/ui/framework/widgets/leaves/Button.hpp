@@ -2,10 +2,9 @@
 
 #include <functional>
 #include <memory>
-#include <concepts>
 
 #include "../core/ISelectable.hpp"
-#include "../core/Widget.hpp"
+#include "../core/Container.hpp"
 #include "Label.hpp"
 
 namespace ui {
@@ -22,21 +21,19 @@ struct ButtonStyle
     Glyph rightPressed = '-';
 };
 
-class Button : public Widget, public ISelectable
+class Button : public Container, public ISelectable
 {
 public:
-    // creates a Label
-    template <typename TextType>
-    requires std::constructible_from<Label, TextType>
-    Button(TextType text,
-        ButtonStyle style = ButtonStyle{},
-        std::function<void()> onPress = nullptr,
-        std::function<void()> onRelease = nullptr
-        )
-        : _label(std::make_unique<Label>(text)),
-        _style(style),
-        _onPress(std::move(onPress)),
-        _onRelease(std::move(onRelease))
+
+    Button(ButtonStyle style = ButtonStyle{},
+           std::function<void()> onPress = nullptr,
+           std::function<void()> onRelease = nullptr,
+           std::unique_ptr<Widget> child = nullptr
+          )
+        : Container(std::move(child)),
+          _style(style),
+          _onPress(std::move(onPress)),
+          _onRelease(std::move(onRelease))
     {}
 
     Size measure() const override;
@@ -51,13 +48,11 @@ public:
 
     void reload() override {
         ISelectable::reload();
-        if (_label)
-            _label->reload();
+        Container::reload();
         _isPressed = false;
     }
 
 private:
-    std::unique_ptr<Label> _label;
     ButtonStyle _style;           // visual decorations
     std::function<void()> _onPress;
     std::function<void()> _onRelease;
