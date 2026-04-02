@@ -25,13 +25,13 @@ uint8_t NoWifiSymbol_BITMAP[8] = {
 	0b00000
 };
 
-uint8_t CustomChar_3_BITMAP[8] = {
+uint8_t CollapsibleExpanded_BITMAP[8] = {
 	0b00000,
 	0b00000,
 	0b00000,
-	0b00000,
-	0b00000,
-	0b00000,
+	0b10001,
+	0b01010,
+	0b00100,
 	0b00000,
 	0b00000
 };
@@ -95,7 +95,7 @@ uint8_t CustomChar_8_BITMAP[8] = {
 uint8_t* CUSTOM_CHAR_MAP[] = {
     WifiSymbol_BITMAP,
     NoWifiSymbol_BITMAP,
-    CustomChar_3_BITMAP,
+    CollapsibleExpanded_BITMAP,
     CustomChar_4_BITMAP,
     CustomChar_5_BITMAP,
     CustomChar_6_BITMAP,

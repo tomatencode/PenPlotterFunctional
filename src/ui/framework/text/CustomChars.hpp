@@ -8,7 +8,7 @@ enum CustomChar
 {
     WifiSymbol = 0,
     NoWifiSymbol = 1,
-    CustomChar_3 = 2,
+    CollapsibleExpanded = 2,
     CustomChar_4 = 3,
     CustomChar_5 = 4,
     CustomChar_6 = 5,
