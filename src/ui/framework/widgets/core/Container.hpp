@@ -18,9 +18,7 @@ public:
 
     Container(std::unique_ptr<Widget>&& child)
         : _child(std::move(child))
-    {
-        if (_child) _child->setParent(this);
-    }
+    {}
 
     ~Container() = default;
 
@@ -38,8 +36,6 @@ public:
     }
 
     virtual void setChild(std::unique_ptr<Widget> newChild) {
-        if (newChild)
-            newChild->setParent(this);
         _child = std::move(newChild);
     }
 

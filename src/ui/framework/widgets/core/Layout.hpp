@@ -14,25 +14,13 @@ public:
     // Vector-based constructor: takes ownership of pre-built vector of widgets
     Layout(std::vector<std::unique_ptr<Widget>>&& ownedChildren)
         : _ownedChildren(std::move(ownedChildren))
-    {
-        // Set parent pointers for children
-        for (const auto& child : _ownedChildren) {
-            if (child)
-                child->setParent(this);
-        }
-    }
+    {}
 
     // Variadic constructor: takes individual widget pointers
     template <typename... Children>
     Layout(Children&&... children)
         : _ownedChildren(makeChildren(std::forward<Children>(children)...))
-    {
-        // Set parent pointers for children
-        for (const auto& child : _ownedChildren) {
-            if (child)
-                child->setParent(this);
-        }
-    }
+    {}
 
     ~Layout() = default;
 
@@ -53,8 +41,6 @@ public:
 
     // for dynamic layouts, allow adding/removing children after construction
     virtual void addChild(std::unique_ptr<Widget> child) {
-        if (child)
-            child->setParent(this);
         _ownedChildren.push_back(std::move(child));
     }
     virtual void clearChildren() {

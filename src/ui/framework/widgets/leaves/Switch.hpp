@@ -46,22 +46,14 @@ public:
         _branches(makeBranches(std::forward<Branches>(branches)...)),
         _lazy(lazy),
         _cacheValid(false)
-    {
-        for (auto& branch : _branches) {
-            branch->setParent(this);
-        }
-    }
+    {}
 
     Switch(std::function<T()> selector, bool lazy, std::vector<std::unique_ptr<Branch>> branches)
         : _selector(selector),
         _branches(std::move(branches)),
         _lazy(lazy),
         _cacheValid(false)
-    {
-        for (auto& branch : _branches) {
-            branch->setParent(this);
-        }
-    }
+    {}
 
     void render(Renderer& r, Rect canvasBox) override
     {

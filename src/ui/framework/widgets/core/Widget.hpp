@@ -26,13 +26,6 @@ public:
 
     virtual size_t getChildCount() const { return 0; }
     virtual Widget* getChild(size_t) const { return nullptr; }
-
-    // for upstream widget tree traversal
-    Widget* getParent() const { return _parent; }
-    void setParent(Widget* parent) { _parent = parent; }
-    
-private:
-    Widget* _parent = nullptr;
 };
 
 } // namespace widgets
