@@ -15,28 +15,40 @@ void ScrollableVerticalLayout::updateScrollOffset(
     {
         auto* widget = child.widget;
 
-        if (auto* selectable = widget->tryGetSelectable())
+        if (containsFocusedWidget(widget))
         {
-            if (selectable->isFocused())
+            uint16_t top = currentY;
+            uint16_t bottom = currentY + child.size.h;
+
+            if (top < _scrollOffset)
             {
-                uint16_t top = currentY;
-                uint16_t bottom = currentY + child.size.h;
-
-                if (top < _scrollOffset)
-                {
-                    _scrollOffset = top;
-                }
-                else if (bottom > _scrollOffset + visibleHeight)
-                {
-                    _scrollOffset = bottom - visibleHeight;
-                }
-
-                return;
+                _scrollOffset = top;
             }
+            else if (bottom > _scrollOffset + visibleHeight)
+            {
+                _scrollOffset = bottom - visibleHeight;
+            }
+
+            return;
         }
 
         currentY += child.size.h + _style.spacing;
     }
+}
+
+bool ScrollableVerticalLayout::containsFocusedWidget(Widget* widget) const
+{
+    if (!widget) return false;
+
+    if (auto* selectable = widget->tryGetSelectable())
+        if (selectable->isFocused())
+            return true;
+
+    for (size_t i = 0; i < widget->getChildCount(); i++)
+        if (containsFocusedWidget(widget->getChild(i)))
+            return true;
+
+    return false;
 }
 
 Rect ScrollableVerticalLayout::applyMargins(Rect box) const
@@ -73,21 +85,6 @@ ScrollableVerticalLayout::collectChildren() const
     return result;
 }
 
-uint16_t ScrollableVerticalLayout::computeChildX(uint16_t width, const Rect& area) const
-{
-    switch (_style.horizontalAlign)
-    {
-        case HorizontalAlignment::Center:
-            return area.x + (area.w - width) / 2;
-
-        case HorizontalAlignment::Right:
-            return area.x + area.w - width;
-
-        default:
-            return area.x;
-    }
-}
-
 void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 {
     if (getChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
@@ -114,7 +111,21 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
             currentY < canvasBox.y + canvasBox.h;
 
         if (visible) {
-            uint16_t x = computeChildX(width, content);
+            uint16_t x;
+            switch (_style.horizontalAlign)
+            {
+                case HorizontalAlignment::Center:
+                    x = content.x + (content.w - width) / 2;
+                    break;
+
+                case HorizontalAlignment::Right:
+                    x = content.x + content.w - width;
+                    break;
+
+                default:
+                    x = content.x;
+                    break;
+            }
 
             Rect rect = {
                 x,

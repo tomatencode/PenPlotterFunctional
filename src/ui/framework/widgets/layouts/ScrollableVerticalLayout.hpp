@@ -50,7 +50,7 @@ private:
     void updateScrollOffset(const std::vector<ChildInfo>& children,
                             uint16_t visibleHeight);
 
-    uint16_t computeChildX(uint16_t childWidth, const Rect& area) const;
+    bool containsFocusedWidget(Widget* widget) const;
 
 private:
     int16_t _scrollOffset = 0;
