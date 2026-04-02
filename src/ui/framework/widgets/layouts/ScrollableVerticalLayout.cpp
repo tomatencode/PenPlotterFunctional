@@ -120,7 +120,7 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
 
             Rect rect = {
                 x,
-                static_cast<int16_t>(currentY),
+                static_cast<uint16_t>(currentY),
                 width,
                 child.size.h
             };
