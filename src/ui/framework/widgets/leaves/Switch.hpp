@@ -32,22 +32,13 @@ public:
         Branch(T value, std::unique_ptr<Widget> child)
             : Container(std::move(child)),
             _value(value)
-        {
-        }
-
-        void enable() {
-            _enabled = true;
-        }
-
-        void disable() {
-            _enabled = false;
-        }
+        {}
 
         T getValue() const {
             return _value;
         }
+
     private:
-        bool _enabled = false;
         T _value;
     };
 
@@ -69,7 +60,7 @@ public:
 
     void render(Renderer& r, Rect canvasBox) override
     {
-        Widget* current = getCurrentWidget();
+        Widget* current = getCurrentBranch();
         if (current) {
             current->render(r, canvasBox);
         }
@@ -77,7 +68,7 @@ public:
 
     Size measure() const override
     {
-        Widget* current = getCurrentWidget();
+        Widget* current = getCurrentBranch();
         if (current) {
             return current->measure();
         }
@@ -86,7 +77,7 @@ public:
 
     bool canExpandHorizontally() const override
     {
-        Widget* current = getCurrentWidget();
+        Widget* current = getCurrentBranch();
         if (current) {
             return current->canExpandHorizontally();
         }
@@ -95,7 +86,7 @@ public:
 
     bool canExpandVertically() const override
     {
-        Widget* current = getCurrentWidget();
+        Widget* current = getCurrentBranch();
         if (current) {
             return current->canExpandVertically();
         }
@@ -104,7 +95,7 @@ public:
 
     size_t getChildCount() const override
     {
-        if (auto current = getCurrentWidget()) {
+        if (auto current = getCurrentBranch()) {
             return 1;
         }
         return 0;
@@ -113,7 +104,7 @@ public:
     Widget* getChild(size_t index) const override
     {
         if (index != 0) return nullptr;
-        return getCurrentWidget();
+        return getCurrentBranch();
     }
 
     void reload() override {
@@ -135,7 +126,7 @@ private:
     mutable T _currentValue = T{};
     mutable bool _cacheValid;
 
-    Branch* getCurrentWidget() const {
+    Branch* getCurrentBranch() const {
         if (_evaluationMode == SwitchEvaluationMode::Lazy && _cacheValid) return _current;
 
         _cacheValid = true;
@@ -144,15 +135,14 @@ private:
         
         if (value != _currentValue) {
             _currentValue = value;
-
+            _current = nullptr;
+            
             for (auto& branch : _branches) {
                 if (branch->getValue() == value) {
-                    branch->enable();
                     _current = branch.get();
                     break;
                 }
                 else {
-                    branch->disable();
                 }
             }
         }
