@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <functional>
+#include <variant>
 #include <concepts>
 #include "GlyphString.hpp"
 #include "DynamicGlyphString.hpp"

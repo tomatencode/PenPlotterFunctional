@@ -9,7 +9,7 @@ namespace components {
 WifiIndicator::WifiIndicator(std::function<bool()> wifiStatusProvider)
     : Container(
         std::make_unique<widgets::Label>([wifiStatusProvider]() -> const GlyphString {
-            return wifiStatusProvider() ? GlyphString(Glyph(CustomChar::WifiSymbol)) : GlyphString(Glyph(CustomChar::NoWifiSymbol)); // TODO: replace 'false' with actual wifi status
+            return wifiStatusProvider() ? WifiSymbolGlyph : NoWifiSymbolGlyph;
         })
     )
 {
