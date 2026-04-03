@@ -1,10 +1,10 @@
-#include "GCodeParser.hpp"
+#include "GCodeExecuter.hpp"
 
-GCodeParser::GCodeParser(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState)
+GCodeExecuter::GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState)
         : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
           _absolute(true), _motionState(motionState) {}
 
-void GCodeParser::executeLine(const std::string& line) {
+void GCodeExecuter::executeLine(const std::string& line) {
     std::string cmd;
     std::map<char,double> params;
 
@@ -45,14 +45,14 @@ void GCodeParser::executeLine(const std::string& line) {
     else if (cmd == "G5.1") handleCUBIC(params);
     else if (cmd == "M3" || cmd == "M5") handlePenUpDown(cmd);
     else if (cmd == "G90" || cmd == "G91") handleG90G91(cmd);
-    else if (cmd == "G28") handlehoming(cmd);
+    else if (cmd == "G28") handleHoming(cmd);
     else {
         Serial.print("Unknown command: ");
         Serial.println(cmd.c_str());
     }
 }
 
-void GCodeParser::handleG0G1(const std::map<char,double>& params) {
+void GCodeExecuter::handleG0G1(const std::map<char,double>& params) {
     XYPos target = _motion.getCurrentPos();
     double feed = _pen.isDown() ? _feedRateDraw : _feedRateTravel;
 
@@ -63,7 +63,7 @@ void GCodeParser::handleG0G1(const std::map<char,double>& params) {
     _motion.LineToXY(target, feed);
 }
 
-void GCodeParser::handleG2G3(const std::map<char,double>& params, bool clockwise) {
+void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwise) {
     XYPos current = _motion.getCurrentPos();
     if (!params.count('X') || !params.count('Y') || !params.count('I') || !params.count('J')) return;
 
@@ -77,7 +77,7 @@ void GCodeParser::handleG2G3(const std::map<char,double>& params, bool clockwise
     _motion.arcToXY(target, center, clockwise, feed);
 }
 
-void GCodeParser::handleQUAD(const std::map<char,double>& params) {
+void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
     XYPos current = _motion.getCurrentPos();
     if (!params.count('X') || !params.count('Y') || !params.count('C') || !params.count('D')) return;
 
@@ -92,7 +92,7 @@ void GCodeParser::handleQUAD(const std::map<char,double>& params) {
     _motion.quadraticBezierToXY(control, target, feed);
 }
 
-void GCodeParser::handleCUBIC(const std::map<char,double>& params) {
+void GCodeExecuter::handleCUBIC(const std::map<char,double>& params) {
     XYPos current = _motion.getCurrentPos();
     if (!params.count('X') || !params.count('Y') || !params.count('A') || !params.count('B') || !params.count('C') || !params.count('D')) return;
 
@@ -108,7 +108,7 @@ void GCodeParser::handleCUBIC(const std::map<char,double>& params) {
 }
 
 // Pen up/down
-void GCodeParser::handlePenUpDown(const std::string& cmd) {
+void GCodeExecuter::handlePenUpDown(const std::string& cmd) {
     if (cmd == "M3") {
         _pen.down();
     } else if (cmd == "M5") {
@@ -116,7 +116,7 @@ void GCodeParser::handlePenUpDown(const std::string& cmd) {
     }
 }
 
-void GCodeParser::handleG90G91(const std::string& cmd) {
+void GCodeExecuter::handleG90G91(const std::string& cmd) {
     if (cmd == "G90") {
         _absolute = true;
     } else if (cmd == "G91") {
@@ -124,7 +124,7 @@ void GCodeParser::handleG90G91(const std::string& cmd) {
     }
 }
 
-void GCodeParser::handlehoming(const std::string& cmd) {
+void GCodeExecuter::handleHoming(const std::string& cmd) {
     if (cmd == "G28") {
         _homingController.home();
     }

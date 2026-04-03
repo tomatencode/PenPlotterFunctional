@@ -42,7 +42,7 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
 
     _motionExecuter(_bezierExecuter, motionState, MIN_FEATURE_SIZE_MM),
 
-    _gcodeParser(
+    _gcodeExecuter(
         _motionExecuter,
         _pen,
         _homingController,
@@ -90,7 +90,7 @@ void PlottingManager::update()
         Serial.print("Executing line: ");
         Serial.println(msg->line);
 
-        _gcodeParser.executeLine(msg->line);
+        _gcodeExecuter.executeLine(msg->line);
     }
     else
     {

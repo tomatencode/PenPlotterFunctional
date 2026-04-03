@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "gcode/GCodeParser.hpp"
+#include "gcode/GCodeExecuter.hpp"
 #include "config/machine_config.hpp"
 #include "hardware/steppers/Stepper.hpp"
 #include "hardware/pen/ServoPen.hpp"
@@ -59,7 +59,7 @@ private:
 
     MotionExecuter _motionExecuter;
 
-    GCodeParser _gcodeParser;
+    GCodeExecuter _gcodeExecuter;
 
     MotionState& _motionState;
     FreeRtosQueue<GcodeMessage>& gcodeQueue;

@@ -8,9 +8,9 @@
 #include <vector>
 #include <map>
 
-class GCodeParser {
+class GCodeExecuter {
 public:
-    GCodeParser(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
+    GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
 
     void executeLine(const std::string& line);
 private:
@@ -29,5 +29,5 @@ private:
     void handleCUBIC(const std::map<char,double>& params);
     void handlePenUpDown(const std::string& cmd);
     void handleG90G91(const std::string& cmd);
-    void handlehoming(const std::string& cmd);
+    void handleHoming(const std::string& cmd);
 };
