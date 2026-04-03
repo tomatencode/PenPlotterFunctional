@@ -113,7 +113,7 @@ public:
 
     void onJobEvent(const JobEventType& event) override {
         if (event.type == JobEvent::ABORTED) {
-            if (router() && router()->top() == this) {  
+            if (router()) {  
                 router()->popScreen();
             }
         }
