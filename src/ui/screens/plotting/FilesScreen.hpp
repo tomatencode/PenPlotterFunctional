@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework/screen/Screen.hpp"
+#include "ui/framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
 #include "jobController/JobController.hpp"
@@ -9,16 +9,16 @@
 #include "storage/FileManager.hpp"
 
 // Include related screens to enable navigation
-#include "../framework/router/Router.hpp"
+#include "ui/framework/router/Router.hpp"
 #include "FileDetailsScreen.hpp"
 
 // Include components and widgets used in this screen
-#include "../components/HeaderLine.hpp"
-#include "../components/FileList.hpp"
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/layouts/LinearLayout.hpp"
-#include "../framework/widgets/layouts/ScrollableVerticalLayout.hpp"
+#include "ui/components/HeaderLine.hpp"
+#include "ui/components/FileList.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/layouts/LinearLayout.hpp"
+#include "ui/framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 
 namespace ui {
 namespace screens {

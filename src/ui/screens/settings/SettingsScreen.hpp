@@ -2,23 +2,27 @@
 
 #include <functional>
 
-#include "../framework/screen/Screen.hpp"
+#include "ui/framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
 #include "jobController/JobController.hpp"
 #include "storage/FileManager.hpp"
 
 // Include related screens to enable navigation
-#include "FilesScreen.hpp"
-#include "../framework/router/Router.hpp"
+#include "WifiSettingsScreen.hpp"
+#include "PlottingSettingsScreen.hpp"
+#include "HoamingSettingsScreen.hpp"
+#include "SteppersSettingsScreen.hpp"
+#include "PenSettingsScreen.hpp"
+#include "ui/framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
-#include "../components/HeaderLine.hpp"
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/layouts/LinearLayout.hpp"
+#include "ui/components/HeaderLine.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/layouts/LinearLayout.hpp"
 
-#include "../styles/ButtonStyles.hpp"
+#include "ui/styles/ButtonStyles.hpp"
 
 namespace ui {
 namespace screens {
@@ -26,9 +30,7 @@ namespace screens {
 class SettingsScreen : public Screen
 {
 public:
-    SettingsScreen(FileManager& fileManager,
-                   std::function<bool()> wifiStatusProvider
-                  )
+    SettingsScreen(std::function<bool()> wifiStatusProvider)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
@@ -49,9 +51,10 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, &fileManager]() {
+                        .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                
+                                auto wifiSettingsScreen = std::make_unique<WifiSettingsScreen>(wifiStatusProvider);
+                                router()->pushScreen(std::move(wifiSettingsScreen));
                             }
                         }
                     },
@@ -61,9 +64,10 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, &fileManager]() {
+                        .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                
+                                auto plottingSettingsScreen = std::make_unique<PlottingSettingsScreen>(wifiStatusProvider);
+                                router()->pushScreen(std::move(plottingSettingsScreen));
                             }
                         }
                     },
@@ -73,9 +77,10 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, &fileManager]() {
+                        .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                
+                                auto homingSettingsScreen = std::make_unique<HoamingSettingsScreen>(wifiStatusProvider);
+                                router()->pushScreen(std::move(homingSettingsScreen));
                             }
                         }
                     },
@@ -85,9 +90,10 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, &fileManager]() {
+                        .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                
+                                auto steppersSettingsScreen = std::make_unique<SteppersSettingsScreen>(wifiStatusProvider);
+                                router()->pushScreen(std::move(steppersSettingsScreen));
                             }
                         }
                     },
@@ -97,9 +103,10 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, &fileManager]() {
+                        .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                
+                                auto penSettingsScreen = std::make_unique<PenSettingsScreen>(wifiStatusProvider);
+                                router()->pushScreen(std::move(penSettingsScreen));
                             }
                         }
                     },

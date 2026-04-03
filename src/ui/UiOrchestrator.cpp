@@ -2,7 +2,7 @@
 
 #include "framework/text/CustomChars.hpp"
 #include "screens/HomeScreen.hpp"
-#include "screens/PlottingScreen.hpp"
+#include "screens/plotting/PlottingScreen.hpp"
 
 #include <string>
 

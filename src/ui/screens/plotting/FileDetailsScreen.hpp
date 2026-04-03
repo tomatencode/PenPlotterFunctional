@@ -4,23 +4,23 @@
 #include <map>
 #include <string>
 
-#include "../framework/screen/Screen.hpp"
+#include "ui/framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
 
 // Include related screens to enable navigation
-#include "../framework/router/Router.hpp"
+#include "ui/framework/router/Router.hpp"
 #include "PlottingScreen.hpp"
 
 // Include components and widgets used in this screen
-#include "../components/HeaderLine.hpp"
-#include "../components/FileList.hpp"
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/leaves/Switch.hpp"
-#include "../components/PressHoldButton.hpp"
+#include "ui/components/HeaderLine.hpp"
+#include "ui/components/FileList.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/leaves/Switch.hpp"
+#include "ui/components/PressHoldButton.hpp"
 
 #include "config/job_config.hpp"
 

@@ -9,8 +9,8 @@
 #include "storage/FileManager.hpp"
 
 // Include related screens to enable navigation
-#include "FilesScreen.hpp"
-#include "SettingsScreen.hpp"
+#include "plotting/FilesScreen.hpp"
+#include "settings/SettingsScreen.hpp"
 #include "../framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -50,9 +50,9 @@ public:
 
             std::make_unique<widgets::Button>(
                 widgets::ButtonProps{
-                    .onPress = [this, &fileManager, wifiStatusProvider]() {
+                    .onPress = [this, wifiStatusProvider]() {
                         if (router()) {
-                            auto settingsScreen = std::make_unique<SettingsScreen>(fileManager, wifiStatusProvider);
+                            auto settingsScreen = std::make_unique<SettingsScreen>(wifiStatusProvider);
                             router()->pushScreen(std::move(settingsScreen));
                         }
                     }

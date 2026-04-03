@@ -3,7 +3,7 @@
 #include <functional>
 #include <map>
 
-#include "../framework/screen/Screen.hpp"
+#include "ui/framework/screen/Screen.hpp"
 
 #include "systemServices/MotionState.hpp"
 #include "jobController/JobController.hpp"
@@ -11,14 +11,14 @@
 
 // Include related screens to enable navigation
 #include "FilesScreen.hpp"
-#include "../framework/router/Router.hpp"
+#include "ui/framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
-#include "../components/HeaderLine.hpp"
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/leaves/ProgressBar.hpp"
-#include "../framework/widgets/leaves/Switch.hpp"
+#include "ui/components/HeaderLine.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/leaves/ProgressBar.hpp"
+#include "ui/framework/widgets/leaves/Switch.hpp"
 
 namespace ui {
 namespace screens {
