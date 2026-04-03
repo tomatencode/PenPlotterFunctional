@@ -4,7 +4,7 @@
 
 #include "systemServices/MotionState.hpp"
 #include "CoreXYKinematics.hpp"
-#include "hardware/axis/StepperAxis.hpp"
+#include "StepperAxis.hpp"
 
 using StepCallback = void(*)(bool direction);
 

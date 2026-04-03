@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hardware/axis/StepperAxis.hpp"
+#include "StepperAxis.hpp"
 #include "systemServices/MotionState.hpp"
 
 class HomingController {
