@@ -67,6 +67,7 @@ void MotionSystem::moveToXY(
                 yield(); // for watchdog (idk if this is necessary)
             }
             motionState.setState(MotionStateType::RUNNING);
+            next_step_time = micros(); // Reset so pause duration doesn't cause a step burst on resume
         }
         else if (motionState.getCommand() == MotionCommand::ABORT)
         {
