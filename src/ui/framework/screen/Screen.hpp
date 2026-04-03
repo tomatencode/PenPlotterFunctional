@@ -7,8 +7,6 @@
 
 namespace ui {
 
-constexpr size_t MAX_WIDGETS_PER_SCREEN = 16;
-
 class Router; // forward declaration
 
 class Screen
