@@ -1,7 +1,7 @@
 #include "HomingController.hpp"
 
-HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms)
-    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _consecutiveStallChecks(consecutiveStallChecks), _sgStartTimeout_ms(sgStartTimeout_ms) {}
+HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms)
+    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _consecutiveStallChecks(consecutiveStallChecks), _sgStartTimeout_ms(sgStartTimeout_ms) {}
 
 void HomingController::moveToLimit(bool Afw, bool Bfw)
 {
@@ -16,14 +16,50 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
 
     uint8_t stallCount = 0;
 
-    _driverA.setSpeed(_speed_stps_per_s * _driverA.getMicrosteps() * (Afw ? 1 : -1));
-    _driverB.setSpeed(_speed_stps_per_s * _driverB.getMicrosteps() * (Bfw ? 1 : -1));
+    double speedA = _speed_stps_per_s * _driverA.getMicrosteps() * (Afw ? 1 : -1);
+    double speedB = _speed_stps_per_s * _driverB.getMicrosteps() * (Bfw ? 1 : -1);
+
+    _driverA.setSpeed(speedA);
+    _driverB.setSpeed(speedB);
+
+    uint32_t last_step_time = micros();
 
     while (true)
     {
-        while ((uint32_t)(micros() - last_SGcheck_time) >= sgCheckInterval_us) { yield(); }
+        while ((uint32_t)(micros() - last_SGcheck_time) < sgCheckInterval_us) { yield(); }
+        last_SGcheck_time = micros();
 
-        last_SGcheck_time += sgCheckInterval_us;
+        // Check for pause/abort commands
+        if (_motionState.getCommand() == MotionCommand::PAUSE) {
+
+            _driverA.setSpeed(0);
+            _driverB.setSpeed(0);
+            _motionState.setState(MotionStateType::PAUSED);
+
+            Serial.println("Homing paused");
+
+            while (_motionState.getCommand() == MotionCommand::PAUSE)
+            {
+                yield(); // for watchdog (idk if this is necessary)
+                Serial.println("Waiting for resume...");
+            }
+
+            Serial.println("Homing resumed");
+
+            _driverA.setSpeed(speedA);
+            _driverB.setSpeed(speedB);
+            _motionState.setState(MotionStateType::RUNNING);
+            last_SGcheck_time = micros(); // Reset to avoid huge elapsed time after pause
+            start_time = micros(); // Reset timeout so pause duration isn't counted
+
+        }
+        else if (_motionState.getCommand() == MotionCommand::ABORT)
+        {
+            Serial.println("Homing aborted");
+            _driverA.setSpeed(0);
+            _driverB.setSpeed(0);
+            return;
+        }
 
         int stallGuardA = _driverA.getStallGuardResult();
         int stallGuardB = _driverB.getStallGuardResult();
@@ -51,15 +87,38 @@ void HomingController::home() {
     if (_axisA.microsteps() != _axisB.microsteps()) return;
 
     moveToLimit(false, false); // Move to x limit
-    delay(500); // Short delay to ensure we're fully at the limit
+    if (_motionState.getCommand() == MotionCommand::ABORT) return;
+
+    // Interruptible 500ms delay
+    uint32_t delayStart = millis();
+    while ((uint32_t)(millis() - delayStart) < 500) {
+        if (_motionState.getCommand() == MotionCommand::ABORT) return;
+        if (_motionState.getCommand() == MotionCommand::PAUSE) {
+            _motionState.setState(MotionStateType::PAUSED);
+            while (_motionState.getCommand() == MotionCommand::PAUSE) { yield(); }
+            _motionState.setState(MotionStateType::RUNNING);
+        }
+        yield();
+    }
+
     moveToLimit(false, true); // Move to y limit
-    
+    if (_motionState.getCommand() == MotionCommand::ABORT) return;
+
     uint16_t stepInterval_us = 1000000UL / _speed_stps_per_s;
 
     for (int i = 0; i < 15 * _axisA.microsteps(); i++) {
+        if (_motionState.getCommand() == MotionCommand::PAUSE) {
+            _motionState.setState(MotionStateType::PAUSED);
+            while (_motionState.getCommand() == MotionCommand::PAUSE) { yield(); }
+            _motionState.setState(MotionStateType::RUNNING);
+        }
+        else if (_motionState.getCommand() == MotionCommand::ABORT) {
+            return;
+        }
+
         _axisA.step(true);
         _axisB.step(true);
-        delayMicroseconds(stepInterval_us); // Short delay between steps to ensure movement
+        delayMicroseconds(stepInterval_us);
     }
 
     _axisA.setPositionSteps(0);

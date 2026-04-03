@@ -28,6 +28,7 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
         _axisB,
         _driverA,
         _driverB,
+        motionState,
         HOMING_SPEED_STPS_PER_S,
         HOMING_STALLGUARD_THRESHOLD,
         HOMING_SG_CHECK_INTERVAL_MS,

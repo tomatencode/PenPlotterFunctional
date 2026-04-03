@@ -1,10 +1,11 @@
 #pragma once
 
 #include "hardware/axis/StepperAxis.hpp"
+#include "systemServices/MotionState.hpp"
 
 class HomingController {
 public:
-    HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms);
+    HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms);
 
     void home();
 private:
@@ -12,6 +13,7 @@ private:
     StepperAxis& _axisB;
     MotorDriver& _driverA;
     MotorDriver& _driverB;
+    MotionState& _motionState;
     float _speed_stps_per_s;
     float _stallGuard_threshold;
     float _sgCheckInterval_ms;
