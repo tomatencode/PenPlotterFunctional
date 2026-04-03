@@ -92,6 +92,9 @@ void PlottingManager::update()
     }
     else
     {
+        if (_motionState.getCommand() == MotionCommand::ABORT) {
+            _pen.up();
+        }
         _motionState.setState(MotionStateType::IDLE);
     }
 }
