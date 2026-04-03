@@ -20,7 +20,7 @@ public:
 
     size_t size() const { return _glyphs().size(); }
 
-    Glyph operator[](size_t i) const { return i < size() ? _glyphs()[i] : GLYPH_NONE; }
+    Glyph operator[](size_t i) const { return i < size() ? _glyphs()[i] : Glyph{}; }
 
 private:
     std::function<GlyphString()> _glyphs;

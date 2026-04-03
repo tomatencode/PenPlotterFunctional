@@ -35,7 +35,7 @@ public:
 
     size_t size() const { return _data.size(); }
 
-    Glyph operator[](size_t i) const { return i < size() ? _data[i] : GLYPH_NONE; }
+    Glyph operator[](size_t i) const { return i < size() ? _data[i] : Glyph{}; }
 
 private:
     std::vector<Glyph> _data;

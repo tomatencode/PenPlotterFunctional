@@ -8,8 +8,8 @@ Renderer::Renderer(LcdDisplay& display) : _display(display)
     {
         for (int x = 0; x < LCD_COLS; x++)
         {
-            _buffer[y][x] = ' ';
-            _currentScreen[y][x] = ' ';
+            _buffer[y][x] = Glyph(' ');
+            _currentScreen[y][x] = Glyph(' ');
         }
     }
 }
@@ -49,8 +49,7 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
     if (y >= LCD_ROWS) return;
     size_t i = 0;
     while (i < s.size() && x < LCD_COLS) {
-        if (s[i] != GLYPH_NONE)
-            _buffer[y][x] = s[i];
+        _buffer[y][x] = s[i];
         x++;
         i++;
     }
@@ -59,8 +58,8 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
 void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
 {
     if (y >= LCD_ROWS || x >= LCD_COLS) return;
-    if (g != GLYPH_NONE)
-        _buffer[y][x] = g;
+
+    _buffer[y][x] = g;
 }
 
 void Renderer::renderToDisplay()

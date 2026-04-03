@@ -1,7 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <functional>
-#include <variant>
 
 namespace ui {
 
@@ -15,8 +13,5 @@ struct Glyph
     bool operator==(const Glyph& other) const { return code == other.code; }
     bool operator!=(const Glyph& other) const { return code != other.code; }
 };
-
-// Special "no glyph" sentinel for optional decorations
-constexpr Glyph GLYPH_NONE(255);
 
 } // namespace ui

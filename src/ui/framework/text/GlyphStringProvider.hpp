@@ -50,7 +50,7 @@ public:
 
     size_t size() const { return getGlyphs().size(); }
 
-    Glyph operator[](size_t i) const { return i < size() ? getGlyphs()[i] : GLYPH_NONE; }
+    Glyph operator[](size_t i) const { return i < size() ? getGlyphs()[i] : Glyph{}; }
 
 private:
     std::variant<GlyphString, DynamicGlyphString> _glyphs;
