@@ -1,11 +1,8 @@
 #include "WebInterface.hpp"
+#include "config/wifi_config.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
-
-// WiFi credentials
-static const char* SSID = "Thomas_Wifi";
-static const char* PASSWORD = "TotallyHarmless";
 
 // Non-blocking
 void WebInterface::startWiFiConnection()
@@ -39,13 +36,15 @@ void WebInterface::setupServer()
     Serial.println(WiFi.localIP());
 
     // mDNS 
-    if (!MDNS.begin("esp32"))
+    if (!MDNS.begin(MDNS_NAME))
     {
         Serial.println("Error starting mDNS");
     }
     else
     {
-        Serial.println("mDNS started: http://esp32.local");
+        Serial.print("mDNS started: http://");
+        Serial.print(MDNS_NAME);
+        Serial.println(".local");
     }
 
     // HTTP server routes
