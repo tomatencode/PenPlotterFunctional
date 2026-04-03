@@ -4,7 +4,14 @@ namespace ui {
 
 Renderer::Renderer(LcdDisplay& display) : _display(display)
 {
-    clearBuffer();
+    for (int y = 0; y < LCD_ROWS; y++)
+    {
+        for (int x = 0; x < LCD_COLS; x++)
+        {
+            _buffer[y][x] = ' ';
+            _currentScreen[y][x] = ' ';
+        }
+    }
 }
 
 void Renderer::init()
@@ -58,13 +65,28 @@ void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
 
 void Renderer::renderToDisplay()
 {
+    // Save current cursor position
+    int cursorX = 0;
+    int cursorY = 0;
+    _display.setCursor(0, 0);
+
     for (int y = 0; y < LCD_ROWS; y++)
     {
-        _display.setCursor(0, y);
-
         for (int x = 0; x < LCD_COLS; x++)
         {
-            _display.write(_buffer[y][x].code);
+            if (_buffer[y][x].code != _currentScreen[y][x].code)
+            {
+                if (cursorX != x || cursorY != y) {
+                    _display.setCursor(x, y);
+                    cursorX = x;
+                    cursorY = y;
+                }
+
+                _display.write(_buffer[y][x].code);
+                cursorX = x + 1;
+
+                _currentScreen[y][x] = _buffer[y][x];
+            }
         }
     }
 }

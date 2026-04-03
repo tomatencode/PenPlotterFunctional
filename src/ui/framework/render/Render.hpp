@@ -26,6 +26,7 @@ private:
     LcdDisplay& _display;
 
     Glyph _buffer[LCD_ROWS][LCD_COLS]; 
+    Glyph _currentScreen[LCD_ROWS][LCD_COLS];
 };
 
 } // namespace ui
