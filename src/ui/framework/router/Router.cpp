@@ -7,9 +7,13 @@ void Router::pushScreen(std::unique_ptr<Screen> screen)
 {
     if (screen == nullptr) return;
 
+    if (top()) {
+        top()->onExit();
+        top()->setRouter(nullptr);
+    }
     _stack.push_back(std::move(screen));
-    _stack.back()->setRouter(this);
-    _stack.back()->onEnter();
+    top()->setRouter(this);
+    top()->onEnter();
 }
 
 void Router::popScreen()
@@ -29,14 +33,14 @@ void Router::popScreen()
 
 void Router::handleInput(InputState& input)
 {
-    if (_stack.empty()) return;
-    _stack.back()->handleInput(input);
+    if (!top()) return;
+    top()->handleInput(input);
 }
 
 void Router::render(Renderer& r)
 {
-    if (_stack.empty()) return;
-    _stack.back()->render(r);
+    if (!top()) return;
+    top()->render(r);
 }
 
 } // namespace ui
