@@ -29,7 +29,7 @@ void Renderer::clearBuffer()
     {
         for (int x = 0; x < LCD_COLS; x++)
         {
-            _buffer[y][x] = ' ';  // clear to space
+            _buffer[y][x] = Glyph(' ');  // clear to space
         }
     }
 }
@@ -49,7 +49,7 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
     if (y >= LCD_ROWS) return;
     size_t i = 0;
     while (i < s.size() && x < LCD_COLS) {
-        if (s[i].code != GLYPH_NONE.code)
+        if (s[i] != GLYPH_NONE)
             _buffer[y][x] = s[i];
         x++;
         i++;
@@ -59,7 +59,7 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
 void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
 {
     if (y >= LCD_ROWS || x >= LCD_COLS) return;
-    if (g.code != GLYPH_NONE.code)
+    if (g != GLYPH_NONE)
         _buffer[y][x] = g;
 }
 
@@ -74,7 +74,7 @@ void Renderer::renderToDisplay()
     {
         for (int x = 0; x < LCD_COLS; x++)
         {
-            if (_buffer[y][x].code != _currentScreen[y][x].code)
+            if (_buffer[y][x] != _currentScreen[y][x])
             {
                 if (cursorX != x || cursorY != y) {
                     _display.setCursor(x, y);

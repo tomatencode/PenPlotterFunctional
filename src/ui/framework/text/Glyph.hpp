@@ -11,6 +11,9 @@ struct Glyph
 
     constexpr Glyph(uint8_t c) : code(c) {}
     constexpr Glyph() : code(' ') {}
+
+    bool operator==(const Glyph& other) const { return code == other.code; }
+    bool operator!=(const Glyph& other) const { return code != other.code; }
 };
 
 // Special "no glyph" sentinel for optional decorations
