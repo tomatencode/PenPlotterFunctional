@@ -7,13 +7,13 @@ Size Button::measure() const
 {
     Size childSize = Container::measure();
     uint8_t width = childSize.w;
-    if (isFocused())
-    {
-        width += _props.style.leftFocused.size() + _props.style.rightFocused.size();
-    }
-    else if (_isPressed)
+    if (_isPressed)
     {
         width += _props.style.leftPressed.size() + _props.style.rightPressed.size();
+    }
+    else if (isFocused())
+    {
+        width += _props.style.leftFocused.size() + _props.style.rightFocused.size();
     }
     else
     {
