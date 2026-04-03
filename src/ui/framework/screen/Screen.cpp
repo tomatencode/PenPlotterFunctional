@@ -27,7 +27,8 @@ void Screen::reload() {
 void Screen::render(Renderer& r)
 {
     r.clearBuffer();
-    _root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
+    if (_root)
+        _root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
 void Screen::onEnter() {}

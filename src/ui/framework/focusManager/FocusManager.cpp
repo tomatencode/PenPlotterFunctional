@@ -5,16 +5,14 @@ namespace ui {
 FocusManager::FocusManager(widgets::Widget* root, size_t initialFocusIndex)
     : _root(root), _focusedIndx(initialFocusIndex)
 {
-    if (_root)
-        refresh();
+    refresh();
 }
 
 void FocusManager::setRoot(widgets::Widget* root, size_t initialFocusIndex) {
     _root = root;
     _focusedIndx = initialFocusIndex;
 
-    if (_root)
-        refresh();
+    refresh();
 }
 
 void FocusManager::handleInput(InputState& input) {
@@ -61,6 +59,8 @@ void FocusManager::prev() {
 }
 
 void FocusManager::refresh() {
+    if (!_root) return;
+
     std::vector<widgets::ISelectable*> widgets;
     collectSelectables(_root, widgets);
 
