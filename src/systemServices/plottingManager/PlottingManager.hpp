@@ -8,7 +8,8 @@
 #include "hardware/drivers/TMC2209Driver.hpp"
 #include "motion/StepperAxis.hpp"
 #include "motion/CoreXYKinematics.hpp"
-#include "motion/MotionSystem.hpp"
+#include "motion/MotionExecuter.hpp"
+#include "motion/BezierExecuter.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
@@ -54,7 +55,9 @@ private:
 
     CoreXYKinematics _kinematics;
 
-    MotionSystem _motionSystem;
+    BezierExecuter _bezierExecuter;
+
+    MotionExecuter _motionExecuter;
 
     GCodeParser _gcodeParser;
 

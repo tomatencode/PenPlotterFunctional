@@ -1,6 +1,6 @@
 #include "GCodeParser.hpp"
 
-GCodeParser::GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState)
+GCodeParser::GCodeParser(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState)
         : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
           _absolute(true), _motionState(motionState) {}
 
@@ -60,7 +60,7 @@ void GCodeParser::handleG0G1(const std::map<char,double>& params) {
     if (params.count('Y')) target.y_mm = _absolute ? params.at('Y') : target.y_mm + params.at('Y');
     if (params.count('F')) feed = params.at('F');
 
-    _motion.moveToXY(target, feed);
+    _motion.LineToXY(target, feed);
 }
 
 void GCodeParser::handleG2G3(const std::map<char,double>& params, bool clockwise) {

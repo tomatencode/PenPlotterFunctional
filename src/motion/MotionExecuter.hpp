@@ -2,18 +2,15 @@
 
 #include <cstdint>
 
+#include "BezierExecuter.hpp"
 #include "systemServices/MotionState.hpp"
-#include "CoreXYKinematics.hpp"
-#include "StepperAxis.hpp"
-
-using StepCallback = void(*)(bool direction);
 
 
-class MotionSystem {
+class MotionExecuter {
     public:
-        MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& motionState, double min_feature_size_mm = 1.0);
+        MotionExecuter(BezierExecuter& bezierExecuter, MotionState& motionState, double min_feature_size_mm = 1.0);
 
-        void moveToXY(
+        void LineToXY(
             const XYPos& targetPos,
             double mm_per_s
         );
@@ -35,15 +32,10 @@ class MotionSystem {
             float mm_per_s
         );
 
-        XYPos getCurrentPos() const {
-            MotorSteps steps = {_axisA.positionSteps(), _axisB.positionSteps()};
-            return _kinematics.steps_to_mm(steps);
-        }
-    private:
-        StepperAxis& _axisA;
-        StepperAxis& _axisB;
-        CoreXYKinematics& _kinematics;
-        double _min_feature_size_mm;
+        XYPos getCurrentPos() const;
 
-        MotionState& motionState;
+    private:
+        BezierExecuter& _bezierExecuter;
+        MotionState& _motionState;
+        double _min_feature_size_mm;
 };

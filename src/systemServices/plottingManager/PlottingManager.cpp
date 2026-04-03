@@ -38,10 +38,12 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
 
     _kinematics(STEPS_PER_MM),
 
-    _motionSystem(_axisA, _axisB, _kinematics, motionState, MIN_FEATURE_SIZE_MM),
+    _bezierExecuter(_axisA, _axisB, _kinematics, motionState),
+
+    _motionExecuter(_bezierExecuter, motionState, MIN_FEATURE_SIZE_MM),
 
     _gcodeParser(
-        _motionSystem,
+        _motionExecuter,
         _pen,
         _homingController,
         FEED_RATE_DRAW_MM_PER_S,

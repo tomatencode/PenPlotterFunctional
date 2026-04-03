@@ -1,6 +1,6 @@
 #pragma once
 
-#include "motion/MotionSystem.hpp"
+#include "motion/MotionExecuter.hpp"
 #include "hardware/pen/Pen.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
@@ -10,11 +10,11 @@
 
 class GCodeParser {
 public:
-    GCodeParser(MotionSystem& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
+    GCodeParser(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
 
     void executeLine(const std::string& line);
 private:
-    MotionSystem& _motion;
+    MotionExecuter& _motion;
     HomingController& _homingController;
     double _feedRateDraw;
     double _feedRateTravel;

@@ -1,108 +1,30 @@
-#include "MotionSystem.hpp"
+#include "MotionExecuter.hpp"
 #include <cmath>
 #include <algorithm>
 #include <Arduino.h>
 
 
-MotionSystem::MotionSystem(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& motionState, double min_feature_size_mm)
-    : _axisA(axisA), _axisB(axisB), _kinematics(kinematics), _min_feature_size_mm(min_feature_size_mm), motionState(motionState) {}
+MotionExecuter::MotionExecuter(BezierExecuter& bezierExecuter, MotionState& motionState, double min_feature_size_mm)
+    : _bezierExecuter(bezierExecuter), _motionState(motionState), _min_feature_size_mm(min_feature_size_mm) {}
 
-void MotionSystem::moveToXY(
+XYPos MotionExecuter::getCurrentPos() const {
+    return _bezierExecuter.getCurrentPos();
+}
+
+void MotionExecuter::LineToXY(
     const XYPos& targetPos,
     double mm_per_s
 ) {
-    // derive current position from steps for motion planning
-    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
-    uint16_t msA = _axisA.microsteps();
-    uint16_t msB = _axisB.microsteps();
-
-    XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
-
-    float dx = targetPos.x_mm - currentPos.x_mm;
-    float dy = targetPos.y_mm - currentPos.y_mm;
-    
-    double distance_mm = std::sqrt(dx * dx + dy * dy);
-    if (distance_mm <= 0.0) return;
-
-    if (mm_per_s <= 0.0) return;
-
-    MotorSteps dfullsteps = _kinematics.mm_to_steps({dx, dy});
-
-    // convert deltas from full steps to microsteps
-    int32_t deltaA = static_cast<int32_t>((dfullsteps.a) * msA);
-    int32_t deltaB = static_cast<int32_t>((dfullsteps.b) * msB);
-
-    int32_t absA = std::abs(deltaA);
-    int32_t absB = std::abs(deltaB);
-
-    bool dirA = (deltaA >= 0);
-    bool dirB = (deltaB >= 0);
-
-    int32_t stepsInLoop = std::max(absA, absB);
-    if (stepsInLoop == 0) return;
-
-    // ---- timing calculation ----
-    double move_time_s = distance_mm / mm_per_s;
-    double step_frequency = stepsInLoop / move_time_s;
-    uint32_t step_interval_us = static_cast<uint32_t>(1e6 / step_frequency);
-    if (step_interval_us == 0) step_interval_us = 1;
-
-    uint32_t next_step_time = micros();
-
-    long errA = 0;
-    long errB = 0;
-
-    for (int32_t i = 0; i < stepsInLoop; i++) {
-
-        // Wait until scheduled time
-        while ((int32_t)(micros() - next_step_time) < 0) {
-            yield(); // for watchdog (idk if this is necessary)
-        }
-
-        // Check for motion commands
-        if (motionState.getCommand() == MotionCommand::PAUSE) {
-            motionState.setState(MotionStateType::PAUSED);
-            while (motionState.getCommand() == MotionCommand::PAUSE)
-            {
-                yield(); // for watchdog (idk if this is necessary)
-            }
-            motionState.setState(MotionStateType::RUNNING);
-            next_step_time = micros(); // Reset so pause duration doesn't cause a step burst on resume
-        }
-        else if (motionState.getCommand() == MotionCommand::ABORT)
-        {
-            return; // Exit the motion loop immediately on abort
-        }
-        
-
-        next_step_time += step_interval_us;
-
-        // ---- stepping logic ----
-        errA += absA;
-        errB += absB;
-
-        if (errA >= stepsInLoop) {
-            _axisA.step(dirA);
-            errA -= stepsInLoop;
-        }
-
-        if (errB >= stepsInLoop) {
-            _axisB.step(dirB);
-            errB -= stepsInLoop;
-        }
-    }
+    _bezierExecuter.bezierTo(targetPos, mm_per_s);
 }
 
-void MotionSystem::arcToXY(
+void MotionExecuter::arcToXY(
     const XYPos& targetPos,
     const XYPos& centerPos,
     bool clockwise,
     double mm_per_s
 ) {
-    // derive current position from steps for motion planning
-    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
-
-    XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
+    XYPos currentPos = _bezierExecuter.getCurrentPos();
 
     // Calculate the radius and angles
     double dx = currentPos.x_mm - centerPos.x_mm;
@@ -136,23 +58,22 @@ void MotionSystem::arcToXY(
         double angle = startAngle + (clockwise ? -1 : 1) * t * totalAngle;
         double x = centerPos.x_mm + radius * cos(angle);
         double y = centerPos.y_mm + radius * sin(angle);
-        moveToXY({x, y}, mm_per_s); // Move to the calculated position
+        LineToXY({x, y}, mm_per_s); // Move to the calculated position
 
         // Check for abort
-        if (motionState.getCommand() == MotionCommand::ABORT)
+        if (_motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
     }
 }
 
-void MotionSystem::quadraticBezierToXY(
+void MotionExecuter::quadraticBezierToXY(
     const XYPos& controlPoint,
     const XYPos& targetPos,
     float mm_per_s
 ) {
-    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
-    XYPos startPos = _kinematics.steps_to_mm(currentSteps);
+    XYPos startPos = _bezierExecuter.getCurrentPos();
 
     auto bezier = [&](double t) -> XYPos {
         double u = 1.0 - t;
@@ -185,14 +106,14 @@ void MotionSystem::quadraticBezierToXY(
             p1 = bezier(t1);
         }
 
-        moveToXY(p1, mm_per_s);
+        LineToXY(p1, mm_per_s);
 
         // Prepare for next segment
         lastPos = p1;
         t0 = t1;
 
         // Check for abort
-        if (motionState.getCommand() == MotionCommand::ABORT)
+        if (_motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
@@ -201,18 +122,16 @@ void MotionSystem::quadraticBezierToXY(
     // Only move to exact target if not already there
     double dx = targetPos.x_mm - lastPos.x_mm;
     double dy = targetPos.y_mm - lastPos.y_mm;
-    if (dx*dx + dy*dy > 1e-12) moveToXY(targetPos, mm_per_s);
+    if (dx*dx + dy*dy > 1e-12) LineToXY(targetPos, mm_per_s);
 }
 
-void MotionSystem::cubicBezierToXY(
+void MotionExecuter::cubicBezierToXY(
     const XYPos& controlPoint1,
     const XYPos& controlPoint2,
     const XYPos& targetPos,
     float mm_per_s
 ) {
-    // Get current position (start anchor)
-    MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
-    XYPos startPos = _kinematics.steps_to_mm(currentSteps);
+    XYPos startPos = _bezierExecuter.getCurrentPos();
 
     // Lambda to evaluate the cubic Bézier at t
     auto bezier = [&](double t) -> XYPos {
@@ -263,19 +182,19 @@ void MotionSystem::cubicBezierToXY(
         }
 
         // Move the pen to the computed point
-        moveToXY(p1, mm_per_s);
+        LineToXY(p1, mm_per_s);
 
         // Prepare for next segment
         lastPos = p1;
         t0 = t1;
 
         // Check for abort
-        if (motionState.getCommand() == MotionCommand::ABORT)
+        if (_motionState.getCommand() == MotionCommand::ABORT)
         {
             return; // Exit the motion loop immediately on abort
         }
     }
 
     // Ensure the pen ends exactly at target
-    moveToXY(targetPos, mm_per_s);
+    LineToXY(targetPos, mm_per_s);
 }
