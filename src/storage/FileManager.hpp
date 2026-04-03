@@ -1,8 +1,8 @@
 #pragma once
 
 #include <FS.h>
+#include <string>
 #include <vector>
-#include <Arduino.h>
 
 #include "FileObserver.hpp"
 
@@ -19,26 +19,26 @@ public:
     void unregisterFileObserver(FileObserver* observer);
 
     // List files in a directory
-    std::vector<String> listFiles(const String& directory);
+    std::vector<std::string> listFiles(const std::string& directory);
 
     // Check if a file exists
-    bool fileExists(const String& path);
+    bool fileExists(const std::string& path);
 
     // Delete a file
-    bool deleteFile(const String& path);
+    bool deleteFile(const std::string& path);
 
     // Open a file for reading
-    File openFileRead(const String& path);
+    File openFileRead(const std::string& path);
 
     // Open a file for writing
-    File openFileWrite(const String& path);
+    File openFileWrite(const std::string& path);
 
     // Get the size of a file
-    size_t getFileSize(const String& path);
+    size_t getFileSize(const std::string& path);
 
 private:
     std::vector<FileObserver*> _observers;
 
     // Internal method to notify observers of file events
-    void notifyFileEvent(FileEvent event, const String& path);
+    void notifyFileEvent(FileEvent event, const std::string& path);
 };

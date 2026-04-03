@@ -14,17 +14,17 @@ namespace components {
 class FileList : public widgets::Container, public FileObserver
 {
 public:
-    FileList(FileManager& fileManager, std::function<void(const String&)> onFileSelected);
+    FileList(FileManager& fileManager, std::function<void(const std::string&)> onFileSelected);
     ~FileList();
 
     void reload();
     
 private:
     FileManager& _fileManager;
-    std::function<void(const String&)> _onFileSelected;
+    std::function<void(const std::string&)> _onFileSelected;
     widgets::ScrollableVerticalLayout* _layout;
 
-    void onFileEvent(FileEvent event, const String& path) override;
+    void onFileEvent(FileEvent event, const std::string& path) override;
 };
 
 } // namespace components

@@ -1,6 +1,5 @@
 #pragma once
-
-#include <Arduino.h>
+#include <string>
 
 enum class FileEvent {
     ADDED = 0,
@@ -14,5 +13,5 @@ public:
     virtual ~FileObserver() = default;
 
     // Method to be called when a file event occurs (e.g., file added, removed)
-    virtual void onFileEvent(FileEvent event, const String& path) = 0;
+    virtual void onFileEvent(FileEvent event, const std::string& path) = 0;
 };

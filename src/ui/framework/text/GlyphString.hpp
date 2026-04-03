@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <string>
 #include <vector>
-#include <Arduino.h>
 #include "Glyph.hpp"
 
 namespace ui {
@@ -18,9 +18,9 @@ public:
         : _data(glyphs)
     {}
 
-    GlyphString(const String& text) {
-        size_t n = text.length();
-        _data.reserve(n + 1);
+    GlyphString(const std::string& text) {
+        size_t n = text.size();
+        _data.reserve(n);
         for (size_t i = 0; i < n; ++i)
             _data.emplace_back(static_cast<uint8_t>(text[i]));
     }

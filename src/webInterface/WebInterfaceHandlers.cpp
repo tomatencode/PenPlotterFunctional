@@ -1,12 +1,13 @@
 #include "WebInterface.hpp"
 
+#include <string>
 #include "config/job_config.hpp"
 
 void WebInterface::handleFileList()
 {
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
 
-    String json = "[";
+    std::string json = "[";
     for (size_t i = 0; i < files.size(); i++)
     {
         if (i != 0) json += ",";
@@ -14,7 +15,7 @@ void WebInterface::handleFileList()
     }
     json += "]";
 
-    server.send(200, "application/json", json);
+    server.send(200, "application/json", json.c_str());
 }
 
 void WebInterface::handlePauseJob()
@@ -39,13 +40,13 @@ void WebInterface::handleStartJob()
 
     String filename = server.arg("file");
 
-    if (!_fileManager.fileExists(PLOTTING_DIRECTORY + '/' + filename))
+    if (!_fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename.c_str()))
     {
         server.send(404, "text/plain", "File not found");
         return;
     }
 
-    _jobController.start(filename);
+    _jobController.start(filename.c_str());
 
     server.send(200, "text/plain", "Job started");
 }
@@ -62,7 +63,7 @@ void WebInterface::handleUpload()
 
     if (upload.status == UPLOAD_FILE_START)
     {
-        String path = "/" + upload.filename;
+        std::string path = std::string("/") + upload.filename.c_str();
         Serial.printf("Upload start: %s\n", path.c_str());
 
         if (_fileManager.fileExists(path))
@@ -76,7 +77,7 @@ void WebInterface::handleUpload()
     }
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
-        String path = "/" + upload.filename;
+        std::string path = std::string("/") + upload.filename.c_str();
         File f = _fileManager.openFileWrite(path);
         f.write(upload.buf, upload.currentSize);
         f.close();

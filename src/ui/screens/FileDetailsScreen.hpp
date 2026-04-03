@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <map>
+#include <string>
 
 #include "../framework/screen/Screen.hpp"
 
@@ -27,24 +28,26 @@ namespace ui {
 namespace screens {
 
 namespace {
-    String formatFileSize(size_t bytes) {
-        if (bytes < 1024) return String(bytes) + " B";
-        else if (bytes < 1024 * 1024) return String(bytes / 1024.0, 2) + " KB";
-        else if (bytes < 1024 * 1024 * 1024) return String(bytes / (1024.0 * 1024), 2) + " MB";
-        else return String(bytes / (1024.0 * 1024 * 1024), 2) + " GB";
+    std::string formatFileSize(size_t bytes) {
+        char buf[32];
+        if (bytes < 1024)                      snprintf(buf, sizeof(buf), "%u B",    (unsigned)bytes);
+        else if (bytes < 1024 * 1024)          snprintf(buf, sizeof(buf), "%.2f KB", bytes / 1024.0);
+        else if (bytes < 1024 * 1024 * 1024)   snprintf(buf, sizeof(buf), "%.2f MB", bytes / (1024.0 * 1024));
+        else                                   snprintf(buf, sizeof(buf), "%.2f GB", bytes / (1024.0 * 1024 * 1024));
+        return std::string(buf);
     }
 
-    String formatPlotTime(size_t seconds) {
+    std::string formatPlotTime(size_t seconds) {
         size_t mins = seconds / 60;
         size_t secs = seconds % 60;
-        return String(mins) + "m " + String(secs) + "s";
+        return std::to_string(mins) + "m " + std::to_string(secs) + "s";
     }
 }
 
 class FileDetailsScreen : public Screen
 {
 public:
-    FileDetailsScreen(const String& filename,
+    FileDetailsScreen(const std::string& filename,
                       JobController& jobController,
                       MotionState& motionState,
                       FileManager& fileManager,
@@ -62,7 +65,7 @@ public:
                     widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
                     std::make_unique<components::HeaderLine>(
-                        filename.substring(0, filename.length() - 6),
+                        filename.substr(0, filename.length() - 6),
                         wifiStatusProvider,
                         [this]() {
                         if (router()) {
@@ -134,7 +137,7 @@ public:
                     widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
                     std::make_unique<components::HeaderLine>(
-                        filename.substring(0, filename.length() - 6),
+                        filename.substr(0, filename.length() - 6),
                         wifiStatusProvider,
                         [this]() {
                             if (router()) {

@@ -35,9 +35,9 @@ public:
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
             std::make_unique<components::HeaderLine>(
                 [&jobController]() {
-                    String filename = jobController.getCurrentFile();
-                    if (filename.endsWith(".gcode")) {
-                        filename = filename.substring(0, filename.length() - 6);
+                    std::string filename = jobController.getCurrentFile();
+                    if (filename.ends_with(".gcode")) {
+                        filename = filename.substr(0, filename.length() - 6);
                     }
                     if (filename == "") {
                         filename = "No Job";
@@ -55,7 +55,7 @@ public:
             }),
 
             std::make_unique<widgets::Label>([&jobController, this]() {
-                return String(String(jobController.getCurrentLine()) + "/" + String(jobController.getTotalLines()));
+                return std::to_string(jobController.getCurrentLine()) + "/" + std::to_string(jobController.getTotalLines());
             }),
 
             std::make_unique<widgets::Switch<bool>>(

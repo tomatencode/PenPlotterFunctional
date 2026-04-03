@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 enum class JobEvent {
     STARTED = 0,
@@ -10,7 +11,7 @@ enum class JobEvent {
 
 struct JobEventType {
     JobEvent type;
-    String filename;
+    std::string filename;
 };
 
 class JobObserver {

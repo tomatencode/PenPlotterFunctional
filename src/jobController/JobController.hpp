@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
+#include <string>
 #include <vector>
 
 #include "storage/FileManager.hpp"
@@ -13,17 +14,17 @@ struct PlotJob {
     File file = File();
     uint32_t totalLines = 0;
     uint32_t currentBufferLine = 0;
-    String filename = "";
+    std::string filename = "";
 };
 
 class JobController {
 public:
-    JobController(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, String plottingDirectory)
-        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _plottingDirectory(plottingDirectory)
+    JobController(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, std::string plottingDirectory)
+        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _plottingDirectory(std::move(plottingDirectory))
     {}
 
     // Job control
-    void start(String filename);
+    void start(const std::string& filename);
     void pause();
     void resume();
     void abort();
@@ -34,7 +35,7 @@ public:
 
     // Status queries
     bool isActive() const { return _active; }
-    String getCurrentFile() const { return _currentJob.filename; }
+    std::string getCurrentFile() const { return _currentJob.filename; }
     uint32_t getTotalLines() const { return _currentJob.totalLines; }
     uint16_t getCurrentLine() const;
 
@@ -43,7 +44,7 @@ public:
 private:
     PlotJob _currentJob;
     bool _active;
-    String _plottingDirectory;
+    std::string _plottingDirectory;
 
     MotionState& _motionState;
     FileManager& _fileManager;

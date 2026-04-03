@@ -15,7 +15,7 @@ namespace ui {
 namespace components {
 
 FileList::FileList(FileManager& fileManager,
-                   std::function<void(const String&)> onFileSelected)
+                   std::function<void(const std::string&)> onFileSelected)
     : Container(),
       _fileManager(fileManager),
       _onFileSelected(std::move(onFileSelected))
@@ -48,13 +48,13 @@ void FileList::reload() {
                 .style = ui::styles::listButtonStyle,
                 .onPress = [this, file]() { _onFileSelected(file); }
             },
-            std::make_unique<widgets::Label>(file.substring(0, file.length() - 6))
+            std::make_unique<widgets::Label>(file.substr(0, file.length() - 6))
         );
         _layout->addChild(std::move(button));
     }
 }
 
-void FileList::onFileEvent(FileEvent event, const String& path) {
+void FileList::onFileEvent(FileEvent event, const std::string& path) {
     if (event == FileEvent::ADDED || event == FileEvent::REMOVED) {
         reload();
     }

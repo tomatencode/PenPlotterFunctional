@@ -1,12 +1,13 @@
 #include "JobController.hpp"
 
 #include <FS.h>
+#include <cstring>
 
-void JobController::start(String filename)
+void JobController::start(const std::string& filename)
 {
     abort(); // Ensure any existing job is stopped before starting a new one
 
-    Serial.println("Starting job: " + filename);
+    Serial.println(("Starting job: " + filename).c_str());
 
     _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
     _currentJob.file = _fileManager.openFileRead(_plottingDirectory + "/" + filename);
@@ -94,17 +95,20 @@ void JobController::update()
     for (UBaseType_t i = 0; i < space && _currentJob.file.available(); i++)
     {
         String line = _currentJob.file.readStringUntil('\n');
-        line.trim();
+        std::string lineStr(line.c_str());
+        // trim whitespace and carriage returns
+        lineStr.erase(0, lineStr.find_first_not_of(" \t\r\n"));
+        if (!lineStr.empty()) lineStr.erase(lineStr.find_last_not_of(" \t\r\n") + 1);
 
         _currentJob.currentBufferLine++;
 
         // skip empty lines
-        if (line.length() == 0)
+        if (lineStr.length() == 0)
             continue;
 
         GcodeMessage msg;
 
-        line.toCharArray(msg.line, MAX_GCODE_LINE);
+        strncpy(msg.line, lineStr.c_str(), MAX_GCODE_LINE - 1);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
 
         if (_gcodeQueue.trySend(msg, 0))

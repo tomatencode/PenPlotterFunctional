@@ -16,34 +16,34 @@ bool FileManager::init()
     return true;
 }
 
-std::vector<String> FileManager::listFiles(const String& directory)
+std::vector<std::string> FileManager::listFiles(const std::string& directory)
 {
-    std::vector<String> files;
+    std::vector<std::string> files;
 
-    File root = SPIFFS.open(directory);
+    File root = SPIFFS.open(directory.c_str());
 
     File file = root.openNextFile();
 
     while (file)
     {
-        files.push_back(String(file.name()));
+        files.push_back(std::string(file.name()));
         file = root.openNextFile();
     }
 
     return files;
 }
 
-bool FileManager::fileExists(const String& path)
+bool FileManager::fileExists(const std::string& path)
 {
-    return SPIFFS.exists(path);
+    return SPIFFS.exists(path.c_str());
 }
 
-bool FileManager::deleteFile(const String& path)
+bool FileManager::deleteFile(const std::string& path)
 {
-    if (!SPIFFS.exists(path))
+    if (!SPIFFS.exists(path.c_str()))
         return false;
 
-    bool success = SPIFFS.remove(path);
+    bool success = SPIFFS.remove(path.c_str());
 
     if (success)
     {
@@ -53,16 +53,16 @@ bool FileManager::deleteFile(const String& path)
     return success;
 }
 
-File FileManager::openFileRead(const String& path)
+File FileManager::openFileRead(const std::string& path)
 {
-    return SPIFFS.open(path, "r");
+    return SPIFFS.open(path.c_str(), "r");
 }
 
-File FileManager::openFileWrite(const String& path)
+File FileManager::openFileWrite(const std::string& path)
 {
     bool existed = fileExists(path);
     
-    File file = SPIFFS.open(path, "w");
+    File file = SPIFFS.open(path.c_str(), "w");
 
     if (file)
     {
@@ -79,9 +79,9 @@ File FileManager::openFileWrite(const String& path)
     return file;
 }
 
-size_t FileManager::getFileSize(const String& path)
+size_t FileManager::getFileSize(const std::string& path)
 {
-    File file = SPIFFS.open(path);
+    File file = SPIFFS.open(path.c_str());
     if (file)
     {
         size_t size = file.size();
@@ -115,7 +115,7 @@ void FileManager::unregisterFileObserver(FileObserver* observer)
     }
 }
 
-void FileManager::notifyFileEvent(FileEvent event, const String& path)
+void FileManager::notifyFileEvent(FileEvent event, const std::string& path)
 {
     for (auto observer : _observers) {
         observer->onFileEvent(event, path);

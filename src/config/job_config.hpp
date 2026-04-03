@@ -1,7 +1,6 @@
 #pragma once
 #include <cstdint>
-
-#include <Arduino.h>
+#include <string>
 
 // Plotting directory
-const String PLOTTING_DIRECTORY = "";
+const std::string PLOTTING_DIRECTORY = "";
