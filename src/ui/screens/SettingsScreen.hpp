@@ -14,11 +14,11 @@
 
 // Include components and widgets used in this screen
 #include "../components/HeaderLine.hpp"
-#include "../components/ColabsibleElement.hpp"
 #include "../framework/widgets/leaves/Button.hpp"
 #include "../framework/widgets/leaves/Label.hpp"
-#include "../framework/widgets/leaves/ValueSelector.hpp"
 #include "../framework/widgets/layouts/LinearLayout.hpp"
+
+#include "../styles/ButtonStyles.hpp"
 
 namespace ui {
 namespace screens {
@@ -45,34 +45,65 @@ public:
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
-                std::make_unique<components::CollabsibleElement>(
-                    components::CollabsibleElementProps{
-                        .label = "Wifi Settings"
-                    },
-                    std::make_unique<widgets::LinearLayout>(
-                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal},
-                        std::make_unique<widgets::Label>("Wifi: "),
-
-                        std::make_unique<widgets::ValueSelector<bool>>(
-                            widgets::ValueSelectorProps<bool>{
-                                .initialValue = false,
-                                .next = [](const bool& value) { return !value; },
-                                .prev = [](const bool& value) { return !value; },
-                                .toString = [](const bool& value) { return value ? "On" : "Off"; },
+                
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, &fileManager]() {
+                            if (router()) {
+                                
                             }
-                        )
-                    )
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Wifi")
                 ),
 
-                std::make_unique<components::CollabsibleElement>(
-                    components::CollabsibleElementProps{
-                        .label = "Plotting Settings"
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, &fileManager]() {
+                            if (router()) {
+                                
+                            }
+                        }
                     },
-                    std::make_unique<widgets::LinearLayout>(
-                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
-                        std::make_unique<widgets::Label>("Plotting settings would go here"),
-                        std::make_unique<widgets::Label>("...")
-                    )
+                    std::make_unique<widgets::Label>("Plotting Speeds")
+                ),
+
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, &fileManager]() {
+                            if (router()) {
+                                
+                            }
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Hoaming Settings")
+                ),
+
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, &fileManager]() {
+                            if (router()) {
+                                
+                            }
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Steppers")
+                ),
+
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, &fileManager]() {
+                            if (router()) {
+                                
+                            }
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Pen")
                 )
             )
         )
