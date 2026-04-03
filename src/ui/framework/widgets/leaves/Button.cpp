@@ -70,10 +70,11 @@ void Button::render(Renderer& r, Rect canvasBox)
 
     Container::render(r, childCanvas);
 
-    x += ChildSize.w;
+    x += finalWidth;
 
     // Draw right decoration
-    r.drawGlyphsToBuffer(x, y, rightDecorator);
+    if (x < canvasBox.x + canvasBox.w)
+        r.drawGlyphsToBuffer(x, y, rightDecorator);
 }
 
 void Button::handleInput(InputState& input)
