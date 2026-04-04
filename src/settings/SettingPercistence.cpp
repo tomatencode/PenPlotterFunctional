@@ -95,7 +95,7 @@ void SettingPercistence::setHomingSpeed_stp_per_s(float value) {
 void SettingPercistence::setStallguardThreshold(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
-    prefs.putFloat("SGThreshold", value);
+    prefs.putFloat("stallguardThreshold", value);
     prefs.end();
     
     _runtimeSettings.setStallguardThreshold(value);
@@ -126,13 +126,13 @@ void SettingPercistence::setPenDownAngle_deg(float value) {
 // Observer Management
 // ============================================================================
 
-void SettingPercistence::addObserver(SettingsObserver* observer) {
+void SettingPercistence::addObserver(SettingObserver* observer) {
     if (observer) {
         _observers.push_back(observer);
     }
 }
 
-void SettingPercistence::removeObserver(SettingsObserver* observer) {
+void SettingPercistence::removeObserver(SettingObserver* observer) {
     auto it = std::find(_observers.begin(), _observers.end(), observer);
     if (it != _observers.end()) {
         _observers.erase(it);
@@ -160,9 +160,25 @@ void SettingPercistence::loadSettings() {
     setDrawFeedRate_mm_per_s(prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S));
     setTravelFeedRate_mm_per_s(prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S));
     setHomingSpeed_stp_per_s(prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S));
-    setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
+    setStallguardThreshold(prefs.getFloat("stallguardThreshold", STALLGUARD_THRESHOLD));
     setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
     setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
     
     prefs.end();
+}
+
+// ============================================================================
+// Settings Management
+// ============================================================================
+
+void SettingPercistence::clearAllSettings() {
+    Preferences prefs;
+    prefs.begin("settings", false);  // false = read-write mode
+    prefs.clear();                   // Clear entire namespace
+    prefs.end();
+    
+    Serial.println("All settings cleared from NVS. Reloading defaults...");
+    
+    // Reload with defaults
+    loadSettings();
 }

@@ -6,7 +6,7 @@
 #include "systemServices/GcodeMessage.hpp"
 
 PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
-    : SettingsObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
+    : SettingObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
     
     _motionState(motionState),
     gcodeQueue(gcodeQueue),
@@ -73,7 +73,7 @@ void PlottingManager::init()
 
     _driverA.begin();
     configureDriver(_driverA);
-    
+
     _driverB.begin();
     configureDriver(_driverB);
 

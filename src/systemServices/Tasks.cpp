@@ -67,7 +67,8 @@ void startSystemTasks()
     
     // Load settings from NVS at startup
     settingPercistence.init();
-    
+    settingPercistence.clearAllSettings(); // for testing
+
     static ApplicationManager appManager(motionState, gcodeQueue, settingPercistence, runtimeSettings);
     static PlottingManager plottingManager(motionState, gcodeQueue, runtimeSettings);
 

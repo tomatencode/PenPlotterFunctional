@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 #include "settings/RuntimeSettings.hpp"
-#include "settings/SettingsObserver.hpp"
+#include "settings/SettingObserver.hpp"
 #include "hardware/steppers/Stepper.hpp"
 #include "hardware/drivers/TMC2209Driver.hpp"
 #include "gCodeExecution/motionExecution/StepperAxis.hpp"
@@ -17,7 +17,7 @@
 #include "systemServices/GcodeMessage.hpp"
 
 
-class PlottingManager : public SettingsObserver
+class PlottingManager : public SettingObserver
 {
 public:
     PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);

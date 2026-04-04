@@ -5,11 +5,11 @@
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
-#include "settings/SettingsObserver.hpp"
+#include "settings/SettingObserver.hpp"
 #include "settings/SettingPercistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
-class WebInterface : public SettingsObserver
+class WebInterface : public SettingObserver
 {
 public:
     WebInterface(JobController& jobController,
@@ -17,8 +17,8 @@ public:
                  FileManager& fileManager,
                  SettingPercistence& settingsRepository,
                  RuntimeSettings& runtimeSettings)
-                 
-        : SettingsObserver({Setting::SSID, Setting::Password, Setting::MdnsName}),
+
+        : SettingObserver({Setting::SSID, Setting::Password, Setting::MdnsName}),
           _jobController(jobController),
           _motionState(motionState),
           _fileManager(fileManager),

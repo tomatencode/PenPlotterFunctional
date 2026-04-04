@@ -1,5 +1,5 @@
 #pragma once
-#include "SettingsObserver.hpp"
+#include "SettingObserver.hpp"
 #include "RuntimeSettings.hpp"
 #include "Settings.hpp"
 #include <string>
@@ -29,15 +29,17 @@ public:
     void setPenUpAngle_deg(float value);
     void setPenDownAngle_deg(float value);
 
+    void clearAllSettings();  // Clear all NVS data and reload defaults
+
     // ====== Observer Management ======
-    void addObserver(SettingsObserver* observer);
-    void removeObserver(SettingsObserver* observer);
+    void addObserver(SettingObserver* observer);
+    void removeObserver(SettingObserver* observer);
 
 private:
     // Notify all observers interested in a specific setting
     void notifyObservers(Setting setting) const;
 
-    std::vector<SettingsObserver*> _observers;
+    std::vector<SettingObserver*> _observers;
 
     void loadSettings();
 

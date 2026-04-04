@@ -4,13 +4,13 @@
 #include <initializer_list>
 #include <atomic>
 
-class SettingsObserver {
+class SettingObserver {
 public:
-    virtual ~SettingsObserver() = default;
+    virtual ~SettingObserver() = default;
 
     // Constructor: declare which settings this observer is interested in
-    // Example: SettingsObserver({Setting::DrawFeedRate, Setting::PenUpAngle})
-    explicit SettingsObserver(std::initializer_list<Setting> interestedSettings)
+    // Example: SettingObserver({Setting::DrawFeedRate, Setting::PenUpAngle})
+    explicit SettingObserver(std::initializer_list<Setting> interestedSettings)
         : _interestedSettings(interestedSettings.begin(), interestedSettings.end()) {}
 
     // Check if this observer cares about a particular setting
