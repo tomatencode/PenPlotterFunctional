@@ -6,7 +6,7 @@
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
 #include "settings/SettingObserver.hpp"
-#include "settings/SettingPercistence.hpp"
+#include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
 class WebInterface : public SettingObserver
@@ -15,7 +15,7 @@ public:
     WebInterface(JobController& jobController,
                  MotionState& motionState,
                  FileManager& fileManager,
-                 SettingPercistence& settingsRepository,
+                 SettingPersistence& settingsRepository,
                  RuntimeSettings& runtimeSettings)
 
         : SettingObserver({Setting::SSID, Setting::Password, Setting::MdnsName}),
@@ -37,7 +37,7 @@ private:
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
-    SettingPercistence& _settingPercistence;
+    SettingPersistence& _settingPercistence;
     RuntimeSettings& _runtimeSettings;
 
     WebServer _server; // HTTP server (port 80)

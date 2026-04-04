@@ -11,14 +11,14 @@
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
-#include "settings/SettingPercistence.hpp"
+#include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
 class ApplicationManager
 {
 public:
     ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
-                       SettingPercistence& settingPercistence, RuntimeSettings& runtimeSettings);
+                       SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings);
     
     void init();
     void update();

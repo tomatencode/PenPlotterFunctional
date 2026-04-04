@@ -6,7 +6,7 @@
 #include "applicationManager/ApplicationManager.hpp"
 #include "plottingManager/PlottingManager.hpp"
 #include "settings/RuntimeSettings.hpp"
-#include "settings/SettingPercistence.hpp"
+#include "settings/SettingPersistence.hpp"
 
 TaskHandle_t motionTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
@@ -63,7 +63,7 @@ void startSystemTasks()
     static FreeRtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
     static MotionState motionState;
     static RuntimeSettings runtimeSettings;
-    static SettingPercistence settingPercistence(runtimeSettings);
+    static SettingPersistence settingPercistence(runtimeSettings);
     
     // Load settings from NVS at startup
     settingPercistence.init();

@@ -4,7 +4,7 @@
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
-#include "settings/SettingPercistence.hpp"
+#include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
 #include "hardware/display/LcdDisplay.hpp"
@@ -33,7 +33,7 @@ public:
         MotionState& motionState,
         Buzzer& buzzer,
         std::function<bool()> wifiStatusProvider,
-        SettingPercistence& settingsRepository,
+        SettingPersistence& settingsRepository,
         RuntimeSettings& runtimeSettings
     )
     : _router(router),
@@ -69,7 +69,7 @@ private:
     InputMapper& _inputMapper;
     Buzzer& _buzzer;
     std::function<bool()> _wifiStatusProvider;
-    SettingPercistence& _settingsRepository;
+    SettingPersistence& _settingsRepository;
     RuntimeSettings& _runtimeSettings;
 
 

@@ -22,9 +22,9 @@ public:
 
 private:
 
-    friend class SettingPercistence;
+    friend class SettingPersistence;
     
-    // setters called by SettingPercistence when loading from NVS or updating a setting
+    // setters called by SettingPersistence when loading from NVS or updating a setting
     void setSSID(const std::string& v) { _ssid = v; }
     void setPassword(const std::string& v) { _password = v; }
     void setMdnsName(const std::string& v) { _mdnsName = v; }

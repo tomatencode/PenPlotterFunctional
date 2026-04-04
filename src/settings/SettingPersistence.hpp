@@ -7,9 +7,9 @@
 #include <algorithm>
 #include <memory>
 
-class SettingPercistence {
+class SettingPersistence {
 public:
-    explicit SettingPercistence(RuntimeSettings& runtimeSettings)
+    explicit SettingPersistence(RuntimeSettings& runtimeSettings)
         : _runtimeSettings(runtimeSettings)
     {}
 

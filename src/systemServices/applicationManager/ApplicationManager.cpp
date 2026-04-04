@@ -7,7 +7,7 @@
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
 ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
-                                       SettingPercistence& settingPercistence, RuntimeSettings& runtimeSettings)
+                                       SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings)
     : _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       _display(_lcd),
       _encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),

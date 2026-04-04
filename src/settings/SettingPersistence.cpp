@@ -1,18 +1,18 @@
-#include "SettingPercistence.hpp"
+#include "SettingPersistence.hpp"
 #include "defaults/PlottingDefaults.hpp"
 #include "defaults/WifiDefaults.hpp"
 #include <Preferences.h>
 #include <algorithm>
 
 
-void SettingPercistence::init() {
+void SettingPersistence::init() {
     loadSettings();
 }
 
 
 // Setters persist → RuntimeSettings → notify
 
-void SettingPercistence::setSSID(const std::string& value) {
+void SettingPersistence::setSSID(const std::string& value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putString("ssid", value.c_str());
@@ -22,7 +22,7 @@ void SettingPercistence::setSSID(const std::string& value) {
     notifyObservers(Setting::SSID);
 }
 
-void SettingPercistence::setPassword(const std::string& value) {
+void SettingPersistence::setPassword(const std::string& value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putString("password", value.c_str());
@@ -32,7 +32,7 @@ void SettingPercistence::setPassword(const std::string& value) {
     notifyObservers(Setting::Password);
 }
 
-void SettingPercistence::setMdnsName(const std::string& value) {
+void SettingPersistence::setMdnsName(const std::string& value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putString("mdnsName", value.c_str());
@@ -42,7 +42,7 @@ void SettingPercistence::setMdnsName(const std::string& value) {
     notifyObservers(Setting::MdnsName);
 }
 
-void SettingPercistence::setDriverCurrent_mA(float value) {
+void SettingPersistence::setDriverCurrent_mA(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("driverCurrent", value);
@@ -52,7 +52,7 @@ void SettingPercistence::setDriverCurrent_mA(float value) {
     notifyObservers(Setting::DriverCurrent);
 }
 
-void SettingPercistence::setMicrosteps(float value) {
+void SettingPersistence::setMicrosteps(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("microsteps", value);
@@ -62,7 +62,7 @@ void SettingPercistence::setMicrosteps(float value) {
     notifyObservers(Setting::Microsteps);
 }
 
-void SettingPercistence::setDrawFeedRate_mm_per_s(float value) {
+void SettingPersistence::setDrawFeedRate_mm_per_s(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("drawFeed", value);
@@ -72,7 +72,7 @@ void SettingPercistence::setDrawFeedRate_mm_per_s(float value) {
     notifyObservers(Setting::DrawFeedRate);
 }
 
-void SettingPercistence::setTravelFeedRate_mm_per_s(float value) {
+void SettingPersistence::setTravelFeedRate_mm_per_s(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("travelFeed", value);
@@ -82,7 +82,7 @@ void SettingPercistence::setTravelFeedRate_mm_per_s(float value) {
     notifyObservers(Setting::TravelFeedRate);
 }
 
-void SettingPercistence::setHomingSpeed_stp_per_s(float value) {
+void SettingPersistence::setHomingSpeed_stp_per_s(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("homingSpeed", value);
@@ -92,7 +92,7 @@ void SettingPercistence::setHomingSpeed_stp_per_s(float value) {
     notifyObservers(Setting::HomingSpeed);
 }
 
-void SettingPercistence::setStallguardThreshold(float value) {
+void SettingPersistence::setStallguardThreshold(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("SGThreshold", value);
@@ -102,7 +102,7 @@ void SettingPercistence::setStallguardThreshold(float value) {
     notifyObservers(Setting::StallguardThreshold);
 }
 
-void SettingPercistence::setPenUpAngle_deg(float value) {
+void SettingPersistence::setPenUpAngle_deg(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("upAngle", value);
@@ -112,7 +112,7 @@ void SettingPercistence::setPenUpAngle_deg(float value) {
     notifyObservers(Setting::PenUpAngle);
 }
 
-void SettingPercistence::setPenDownAngle_deg(float value) {
+void SettingPersistence::setPenDownAngle_deg(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
     prefs.putFloat("downAngle", value);
@@ -126,20 +126,20 @@ void SettingPercistence::setPenDownAngle_deg(float value) {
 // Observer Management
 // ============================================================================
 
-void SettingPercistence::addObserver(SettingObserver* observer) {
+void SettingPersistence::addObserver(SettingObserver* observer) {
     if (observer) {
         _observers.push_back(observer);
     }
 }
 
-void SettingPercistence::removeObserver(SettingObserver* observer) {
+void SettingPersistence::removeObserver(SettingObserver* observer) {
     auto it = std::find(_observers.begin(), _observers.end(), observer);
     if (it != _observers.end()) {
         _observers.erase(it);
     }
 }
 
-void SettingPercistence::notifyObservers(Setting setting) const {
+void SettingPersistence::notifyObservers(Setting setting) const {
     for (auto observer : _observers) {
         if (observer->isInterestedIn(setting)) {
             observer->markChanged();
@@ -147,7 +147,7 @@ void SettingPercistence::notifyObservers(Setting setting) const {
     }
 }
 
-void SettingPercistence::loadSettings() {
+void SettingPersistence::loadSettings() {
     Preferences prefs;
     prefs.begin("settings", true);  // true = read-only mode
 
@@ -171,7 +171,7 @@ void SettingPercistence::loadSettings() {
 // Settings Management
 // ============================================================================
 
-void SettingPercistence::clearAllSettings() {
+void SettingPersistence::clearAllSettings() {
     Preferences prefs;
     prefs.begin("settings", false);  // false = read-write mode
     prefs.clear();                   // Clear entire namespace
