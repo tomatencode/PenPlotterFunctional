@@ -29,8 +29,10 @@ public:
     HomeScreen(JobController& jobController,
                MotionState& motionState,
                FileManager& fileManager,
-               std::function<bool()> wifiStatusProvider
-               )
+               std::function<bool()> wifiStatusProvider,
+               SettingPersistence& settingsPersistence,
+               RuntimeSettings& runtimeSettings
+              )
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
@@ -50,9 +52,9 @@ public:
 
             std::make_unique<widgets::Button>(
                 widgets::ButtonProps{
-                    .onPress = [this, wifiStatusProvider]() {
+                    .onPress = [this, wifiStatusProvider, &settingsPersistence, &runtimeSettings]() {
                         if (router()) {
-                            auto settingsScreen = std::make_unique<SettingsScreen>(wifiStatusProvider);
+                            auto settingsScreen = std::make_unique<SettingsScreen>(wifiStatusProvider, settingsPersistence, runtimeSettings);
                             router()->pushScreen(std::move(settingsScreen));
                         }
                     }

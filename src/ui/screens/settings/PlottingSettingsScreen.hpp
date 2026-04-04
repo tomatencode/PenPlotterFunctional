@@ -8,6 +8,9 @@
 #include "jobController/JobController.hpp"
 #include "storage/FileManager.hpp"
 
+#include "settings/SettingPersistence.hpp"
+#include "settings/RuntimeSettings.hpp"
+
 // Include related screens to enable navigation
 #include "ui/framework/router/Router.hpp"
 
@@ -24,7 +27,7 @@ namespace screens {
 class PlottingSettingsScreen : public Screen
 {
 public:
-    PlottingSettingsScreen(std::function<bool()> wifiStatusProvider)
+    PlottingSettingsScreen(std::function<bool()> wifiStatusProvider, SettingPersistence& settingsPersistence, RuntimeSettings& runtimeSettings)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
@@ -42,6 +45,7 @@ public:
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
                 
+
                 std::make_unique<widgets::Label>("Plotting Settings")
             )
         )
