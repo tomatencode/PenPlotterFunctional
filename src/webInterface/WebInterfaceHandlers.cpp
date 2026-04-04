@@ -3,10 +3,6 @@
 
 #include <string>
 
-// ============================================================================
-// File Management Handler
-// ============================================================================
-
 void WebInterface::handleFileList()
 {
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
@@ -34,10 +30,6 @@ void WebInterface::handleResumeJob()
     _server.send(200, "text/plain", "Job resumed");
 }
 
-// ============================================================================
-// Job Start/Abort Handlers
-// ============================================================================
-
 void WebInterface::handleStartJob()
 {
     if (!_server.hasArg("file"))
@@ -64,10 +56,6 @@ void WebInterface::handleAbortJob()
     _jobController.abort();
     _server.send(200, "text/plain", "Job aborted");
 }
-
-// ============================================================================
-// File Upload Handler
-// ============================================================================
 
 void WebInterface::handleUpload()
 {
