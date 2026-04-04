@@ -12,9 +12,10 @@ struct NetworkSettings {
 };
 
 struct PlottingSettings {
+    float driverCurrent_mA;
+    float microsteps;
     float drawFeedRate;
     float travelFeedRate;
-    float stepsPerMm;
     float homingSpeed;
     float stallguardThreshold;
 };

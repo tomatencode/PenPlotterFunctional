@@ -6,22 +6,24 @@
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
+#include "settings/SettingsObserver.hpp"
+#include "settings/SettingsRepository.hpp"
 
-class WebInterface
+class WebInterface : public SettingsObserver
 {
 public:
-    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager)
-        : _jobController(jobController), _motionState(motionState), _fileManager(fileManager), server(80)
+    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository)
+        : _jobController(jobController), _motionState(motionState), _fileManager(fileManager),
+          _settingsRepository(settingsRepository), server(80)
     {}
 
     void init();
     void update();
     bool isWiFiConnected() const;
-
-private:
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
+    SettingsRepository& _settingsRepository;
 
 
     WebServer server;
@@ -39,4 +41,7 @@ private:
     void startWiFiConnection();
     void checkWiFiStatus();
     void setupServer();
+
+    // SettingsObserver implementation
+    void onNetworkSettingsChanged(const NetworkSettings& newSettings) override;
 };

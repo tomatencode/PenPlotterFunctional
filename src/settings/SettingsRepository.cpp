@@ -1,8 +1,9 @@
 #include "SettingsRepository.hpp"
 #include "../systemServices/RuntimeSettings.hpp"
-#include "../config/machine_config.hpp"
-#include "../config/wifi_config.hpp"
+#include "defaults/PlottingDefaults.hpp"
+#include "defaults/WifiDefaults.hpp"
 #include <Preferences.h>
+#include <algorithm>
 
 // ============================================================================
 // Constructor and Initialization
@@ -22,9 +23,10 @@ void SettingsRepository::init() {
 
     // Populate RuntimeSettings with the loaded values
     // (the lock-free atomic bridge for Core 1 to read motion settings)
+    _runtimeSettings.setDriverCurrent_mA(_plotting.driverCurrent_mA);
+    _runtimeSettings.setMicrosteps(_plotting.microsteps);
     _runtimeSettings.setDrawFeedRate(_plotting.drawFeedRate);
     _runtimeSettings.setTravelFeedRate(_plotting.travelFeedRate);
-    _runtimeSettings.setStepsPerMm(_plotting.stepsPerMm);
     _runtimeSettings.setHomingSpeed(_plotting.homingSpeed);
     _runtimeSettings.setStallguardThreshold(_plotting.stallguardThreshold);
     _runtimeSettings.setPenUpAngle(_pen.upAngle);
@@ -69,9 +71,10 @@ void SettingsRepository::updatePlottingSettings(const PlottingSettings& settings
 
     // Update the atomic bridge immediately so Core 1 sees the new values
     // on the next G-code command execution
+    _runtimeSettings.setDriverCurrent_mA(_plotting.driverCurrent_mA);
+    _runtimeSettings.setMicrosteps(_plotting.microsteps);
     _runtimeSettings.setDrawFeedRate(_plotting.drawFeedRate);
     _runtimeSettings.setTravelFeedRate(_plotting.travelFeedRate);
-    _runtimeSettings.setStepsPerMm(_plotting.stepsPerMm);
     _runtimeSettings.setHomingSpeed(_plotting.homingSpeed);
     _runtimeSettings.setStallguardThreshold(_plotting.stallguardThreshold);
 
@@ -149,10 +152,9 @@ void SettingsRepository::persistNetworkSettings() {
     Preferences prefs;
     prefs.begin("network", false);  // false = read-write mode
     
-    // TODO: Implement
-    // prefs.putString("ssid", _network.ssid);
-    // prefs.putString("password", _network.password);
-    // prefs.putString("mdnsName", _network.mdnsName);
+    prefs.putString("ssid", _network.ssid.c_str());
+    prefs.putString("password", _network.password.c_str());
+    prefs.putString("mdnsName", _network.mdnsName.c_str());
     
     prefs.end();
 }
@@ -161,12 +163,12 @@ void SettingsRepository::persistPlottingSettings() {
     Preferences prefs;
     prefs.begin("machine", false);
 
-    // TODO: Implement
-    // prefs.putFloat("drawFeed", _plotting.drawFeedRate);
-    // prefs.putFloat("travelFeed", _plotting.travelFeedRate);
-    // prefs.putFloat("stepsPerMm", _plotting.stepsPerMm);
-    // prefs.putFloat("homingSpeed", _plotting.homingSpeed);
-    // prefs.putFloat("stallguardThreshold", _plotting.stallguardThreshold);
+    prefs.putFloat("driverCurrent", _plotting.driverCurrent_mA);
+    prefs.putFloat("microsteps", _plotting.microsteps);
+    prefs.putFloat("drawFeed", _plotting.drawFeedRate);
+    prefs.putFloat("travelFeed", _plotting.travelFeedRate);
+    prefs.putFloat("homingSpeed", _plotting.homingSpeed);
+    prefs.putFloat("stallguardThreshold", _plotting.stallguardThreshold);
 
     prefs.end();
 }
@@ -175,9 +177,8 @@ void SettingsRepository::persistPenSettings() {
     Preferences prefs;
     prefs.begin("pen", false);
 
-    // TODO: Implement
-    // prefs.putFloat("upAngle", _pen.upAngle);
-    // prefs.putFloat("downAngle", _pen.downAngle);
+    prefs.putFloat("upAngle", _pen.upAngle);
+    prefs.putFloat("downAngle", _pen.downAngle);
 
     prefs.end();
 }
@@ -186,11 +187,10 @@ void SettingsRepository::loadNetworkSettings() {
     Preferences prefs;
     prefs.begin("network", true);  // true = read-only mode
 
-    // TODO: Implement
     // Use hardcoded config header values as defaults on first boot
-    // _network.ssid = prefs.getString("ssid", SSID);
-    // _network.password = prefs.getString("password", PASSWORD);
-    // _network.mdnsName = prefs.getString("mdnsName", MDNS_NAME);
+    _network.ssid = prefs.getString("ssid", SSID).c_str();
+    _network.password = prefs.getString("password", PASSWORD).c_str();
+    _network.mdnsName = prefs.getString("mdnsName", MDNS_NAME).c_str();
 
     prefs.end();
 }
@@ -198,13 +198,13 @@ void SettingsRepository::loadNetworkSettings() {
 void SettingsRepository::loadPlottingSettings() {
     Preferences prefs;
     prefs.begin("machine", true);
-
-    // TODO: Implement
-    // _machine.drawFeedRate = prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S);
-    // _machine.travelFeedRate = prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S);
-    // _machine.stepsPerMm = prefs.getFloat("stepsPerMm", STEPS_PER_MM);
-    // _machine.homingSpeed = prefs.getFloat("homingSpeed", HOMING_SPEED_STPS_PER_S);
-    // _machine.stallguardThreshold = prefs.getFloat("stallguardThreshold", HOMING_STALLGUARD_THRESHOLD);
+    
+    _plotting.driverCurrent_mA = prefs.getFloat("driverCurrent", DRIVER_CURRENT_MA);
+    _plotting.microsteps = prefs.getFloat("microsteps", MICROSTEPS);
+    _plotting.drawFeedRate = prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S);
+    _plotting.travelFeedRate = prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S);
+    _plotting.homingSpeed = prefs.getFloat("homingSpeed", HOMING_SPEED_STPS_PER_S);
+    _plotting.stallguardThreshold = prefs.getFloat("stallguardThreshold", HOMING_STALLGUARD_THRESHOLD);
 
     prefs.end();
 }
@@ -213,9 +213,8 @@ void SettingsRepository::loadPenSettings() {
     Preferences prefs;
     prefs.begin("pen", true);
 
-    // TODO: Implement
-    // _pen.upAngle = prefs.getFloat("upAngle", PEN_UP_ANGLE);
-    // _pen.downAngle = prefs.getFloat("downAngle", PEN_DOWN_ANGLE);
+    _pen.upAngle = prefs.getFloat("upAngle", PEN_UP_ANGLE);
+    _pen.downAngle = prefs.getFloat("downAngle", PEN_DOWN_ANGLE);
 
     prefs.end();
 }

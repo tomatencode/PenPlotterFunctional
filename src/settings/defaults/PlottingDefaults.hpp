@@ -6,7 +6,7 @@ constexpr float PEN_UP_ANGLE = 100.0f;
 constexpr float PEN_DOWN_ANGLE = 65.0f;
 
 // Driver
-constexpr float CURRENT_MA = 1000.0f;
+constexpr float DRIVER_CURRENT_MA = 1000.0f;
 constexpr uint16_t MICROSTEPS = 16;
 
 // Homing

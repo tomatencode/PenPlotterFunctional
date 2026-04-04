@@ -1,16 +1,17 @@
 #include "ServoPen.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 
-ServoPen::ServoPen(Servo& servo, int upPosition, int downPosition)
-        : _servo(servo), _upPosition(upPosition), _downPosition(downPosition), _penDown(false) {};
+ServoPen::ServoPen(Servo& servo, RuntimeSettings& runtimeSettings)
+        : _servo(servo), _runtimeSettings(runtimeSettings), _penDown(false) {};
 
 void ServoPen::down() {
-    _servo.write(_downPosition);
+    _servo.write((int)_runtimeSettings.penDownAngle());
     delay(100); // Short delay to allow servo to move down before marking pen as down
     _penDown = true;
 }
 
 void ServoPen::up() {
-    _servo.write(_upPosition);
+    _servo.write((int)_runtimeSettings.penUpAngle());
     delay(100); // Short delay to allow servo to move up before marking pen as up
     _penDown = false;
 }

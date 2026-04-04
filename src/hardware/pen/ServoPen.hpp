@@ -3,9 +3,12 @@
 #include <ESP32Servo.h>
 #include "Pen.hpp"
 
+// Forward declaration
+class RuntimeSettings;
+
 class ServoPen : public Pen {
 public:
-    ServoPen(Servo& servo, int upPosition, int downPosition);
+    ServoPen(Servo& servo, RuntimeSettings& runtimeSettings);
 
     void down() override;
     void up() override;
@@ -13,7 +16,6 @@ public:
 
 private:
     Servo& _servo;
-    int _upPosition;
-    int _downPosition;
+    RuntimeSettings& _runtimeSettings;
     bool _penDown;
 };

@@ -4,20 +4,21 @@
 #include "hardware/pen/Pen.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 #include <string>
 #include <vector>
 #include <map>
 
 class GCodeExecuter {
 public:
-    GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState);
+    GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, 
+                  RuntimeSettings& runtimeSettings, MotionState& motionState);
 
     void executeLine(const std::string& line);
 private:
     MotionExecuter& _motion;
     HomingController& _homingController;
-    double _feedRateDraw;
-    double _feedRateTravel;
+    RuntimeSettings& _runtimeSettings;
     bool _absolute;
     Pen& _pen;
     MotionState& _motionState;

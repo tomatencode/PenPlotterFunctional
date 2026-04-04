@@ -9,14 +9,19 @@
 #include "ui/framework/router/Router.hpp"
 #include "ui/framework/render/Render.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
+#include "settings/SettingsRepository.hpp"
 
+// Forward declarations
+class SettingsRepository;
 
 class ApplicationManager
 {
 public:
-    ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue);
+    ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
+                       SettingsRepository& settingsRepository);
     
     void init();
     void update();
@@ -39,4 +44,5 @@ private:
 
     MotionState& _motionState;
     FreeRtosQueue<GcodeMessage>& _gcodeQueue;
+    SettingsRepository& _settingsRepository;
 };

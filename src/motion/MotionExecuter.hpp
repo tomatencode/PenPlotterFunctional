@@ -4,11 +4,12 @@
 
 #include "BezierExecuter.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 
 
 class MotionExecuter {
     public:
-        MotionExecuter(BezierExecuter& bezierExecuter, MotionState& motionState, double min_feature_size_mm = 1.0);
+        MotionExecuter(BezierExecuter& bezierExecuter, MotionState& motionState, RuntimeSettings& runtimeSettings);
 
         void LineToXY(
             const XYPos& targetPos,
@@ -37,5 +38,5 @@ class MotionExecuter {
     private:
         BezierExecuter& _bezierExecuter;
         MotionState& _motionState;
-        double _min_feature_size_mm;
+        RuntimeSettings& _runtimeSettings;
 };

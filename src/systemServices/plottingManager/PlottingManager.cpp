@@ -1,12 +1,15 @@
 #include "PlottingManager.hpp"
 
 #include "config/pins.hpp"
+#include "config/hardware_config.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 #include "systemServices/GcodeMessage.hpp"
 
-PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue)
+PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
     : _motionState(motionState),
     gcodeQueue(gcodeQueue),
+    _runtimeSettings(runtimeSettings),
     _driverSerial(1),
 
     _rawDriverA(&_driverSerial, R_SENSE, 0),
@@ -21,7 +24,7 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
     _axisA(_stepA, _driverA, true),
     _axisB(_stepB, _driverB, true),
 
-    _pen(_penServo, PEN_UP_ANGLE, PEN_DOWN_ANGLE),
+    _pen(_penServo, runtimeSettings),
 
     _homingController(
         _axisA,
@@ -29,25 +32,20 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
         _driverA,
         _driverB,
         motionState,
-        HOMING_SPEED_STPS_PER_S,
-        HOMING_STALLGUARD_THRESHOLD,
-        HOMING_SG_CHECK_INTERVAL_MS,
-        HOMING_CONSECUTIVE_STALL_CHECKS,
-        HOMING_SG_START_TIMEOUT_MS
+        runtimeSettings
     ),
 
     _kinematics(STEPS_PER_MM),
 
     _bezierExecuter(_axisA, _axisB, _kinematics, motionState),
 
-    _motionExecuter(_bezierExecuter, motionState, MIN_FEATURE_SIZE_MM),
+    _motionExecuter(_bezierExecuter, motionState, runtimeSettings),
 
     _gcodeExecuter(
         _motionExecuter,
         _pen,
         _homingController,
-        FEED_RATE_DRAW_MM_PER_S,
-        FEED_RATE_TRAVEL_MM_PER_S,
+        runtimeSettings,
         motionState
     )
 {
@@ -56,9 +54,9 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
 void PlottingManager::configureDriver(TMC2209Driver& driver)
 {
     driver.begin();
-    driver.setStallGuardThreshold(HOMING_STALLGUARD_THRESHOLD);
-    driver.setCurrent(CURRENT_MA);
-    driver.setMicrosteps(MICROSTEPS);
+    driver.setStallGuardThreshold(_runtimeSettings.stallguardThreshold());
+    driver.setCurrent(_runtimeSettings.driverCurrent_mA());
+    driver.setMicrosteps(_runtimeSettings.microsteps());
 }
 
 void PlottingManager::init()

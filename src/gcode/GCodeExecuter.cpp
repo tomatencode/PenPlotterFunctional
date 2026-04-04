@@ -1,7 +1,8 @@
 #include "GCodeExecuter.hpp"
 
-GCodeExecuter::GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, double feedRateDraw, double feedRateTravel, MotionState& motionState)
-        : _motion(motion), _pen(pen), _homingController(homingController), _feedRateDraw(feedRateDraw), _feedRateTravel(feedRateTravel),
+GCodeExecuter::GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, 
+                             RuntimeSettings& runtimeSettings, MotionState& motionState)
+        : _motion(motion), _pen(pen), _homingController(homingController), _runtimeSettings(runtimeSettings),
           _absolute(true), _motionState(motionState) {}
 
 void GCodeExecuter::executeLine(const std::string& line) {
@@ -54,7 +55,7 @@ void GCodeExecuter::executeLine(const std::string& line) {
 
 void GCodeExecuter::handleG0G1(const std::map<char,double>& params) {
     XYPos target = _motion.getCurrentPos();
-    double feed = _pen.isDown() ? _feedRateDraw : _feedRateTravel;
+    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate() : _runtimeSettings.travelFeedRate();
 
     if (params.count('X')) target.x_mm = _absolute ? params.at('X') : target.x_mm + params.at('X');
     if (params.count('Y')) target.y_mm = _absolute ? params.at('Y') : target.y_mm + params.at('Y');
@@ -71,7 +72,7 @@ void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwi
     XYPos target;
     target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
     target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
-    double feed = _pen.isDown() ? _feedRateDraw : _feedRateTravel;
+    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate() : _runtimeSettings.travelFeedRate();
     if (params.count('F')) feed = params.at('F');
 
     _motion.arcToXY(target, center, clockwise, feed);
@@ -86,7 +87,7 @@ void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
     target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
     control.x_mm = params.at('C');       // Control X
     control.y_mm = params.at('D');       // Control Y (use 'D' as second letter for clarity)
-    double feed = _pen.isDown() ? _feedRateDraw : _feedRateTravel;
+    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate() : _runtimeSettings.travelFeedRate();
     if (params.count('F')) feed = params.at('F');
 
     _motion.quadraticBezierToXY(control, target, feed);
@@ -101,7 +102,7 @@ void GCodeExecuter::handleCUBIC(const std::map<char,double>& params) {
     target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
     c1.x_mm = params.at('A'); c1.y_mm = params.at('B');
     c2.x_mm = params.at('C'); c2.y_mm = params.at('D');
-    double feed = _pen.isDown() ? _feedRateDraw : _feedRateTravel;
+    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate() : _runtimeSettings.travelFeedRate();
     if (params.count('F')) feed = params.at('F');
 
     _motion.cubicBezierToXY(c1, c2, target, feed);

@@ -3,9 +3,12 @@
 #include "StepperAxis.hpp"
 #include "systemServices/MotionState.hpp"
 
+// Forward declaration
+class RuntimeSettings;
+
 class HomingController {
 public:
-    HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms);
+    HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings);
 
     void home();
 private:
@@ -14,11 +17,12 @@ private:
     MotorDriver& _driverA;
     MotorDriver& _driverB;
     MotionState& _motionState;
-    float _speed_stps_per_s;
-    float _stallGuard_threshold;
-    float _sgCheckInterval_ms;
-    uint16_t _consecutiveStallChecks;
-    uint16_t _sgStartTimeout_ms;
+    RuntimeSettings& _runtimeSettings;
+
+    // Compile-time homing constants (not meant to be dynamic)
+    static constexpr float _sgCheckInterval_ms = 50.0f;
+    static constexpr uint16_t _consecutiveStallChecks = 5;
+    static constexpr uint16_t _sgStartTimeout_ms = 500;
 
     void moveToLimit(bool Afw, bool Bfw);
 };

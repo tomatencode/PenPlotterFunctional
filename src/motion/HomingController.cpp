@@ -1,11 +1,15 @@
 #include "HomingController.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 
-HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, float speed_stps_per_s, float stallGuard_threshold, float sgCheckInterval_ms, uint16_t consecutiveStallChecks, uint16_t sgStartTimeout_ms)
-    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _speed_stps_per_s(speed_stps_per_s), _stallGuard_threshold(stallGuard_threshold), _sgCheckInterval_ms(sgCheckInterval_ms), _consecutiveStallChecks(consecutiveStallChecks), _sgStartTimeout_ms(sgStartTimeout_ms) {}
+HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
+    : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}
 
 void HomingController::moveToLimit(bool Afw, bool Bfw)
 {
-    if (_speed_stps_per_s <= 0.0f) return;
+    float speed_stps_per_s = _runtimeSettings.homingSpeed();
+    float stallGuard_threshold = _runtimeSettings.stallguardThreshold();
+    
+    if (speed_stps_per_s <= 0.0f) return;
     if (_driverA.getMicrosteps() != _driverB.getMicrosteps()) return;
 
 
@@ -16,8 +20,8 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
 
     uint8_t stallCount = 0;
 
-    double speedA = _speed_stps_per_s * _driverA.getMicrosteps() * (Afw ? 1 : -1);
-    double speedB = _speed_stps_per_s * _driverB.getMicrosteps() * (Bfw ? 1 : -1);
+    double speedA = speed_stps_per_s * _driverA.getMicrosteps() * (Afw ? 1 : -1);
+    double speedB = speed_stps_per_s * _driverB.getMicrosteps() * (Bfw ? 1 : -1);
 
     _driverA.setSpeed(speedA);
     _driverB.setSpeed(speedB);
@@ -64,7 +68,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw)
         int stallGuardA = _driverA.getStallGuardResult();
         int stallGuardB = _driverB.getStallGuardResult();
         
-        if (stallGuardA < _stallGuard_threshold || stallGuardB < _stallGuard_threshold)
+        if (stallGuardA < stallGuard_threshold || stallGuardB < stallGuard_threshold)
         {
             stallCount++;
             if (stallCount >= _consecutiveStallChecks) break;
@@ -104,7 +108,7 @@ void HomingController::home() {
     moveToLimit(false, true); // Move to y limit
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
 
-    uint16_t stepInterval_us = 1000000UL / _speed_stps_per_s;
+    uint16_t stepInterval_us = 1000000UL / _runtimeSettings.homingSpeed() * _axisA.microsteps();
 
     for (int i = 0; i < 15 * _axisA.microsteps(); i++) {
         if (_motionState.getCommand() == MotionCommand::PAUSE) {

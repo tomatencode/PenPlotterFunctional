@@ -1,21 +1,20 @@
 #include "WebInterface.hpp"
-#include "config/wifi_config.hpp"
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
 
 // Non-blocking
-void WebInterface::startWiFiConnection()
-{
+void WebInterface::startWiFiConnection() {
+    const NetworkSettings& netSettings = _settingsRepository.getNetworkSettings();
+
     WiFi.mode(WIFI_STA);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
-    WiFi.begin(SSID, PASSWORD);
+    WiFi.begin(netSettings.ssid.c_str(), netSettings.password.c_str());
     _wifiInitialized = true;
 }
 
-void WebInterface::checkWiFiStatus()
-{
+void WebInterface::checkWiFiStatus() {
     if (!_wifiInitialized) return; // Should not happen, but guard just in case
 
     wl_status_t status = WiFi.status();
@@ -27,23 +26,22 @@ void WebInterface::checkWiFiStatus()
     }
 }
 
-void WebInterface::setupServer()
-{
+void WebInterface::setupServer() {
     if (_serverStarted) return;
     if (WiFi.status() != WL_CONNECTED) return;
 
     Serial.print("WiFi Connected! IP address: ");
     Serial.println(WiFi.localIP());
 
+    const NetworkSettings& netSettings = _settingsRepository.getNetworkSettings();
+
     // mDNS 
-    if (!MDNS.begin(MDNS_NAME))
-    {
+    if (!MDNS.begin(netSettings.mdnsName.c_str())) {
         Serial.println("Error starting mDNS");
     }
-    else
-    {
+    else {
         Serial.print("mDNS started: http://");
-        Serial.print(MDNS_NAME);
+        Serial.print(netSettings.mdnsName.c_str());
         Serial.println(".local");
     }
 
@@ -58,19 +56,16 @@ void WebInterface::setupServer()
     server.begin();
 }
 
-void WebInterface::init()
-{
+void WebInterface::init() {
     Serial.println("WebInterface initializing (WiFi connects in background)...");
     startWiFiConnection();
 }
 
-bool WebInterface::isWiFiConnected() const
-{
+bool WebInterface::isWiFiConnected() const {
     return WiFi.status() == WL_CONNECTED;
 }
 
-void WebInterface::update()
-{
+void WebInterface::update() {
     if (!_serverStarted)
     {
         checkWiFiStatus();
@@ -80,4 +75,20 @@ void WebInterface::update()
     {
         server.handleClient();
     }
+}
+
+void WebInterface::onNetworkSettingsChanged(const NetworkSettings& newSettings) {
+    // WiFi credentials have changed, reconnect with new credentials
+    Serial.println("Network settings changed, reconnecting WiFi...");
+    
+    WiFi.disconnect(true);  // Disconnect and turn off WiFi
+    _serverStarted = false;
+    _wifiInitialized = false;
+    
+    // Small delay to ensure WiFi is fully shut down
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    
+    // Restart WiFi connection with new credentials
+    WiFi.begin(newSettings.ssid.c_str(), newSettings.password.c_str());
+    _wifiInitialized = true;
 }

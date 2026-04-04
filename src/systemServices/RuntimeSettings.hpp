@@ -30,18 +30,22 @@
 class RuntimeSettings {
 public:
     // ====== Setters (called by SettingsRepository on Core 0) ======
+    void setDriverCurrent_mA(float v) { _driverCurrent_mA.store(v, std::memory_order_relaxed); }
+    void setMicrosteps(float v) { _microsteps.store(v, std::memory_order_relaxed); }
     void setDrawFeedRate(float v) { _drawFeedRate.store(v, std::memory_order_relaxed); }
     void setTravelFeedRate(float v) { _travelFeedRate.store(v, std::memory_order_relaxed); }
-    void setStepsPerMm(float v) { _stepsPerMm.store(v, std::memory_order_relaxed); }
+    void setMinFeatureSize(float v) { _minFeatureSize.store(v, std::memory_order_relaxed); }
     void setHomingSpeed(float v) { _homingSpeed.store(v, std::memory_order_relaxed); }
     void setStallguardThreshold(float v) { _stallguardThreshold.store(v, std::memory_order_relaxed); }
     void setPenUpAngle(float v) { _penUpAngle.store(v, std::memory_order_relaxed); }
     void setPenDownAngle(float v) { _penDownAngle.store(v, std::memory_order_relaxed); }
 
     // ====== Getters (called by Core 1 during motion execution) ======
+    float driverCurrent_mA() const { return _driverCurrent_mA.load(std::memory_order_relaxed); }
+    float microsteps() const { return _microsteps.load(std::memory_order_relaxed); }
     float drawFeedRate() const { return _drawFeedRate.load(std::memory_order_relaxed); }
     float travelFeedRate() const { return _travelFeedRate.load(std::memory_order_relaxed); }
-    float stepsPerMm() const { return _stepsPerMm.load(std::memory_order_relaxed); }
+    float minFeatureSize() const { return _minFeatureSize.load(std::memory_order_relaxed); }
     float homingSpeed() const { return _homingSpeed.load(std::memory_order_relaxed); }
     float stallguardThreshold() const { return _stallguardThreshold.load(std::memory_order_relaxed); }
     float penUpAngle() const { return _penUpAngle.load(std::memory_order_relaxed); }
@@ -53,9 +57,11 @@ private:
     // - No ordering constraints with other atomics
     // - Fastest possible atomic operations (no barriers)
     
+    std::atomic<float> _driverCurrent_mA{800.0f};     // DRIVER_CURRENT_MA
+    std::atomic<float> _microsteps{16.0f};            // MICROSTEPS
     std::atomic<float> _drawFeedRate{20.0f};          // FEED_RATE_DRAW_MM_PER_S
     std::atomic<float> _travelFeedRate{50.0f};        // FEED_RATE_TRAVEL_MM_PER_S
-    std::atomic<float> _stepsPerMm{5.0f};             // STEPS_PER_MM
+    std::atomic<float> _minFeatureSize{1.0f};         // MIN_FEATURE_SIZE_MM
     std::atomic<float> _homingSpeed{360.0f};          // HOMING_SPEED_STPS_PER_S
     std::atomic<float> _stallguardThreshold{120.0f};  // HOMING_STALLGUARD_THRESHOLD
     std::atomic<float> _penUpAngle{100.0f};           // PEN_UP_ANGLE

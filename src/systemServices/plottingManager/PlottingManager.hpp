@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include "gcode/GCodeExecuter.hpp"
-#include "config/machine_config.hpp"
 #include "hardware/steppers/Stepper.hpp"
 #include "hardware/pen/ServoPen.hpp"
 #include "hardware/drivers/TMC2209Driver.hpp"
@@ -12,6 +11,7 @@
 #include "motion/BezierExecuter.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
+#include "systemServices/RuntimeSettings.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
 
@@ -19,7 +19,7 @@
 class PlottingManager
 {
 public:
-    PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue);
+    PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);
 
     void init();
     void update();
@@ -63,4 +63,5 @@ private:
 
     MotionState& _motionState;
     FreeRtosQueue<GcodeMessage>& gcodeQueue;
+    RuntimeSettings& _runtimeSettings;
 };

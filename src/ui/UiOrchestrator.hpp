@@ -18,6 +18,9 @@
 #include "framework/input/InputState.hpp"
 #include "framework/router/Router.hpp"
 
+// Forward declarations
+class SettingsRepository;
+
 namespace ui {
 
 class UiOrchestrator : public JobObserver
@@ -30,7 +33,8 @@ public:
         FileManager& fileManager,
         MotionState& motionState,
         Buzzer& buzzer,
-        std::function<bool()> wifiStatusProvider
+        std::function<bool()> wifiStatusProvider,
+        SettingsRepository& settingsRepository
     )
     : _router(router),
       _renderer(renderer),
@@ -39,7 +43,8 @@ public:
       _fileManager(fileManager),
       _motionState(motionState),
       _buzzer(buzzer),
-      _wifiStatusProvider(wifiStatusProvider)
+      _wifiStatusProvider(wifiStatusProvider),
+      _settingsRepository(settingsRepository)
     {}
     
     ~UiOrchestrator() {
@@ -62,6 +67,7 @@ private:
     InputMapper& _inputMapper;
     Buzzer& _buzzer;
     std::function<bool()> _wifiStatusProvider;
+    SettingsRepository& _settingsRepository;
 
 
     unsigned long _lastUpdateTime = 0;  // For non-blocking timing

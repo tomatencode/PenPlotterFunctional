@@ -2,8 +2,11 @@
 
 #include "FreeRtosQueue.hpp"
 #include "GcodeMessage.hpp"
+#include "MotionState.hpp"
+#include "RuntimeSettings.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 #include "plottingManager/PlottingManager.hpp"
+#include "settings/SettingsRepository.hpp"
 
 TaskHandle_t motionTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
@@ -59,8 +62,14 @@ void startSystemTasks()
     size_t gcodeQueueSize = 32;
     static FreeRtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
     static MotionState motionState;
-    static ApplicationManager appManager(motionState, gcodeQueue);
-    static PlottingManager plottingManager(motionState, gcodeQueue);
+    static RuntimeSettings runtimeSettings;
+    static SettingsRepository settingsRepository(runtimeSettings);
+    
+    // Load settings from NVS at startup
+    settingsRepository.init();
+    
+    static ApplicationManager appManager(motionState, gcodeQueue, settingsRepository);
+    static PlottingManager plottingManager(motionState, gcodeQueue, runtimeSettings);
 
     // Motion task (CORE 1)
     xTaskCreatePinnedToCore(
