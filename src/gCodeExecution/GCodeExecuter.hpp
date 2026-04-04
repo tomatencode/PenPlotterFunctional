@@ -2,7 +2,7 @@
 
 #include "motionExecution/MotionExecuter.hpp"
 #include "pen/Pen.hpp"
-#include "hoaming/HomingController.hpp"
+#include "homing/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
 #include "settings/RuntimeSettings.hpp"
 #include <string>

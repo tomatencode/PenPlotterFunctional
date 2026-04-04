@@ -10,7 +10,7 @@
 #include "gCodeExecution/motionExecution/MotionExecuter.hpp"
 #include "gCodeExecution/motionExecution/BezierExecuter.hpp"
 #include "gCodeExecution/pen/ServoPen.hpp"
-#include "gCodeExecution/hoaming/HomingController.hpp"
+#include "gCodeExecution/homing/HomingController.hpp"
 #include "gCodeExecution/GCodeExecuter.hpp"
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
