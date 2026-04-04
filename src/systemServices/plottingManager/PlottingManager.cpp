@@ -3,7 +3,6 @@
 #include "config/pins.hpp"
 #include "config/hardware_config.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
-#include "systemServices/RuntimeSettings.hpp"
 #include "systemServices/GcodeMessage.hpp"
 
 PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)

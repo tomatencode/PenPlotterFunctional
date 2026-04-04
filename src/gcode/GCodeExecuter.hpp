@@ -4,7 +4,7 @@
 #include "hardware/pen/Pen.hpp"
 #include "motion/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
-#include "systemServices/RuntimeSettings.hpp"
+#include "settings/RuntimeSettings.hpp"
 #include <string>
 #include <vector>
 #include <map>

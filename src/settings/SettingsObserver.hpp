@@ -2,10 +2,6 @@
 #include <string>
 #include "SettingGroups.hpp"
 
-// ============================================================================
-// Observer Interface (same pattern as JobObserver)
-// ============================================================================
-
 class SettingsObserver {
 public:
     virtual ~SettingsObserver() = default;

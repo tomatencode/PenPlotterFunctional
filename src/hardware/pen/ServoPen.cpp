@@ -1,5 +1,5 @@
 #include "ServoPen.hpp"
-#include "systemServices/RuntimeSettings.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 ServoPen::ServoPen(Servo& servo, RuntimeSettings& runtimeSettings)
         : _servo(servo), _runtimeSettings(runtimeSettings), _penDown(false) {};

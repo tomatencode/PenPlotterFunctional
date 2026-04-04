@@ -4,7 +4,7 @@
 
 #include "BezierExecuter.hpp"
 #include "systemServices/MotionState.hpp"
-#include "systemServices/RuntimeSettings.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 
 class MotionExecuter {

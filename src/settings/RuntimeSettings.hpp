@@ -1,7 +1,7 @@
 #pragma once
 #include <atomic>
 
-#include "settings/defaults/PlottingDefaults.hpp"
+#include "defaults/PlottingDefaults.hpp"
 
 class RuntimeSettings {
 public:

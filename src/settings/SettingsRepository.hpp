@@ -1,36 +1,8 @@
 #pragma once
 #include "SettingsObserver.hpp"
+#include "RuntimeSettings.hpp"
 #include <vector>
 #include <memory>
-
-// Forward declarations
-class RuntimeSettings;
-
-// ============================================================================
-// SettingsRepository - Single source of truth for all runtime settings
-// ============================================================================
-//
-// Responsibilities:
-// 1. Load/persist settings from/to ESP32 NVS (Non-Volatile Storage / flash)
-// 2. Provide thread-safe getters for current settings (return by value)
-// 3. Handle updates to settings (validate, persist, notify observers, update RuntimeSettings)
-// 4. Manage observer notifications when settings change
-//
-// Design:
-// - Grouped by domain (Network, Machine, Pen) → one struct per group
-// - Each group has: getter(), update(), NVS namespace
-// - All NVS logic is hidden inside update() methods
-// - No confusion about when things persist or take effect
-// - Observers get notified with the full struct (batch notification, not per-field)
-//
-// Usage:
-//   repo.updatePlottingSettings(PlottingSettings{20.0f, 50.0f, 5.0f, ...});
-//   // ^ Automatically:
-//   //   - validates
-//   //   - writes all fields to NVS namespace "machine"
-//   //   - updates RuntimeSettings (atomic bridge to Core 1)
-//   //   - notifies all observers of the change
-//
 
 class SettingsRepository {
 public:

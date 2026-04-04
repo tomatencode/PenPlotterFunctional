@@ -1,5 +1,5 @@
 #include "HomingController.hpp"
-#include "systemServices/RuntimeSettings.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}

@@ -3,9 +3,9 @@
 #include "FreeRtosQueue.hpp"
 #include "GcodeMessage.hpp"
 #include "MotionState.hpp"
-#include "RuntimeSettings.hpp"
 #include "applicationManager/ApplicationManager.hpp"
 #include "plottingManager/PlottingManager.hpp"
+#include "settings/RuntimeSettings.hpp"
 #include "settings/SettingsRepository.hpp"
 
 TaskHandle_t motionTaskHandle = nullptr;
