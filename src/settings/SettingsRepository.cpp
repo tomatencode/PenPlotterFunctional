@@ -188,9 +188,12 @@ void SettingsRepository::loadNetworkSettings() {
     prefs.begin("network", true);  // true = read-only mode
 
     // Use hardcoded config header values as defaults on first boot
-    _network.ssid = prefs.getString("ssid", SSID).c_str();
-    _network.password = prefs.getString("password", PASSWORD).c_str();
-    _network.mdnsName = prefs.getString("mdnsName", MDNS_NAME).c_str();
+    String ssid = prefs.getString("ssid", SSID);
+    _network.ssid = ssid.c_str();
+    String password = prefs.getString("password", PASSWORD);
+    _network.password = password.c_str();
+    String mdnsName = prefs.getString("mdnsName", MDNS_NAME);
+    _network.mdnsName = mdnsName.c_str();
 
     prefs.end();
 }
