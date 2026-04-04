@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StepperAxis.hpp"
+#include "../motionExecution/StepperAxis.hpp"
 #include "systemServices/MotionState.hpp"
 
 // Forward declaration

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "motion/MotionExecuter.hpp"
-#include "hardware/pen/Pen.hpp"
-#include "motion/HomingController.hpp"
+#include "motionExecution/MotionExecuter.hpp"
+#include "pen/Pen.hpp"
+#include "hoaming/HomingController.hpp"
 #include "systemServices/MotionState.hpp"
 #include "settings/RuntimeSettings.hpp"
 #include <string>
