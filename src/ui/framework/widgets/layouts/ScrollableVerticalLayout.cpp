@@ -51,7 +51,7 @@ bool ScrollableVerticalLayout::containsFocusedWidget(Widget* widget) const
     return false;
 }
 
-Rect ScrollableVerticalLayout::applyMargins(Rect box) const
+Box ScrollableVerticalLayout::applyMargins(Box box) const
 {
     auto safeSub = [](int a, int b) {
         return std::max(0, a - b);
@@ -85,12 +85,12 @@ ScrollableVerticalLayout::collectChildren() const
     return result;
 }
 
-void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
+void ScrollableVerticalLayout::render(Renderer& r, Box canvasBox)
 {
     if (getChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
-    Rect content = applyMargins(canvasBox);
+    Box content = applyMargins(canvasBox);
 
     auto children = collectChildren();
 
@@ -127,7 +127,7 @@ void ScrollableVerticalLayout::render(Renderer& r, Rect canvasBox)
                     break;
             }
 
-            Rect rect = {
+            Box rect = {
                 x,
                 static_cast<uint16_t>(currentY),
                 width,

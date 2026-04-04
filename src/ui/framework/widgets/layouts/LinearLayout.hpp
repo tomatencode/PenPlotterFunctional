@@ -36,7 +36,7 @@ public:
     LinearLayout(const LinearLayoutStyle& style, Children&&... children)
         : Layout(std::forward<Children>(children)...), _style(style) {}
 
-    void render(Renderer& r, Rect canvasBox) override;
+    void render(Renderer& r, Box canvasBox) override;
     Size measure() const override;
     bool canExpandHorizontally() const override;
     bool canExpandVertically() const override;
@@ -53,7 +53,7 @@ private:
 
     struct LayoutItem {
         Widget* widget;
-        Rect rect;
+        Box rect;
     };
 
     struct Spacing {
@@ -63,21 +63,21 @@ private:
 
 private:
     // helpers
-    Rect applyMargins(Rect box) const;
+    Box applyMargins(Box box) const;
 
     uint16_t primarySize(Size s) const;
     uint16_t secondarySize(Size s) const;
 
-    uint16_t PrimaryPos(Rect r) const;
-    uint16_t SecondaryPos(Rect r) const;
-    uint16_t availablePrimarySpace(Rect r) const;
-    uint16_t availableSecondarySpace(Rect r) const;
+    uint16_t PrimaryPos(Box r) const;
+    uint16_t SecondaryPos(Box r) const;
+    uint16_t availablePrimarySpace(Box r) const;
+    uint16_t availableSecondarySpace(Box r) const;
 
     Spacing computeSpacing(uint16_t available, uint16_t total, size_t count) const;
     void distributeExpansion(std::vector<ChildInfo>& children, uint16_t available) const;
-    std::optional<Rect> computeChildRect(const ChildInfo& c, Rect content, uint16_t childStart) const;
+    std::optional<Box> computeChildRect(const ChildInfo& c, Box content, uint16_t childStart) const;
 
-    std::vector<LayoutItem> computeLayout(Rect content) const;
+    std::vector<LayoutItem> computeLayout(Box content) const;
 
 private:
     LinearLayoutStyle _style;

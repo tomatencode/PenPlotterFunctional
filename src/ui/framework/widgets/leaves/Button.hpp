@@ -40,7 +40,7 @@ public:
 
     Size measure() const override;
 
-    void render(Renderer& r, Rect canvasBox) override;
+    void render(Renderer& r, Box canvasBox) override;
     
     void handleInput(InputState& input) override;
 

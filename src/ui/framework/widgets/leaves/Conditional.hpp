@@ -22,7 +22,7 @@ public:
           _props(std::move(props))
     {}
 
-    void render(Renderer& r, Rect canvasBox) override {
+    void render(Renderer& r, Box canvasBox) override {
         if (_props.condition())
             Container::render(r, canvasBox);
     }

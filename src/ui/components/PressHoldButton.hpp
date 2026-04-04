@@ -58,7 +58,7 @@ private:
     PressHoldButtonStyle _style;
 
     void handleInput(InputState& input) override;
-    void render(Renderer& r, widgets::Rect canvasBox) override;
+    void render(Renderer& r, widgets::Box canvasBox) override;
 };
 
 } // namespace components

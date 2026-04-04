@@ -13,7 +13,7 @@ Size ProgressBar::measure() const
     return Size{2, 1}; // Minimum size to show empty bar: "[]"
 }
 
-void ProgressBar::render(Renderer& r, Rect canvasBox)
+void ProgressBar::render(Renderer& r, Box canvasBox)
 {
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible

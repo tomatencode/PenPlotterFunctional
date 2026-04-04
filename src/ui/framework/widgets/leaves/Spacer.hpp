@@ -12,7 +12,7 @@ public:
 
     Size measure() const override { return Size{_width, _height}; }
 
-    void render(Renderer& r, Rect canvasBox) override {};  // Does nothing
+    void render(Renderer& r, Box canvasBox) override {};  // Does nothing
 private:
     uint8_t _width;
     uint8_t _height;

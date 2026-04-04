@@ -39,7 +39,7 @@ public:
         _child = std::move(newChild);
     }
 
-    virtual void render(Renderer& r, Rect canvasBox) override {
+    virtual void render(Renderer& r, Box canvasBox) override {
         if (_child)
             _child->render(r, canvasBox);
     }

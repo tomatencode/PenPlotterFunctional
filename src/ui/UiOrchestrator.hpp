@@ -11,7 +11,7 @@
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
 #include "hardware/buzzer/Buzzer.hpp"
 
-#include "framework/render/Render.hpp"
+#include "framework/renderer/Renderer.hpp"
 #include "framework/input/InputState.hpp"
 #include "framework/router/Router.hpp"
 

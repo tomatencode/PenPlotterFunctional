@@ -31,7 +31,7 @@ public:
         : Layout(std::forward<Children>(children)...), _style(style)
     {}
 
-    void render(Renderer& r, Rect canvasBox) override;
+    void render(Renderer& r, Box canvasBox) override;
     Size measure() const override;
     bool canExpandHorizontally() const override;
     bool canExpandVertically() const override;
@@ -43,7 +43,7 @@ private:
     };
 
 private:
-    Rect applyMargins(Rect box) const;
+    Box applyMargins(Box box) const;
 
     std::vector<ChildInfo> collectChildren() const;
 

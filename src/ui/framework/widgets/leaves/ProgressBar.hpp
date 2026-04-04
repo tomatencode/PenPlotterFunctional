@@ -26,7 +26,7 @@ class ProgressBar : public Widget
 public:
     ProgressBar(ProgressBarProps props);
 
-    void render(Renderer& r, Rect canvasBox) override;
+    void render(Renderer& r, Box canvasBox) override;
     Size measure() const override;
     bool canExpandHorizontally() const override { return true; }
 

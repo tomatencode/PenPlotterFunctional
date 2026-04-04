@@ -11,7 +11,7 @@
 // Include related screens to enable navigation
 #include "WifiSettingsScreen.hpp"
 #include "PlottingSettingsScreen.hpp"
-#include "HoamingSettingsScreen.hpp"
+#include "HomingSettingsScreen.hpp"
 #include "SteppersSettingsScreen.hpp"
 #include "PenSettingsScreen.hpp"
 #include "ui/framework/router/Router.hpp"
@@ -79,12 +79,12 @@ public:
                         .style = styles::listButtonStyle,
                         .onPress = [this, wifiStatusProvider]() {
                             if (router()) {
-                                auto homingSettingsScreen = std::make_unique<HoamingSettingsScreen>(wifiStatusProvider);
+                                auto homingSettingsScreen = std::make_unique<HomingSettingsScreen>(wifiStatusProvider);
                                 router()->pushScreen(std::move(homingSettingsScreen));
                             }
                         }
                     },
-                    std::make_unique<widgets::Label>("Hoaming Settings")
+                    std::make_unique<widgets::Label>("Homing Settings")
                 ),
 
                 std::make_unique<widgets::Button>(

@@ -3,7 +3,7 @@
 namespace ui {
 namespace widgets {
 
-Rect LinearLayout::applyMargins(Rect box) const
+Box LinearLayout::applyMargins(Box box) const
 {
     auto safeSub = [](int a, int b) {
         return std::max(0, a - b);
@@ -27,18 +27,18 @@ uint16_t LinearLayout::secondarySize(Size s) const {
     return (_style.axis == Axis::Horizontal) ? s.h : s.w;
 }
 
-uint16_t LinearLayout::PrimaryPos(Rect r) const {
+uint16_t LinearLayout::PrimaryPos(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.x : r.y;
 }
-uint16_t LinearLayout::SecondaryPos(Rect r) const {
+uint16_t LinearLayout::SecondaryPos(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.y : r.x;
 }
 
-uint16_t LinearLayout::availablePrimarySpace(Rect r) const {
+uint16_t LinearLayout::availablePrimarySpace(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.w : r.h;
 }
 
-uint16_t LinearLayout::availableSecondarySpace(Rect r) const {
+uint16_t LinearLayout::availableSecondarySpace(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.h : r.w;
 }
 
@@ -125,7 +125,7 @@ void LinearLayout::distributeExpansion(std::vector<ChildInfo>& children,
             c.finalPrimarySize = targetSize;
 }
 
-std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect content, uint16_t childStart) const
+std::optional<Box> LinearLayout::computeChildRect(const ChildInfo& c, Box content, uint16_t childStart) const
 {
     uint16_t start = PrimaryPos(content);
     uint16_t end = start + availablePrimarySpace(content);
@@ -160,7 +160,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect cont
 
     if (_style.axis == Axis::Horizontal)
     {
-        return std::make_optional(Rect{
+        return std::make_optional(Box{
             static_cast<uint16_t>(clampedStart),
             static_cast<uint16_t>(secondaryPos),
             static_cast<uint16_t>(clampedSize),
@@ -169,7 +169,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect cont
     }
     else
     {
-        return std::make_optional(Rect{
+        return std::make_optional(Box{
             static_cast<uint16_t>(secondaryPos),
             static_cast<uint16_t>(clampedStart),
             static_cast<uint16_t>(c.secondarySize),
@@ -181,7 +181,7 @@ std::optional<Rect> LinearLayout::computeChildRect(const ChildInfo& c, Rect cont
 // ---------- Layout ----------
 
 std::vector<LinearLayout::LayoutItem>
-LinearLayout::computeLayout(Rect content) const
+LinearLayout::computeLayout(Box content) const
 {
     std::vector<LayoutItem> result;
 
@@ -273,12 +273,12 @@ LinearLayout::computeLayout(Rect content) const
 
 // ---------- Public API ----------
 
-void LinearLayout::render(Renderer& r, Rect canvasBox)
+void LinearLayout::render(Renderer& r, Box canvasBox)
 {
     if (getChildCount() == 0 || canvasBox.w == 0 || canvasBox.h == 0)
         return;
 
-    Rect content = applyMargins(canvasBox);
+    Box content = applyMargins(canvasBox);
     auto layout = computeLayout(content);
 
     for (auto& item : layout)

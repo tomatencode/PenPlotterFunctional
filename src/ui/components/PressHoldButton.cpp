@@ -49,7 +49,7 @@ void PressHoldButton::handleInput(InputState& input)
     Button::handleInput(input);
 }
 
-void PressHoldButton::render(Renderer& r, widgets::Rect canvasBox)
+void PressHoldButton::render(Renderer& r, widgets::Box canvasBox)
 {
     // Call base class to render button and child
     Button::render(r, canvasBox);

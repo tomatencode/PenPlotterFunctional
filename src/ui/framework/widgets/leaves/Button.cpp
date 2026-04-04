@@ -22,7 +22,7 @@ Size Button::measure() const
     return { width, 1 };
 }
 
-void Button::render(Renderer& r, Rect canvasBox)
+void Button::render(Renderer& r, Box canvasBox)
 {
     // Button renders at the given canvasBox position, full width
     if (canvasBox.w == 0 || canvasBox.h == 0)
@@ -61,7 +61,7 @@ void Button::render(Renderer& r, Rect canvasBox)
     uint16_t finalWidth = std::min<uint16_t>(ChildSize.w, remainingWidth);
 
     // Create a canvas for the child within the button
-    Rect childCanvas = {
+    Box childCanvas = {
         x,
         y,
         finalWidth,

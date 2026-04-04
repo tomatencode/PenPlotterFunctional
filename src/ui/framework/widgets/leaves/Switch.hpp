@@ -58,7 +58,7 @@ public:
         _cacheValid(false)
     {}
 
-    void render(Renderer& r, Rect canvasBox) override
+    void render(Renderer& r, Box canvasBox) override
     {
         Widget* current = getCurrentBranch();
         if (current) {

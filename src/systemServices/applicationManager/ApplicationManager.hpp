@@ -7,7 +7,7 @@
 #include "ui/UiOrchestrator.hpp"
 #include "ui/InputMapper.hpp"
 #include "ui/framework/router/Router.hpp"
-#include "ui/framework/render/Render.hpp"
+#include "ui/framework/renderer/Renderer.hpp"
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"

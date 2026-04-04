@@ -85,7 +85,7 @@ public:
         };
     }
 
-    void render(Renderer& r, Rect canvasBox) override
+    void render(Renderer& r, Box canvasBox) override
     {
         if (canvasBox.w == 0 || canvasBox.h == 0)
             return;

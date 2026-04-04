@@ -21,10 +21,10 @@
 namespace ui {
 namespace screens {
 
-class HoamingSettingsScreen : public Screen
+class HomingSettingsScreen : public Screen
 {
 public:
-    HoamingSettingsScreen(std::function<bool()> wifiStatusProvider)
+    HomingSettingsScreen(std::function<bool()> wifiStatusProvider)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},

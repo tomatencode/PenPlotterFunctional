@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../render/Render.hpp"
-#include "box.hpp"
+#include "../../renderer/Renderer.hpp"
+#include "Box.hpp"
 #include "Size.hpp"
 
 namespace ui {
@@ -15,7 +15,7 @@ public:
     Widget() {}
     virtual ~Widget() = default;
 
-    virtual void render(Renderer& r, Rect canvasBox) = 0;
+    virtual void render(Renderer& r, Box canvasBox) = 0;
 
     virtual Size measure() const { return Size{0, 0}; }
 
