@@ -5,17 +5,6 @@
 
 class RuntimeSettings {
 public:
-    // Setters called by SettingsRepository on Core 0
-    void setDriverCurrent_mA(float v) { _driverCurrent_mA.store(v, std::memory_order_relaxed); }
-    void setMicrosteps(float v) { _microsteps.store(v, std::memory_order_relaxed); }
-    void setDrawFeedRate_mm_per_s(float v) { _drawFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
-    void setTravelFeedRate_mm_per_s(float v) { _travelFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
-    void setMinFeatureSize_mm(float v) { _minFeatureSize_mm.store(v, std::memory_order_relaxed); }
-    void setHomingSpeed_stp_per_s(float v) { _homingSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
-    void setStallguardThreshold(float v) { _stallguardThreshold.store(v, std::memory_order_relaxed); }
-    void setPenUpAngle_deg(float v) { _penUpAngle_deg.store(v, std::memory_order_relaxed); }
-    void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
-
     // Getters called by Core 1 during motion execution
     float driverCurrent_mA() const { return _driverCurrent_mA.load(std::memory_order_relaxed); }
     float microsteps() const { return _microsteps.load(std::memory_order_relaxed); }
@@ -29,6 +18,18 @@ public:
 
 private:
 
+    friend class SettingsRepository;
+    void setDriverCurrent_mA(float v) { _driverCurrent_mA.store(v, std::memory_order_relaxed); }
+    void setMicrosteps(float v) { _microsteps.store(v, std::memory_order_relaxed); }
+    void setDrawFeedRate_mm_per_s(float v) { _drawFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
+    void setTravelFeedRate_mm_per_s(float v) { _travelFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
+    void setMinFeatureSize_mm(float v) { _minFeatureSize_mm.store(v, std::memory_order_relaxed); }
+    void setHomingSpeed_stp_per_s(float v) { _homingSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
+    void setStallguardThreshold(float v) { _stallguardThreshold.store(v, std::memory_order_relaxed); }
+    void setPenUpAngle_deg(float v) { _penUpAngle_deg.store(v, std::memory_order_relaxed); }
+    void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
+
+private:
     std::atomic<float> _driverCurrent_mA{DRIVER_CURRENT_MA};
     std::atomic<float> _microsteps{MICROSTEPS};
     std::atomic<float> _drawFeedRate_mm_per_s{FEED_RATE_DRAW_MM_PER_S};
