@@ -1,7 +1,11 @@
 #include "WebInterface.hpp"
+#include "config/job_config.hpp"
 
 #include <string>
-#include "config/job_config.hpp"
+
+// ============================================================================
+// File Management Handler
+// ============================================================================
 
 void WebInterface::handleFileList()
 {
@@ -15,63 +19,71 @@ void WebInterface::handleFileList()
     }
     json += "]";
 
-    server.send(200, "application/json", json.c_str());
+    _server.send(200, "application/json", json.c_str());
 }
 
 void WebInterface::handlePauseJob()
 {
     _jobController.pause();
-    server.send(200, "text/plain", "Job paused");
+    _server.send(200, "text/plain", "Job paused");
 }
 
 void WebInterface::handleResumeJob()
 {
     _jobController.resume();
-    server.send(200, "text/plain", "Job resumed");
+    _server.send(200, "text/plain", "Job resumed");
 }
+
+// ============================================================================
+// Job Start/Abort Handlers
+// ============================================================================
 
 void WebInterface::handleStartJob()
 {
-    if (!server.hasArg("file"))
+    if (!_server.hasArg("file"))
     {
-        server.send(400, "text/plain", "Missing 'file' parameter");
+        _server.send(400, "text/plain", "Error: Missing 'file' parameter");
         return;
     }
 
-    String filename = server.arg("file");
+    String filename = _server.arg("file");
+    std::string filepath = PLOTTING_DIRECTORY + "/" + std::string(filename.c_str());
 
-    if (!_fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename.c_str()))
+    if (!_fileManager.fileExists(filepath))
     {
-        server.send(404, "text/plain", "File not found");
+        _server.send(404, "text/plain", "Error: File not found");
         return;
     }
 
     _jobController.start(filename.c_str());
-
-    server.send(200, "text/plain", "Job started");
+    _server.send(200, "text/plain", "Job started");
 }
 
 void WebInterface::handleAbortJob()
 {
     _jobController.abort();
-    server.send(200, "text/plain", "Job stopped");
+    _server.send(200, "text/plain", "Job aborted");
 }
+
+// ============================================================================
+// File Upload Handler
+// ============================================================================
 
 void WebInterface::handleUpload()
 {
-    HTTPUpload& upload = server.upload();
+    HTTPUpload& upload = _server.upload();
 
     if (upload.status == UPLOAD_FILE_START)
     {
         std::string path = std::string("/") + upload.filename.c_str();
-        Serial.printf("Upload start: %s\n", path.c_str());
+        Serial.printf("WebInterface: Upload start - %s\n", path.c_str());
 
         if (_fileManager.fileExists(path))
             _fileManager.deleteFile(path);
 
         File f = _fileManager.openFileWrite(path);
         if (!f)
-            Serial.println("Failed to open file for writing");
+            Serial.println("WebInterface: ERROR - Failed to open file for writing");
 
         f.close();
     }
@@ -84,8 +96,8 @@ void WebInterface::handleUpload()
     }
     else if (upload.status == UPLOAD_FILE_END)
     {
-        Serial.printf("Upload finished: %s (%u bytes)\n",
+        Serial.printf("WebInterface: Upload complete - %s (%u bytes)\n",
                       upload.filename.c_str(), upload.totalSize);
-        server.send(200, "text/plain", "File uploaded");
+        _server.send(200, "text/plain", "File uploaded successfully");
     }
 }

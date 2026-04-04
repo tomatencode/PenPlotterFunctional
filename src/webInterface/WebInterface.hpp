@@ -1,47 +1,50 @@
 #pragma once
 
 #include <WebServer.h>
-#include <cstdint>
 
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
 #include "settings/SettingsObserver.hpp"
-#include "settings/SettingsRepository.hpp"
+
+// Forward declarations
+class SettingsRepository;
 
 class WebInterface : public SettingsObserver
 {
 public:
-    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository)
-        : _jobController(jobController), _motionState(motionState), _fileManager(fileManager),
-          _settingsRepository(settingsRepository), server(80)
-    {}
+    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository);
+    
+    ~WebInterface() = default;
 
-    void init();
-    void update();
+    // Main lifecycle
+    void init();      // Start WiFi connection (non-blocking)
+    void update();    // Poll WiFi status, handle HTTP requests
     bool isWiFiConnected() const;
+
+private:
+    // Dependencies (references, never null)
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
     SettingsRepository& _settingsRepository;
 
-
-    WebServer server;
-    bool _wifiInitialized = false;
+    // WiFi/Server state
+    WebServer _server;           // HTTP server (port 80)
     bool _serverStarted = false;
 
-
-    void handleFileList();
-    void handlePauseJob();
-    void handleResumeJob();
-    void handleStartJob();
-    void handleAbortJob();
-    void handleUpload();
-    
+    // ====== WiFi Setup (Core 0) ======
     void startWiFiConnection();
-    void checkWiFiStatus();
     void setupServer();
 
-    // SettingsObserver implementation
+    // ====== HTTP Handlers ======
+    void handleFileList();
+    void handleStartJob();
+    void handleAbortJob();
+    void handlePauseJob();
+    void handleResumeJob();
+    void handleUpload();
+
+    // ====== SettingsObserver Implementation ======
     void onNetworkSettingsChanged(const NetworkSettings& newSettings) override;
 };
