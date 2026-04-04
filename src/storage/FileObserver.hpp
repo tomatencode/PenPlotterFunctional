@@ -7,6 +7,7 @@ enum class FileEvent {
     REMOVED = 2
 };
 
+// not ThreadSafe - only to be used on same core as FileManager
 class FileObserver
 {
 public:

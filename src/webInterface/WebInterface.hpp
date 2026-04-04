@@ -6,16 +6,24 @@
 #include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
 #include "settings/SettingsObserver.hpp"
-#include "settings/SettingsRepository.hpp"
+#include "settings/SettingPercistence.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 class WebInterface : public SettingsObserver
 {
 public:
-    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository)
-        : _jobController(jobController),
+    WebInterface(JobController& jobController,
+                 MotionState& motionState,
+                 FileManager& fileManager,
+                 SettingPercistence& settingsRepository,
+                 RuntimeSettings& runtimeSettings)
+                 
+        : SettingsObserver({Setting::SSID, Setting::Password, Setting::MdnsName}),
+          _jobController(jobController),
           _motionState(motionState),
           _fileManager(fileManager),
-          _settingsRepository(settingsRepository),
+          _settingPercistence(settingsRepository),
+          _runtimeSettings(runtimeSettings),
           _server(80)
     {}
     
@@ -29,7 +37,8 @@ private:
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
-    SettingsRepository& _settingsRepository;
+    SettingPercistence& _settingPercistence;
+    RuntimeSettings& _runtimeSettings;
 
     WebServer _server; // HTTP server (port 80)
     bool _serverStarted = false;
@@ -45,5 +54,5 @@ private:
     void handleResumeJob();
     void handleUpload();
 
-    void onNetworkSettingsChanged(const NetworkSettings& newSettings) override;
+    void onRelevantSettingsChanged() override;
 };

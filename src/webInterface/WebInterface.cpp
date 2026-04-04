@@ -4,7 +4,7 @@
 #include <ESPmDNS.h>
 
 void WebInterface::init() {
-    _settingsRepository.addObserver(this);
+    _settingPercistence.addObserver(this);
 
     Serial.println("WebInterface initializing (WiFi connects in background)...");
     startWiFiConnection();
@@ -28,27 +28,25 @@ void WebInterface::update() {
 
 // Non-blocking
 void WebInterface::startWiFiConnection() {
-    const NetworkSettings& netSettings = _settingsRepository.getNetworkSettings();
 
     WiFi.mode(WIFI_STA);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
-    WiFi.begin(netSettings.ssid.c_str(), netSettings.password.c_str());
+    WiFi.begin(_runtimeSettings.getSSID().c_str(), _runtimeSettings.getPassword().c_str());
 }
 
 void WebInterface::setupServer() {
     if (_serverStarted) return;
     if (WiFi.status() != WL_CONNECTED) return;
 
-    const NetworkSettings& netSettings = _settingsRepository.getNetworkSettings();
 
     // mDNS server
-    if (!MDNS.begin(netSettings.mdnsName.c_str())) {
+    if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
         Serial.println("Error starting mDNS");
     }
     else {
         Serial.print("mDNS started: http://");
-        Serial.print(netSettings.mdnsName.c_str());
+        Serial.print(_runtimeSettings.getMdnsName().c_str());
         Serial.println(".local");
     }
 
@@ -66,7 +64,7 @@ void WebInterface::setupServer() {
     Serial.println("HTTP server started");
 }
 
-void WebInterface::onNetworkSettingsChanged(const NetworkSettings& newSettings) {
+void WebInterface::onRelevantSettingsChanged() {
     // WiFi credentials have changed, reconnect with new credentials
     Serial.println("Network settings changed, reconnecting WiFi...");
     
@@ -77,5 +75,5 @@ void WebInterface::onNetworkSettingsChanged(const NetworkSettings& newSettings) 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     
     // Restart WiFi connection with new credentials
-    WiFi.begin(newSettings.ssid.c_str(), newSettings.password.c_str());
+    WiFi.begin(_runtimeSettings.getSSID().c_str(), _runtimeSettings.getPassword().c_str());
 }

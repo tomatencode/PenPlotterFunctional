@@ -2,13 +2,10 @@
 
 #include <functional>
 
-#include "jobController/JobController.hpp"
-#include "jobController/JobObserver.hpp"
-
-#include "InputMapper.hpp"
-
 #include "systemServices/MotionState.hpp"
 #include "storage/FileManager.hpp"
+#include "settings/SettingPercistence.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 #include "hardware/display/LcdDisplay.hpp"
 #include "hardware/rotaryEncoder/RotaryEncoder.hpp"
@@ -18,8 +15,10 @@
 #include "framework/input/InputState.hpp"
 #include "framework/router/Router.hpp"
 
-// Forward declarations
-class SettingsRepository;
+#include "jobController/JobController.hpp"
+#include "jobController/JobObserver.hpp"
+
+#include "InputMapper.hpp"
 
 namespace ui {
 
@@ -34,7 +33,8 @@ public:
         MotionState& motionState,
         Buzzer& buzzer,
         std::function<bool()> wifiStatusProvider,
-        SettingsRepository& settingsRepository
+        SettingPercistence& settingsRepository,
+        RuntimeSettings& runtimeSettings
     )
     : _router(router),
       _renderer(renderer),
@@ -44,7 +44,9 @@ public:
       _motionState(motionState),
       _buzzer(buzzer),
       _wifiStatusProvider(wifiStatusProvider),
-      _settingsRepository(settingsRepository)
+      _settingsRepository(settingsRepository),
+      _runtimeSettings(runtimeSettings)
+
     {}
     
     ~UiOrchestrator() {
@@ -67,7 +69,8 @@ private:
     InputMapper& _inputMapper;
     Buzzer& _buzzer;
     std::function<bool()> _wifiStatusProvider;
-    SettingsRepository& _settingsRepository;
+    SettingPercistence& _settingsRepository;
+    RuntimeSettings& _runtimeSettings;
 
 
     unsigned long _lastUpdateTime = 0;  // For non-blocking timing

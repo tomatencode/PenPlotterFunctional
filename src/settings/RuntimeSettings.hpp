@@ -1,11 +1,15 @@
 #pragma once
 #include <atomic>
+#include <string>
 
 #include "defaults/PlottingDefaults.hpp"
 
 class RuntimeSettings {
 public:
-    // Getters called by Core 1 during motion execution
+
+    std::string getSSID() const { return _ssid; }
+    std::string getPassword() const { return _password; }
+    std::string getMdnsName() const { return _mdnsName; }
     float driverCurrent_mA() const { return _driverCurrent_mA.load(std::memory_order_relaxed); }
     float microsteps() const { return _microsteps.load(std::memory_order_relaxed); }
     float drawFeedRate_mm_per_s() const { return _drawFeedRate_mm_per_s.load(std::memory_order_relaxed); }
@@ -18,7 +22,12 @@ public:
 
 private:
 
-    friend class SettingsRepository;
+    friend class SettingPercistence;
+    
+    // setters called by SettingPercistence when loading from NVS or updating a setting
+    void setSSID(const std::string& v) { _ssid = v; }
+    void setPassword(const std::string& v) { _password = v; }
+    void setMdnsName(const std::string& v) { _mdnsName = v; }
     void setDriverCurrent_mA(float v) { _driverCurrent_mA.store(v, std::memory_order_relaxed); }
     void setMicrosteps(float v) { _microsteps.store(v, std::memory_order_relaxed); }
     void setDrawFeedRate_mm_per_s(float v) { _drawFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
@@ -30,13 +39,20 @@ private:
     void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
 
 private:
+
     std::atomic<float> _driverCurrent_mA{DRIVER_CURRENT_MA};
     std::atomic<float> _microsteps{MICROSTEPS};
     std::atomic<float> _drawFeedRate_mm_per_s{FEED_RATE_DRAW_MM_PER_S};
     std::atomic<float> _travelFeedRate_mm_per_s{FEED_RATE_TRAVEL_MM_PER_S};
     std::atomic<float> _minFeatureSize_mm{MIN_FEATURE_SIZE_MM};
     std::atomic<float> _homingSpeed_stp_per_s{HOMING_SPEED_STP_PER_S};
-    std::atomic<float> _stallguardThreshold{HOMING_STALLGUARD_THRESHOLD};
+    std::atomic<float> _stallguardThreshold{STALLGUARD_THRESHOLD};
     std::atomic<float> _penUpAngle_deg{PEN_UP_DEG};
     std::atomic<float> _penDownAngle_deg{PEN_DOWN_DEG};
+    
+    // cant make these atomics since std::string is not trivially copyable
+    // but they are only accessed on Core 0 (main thread) so should be safe without synchronization
+    std::string _ssid;
+    std::string _password;
+    std::string _mdnsName;
 };

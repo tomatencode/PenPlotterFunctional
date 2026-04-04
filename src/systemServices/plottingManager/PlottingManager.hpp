@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include "gcode/GCodeExecuter.hpp"
 #include "settings/RuntimeSettings.hpp"
+#include "settings/SettingsObserver.hpp"
 #include "hardware/steppers/Stepper.hpp"
 #include "hardware/pen/ServoPen.hpp"
 #include "hardware/drivers/TMC2209Driver.hpp"
@@ -16,7 +17,7 @@
 #include "systemServices/GcodeMessage.hpp"
 
 
-class PlottingManager
+class PlottingManager : public SettingsObserver
 {
 public:
     PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);
@@ -27,6 +28,8 @@ public:
 private:
 
     void configureDriver(TMC2209Driver& driver);
+
+    void onRelevantSettingsChanged() override;
 
     // UART
     HardwareSerial _driverSerial;

@@ -11,16 +11,14 @@
 #include "systemServices/MotionState.hpp"
 #include "systemServices/FreeRtosQueue.hpp"
 #include "systemServices/GcodeMessage.hpp"
-#include "settings/SettingsRepository.hpp"
-
-// Forward declarations
-class SettingsRepository;
+#include "settings/SettingPercistence.hpp"
+#include "settings/RuntimeSettings.hpp"
 
 class ApplicationManager
 {
 public:
     ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
-                       SettingsRepository& settingsRepository);
+                       SettingPercistence& settingPercistence, RuntimeSettings& runtimeSettings);
     
     void init();
     void update();
@@ -39,5 +37,5 @@ private:
     ui::Router _router;
     ui::Renderer _renderer;
     ui::InputMapper _inputMapper;
-    ui::UiOrchestrator _UiOrchestrator;
+    ui::UiOrchestrator _uiOrchestrator;
 };

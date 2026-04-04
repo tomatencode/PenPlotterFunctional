@@ -3,27 +3,26 @@
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
 #include "config/job_config.hpp"
-#include "settings/SettingsRepository.hpp"
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
 ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
-                                       SettingsRepository& settingsRepository)
+                                       SettingPercistence& settingPercistence, RuntimeSettings& runtimeSettings)
     : _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       _display(_lcd),
       _encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       _buzzer(BUZZER_PIN, 5),
       _fileManager(),
       _jobController(motionState, gcodeQueue, _fileManager, PLOTTING_DIRECTORY),
-      _webInterface(_jobController, motionState, _fileManager, settingsRepository),
+      _webInterface(_jobController, motionState, _fileManager, settingPercistence, runtimeSettings),
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
-      _UiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer,
+      _uiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer,
                         [this]() -> bool {
                             return _webInterface.isWiFiConnected();
                         },
-                        settingsRepository
+                        settingPercistence, runtimeSettings
                     )
 {}
 
@@ -40,7 +39,7 @@ void ApplicationManager::init()
 
     _fileManager.init();
 
-    _UiOrchestrator.init();
+    _uiOrchestrator.init();
     _webInterface.init();
 
     _buzzer.playMelody(startupMelody);
@@ -51,5 +50,5 @@ void ApplicationManager::update()
     _webInterface.update();
     _jobController.update();
     _buzzer.update();
-    _UiOrchestrator.update();
+    _uiOrchestrator.update();
 }

@@ -14,6 +14,7 @@ struct JobEventType {
     std::string filename;
 };
 
+// not ThreadSafe - only to be used on same core as JobController
 class JobObserver {
 public:
     virtual ~JobObserver() = default;

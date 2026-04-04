@@ -6,7 +6,9 @@
 #include "systemServices/GcodeMessage.hpp"
 
 PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
-    : _motionState(motionState),
+    : SettingsObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
+    
+    _motionState(motionState),
     gcodeQueue(gcodeQueue),
     _runtimeSettings(runtimeSettings),
     _driverSerial(1),
@@ -52,7 +54,6 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
 
 void PlottingManager::configureDriver(TMC2209Driver& driver)
 {
-    driver.begin();
     driver.setStallGuardThreshold(_runtimeSettings.stallguardThreshold());
     driver.setCurrent(_runtimeSettings.driverCurrent_mA());
     driver.setMicrosteps(_runtimeSettings.microsteps());
@@ -70,7 +71,10 @@ void PlottingManager::init()
 
     _driverSerial.begin(115200, SERIAL_8N1, DRIVER_RX_PIN, DRIVER_TX_PIN);
 
+    _driverA.begin();
     configureDriver(_driverA);
+    
+    _driverB.begin();
     configureDriver(_driverB);
 
     Serial.println("Plotting manager initialized.");
@@ -96,4 +100,10 @@ void PlottingManager::update()
         }
         _motionState.setState(MotionStateType::IDLE);
     }
+}
+
+void PlottingManager::onRelevantSettingsChanged() {
+    // Update driver configurations based on the changed settings
+    configureDriver(_driverA);
+    configureDriver(_driverB);
 }
