@@ -1,11 +1,11 @@
-#include "PlottingManager.hpp"
+#include "PlottingController.hpp"
 
 #include "config/pins.hpp"
 #include "config/hardware_config.hpp"
-#include "systemServices/FreeRtosQueue.hpp"
-#include "systemServices/GcodeMessage.hpp"
+#include "rtos/RtosQueue.hpp"
+#include "rtos/GcodeMessage.hpp"
 
-PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
+PlottingController::PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
     : SettingObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
     
     _motionState(motionState),
@@ -52,14 +52,14 @@ PlottingManager::PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMe
 {
 }
 
-void PlottingManager::configureDriver(TMC2209Driver& driver)
+void PlottingController::configureDriver(TMC2209Driver& driver)
 {
     driver.setStallGuardThreshold(_runtimeSettings.stallguardThreshold());
     driver.setCurrent(_runtimeSettings.driverCurrent_mA());
     driver.setMicrosteps(_runtimeSettings.microsteps());
 }
 
-void PlottingManager::init()
+void PlottingController::init()
 {
     pinMode(SERVO_PIN, OUTPUT);
 
@@ -80,7 +80,7 @@ void PlottingManager::init()
     Serial.println("Plotting manager initialized.");
 }
 
-void PlottingManager::update()
+void PlottingController::update()
 {
     auto msg = gcodeQueue.tryReceive(0);
 
@@ -102,7 +102,7 @@ void PlottingManager::update()
     }
 }
 
-void PlottingManager::onRelevantSettingsChanged() {
+void PlottingController::onRelevantSettingsChanged() {
     // Update driver configurations based on the changed settings
     configureDriver(_driverA);
     configureDriver(_driverB);

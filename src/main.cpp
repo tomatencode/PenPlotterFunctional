@@ -1,11 +1,11 @@
 #include <Arduino.h>
 
-#include "systemServices/Tasks.hpp"
+#include "rtos/Tasks.hpp"
 
 void setup()
 {
     Serial.begin(115200);
-    startSystemTasks();
+    startRtosTasks();
 }
 
 void loop() {}

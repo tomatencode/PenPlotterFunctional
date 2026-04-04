@@ -3,8 +3,8 @@
 #include <Arduino.h>
 
 // Start all firmware tasks
-void startSystemTasks();
+void startRtosTasks();
 
 // Task functions
-void motionTask(void *parameter);
+void plottingTask(void *parameter);
 void systemTask(void *parameter);

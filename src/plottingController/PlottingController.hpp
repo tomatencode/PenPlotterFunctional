@@ -12,15 +12,15 @@
 #include "gcodeExecution/pen/ServoPen.hpp"
 #include "gcodeExecution/homing/HomingController.hpp"
 #include "gcodeExecution/GCodeExecuter.hpp"
-#include "systemServices/MotionState.hpp"
-#include "systemServices/FreeRtosQueue.hpp"
-#include "systemServices/GcodeMessage.hpp"
+#include "rtos/MotionState.hpp"
+#include "rtos/RtosQueue.hpp"
+#include "rtos/GcodeMessage.hpp"
 
 
-class PlottingManager : public SettingObserver
+class PlottingController : public SettingObserver
 {
 public:
-    PlottingManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);
+    PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);
 
     void init();
     void update();
@@ -65,6 +65,6 @@ private:
     GCodeExecuter _gcodeExecuter;
 
     MotionState& _motionState;
-    FreeRtosQueue<GcodeMessage>& gcodeQueue;
+    RtosQueue<GcodeMessage>& gcodeQueue;
     RuntimeSettings& _runtimeSettings;
 };

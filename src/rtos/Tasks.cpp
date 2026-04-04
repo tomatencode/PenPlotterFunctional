@@ -1,33 +1,33 @@
 #include "Tasks.hpp"
 
-#include "FreeRtosQueue.hpp"
+#include "RtosQueue.hpp"
 #include "GcodeMessage.hpp"
 #include "MotionState.hpp"
-#include "applicationManager/ApplicationManager.hpp"
-#include "plottingManager/PlottingManager.hpp"
+#include "systemController/SystemController.hpp"
+#include "plottingController/PlottingController.hpp"
 #include "settings/RuntimeSettings.hpp"
 #include "settings/SettingPersistence.hpp"
 
-TaskHandle_t motionTaskHandle = nullptr;
+TaskHandle_t plottingTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
 
 /*
     CORE 1
-    Motion execution task
+    Plotting task
 */
-void motionTask(void *parameter)
+void plottingTask(void *parameter)
 {
-    Serial.print("Motion task running on core: ");
+    Serial.print("Plotting task running on core: ");
     Serial.println(xPortGetCoreID());
 
-    PlottingManager* plottingManager =
-        static_cast<PlottingManager*>(parameter);
+    PlottingController* plottingController =
+        static_cast<PlottingController*>(parameter);
 
-    plottingManager->init();
+    plottingController->init();
 
     while (true)
     {
-        plottingManager->update();
+        plottingController->update();
         taskYIELD();
     }
 }
@@ -41,8 +41,8 @@ void systemTask(void *parameter)
     Serial.print("System task running on core: ");
     Serial.println(xPortGetCoreID());
 
-    ApplicationManager* app =
-        static_cast<ApplicationManager*>(parameter);
+    SystemController* app =
+        static_cast<SystemController*>(parameter);
 
     app->init();
 
@@ -57,10 +57,10 @@ void systemTask(void *parameter)
 /*
     Create all tasks
 */
-void startSystemTasks()
+void startRtosTasks()
 {
     size_t gcodeQueueSize = 32;
-    static FreeRtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
+    static RtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
     static MotionState motionState;
     static RuntimeSettings runtimeSettings;
     static SettingPersistence settingPercistence(runtimeSettings);
@@ -68,17 +68,17 @@ void startSystemTasks()
     // Load settings from NVS at startup
     settingPercistence.init();
 
-    static ApplicationManager appManager(motionState, gcodeQueue, settingPercistence, runtimeSettings);
-    static PlottingManager plottingManager(motionState, gcodeQueue, runtimeSettings);
+    static SystemController appManager(motionState, gcodeQueue, settingPercistence, runtimeSettings);
+    static PlottingController plottingController(motionState, gcodeQueue, runtimeSettings);
 
-    // Motion task (CORE 1)
+    // Plotting task (CORE 1)
     xTaskCreatePinnedToCore(
-        motionTask,
-        "MotionTask",
+        plottingTask,
+        "PlottingTask",
         10000,
-        &plottingManager,
+        &plottingController,
         2,
-        &motionTaskHandle,
+        &plottingTaskHandle,
         1);
 
     // System task (CORE 0)

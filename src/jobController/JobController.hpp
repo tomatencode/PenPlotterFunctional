@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "storage/FileManager.hpp"
-#include "systemServices/MotionState.hpp"
-#include "systemServices/FreeRtosQueue.hpp"
-#include "systemServices/GcodeMessage.hpp"
+#include "rtos/MotionState.hpp"
+#include "rtos/RtosQueue.hpp"
+#include "rtos/GcodeMessage.hpp"
 #include "JobObserver.hpp"
 
 struct PlotJob {
@@ -19,7 +19,7 @@ struct PlotJob {
 
 class JobController {
 public:
-    JobController(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, std::string plottingDirectory)
+    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, std::string plottingDirectory)
         : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _plottingDirectory(std::move(plottingDirectory))
     {}
 
@@ -48,7 +48,7 @@ private:
 
     MotionState& _motionState;
     FileManager& _fileManager;
-    FreeRtosQueue<GcodeMessage>& _gcodeQueue;
+    RtosQueue<GcodeMessage>& _gcodeQueue;
 
     std::vector<JobObserver*> _observers;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../motionExecution/StepperAxis.hpp"
-#include "systemServices/MotionState.hpp"
+#include "rtos/MotionState.hpp"
 
 // Forward declaration
 class RuntimeSettings;

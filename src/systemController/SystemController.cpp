@@ -1,4 +1,4 @@
-#include "ApplicationManager.hpp"
+#include "SystemController.hpp"
 
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
@@ -6,7 +6,7 @@
 
 const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
 
-ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
+SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue,
                                        SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings)
     : _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       _display(_lcd),
@@ -26,7 +26,7 @@ ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<G
                     )
 {}
 
-void ApplicationManager::init()
+void SystemController::init()
 {
     Wire.begin();
 
@@ -45,7 +45,7 @@ void ApplicationManager::init()
     _buzzer.playMelody(startupMelody);
 }
 
-void ApplicationManager::update()
+void SystemController::update()
 {
     _webInterface.update();
     _jobController.update();

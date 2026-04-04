@@ -3,14 +3,14 @@
 
 
 template<typename T>
-class FreeRtosQueue {
+class RtosQueue {
 public:
-    FreeRtosQueue(size_t capacity)
+    RtosQueue(size_t capacity)
         : _capacity(capacity),
         _queue(xQueueCreate(capacity, sizeof(T)))
     {}
 
-    ~FreeRtosQueue() {
+    ~RtosQueue() {
         if (_queue) {
             vQueueDelete(_queue);
         }
@@ -50,10 +50,10 @@ public:
         return _capacity;
     }
 
-    FreeRtosQueue(const FreeRtosQueue&) = delete;
-    FreeRtosQueue& operator=(const FreeRtosQueue&) = delete;
+    RtosQueue(const RtosQueue&) = delete;
+    RtosQueue& operator=(const RtosQueue&) = delete;
 
-    FreeRtosQueue(FreeRtosQueue&& other) noexcept
+    RtosQueue(RtosQueue&& other) noexcept
         : _queue(other._queue),
           _capacity(other._capacity)
     {
@@ -61,7 +61,7 @@ public:
         other._capacity = 0;
     }
 
-    FreeRtosQueue& operator=(FreeRtosQueue&& other) noexcept
+    RtosQueue& operator=(RtosQueue&& other) noexcept
     {
         if (this != &other) {
             if (_queue) vQueueDelete(_queue);

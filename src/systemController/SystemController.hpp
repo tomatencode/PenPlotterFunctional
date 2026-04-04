@@ -8,16 +8,16 @@
 #include "ui/InputMapper.hpp"
 #include "ui/framework/router/Router.hpp"
 #include "ui/framework/renderer/Renderer.hpp"
-#include "systemServices/MotionState.hpp"
-#include "systemServices/FreeRtosQueue.hpp"
-#include "systemServices/GcodeMessage.hpp"
+#include "rtos/MotionState.hpp"
+#include "rtos/RtosQueue.hpp"
+#include "rtos/GcodeMessage.hpp"
 #include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
-class ApplicationManager
+class SystemController
 {
 public:
-    ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
+    SystemController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue,
                        SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings);
     
     void init();
