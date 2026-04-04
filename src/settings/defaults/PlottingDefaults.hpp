@@ -2,15 +2,15 @@
 #include <cstdint>
 
 // Pen
-constexpr float PEN_UP_ANGLE = 100.0f;
-constexpr float PEN_DOWN_ANGLE = 65.0f;
+constexpr float PEN_UP_DEG = 100.0f;
+constexpr float PEN_DOWN_DEG = 65.0f;
 
 // Driver
 constexpr float DRIVER_CURRENT_MA = 1000.0f;
 constexpr uint16_t MICROSTEPS = 16;
 
 // Homing
-constexpr float HOMING_SPEED_STPS_PER_S = 360.0f;
+constexpr float HOMING_SPEED_STP_PER_S = 360.0f;
 constexpr float HOMING_STALLGUARD_THRESHOLD = 120.0f;
 constexpr float HOMING_SG_CHECK_INTERVAL_MS = 50.0f;
 constexpr uint16_t HOMING_CONSECUTIVE_STALL_CHECKS = 5;

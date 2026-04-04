@@ -48,9 +48,9 @@ void MotionExecuter::arcToXY(
     // Calculate the arc length and time to move
     double arcLength = radius * totalAngle;
 
-    if (_runtimeSettings.minFeatureSize() <= 0.0) return;
+    if (_runtimeSettings.minFeatureSize_mm() <= 0.0) return;
 
-    int linesegments = static_cast<int>(arcLength / _runtimeSettings.minFeatureSize()); // Number of line segments to approximate the arc
+    int linesegments = static_cast<int>(arcLength / _runtimeSettings.minFeatureSize_mm()); // Number of line segments to approximate the arc
     linesegments = std::max(1, std::min(linesegments, 1000));
 
     for (int32_t i = 1; i <= linesegments; i++) {
@@ -84,7 +84,7 @@ void MotionExecuter::quadraticBezierToXY(
         };
     };
 
-    const double maxSegmentLength = _runtimeSettings.minFeatureSize();
+    const double maxSegmentLength = _runtimeSettings.minFeatureSize_mm();
     double t0 = 0.0;
     XYPos lastPos = startPos;
     const double dt = 0.01; // initial increment
@@ -156,7 +156,7 @@ void MotionExecuter::cubicBezierToXY(
         return p;
     };
 
-    const double maxSegmentLength = _runtimeSettings.minFeatureSize();
+    const double maxSegmentLength = _runtimeSettings.minFeatureSize_mm();
 
     double t0 = 0.0;
     XYPos lastPos = startPos;

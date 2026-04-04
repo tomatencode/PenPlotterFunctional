@@ -14,13 +14,13 @@ struct NetworkSettings {
 struct PlottingSettings {
     float driverCurrent_mA;
     float microsteps;
-    float drawFeedRate;
-    float travelFeedRate;
-    float homingSpeed;
+    float drawFeedRate_mm_per_s;
+    float travelFeedRate_mm_per_s;
+    float homingSpeed_stp_per_s;
     float stallguardThreshold;
 };
 
 struct PenSettings {
-    float upAngle;
-    float downAngle;
+    float upAngle_deg;
+    float downAngle_deg;
 };

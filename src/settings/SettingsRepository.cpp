@@ -25,12 +25,12 @@ void SettingsRepository::init() {
     // (the lock-free atomic bridge for Core 1 to read motion settings)
     _runtimeSettings.setDriverCurrent_mA(_plotting.driverCurrent_mA);
     _runtimeSettings.setMicrosteps(_plotting.microsteps);
-    _runtimeSettings.setDrawFeedRate(_plotting.drawFeedRate);
-    _runtimeSettings.setTravelFeedRate(_plotting.travelFeedRate);
-    _runtimeSettings.setHomingSpeed(_plotting.homingSpeed);
+    _runtimeSettings.setDrawFeedRate_mm_per_s(_plotting.drawFeedRate_mm_per_s);
+    _runtimeSettings.setTravelFeedRate_mm_per_s(_plotting.travelFeedRate_mm_per_s);
+    _runtimeSettings.setHomingSpeed_stp_per_s(_plotting.homingSpeed_stp_per_s);
     _runtimeSettings.setStallguardThreshold(_plotting.stallguardThreshold);
-    _runtimeSettings.setPenUpAngle(_pen.upAngle);
-    _runtimeSettings.setPenDownAngle(_pen.downAngle);
+    _runtimeSettings.setPenUpAngle_deg(_pen.upAngle_deg);
+    _runtimeSettings.setPenDownAngle_deg(_pen.downAngle_deg);
 }
 
 // ============================================================================
@@ -73,9 +73,9 @@ void SettingsRepository::updatePlottingSettings(const PlottingSettings& settings
     // on the next G-code command execution
     _runtimeSettings.setDriverCurrent_mA(_plotting.driverCurrent_mA);
     _runtimeSettings.setMicrosteps(_plotting.microsteps);
-    _runtimeSettings.setDrawFeedRate(_plotting.drawFeedRate);
-    _runtimeSettings.setTravelFeedRate(_plotting.travelFeedRate);
-    _runtimeSettings.setHomingSpeed(_plotting.homingSpeed);
+    _runtimeSettings.setDrawFeedRate_mm_per_s(_plotting.drawFeedRate_mm_per_s);
+    _runtimeSettings.setTravelFeedRate_mm_per_s(_plotting.travelFeedRate_mm_per_s);
+    _runtimeSettings.setHomingSpeed_stp_per_s(_plotting.homingSpeed_stp_per_s);
     _runtimeSettings.setStallguardThreshold(_plotting.stallguardThreshold);
 
     notifyPlottingSettingsChanged();
@@ -88,8 +88,8 @@ void SettingsRepository::updatePenSettings(const PenSettings& settings) {
     persistPenSettings();
 
     // Update the atomic bridge
-    _runtimeSettings.setPenUpAngle(_pen.upAngle);
-    _runtimeSettings.setPenDownAngle(_pen.downAngle);
+    _runtimeSettings.setPenUpAngle_deg(_pen.upAngle_deg);
+    _runtimeSettings.setPenDownAngle_deg(_pen.downAngle_deg);
 
     notifyPenSettingsChanged();
 }
@@ -165,9 +165,9 @@ void SettingsRepository::persistPlottingSettings() {
 
     prefs.putFloat("driverCurrent", _plotting.driverCurrent_mA);
     prefs.putFloat("microsteps", _plotting.microsteps);
-    prefs.putFloat("drawFeed", _plotting.drawFeedRate);
-    prefs.putFloat("travelFeed", _plotting.travelFeedRate);
-    prefs.putFloat("homingSpeed", _plotting.homingSpeed);
+    prefs.putFloat("drawFeed", _plotting.drawFeedRate_mm_per_s);
+    prefs.putFloat("travelFeed", _plotting.travelFeedRate_mm_per_s);
+    prefs.putFloat("homingSpeed", _plotting.homingSpeed_stp_per_s);
     prefs.putFloat("stallguardThreshold", _plotting.stallguardThreshold);
 
     prefs.end();
@@ -177,8 +177,8 @@ void SettingsRepository::persistPenSettings() {
     Preferences prefs;
     prefs.begin("pen", false);
 
-    prefs.putFloat("upAngle", _pen.upAngle);
-    prefs.putFloat("downAngle", _pen.downAngle);
+    prefs.putFloat("upAngle", _pen.upAngle_deg);
+    prefs.putFloat("downAngle", _pen.downAngle_deg);
 
     prefs.end();
 }
@@ -202,9 +202,9 @@ void SettingsRepository::loadPlottingSettings() {
     
     _plotting.driverCurrent_mA = prefs.getFloat("driverCurrent", DRIVER_CURRENT_MA);
     _plotting.microsteps = prefs.getFloat("microsteps", MICROSTEPS);
-    _plotting.drawFeedRate = prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S);
-    _plotting.travelFeedRate = prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S);
-    _plotting.homingSpeed = prefs.getFloat("homingSpeed", HOMING_SPEED_STPS_PER_S);
+    _plotting.drawFeedRate_mm_per_s = prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S);
+    _plotting.travelFeedRate_mm_per_s = prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S);
+    _plotting.homingSpeed_stp_per_s = prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S);
     _plotting.stallguardThreshold = prefs.getFloat("stallguardThreshold", HOMING_STALLGUARD_THRESHOLD);
 
     prefs.end();
@@ -214,8 +214,8 @@ void SettingsRepository::loadPenSettings() {
     Preferences prefs;
     prefs.begin("pen", true);
 
-    _pen.upAngle = prefs.getFloat("upAngle", PEN_UP_ANGLE);
-    _pen.downAngle = prefs.getFloat("downAngle", PEN_DOWN_ANGLE);
+    _pen.upAngle_deg = prefs.getFloat("upAngle", PEN_UP_DEG);
+    _pen.downAngle_deg = prefs.getFloat("downAngle", PEN_DOWN_DEG);
 
     prefs.end();
 }

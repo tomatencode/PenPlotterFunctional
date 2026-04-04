@@ -1,69 +1,41 @@
 #pragma once
 #include <atomic>
 
-// ============================================================================
-// RuntimeSettings - Lock-free shared state for cross-core setting access
-// ============================================================================
-//
-// Problem:
-//   - Core 0 (UI/Web) reads/writes all settings, persists them to NVS
-//   - Core 1 (Motion) needs to read feed rates, pen angles, etc. in real-time
-//     while executing G-code commands
-//   - Can't use Preferences (NVS) from Core 1 — too slow
-//   - Can't use mutexes — would block G-code execution
-//
-// Solution: std::atomic<float> fields
-//   - Core 0 updates these atomically when SettingsRepository::update() is called
-//   - Core 1 reads them atomically with zero latency, zero locks
-//   - Same pattern as MotionState for cross-core communication
-//
-// Created in: Tasks.cpp (static local)
-// Passed to:  ApplicationManager (Core 0) and PlottingManager (Core 1) by reference
-//
-// Usage from Core 1 (MotionExecuter, GCodeExecuter, ServoPen):
-//   float feedRate = _runtimeSettings.drawFeedRate();  // atomic load, lock-free
-//
-// Usage from Core 0 (SettingsRepository):
-//   _runtimeSettings.setDrawFeedRate(20.5f);  // atomic store, lock-free
-//
+#include "settings/defaults/PlottingDefaults.hpp"
 
 class RuntimeSettings {
 public:
-    // ====== Setters (called by SettingsRepository on Core 0) ======
+    // Setters called by SettingsRepository on Core 0
     void setDriverCurrent_mA(float v) { _driverCurrent_mA.store(v, std::memory_order_relaxed); }
     void setMicrosteps(float v) { _microsteps.store(v, std::memory_order_relaxed); }
-    void setDrawFeedRate(float v) { _drawFeedRate.store(v, std::memory_order_relaxed); }
-    void setTravelFeedRate(float v) { _travelFeedRate.store(v, std::memory_order_relaxed); }
-    void setMinFeatureSize(float v) { _minFeatureSize.store(v, std::memory_order_relaxed); }
-    void setHomingSpeed(float v) { _homingSpeed.store(v, std::memory_order_relaxed); }
+    void setDrawFeedRate_mm_per_s(float v) { _drawFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
+    void setTravelFeedRate_mm_per_s(float v) { _travelFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
+    void setMinFeatureSize_mm(float v) { _minFeatureSize_mm.store(v, std::memory_order_relaxed); }
+    void setHomingSpeed_stp_per_s(float v) { _homingSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
     void setStallguardThreshold(float v) { _stallguardThreshold.store(v, std::memory_order_relaxed); }
-    void setPenUpAngle(float v) { _penUpAngle.store(v, std::memory_order_relaxed); }
-    void setPenDownAngle(float v) { _penDownAngle.store(v, std::memory_order_relaxed); }
+    void setPenUpAngle_deg(float v) { _penUpAngle_deg.store(v, std::memory_order_relaxed); }
+    void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
 
-    // ====== Getters (called by Core 1 during motion execution) ======
+    // Getters called by Core 1 during motion execution
     float driverCurrent_mA() const { return _driverCurrent_mA.load(std::memory_order_relaxed); }
     float microsteps() const { return _microsteps.load(std::memory_order_relaxed); }
-    float drawFeedRate() const { return _drawFeedRate.load(std::memory_order_relaxed); }
-    float travelFeedRate() const { return _travelFeedRate.load(std::memory_order_relaxed); }
-    float minFeatureSize() const { return _minFeatureSize.load(std::memory_order_relaxed); }
-    float homingSpeed() const { return _homingSpeed.load(std::memory_order_relaxed); }
+    float drawFeedRate_mm_per_s() const { return _drawFeedRate_mm_per_s.load(std::memory_order_relaxed); }
+    float travelFeedRate_mm_per_s() const { return _travelFeedRate_mm_per_s.load(std::memory_order_relaxed); }
+    float minFeatureSize_mm() const { return _minFeatureSize_mm.load(std::memory_order_relaxed); }
+    float homingSpeed_stp_per_s() const { return _homingSpeed_stp_per_s.load(std::memory_order_relaxed); }
     float stallguardThreshold() const { return _stallguardThreshold.load(std::memory_order_relaxed); }
-    float penUpAngle() const { return _penUpAngle.load(std::memory_order_relaxed); }
-    float penDownAngle() const { return _penDownAngle.load(std::memory_order_relaxed); }
+    float penUpAngle_deg() const { return _penUpAngle_deg.load(std::memory_order_relaxed); }
+    float penDownAngle_deg() const { return _penDownAngle_deg.load(std::memory_order_relaxed); }
 
 private:
-    // Using memory_order_relaxed because:
-    // - No synchronization required (settings change rarely)
-    // - No ordering constraints with other atomics
-    // - Fastest possible atomic operations (no barriers)
-    
-    std::atomic<float> _driverCurrent_mA{800.0f};     // DRIVER_CURRENT_MA
-    std::atomic<float> _microsteps{16.0f};            // MICROSTEPS
-    std::atomic<float> _drawFeedRate{20.0f};          // FEED_RATE_DRAW_MM_PER_S
-    std::atomic<float> _travelFeedRate{50.0f};        // FEED_RATE_TRAVEL_MM_PER_S
-    std::atomic<float> _minFeatureSize{1.0f};         // MIN_FEATURE_SIZE_MM
-    std::atomic<float> _homingSpeed{360.0f};          // HOMING_SPEED_STPS_PER_S
-    std::atomic<float> _stallguardThreshold{120.0f};  // HOMING_STALLGUARD_THRESHOLD
-    std::atomic<float> _penUpAngle{100.0f};           // PEN_UP_ANGLE
-    std::atomic<float> _penDownAngle{65.0f};          // PEN_DOWN_ANGLE
+
+    std::atomic<float> _driverCurrent_mA{DRIVER_CURRENT_MA};
+    std::atomic<float> _microsteps{MICROSTEPS};
+    std::atomic<float> _drawFeedRate_mm_per_s{FEED_RATE_DRAW_MM_PER_S};
+    std::atomic<float> _travelFeedRate_mm_per_s{FEED_RATE_TRAVEL_MM_PER_S};
+    std::atomic<float> _minFeatureSize_mm{MIN_FEATURE_SIZE_MM};
+    std::atomic<float> _homingSpeed_stp_per_s{HOMING_SPEED_STP_PER_S};
+    std::atomic<float> _stallguardThreshold{HOMING_STALLGUARD_THRESHOLD};
+    std::atomic<float> _penUpAngle_deg{PEN_UP_DEG};
+    std::atomic<float> _penDownAngle_deg{PEN_DOWN_DEG};
 };

@@ -6,7 +6,7 @@ HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, Motor
 
 void HomingController::moveToLimit(bool Afw, bool Bfw)
 {
-    float speed_stps_per_s = _runtimeSettings.homingSpeed();
+    float speed_stps_per_s = _runtimeSettings.homingSpeed_stp_per_s();
     float stallGuard_threshold = _runtimeSettings.stallguardThreshold();
     
     if (speed_stps_per_s <= 0.0f) return;
@@ -108,7 +108,8 @@ void HomingController::home() {
     moveToLimit(false, true); // Move to y limit
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
 
-    uint16_t stepInterval_us = 1000000UL / _runtimeSettings.homingSpeed() * _axisA.microsteps();
+    double microsteps_per_s = _runtimeSettings.homingSpeed_stp_per_s() * _axisA.microsteps();
+    uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
 
     for (int i = 0; i < 15 * _axisA.microsteps(); i++) {
         if (_motionState.getCommand() == MotionCommand::PAUSE) {
