@@ -41,8 +41,4 @@ private:
     ui::Renderer _renderer;
     ui::InputMapper _inputMapper;
     ui::UiOrchestrator _UiOrchestrator;
-
-    MotionState& _motionState;
-    FreeRtosQueue<GcodeMessage>& _gcodeQueue;
-    SettingsRepository& _settingsRepository;
 };

@@ -9,16 +9,13 @@ const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200
 
 ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<GcodeMessage>& gcodeQueue,
                                        SettingsRepository& settingsRepository)
-    : _motionState(motionState),
-      _gcodeQueue(gcodeQueue),
-      _settingsRepository(settingsRepository),
-      _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
+    : _lcd(LCD_I2C_ADDRESS, LCD_COLS, LCD_ROWS),
       _display(_lcd),
       _encoder(ENCODER_DT_PIN, ENCODER_CLK_PIN, ENCODER_SW_PIN, ENCODER_DEBOUNCE_MS),
       _buzzer(BUZZER_PIN, 5),
       _fileManager(),
       _jobController(motionState, gcodeQueue, _fileManager, PLOTTING_DIRECTORY),
-      _webInterface(_jobController, motionState, _fileManager, _settingsRepository),
+      _webInterface(_jobController, motionState, _fileManager, settingsRepository),
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
@@ -26,7 +23,7 @@ ApplicationManager::ApplicationManager(MotionState& motionState, FreeRtosQueue<G
                         [this]() -> bool {
                             return _webInterface.isWiFiConnected();
                         },
-                        _settingsRepository
+                        settingsRepository
                     )
 {}
 
@@ -42,9 +39,6 @@ void ApplicationManager::init()
     _encoder.begin();
 
     _fileManager.init();
-
-    // Register WebInterface as observer for network settings changes
-    _settingsRepository.addObserver(&_webInterface);
 
     _UiOrchestrator.init();
     _webInterface.init();

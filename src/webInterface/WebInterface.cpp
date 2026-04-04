@@ -34,12 +34,6 @@ void WebInterface::startWiFiConnection() {
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
     WiFi.begin(netSettings.ssid.c_str(), netSettings.password.c_str());
-
-    // Wait for connection
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-
-    Serial.print("WiFi Connected! IP address: ");
-    Serial.println(WiFi.localIP());
 }
 
 void WebInterface::setupServer() {

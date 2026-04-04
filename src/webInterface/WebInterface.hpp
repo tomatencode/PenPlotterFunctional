@@ -11,7 +11,13 @@
 class WebInterface : public SettingsObserver
 {
 public:
-    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository);
+    WebInterface(JobController& jobController, MotionState& motionState, FileManager& fileManager, SettingsRepository& settingsRepository)
+        : _jobController(jobController),
+          _motionState(motionState),
+          _fileManager(fileManager),
+          _settingsRepository(settingsRepository),
+          _server(80)
+    {}
     
     ~WebInterface() = default;
 
