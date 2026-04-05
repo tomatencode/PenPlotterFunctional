@@ -4,5 +4,5 @@
 static const char* MDNS_NAME = "penPlttr";
 
 // WiFi credentials
-static const char* SSID = "Thomas_Wifi";
-static const char* PASSWORD = "TotallyHarmless";
+static const char* SSID = "";
+static const char* PASSWORD = "";
