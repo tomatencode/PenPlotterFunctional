@@ -22,12 +22,12 @@ public:
           _jobController(jobController),
           _motionState(motionState),
           _fileManager(fileManager),
-          _settingPercistence(settingsRepository),
+          _settingPersistence(settingsRepository),
           _runtimeSettings(runtimeSettings),
           _server(80)
     {}
     
-    ~WebInterface() = default;
+    ~WebInterface();
 
     void init();
     void update();
@@ -37,7 +37,7 @@ private:
     JobController& _jobController;
     MotionState& _motionState;
     FileManager& _fileManager;
-    SettingPersistence& _settingPercistence;
+    SettingPersistence& _settingPersistence;
     RuntimeSettings& _runtimeSettings;
 
     WebServer _server; // HTTP server (port 80)

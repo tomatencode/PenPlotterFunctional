@@ -69,7 +69,7 @@ void startRtosTasks()
     settingPercistence.init();
 
     static SystemController appManager(motionState, gcodeQueue, settingPercistence, runtimeSettings);
-    static PlottingController plottingController(motionState, gcodeQueue, runtimeSettings);
+    static PlottingController plottingController(motionState, gcodeQueue, settingPercistence, runtimeSettings);
 
     // Plotting task (CORE 1)
     xTaskCreatePinnedToCore(

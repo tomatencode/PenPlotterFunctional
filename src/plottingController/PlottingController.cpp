@@ -5,11 +5,12 @@
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"
 
-PlottingController::PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings)
+PlottingController::PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, SettingPersistence& settingsPersistence, RuntimeSettings& runtimeSettings)
     : SettingObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
     
     _motionState(motionState),
     gcodeQueue(gcodeQueue),
+    _settingPersistence(settingsPersistence),
     _runtimeSettings(runtimeSettings),
     _driverSerial(1),
 
@@ -25,7 +26,7 @@ PlottingController::PlottingController(MotionState& motionState, RtosQueue<Gcode
     _axisA(_stepA, _driverA, true),
     _axisB(_stepB, _driverB, true),
 
-    _pen(_penServo, runtimeSettings),
+    _pen(_penServo, settingsPersistence, runtimeSettings),
 
     _homingController(
         _axisA,
@@ -50,6 +51,11 @@ PlottingController::PlottingController(MotionState& motionState, RtosQueue<Gcode
         motionState
     )
 {
+    _settingPersistence.registerObserver(this);
+}
+
+PlottingController::~PlottingController() {
+    _settingPersistence.unregisterObserver(this);
 }
 
 void PlottingController::configureDriver(TMC2209Driver& driver)
@@ -100,6 +106,9 @@ void PlottingController::update()
         }
         _motionState.setState(MotionStateType::IDLE);
     }
+
+    _pen.checkIfSettingsChanged();
+    SettingObserver::checkIfSettingsChanged();
 }
 
 void PlottingController::onRelevantSettingsChanged() {

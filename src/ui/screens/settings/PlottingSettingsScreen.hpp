@@ -16,6 +16,7 @@
 
 // Include components and widgets used in this screen
 #include "ui/components/HeaderLine.hpp"
+#include "ui/components/LabeledValueSelector.hpp"
 #include "ui/framework/widgets/leaves/Button.hpp"
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/layouts/LinearLayout.hpp"
@@ -44,9 +45,32 @@ public:
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
-                
 
-                std::make_unique<widgets::Label>("Plotting Settings")
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "Draw",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.drawFeedRate_mm_per_s()),
+                        .next = [](int current) { return std::min(current + 1, 200); },
+                        .prev = [](int current) { return std::max(current - 1, 1); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setDrawFeedRate_mm_per_s(static_cast<float>(newValue));
+                        },
+                        .toString = [](int value) { return std::to_string(value) + " mm/s"; }
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "Travel",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.travelFeedRate_mm_per_s()),
+                        .next = [](int current) { return std::min(current + 1, 200); },
+                        .prev = [](int current) { return std::max(current - 1, 1); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setTravelFeedRate_mm_per_s(static_cast<float>(newValue));
+                        },
+                        .toString = [](int value) { return std::to_string(value) + " mm/s"; }
+                    }
+                })
             )
         )
     )

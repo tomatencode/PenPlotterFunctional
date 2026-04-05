@@ -126,13 +126,13 @@ void SettingPersistence::setPenDownAngle_deg(float value) {
 // Observer Management
 // ============================================================================
 
-void SettingPersistence::addObserver(SettingObserver* observer) {
+void SettingPersistence::registerObserver(SettingObserver* observer) {
     if (observer) {
         _observers.push_back(observer);
     }
 }
 
-void SettingPersistence::removeObserver(SettingObserver* observer) {
+void SettingPersistence::unregisterObserver(SettingObserver* observer) {
     auto it = std::find(_observers.begin(), _observers.end(), observer);
     if (it != _observers.end()) {
         _observers.erase(it);

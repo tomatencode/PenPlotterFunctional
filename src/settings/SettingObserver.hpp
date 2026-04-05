@@ -18,17 +18,17 @@ public:
         return _interestedSettings.count(setting) > 0;
     }
 
+    void checkIfSettingsChanged() {
+        if (_didChange.exchange(false)) {  // Atomic read-and-clear
+            onRelevantSettingsChanged();
+        }
+    }
+
     void markChanged() {
         _didChange.store(true);
     }
 
 protected:
-
-    void checkIfChanged() {
-        if (_didChange.exchange(false)) {  // Atomic read-and-clear
-            onRelevantSettingsChanged();
-        }
-    }
 
     virtual void onRelevantSettingsChanged() = 0;
 

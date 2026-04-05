@@ -16,6 +16,7 @@
 
 // Include components and widgets used in this screen
 #include "ui/components/HeaderLine.hpp"
+#include "ui/components/LabeledValueSelector.hpp"
 #include "ui/framework/widgets/leaves/Button.hpp"
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/layouts/LinearLayout.hpp"
@@ -44,8 +45,30 @@ public:
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
-                
-                std::make_unique<widgets::Label>("Steppers Settings")
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "Current (mA)",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.driverCurrent_mA()),
+                        .next = [](int current) { return std::min(current + 50, 1500); },
+                        .prev = [](int current) { return std::max(current - 50, 100); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setDriverCurrent_mA(static_cast<float>(newValue));
+                        },
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "Microsteps",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.microsteps()),
+                        .next = [](int current) { return std::min(current * 2, 256); },
+                        .prev = [](int current) { return std::max(current / 2, 1); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setMicrosteps(static_cast<float>(newValue));
+                        },
+                    }
+                })
             )
         )
     )

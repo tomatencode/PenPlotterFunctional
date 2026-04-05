@@ -4,10 +4,14 @@
 #include <ESPmDNS.h>
 
 void WebInterface::init() {
-    _settingPercistence.addObserver(this);
-
     Serial.println("WebInterface initializing (WiFi connects in background)...");
     startWiFiConnection();
+
+    _settingPersistence.registerObserver(this);
+}
+
+WebInterface::~WebInterface() {
+    _settingPersistence.unregisterObserver(this);
 }
 
 bool WebInterface::isWiFiConnected() const {
@@ -16,6 +20,8 @@ bool WebInterface::isWiFiConnected() const {
 
 
 void WebInterface::update() {
+    SettingObserver::checkIfSettingsChanged();
+
     if (!_serverStarted && WiFi.status() == WL_CONNECTED) {
         setupServer();
     }

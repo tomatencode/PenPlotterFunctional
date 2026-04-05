@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "settings/RuntimeSettings.hpp"
+#include "settings/SettingPersistence.hpp"
 #include "settings/SettingObserver.hpp"
 #include "hardware/steppers/Stepper.hpp"
 #include "hardware/drivers/TMC2209Driver.hpp"
@@ -20,7 +21,8 @@
 class PlottingController : public SettingObserver
 {
 public:
-    PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, RuntimeSettings& runtimeSettings);
+    PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, SettingPersistence& settingsPersistence, RuntimeSettings& runtimeSettings);
+    ~PlottingController();
 
     void init();
     void update();
@@ -67,4 +69,5 @@ private:
     MotionState& _motionState;
     RtosQueue<GcodeMessage>& gcodeQueue;
     RuntimeSettings& _runtimeSettings;
+    SettingPersistence& _settingPersistence;
 };

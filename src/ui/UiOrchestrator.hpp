@@ -49,9 +49,7 @@ public:
 
     {}
     
-    ~UiOrchestrator() {
-        _jobController.unregisterObserver(this);
-    }
+    ~UiOrchestrator();
 
     void init();
 

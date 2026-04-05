@@ -30,6 +30,10 @@ void UiOrchestrator::init()
     Serial.println("UI initialized.");
 }
 
+UiOrchestrator::~UiOrchestrator() {
+    _jobController.unregisterObserver(this);
+}
+
 void UiOrchestrator::update()
 {
     // Simple non-blocking timing to limit update frequency (e.g., 20 FPS)

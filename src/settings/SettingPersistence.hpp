@@ -32,8 +32,8 @@ public:
     void clearAllSettings();  // Clear all NVS data and reload defaults
 
     // ====== Observer Management ======
-    void addObserver(SettingObserver* observer);
-    void removeObserver(SettingObserver* observer);
+    void registerObserver(SettingObserver* observer);
+    void unregisterObserver(SettingObserver* observer);
 
 private:
     // Notify all observers interested in a specific setting

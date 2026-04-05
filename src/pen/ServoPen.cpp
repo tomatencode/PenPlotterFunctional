@@ -1,8 +1,20 @@
 #include "ServoPen.hpp"
 #include "settings/RuntimeSettings.hpp"
 
-ServoPen::ServoPen(Servo& servo, RuntimeSettings& runtimeSettings)
-        : _servo(servo), _runtimeSettings(runtimeSettings), _penDown(false) {};
+ServoPen::ServoPen(Servo& servo, SettingPersistence& settingPersistence, RuntimeSettings& runtimeSettings)
+    : SettingObserver({Setting::PenUpAngle, Setting::PenDownAngle}),
+    _servo(servo),
+    _settingPersistence(settingPersistence),
+    _runtimeSettings(runtimeSettings),
+    _penDown(false)
+{
+    _settingPersistence.registerObserver(this);
+    up();
+};
+
+ServoPen::~ServoPen() {
+    _settingPersistence.unregisterObserver(this);
+}
 
 void ServoPen::down() {
     _servo.write((int)_runtimeSettings.penDownAngle_deg());
@@ -18,4 +30,13 @@ void ServoPen::up() {
 
 bool ServoPen::isDown() const {
     return _penDown;
+}
+
+void ServoPen::onRelevantSettingsChanged() {
+    // If pen is currently down, we need to update the servo position to reflect new angles
+    if (_penDown) {
+        down();
+    } else {
+        up();
+    }
 }
