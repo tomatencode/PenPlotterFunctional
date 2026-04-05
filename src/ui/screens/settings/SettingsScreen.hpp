@@ -123,7 +123,8 @@ public:
                             settingPersistence.clearAllSettings();
                         },
                         .holdDurationMs = 3000,
-                    }
+                    },
+                    std::make_unique<widgets::Label>("Reset All")
                 )
             )
         )
