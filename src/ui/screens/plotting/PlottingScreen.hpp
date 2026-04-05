@@ -33,8 +33,8 @@ public:
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
-            std::make_unique<components::HeaderLine>(
-                [&jobController]() {
+            std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                .textProvider = [&jobController]() {
                     std::string filename = jobController.getCurrentFile();
                     if (filename.ends_with(".gcode")) {
                         filename = filename.substr(0, filename.length() - 6);
@@ -44,13 +44,11 @@ public:
                     }
                     return filename;
                 },
-                wifiStatusProvider,
-                [this]() {
-                    if (router()) {
-                        router()->popScreen();
-                    }
+                .wifiStatusProvider = wifiStatusProvider,
+                .onBackPress = [this]() {
+                    if (router()) router()->popScreen();
                 }
-            ),
+            }),
 
             std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
                 .getProgress = [&jobController, this]() {

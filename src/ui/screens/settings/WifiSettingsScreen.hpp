@@ -33,15 +33,13 @@ public:
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
-            std::make_unique<components::HeaderLine>(
-                "Wifi",
-                wifiStatusProvider,
-                [this]() {
-                    if (router()) {
-                        router()->popScreen();
-                    }
+            std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                .textProvider = "Wifi",
+                .wifiStatusProvider = wifiStatusProvider,
+                .onBackPress = [this]() {
+                    if (router()) router()->popScreen();
                 }
-            ),
+            }),
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},

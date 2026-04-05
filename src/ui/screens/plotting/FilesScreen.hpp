@@ -34,12 +34,14 @@ public:
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
-            std::make_unique<components::HeaderLine>("Files", wifiStatusProvider, [this]() {
-                if (router()) {
-                    router()->popScreen();
+            std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                .textProvider = "Files",
+                .wifiStatusProvider = wifiStatusProvider,
+                .onBackPress = [this]() {
+                    if (router()) router()->popScreen();
                 }
             }),
-            
+
             std::make_unique<components::FileList>(fileManager,
                 [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const std::string& file) {
                 auto detailsScreen = std::make_unique<FileDetailsScreen>(file, jobController, motionState, fileManager, wifiStatusProvider);

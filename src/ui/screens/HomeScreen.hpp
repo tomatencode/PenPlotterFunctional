@@ -36,7 +36,10 @@ public:
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
-            std::make_unique<components::HeaderLine>("Pen Plotter", wifiStatusProvider),
+            std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                .textProvider = "Pen Plotter",
+                .wifiStatusProvider = wifiStatusProvider
+            }),
 
             std::make_unique<widgets::Button>(
                 widgets::ButtonProps{

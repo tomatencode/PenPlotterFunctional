@@ -64,12 +64,11 @@ public:
                 std::make_unique<widgets::LinearLayout>(
                     widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
-                    std::make_unique<components::HeaderLine>(
-                        filename.substr(0, filename.length() - 6),
-                        wifiStatusProvider,
-                        [this]() {
-                        if (router()) {
-                            router()->popScreen();
+                    std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                        .textProvider = filename.substr(0, filename.length() - 6),
+                        .wifiStatusProvider = wifiStatusProvider,
+                        .onBackPress = [this]() {
+                            if (router()) router()->popScreen();
                         }
                     }),
 
@@ -136,15 +135,13 @@ public:
                 std::make_unique<widgets::LinearLayout>(
                     widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
-                    std::make_unique<components::HeaderLine>(
-                        filename.substr(0, filename.length() - 6),
-                        wifiStatusProvider,
-                        [this]() {
-                            if (router()) {
-                                router()->popScreen();
-                            }
+                    std::make_unique<components::HeaderLine>(components::HeaderLineProps{
+                        .textProvider = filename.substr(0, filename.length() - 6),
+                        .wifiStatusProvider = wifiStatusProvider,
+                        .onBackPress = [this]() {
+                            if (router()) router()->popScreen();
                         }
-                    ),
+                    }),
 
                     std::make_unique<widgets::Label>("File does not exist!")
                 )
