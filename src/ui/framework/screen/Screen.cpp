@@ -31,7 +31,4 @@ void Screen::render(Renderer& r)
         _root->render(r, {0, 0, LCD_COLS, LCD_ROWS});
 }
 
-void Screen::onEnter() {}
-void Screen::onExit() {}
-
 } // namespace ui

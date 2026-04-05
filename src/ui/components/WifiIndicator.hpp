@@ -10,10 +10,21 @@
 namespace ui {
 namespace components {
 
+struct WifiIndicatorProps {
+    std::function<bool()> wifiStatusProvider;
+};
+
 class WifiIndicator: public ui::widgets::Container
 {
 public:
-    WifiIndicator(std::function<bool()> wifiStatusProvider);
+    WifiIndicator(WifiIndicatorProps props)
+    : Container(
+        std::make_unique<widgets::Label>([props]() -> const GlyphString {
+            return props.wifiStatusProvider() ? WifiSymbolGlyph : NoWifiSymbolGlyph;
+        })
+    )
+{
+}
 };
 
 } // namespace components

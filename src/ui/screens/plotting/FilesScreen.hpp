@@ -39,6 +39,7 @@ public:
                     router()->popScreen();
                 }
             }),
+            
             std::make_unique<components::FileList>(fileManager,
                 [this, &jobController, &motionState, &fileManager, wifiStatusProvider](const std::string& file) {
                 auto detailsScreen = std::make_unique<FileDetailsScreen>(file, jobController, motionState, fileManager, wifiStatusProvider);

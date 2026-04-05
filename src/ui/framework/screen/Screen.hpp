@@ -24,8 +24,10 @@ public:
     virtual void reload();
 
     // Lifecycle hooks
-    virtual void onEnter();
-    virtual void onExit();
+    virtual void onEnter() {};
+    virtual void onExit() {};
+    virtual void onPause() {};
+    virtual void onUnPause() {};
 
     // Access selectable widgets
     virtual void handleInput(InputState& input) {

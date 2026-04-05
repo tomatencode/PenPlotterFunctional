@@ -44,7 +44,12 @@ public:
                     }
                     return filename;
                 },
-                wifiStatusProvider
+                wifiStatusProvider,
+                [this]() {
+                    if (router()) {
+                        router()->popScreen();
+                    }
+                }
             ),
 
             std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
@@ -102,7 +107,7 @@ public:
                 )
             )
         )
-    ), _jobController(jobController)
+    , 1)/*start with pause button focused*/, _jobController(jobController)
     {
         jobController.registerObserver(this);
     }

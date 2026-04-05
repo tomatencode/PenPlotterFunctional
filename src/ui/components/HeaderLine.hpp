@@ -21,13 +21,13 @@ public:
     template <typename TextType>
     requires std::constructible_from<widgets::Label, TextType>
     HeaderLine(TextType textProvider,
-               std::function<bool()> WifiStatusProvider,
+               std::function<bool()> wifiStatusProvider,
                std::function<void()> onBackPress = nullptr
               )
     : Container(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal, .spacingMode = widgets::SpacingMode::SpaceBetween},
-            std::make_unique<components::WifiIndicator>(WifiStatusProvider),
+            std::make_unique<components::WifiIndicator>({.wifiStatusProvider = wifiStatusProvider}),
             std::make_unique<widgets::Label>(textProvider),
             std::make_unique<widgets::Switch<bool>>(
                 widgets::SwitchProps{

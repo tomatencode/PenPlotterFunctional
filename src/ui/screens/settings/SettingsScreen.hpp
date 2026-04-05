@@ -88,7 +88,7 @@ public:
                             }
                         }
                     },
-                    std::make_unique<widgets::Label>("Homing Settings")
+                    std::make_unique<widgets::Label>("Homing")
                 ),
 
                 std::make_unique<widgets::Button>(

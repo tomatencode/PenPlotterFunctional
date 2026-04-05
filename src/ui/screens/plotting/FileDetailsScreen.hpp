@@ -153,8 +153,12 @@ public:
     , 1)
     {}
 
-    void onEnter() override {
-        reload();
+    void onUnPause() override {
+        if (router()) {
+            // this screen is not interesting when returning to it,
+            // so pop it to return to the file list
+            router()->popScreen();
+        }
     }
 };
 

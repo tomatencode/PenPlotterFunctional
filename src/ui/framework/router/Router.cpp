@@ -8,7 +8,7 @@ void Router::pushScreen(std::unique_ptr<Screen> screen)
     if (screen == nullptr) return;
 
     if (top()) {
-        top()->onExit();
+        top()->onPause();
         top()->setRouter(nullptr);
     }
     _stack.push_back(std::move(screen));
@@ -27,7 +27,7 @@ void Router::popScreen()
     if (canPop())
     {
         top()->setRouter(this);
-        top()->onEnter();
+        top()->onUnPause();
     }
 }
 
