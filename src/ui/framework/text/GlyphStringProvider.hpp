@@ -53,6 +53,63 @@ public:
 
     Glyph operator[](size_t i) const { return i < size() ? getGlyphs()[i] : Glyph{}; }
 
+    // operator+ preserves dynamic type if the provider holds a DynamicGlyphString
+    GlyphStringProvider operator+(const GlyphString& other) const
+    {
+        if (std::holds_alternative<DynamicGlyphString>(_glyphs))
+            return GlyphStringProvider(std::get<DynamicGlyphString>(_glyphs) + other);
+        return GlyphStringProvider(std::get<GlyphString>(_glyphs) + other);
+    }
+
+    GlyphStringProvider operator+(Glyph glyph) const
+    {
+        if (std::holds_alternative<DynamicGlyphString>(_glyphs))
+            return GlyphStringProvider(std::get<DynamicGlyphString>(_glyphs) + glyph);
+        return GlyphStringProvider(std::get<GlyphString>(_glyphs) + glyph);
+    }
+
+    GlyphStringProvider operator+(const GlyphStringProvider& other) const
+    {
+        bool thisDynamic  = std::holds_alternative<DynamicGlyphString>(_glyphs);
+        bool otherDynamic = std::holds_alternative<DynamicGlyphString>(other._glyphs);
+
+        if (thisDynamic || otherDynamic)
+        {
+            auto lhs = thisDynamic
+                ? std::get<DynamicGlyphString>(_glyphs)
+                : DynamicGlyphString([s = std::get<GlyphString>(_glyphs)]() { return s; });
+            auto rhs = otherDynamic
+                ? std::get<DynamicGlyphString>(other._glyphs)
+                : DynamicGlyphString([s = std::get<GlyphString>(other._glyphs)]() { return s; });
+            return GlyphStringProvider(lhs + rhs);
+        }
+        return GlyphStringProvider(std::get<GlyphString>(_glyphs) + std::get<GlyphString>(other._glyphs));
+    }
+
+    GlyphStringProvider& operator+=(const GlyphString& other)
+    {
+        if (std::holds_alternative<DynamicGlyphString>(_glyphs))
+            std::get<DynamicGlyphString>(_glyphs) += other;
+        else
+            _glyphs = std::get<GlyphString>(_glyphs) + other;
+        return *this;
+    }
+
+    GlyphStringProvider& operator+=(Glyph glyph)
+    {
+        if (std::holds_alternative<DynamicGlyphString>(_glyphs))
+            std::get<DynamicGlyphString>(_glyphs) += glyph;
+        else
+            _glyphs = std::get<GlyphString>(_glyphs) + glyph;
+        return *this;
+    }
+
+    GlyphStringProvider& operator+=(const GlyphStringProvider& other)
+    {
+        *this = *this + other;
+        return *this;
+    }
+
 private:
     std::variant<GlyphString, DynamicGlyphString> _glyphs;
 };
