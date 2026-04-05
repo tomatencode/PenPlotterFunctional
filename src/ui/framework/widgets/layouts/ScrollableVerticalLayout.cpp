@@ -1,39 +1,20 @@
 #include "ScrollableVerticalLayout.hpp"
 #include "../core/ISelectable.hpp"
-#include <cassert>
 
 namespace ui {
 namespace widgets {
 
-void ScrollableVerticalLayout::updateScrollOffset(
-    const std::vector<ChildInfo>& children,
-    uint16_t visibleHeight)
+// ---------- Helpers ----------
+
+Box ScrollableVerticalLayout::applyMargins(Box box) const
 {
-    uint16_t currentY = _style.marginTop;
-
-    for (const auto& child : children)
-    {
-        auto* widget = child.widget;
-
-        if (containsFocusedWidget(widget))
-        {
-            uint16_t top = currentY;
-            uint16_t bottom = currentY + child.size.h;
-
-            if (top < _scrollOffset)
-            {
-                _scrollOffset = top;
-            }
-            else if (bottom > _scrollOffset + visibleHeight)
-            {
-                _scrollOffset = bottom - visibleHeight;
-            }
-
-            return;
-        }
-
-        currentY += child.size.h + _style.spacing;
-    }
+    auto safeSub = [](int a, int b) { return std::max(0, a - b); };
+    return {
+        static_cast<uint16_t>(box.x + _style.marginLeft),
+        static_cast<uint16_t>(box.y + _style.marginTop),
+        static_cast<uint16_t>(safeSub(box.w, _style.marginLeft + _style.marginRight)),
+        static_cast<uint16_t>(safeSub(box.h, _style.marginTop + _style.marginBottom))
+    };
 }
 
 bool ScrollableVerticalLayout::containsFocusedWidget(Widget* widget) const
@@ -51,22 +32,10 @@ bool ScrollableVerticalLayout::containsFocusedWidget(Widget* widget) const
     return false;
 }
 
-Box ScrollableVerticalLayout::applyMargins(Box box) const
-{
-    auto safeSub = [](int a, int b) {
-        return std::max(0, a - b);
-    };
-
-    return {
-        static_cast<uint16_t>(box.x + _style.marginLeft),
-        static_cast<uint16_t>(box.y + _style.marginTop),
-        static_cast<uint16_t>(safeSub(box.w, _style.marginLeft + _style.marginRight)),
-        static_cast<uint16_t>(safeSub(box.h, _style.marginTop + _style.marginBottom))
-    };
-}
+// ---------- Layout ----------
 
 std::vector<ScrollableVerticalLayout::ChildInfo>
-ScrollableVerticalLayout::collectChildren() const
+ScrollableVerticalLayout::collectChildren(Box content) const
 {
     std::vector<ChildInfo> result;
     result.reserve(getChildCount());
@@ -75,15 +44,84 @@ ScrollableVerticalLayout::collectChildren() const
     {
         if (auto* w = getChild(i))
         {
-            result.push_back({
-                w,
-                w->measure()
-            });
+            Size s = w->measure();
+            uint16_t width = w->canExpandHorizontally()
+                ? content.w
+                : std::min(s.w, content.w);
+            result.push_back({w, width, s.h});
         }
     }
 
     return result;
 }
+
+std::vector<ScrollableVerticalLayout::LayoutItem>
+ScrollableVerticalLayout::computeLayout(Box content)
+{
+    auto children = collectChildren(content);
+
+    // 1. Update scroll offset so the focused child stays visible.
+    //    currentY is content-relative (0 = top of content area).
+    uint16_t currentY = 0;
+    for (const auto& child : children)
+    {
+        if (containsFocusedWidget(child.widget))
+        {
+            if (currentY < _scrollOffset)
+                _scrollOffset = currentY;
+            else if (currentY + child.height > _scrollOffset + content.h)
+                _scrollOffset = currentY + child.height - content.h;
+            break;
+        }
+        currentY += child.height + _style.spacing;
+    }
+
+    // 2. Build layout items, converting content-relative Y to screen Y.
+    std::vector<LayoutItem> result;
+    result.reserve(children.size());
+
+    currentY = 0;
+    for (const auto& child : children)
+    {
+        int screenY = static_cast<int>(content.y)
+                    + static_cast<int>(currentY)
+                    - static_cast<int>(_scrollOffset);
+
+        int contentBottom = static_cast<int>(content.y) + static_cast<int>(content.h);
+        bool visible = screenY + static_cast<int>(child.height) > static_cast<int>(content.y)
+                    && screenY < contentBottom;
+
+        if (visible)
+        {
+            uint16_t x;
+            switch (_style.horizontalAlign)
+            {
+                case HorizontalAlignment::Center:
+                    x = content.x + (content.w - child.width) / 2;
+                    break;
+                case HorizontalAlignment::Right:
+                    x = content.x + content.w - child.width;
+                    break;
+                default:
+                    x = content.x;
+                    break;
+            }
+
+            result.push_back({child.widget, Box{
+                x,
+                static_cast<uint16_t>(screenY),
+                child.width,
+                child.height
+            }});
+        }
+
+        currentY += child.height + _style.spacing;
+    }
+
+    return result;
+}
+
+// ---------- Public API ----------
 
 void ScrollableVerticalLayout::render(Renderer& r, Box canvasBox)
 {
@@ -91,73 +129,30 @@ void ScrollableVerticalLayout::render(Renderer& r, Box canvasBox)
         return;
 
     Box content = applyMargins(canvasBox);
+    auto layout = computeLayout(content);
 
-    auto children = collectChildren();
-
-    updateScrollOffset(children, content.h);
-
-    int currentY = content.y - _scrollOffset;
-
-    for (const auto& child : children)
-    {
-        auto* widget = child.widget;
-
-        uint16_t width = widget->canExpandHorizontally()
-            ? content.w
-            : std::min(child.size.w, content.w);
-
-        bool visible =
-            currentY + child.size.h > canvasBox.y &&
-            currentY < canvasBox.y + canvasBox.h;
-
-        if (visible) {
-            uint16_t x;
-            switch (_style.horizontalAlign)
-            {
-                case HorizontalAlignment::Center:
-                    x = content.x + (content.w - width) / 2;
-                    break;
-
-                case HorizontalAlignment::Right:
-                    x = content.x + content.w - width;
-                    break;
-
-                default:
-                    x = content.x;
-                    break;
-            }
-
-            Box rect = {
-                x,
-                static_cast<uint16_t>(currentY),
-                width,
-                child.size.h
-            };
-
-            widget->render(r, rect);
-        }
-        currentY += child.size.h + _style.spacing;
-    }
+    for (auto& item : layout)
+        if (item.widget)
+            item.widget->render(r, item.rect);
 }
 
 Size ScrollableVerticalLayout::measure() const
 {
-    auto children = collectChildren();
-
-    if (children.empty())
-        return {0, 0};
-
     uint16_t totalHeight = 0;
     uint16_t maxWidth = 0;
 
-    for (const auto& child : children)
+    for (size_t i = 0; i < getChildCount(); i++)
     {
-        totalHeight += child.size.h;
-        maxWidth = std::max(maxWidth, static_cast<uint16_t>(child.size.w));
+        if (auto* w = getChild(i))
+        {
+            Size s = w->measure();
+            totalHeight += s.h;
+            maxWidth = std::max(maxWidth, s.w);
+        }
     }
 
-    if (children.size() > 1)
-        totalHeight += (children.size() - 1) * _style.spacing;
+    if (getChildCount() > 1)
+        totalHeight += static_cast<uint16_t>((getChildCount() - 1) * _style.spacing);
 
     return {
         static_cast<uint16_t>(maxWidth + _style.marginLeft + _style.marginRight),
@@ -168,16 +163,15 @@ Size ScrollableVerticalLayout::measure() const
 bool ScrollableVerticalLayout::canExpandHorizontally() const
 {
     for (size_t i = 0; i < getChildCount(); i++)
-        if (auto* child = getChild(i))
-            if (child->canExpandHorizontally())
+        if (auto* w = getChild(i))
+            if (w->canExpandHorizontally())
                 return true;
-
     return false;
 }
 
 bool ScrollableVerticalLayout::canExpandVertically() const
 {
-    return false; // scrolls instead
+    return false; // scrolls instead of expanding
 }
 
 } // namespace widgets

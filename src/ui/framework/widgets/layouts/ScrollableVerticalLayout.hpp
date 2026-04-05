@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 #include "../core/Layout.hpp"
 #include "LayoutStyle.hpp"
@@ -39,21 +40,23 @@ public:
 private:
     struct ChildInfo {
         Widget* widget;
-        Size size;
+        uint16_t width;   // clamped to content width
+        uint16_t height;
+    };
+
+    struct LayoutItem {
+        Widget* widget;
+        Box rect;
     };
 
 private:
     Box applyMargins(Box box) const;
-
-    std::vector<ChildInfo> collectChildren() const;
-
-    void updateScrollOffset(const std::vector<ChildInfo>& children,
-                            uint16_t visibleHeight);
-
+    std::vector<ChildInfo> collectChildren(Box content) const;
+    std::vector<LayoutItem> computeLayout(Box content);
     bool containsFocusedWidget(Widget* widget) const;
 
 private:
-    int16_t _scrollOffset = 0;
+    uint16_t _scrollOffset = 0;
     ScrollableVerticalLayoutStyle _style;
 };
 
