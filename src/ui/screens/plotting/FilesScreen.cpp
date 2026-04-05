@@ -31,7 +31,6 @@ FilesScreen::FilesScreen(JobController& jobController,
         widgets::ConditionalProps{.condition = [&jobController]() { return jobController.isActive(); }},
         std::make_unique<widgets::Button>(
             widgets::ButtonProps{
-                .style = ui::styles::listButtonStyle,
                 .onPress = [this]() {
                     if (router()) {
                         auto currentJobScreen = std::make_unique<PlottingScreen>(_jobController, _motionState, _wifiStatusProvider);
