@@ -207,7 +207,9 @@ LinearLayout::computeLayout(Box content) const
                 : child->canExpandHorizontally();
 
             uint16_t primSize = primarySize(s);
-            uint16_t secSize = expandSecondary ? availableSecondarySpace(content) : secondarySize(s);
+            uint16_t secSize = expandSecondary
+                ? availableSecondarySpace(content)
+                : std::min(secondarySize(s), availableSecondarySpace(content));
 
             children.push_back({child, primSize, primSize, secSize, expandPrimary});
         }
