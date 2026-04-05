@@ -85,8 +85,8 @@ public:
 
         auto [leftDecorator, rightDecorator] = getDecorators();
 
-        uint16_t x = canvasBox.x;
-        uint16_t y = canvasBox.y;
+        int16_t x = canvasBox.x;
+        int16_t y = canvasBox.y;
 
         std::string text = _toString(_value);
 

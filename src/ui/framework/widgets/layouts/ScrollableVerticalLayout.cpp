@@ -10,8 +10,8 @@ Box ScrollableVerticalLayout::applyMargins(Box box) const
 {
     auto safeSub = [](int a, int b) { return std::max(0, a - b); };
     return {
-        static_cast<uint16_t>(box.x + _style.marginLeft),
-        static_cast<uint16_t>(box.y + _style.marginTop),
+        static_cast<int16_t>(box.x + _style.marginLeft),
+        static_cast<int16_t>(box.y + _style.marginTop),
         static_cast<uint16_t>(safeSub(box.w, _style.marginLeft + _style.marginRight)),
         static_cast<uint16_t>(safeSub(box.h, _style.marginTop + _style.marginBottom))
     };
@@ -93,7 +93,7 @@ ScrollableVerticalLayout::computeLayout(Box content)
 
         if (visible)
         {
-            uint16_t x;
+            int16_t x;
             switch (_style.horizontalAlign)
             {
                 case HorizontalAlignment::Center:
@@ -109,7 +109,7 @@ ScrollableVerticalLayout::computeLayout(Box content)
 
             result.push_back({child.widget, Box{
                 x,
-                static_cast<uint16_t>(screenY),
+                static_cast<int16_t>(screenY),
                 child.width,
                 child.height
             }});

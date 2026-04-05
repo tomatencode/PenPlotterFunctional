@@ -68,14 +68,14 @@ private:
     uint16_t primarySize(Size s) const;
     uint16_t secondarySize(Size s) const;
 
-    uint16_t PrimaryPos(Box r) const;
-    uint16_t SecondaryPos(Box r) const;
+    int16_t PrimaryPos(Box r) const;
+    int16_t SecondaryPos(Box r) const;
     uint16_t availablePrimarySpace(Box r) const;
     uint16_t availableSecondarySpace(Box r) const;
 
     Spacing computeSpacing(uint16_t available, uint16_t total, size_t count) const;
     void distributeExpansion(std::vector<ChildInfo>& children, uint16_t available) const;
-    std::optional<Box> computeChildRect(const ChildInfo& c, Box content, uint16_t childStart) const;
+    std::optional<Box> computeChildRect(const ChildInfo& c, Box content, int16_t childStart) const;
 
     std::vector<LayoutItem> computeLayout(Box content) const;
 

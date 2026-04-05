@@ -23,8 +23,8 @@ void TextEditor::render(Renderer& r, Box canvasBox)
 
     auto [leftDecorator, rightDecorator] = getDecorators();
 
-    uint16_t x = canvasBox.x;
-    uint16_t y = canvasBox.y;
+    int16_t x = canvasBox.x;
+    int16_t y = canvasBox.y;
 
     uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 

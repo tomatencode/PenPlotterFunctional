@@ -10,8 +10,8 @@ Box LinearLayout::applyMargins(Box box) const
     };
 
     return {
-        static_cast<uint16_t>(box.x + _style.marginLeft),
-        static_cast<uint16_t>(box.y + _style.marginTop),
+        static_cast<int16_t>(box.x + _style.marginLeft),
+        static_cast<int16_t>(box.y + _style.marginTop),
         static_cast<uint16_t>(safeSub(box.w, _style.marginLeft + _style.marginRight)),
         static_cast<uint16_t>(safeSub(box.h, _style.marginTop + _style.marginBottom))
     };
@@ -27,10 +27,10 @@ uint16_t LinearLayout::secondarySize(Size s) const {
     return (_style.axis == Axis::Horizontal) ? s.h : s.w;
 }
 
-uint16_t LinearLayout::PrimaryPos(Box r) const {
+int16_t LinearLayout::PrimaryPos(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.x : r.y;
 }
-uint16_t LinearLayout::SecondaryPos(Box r) const {
+int16_t LinearLayout::SecondaryPos(Box r) const {
     return (_style.axis == Axis::Horizontal) ? r.y : r.x;
 }
 
@@ -125,23 +125,23 @@ void LinearLayout::distributeExpansion(std::vector<ChildInfo>& children,
             c.finalPrimarySize = targetSize;
 }
 
-std::optional<Box> LinearLayout::computeChildRect(const ChildInfo& c, Box content, uint16_t childStart) const
+std::optional<Box> LinearLayout::computeChildRect(const ChildInfo& c, Box content, int16_t childStart) const
 {
-    uint16_t start = PrimaryPos(content);
-    uint16_t end = start + availablePrimarySpace(content);
+    int16_t start = PrimaryPos(content);
+    int16_t end = start + availablePrimarySpace(content);
 
-    uint16_t childEnd = childStart + c.finalPrimarySize;
+    int16_t childEnd = childStart + c.finalPrimarySize;
 
     // Child is at least partially visible - clamp to visible bounds
-    uint16_t clampedStart = std::max(childStart, start);
-    uint16_t clampedEnd = std::min(childEnd, end);
-    uint16_t clampedSize = clampedEnd - clampedStart;
+    int16_t clampedStart = std::max(childStart, start);
+    int16_t clampedEnd = std::min(childEnd, end);
+    int16_t clampedSize = clampedEnd - clampedStart;
 
     if (clampedSize <= 0)
         return std::nullopt;
 
     // Calculate secondary axis position
-    uint16_t secondaryPos = SecondaryPos(content);
+    int16_t secondaryPos = SecondaryPos(content);
 
     if (_style.axis == Axis::Horizontal)
     {
@@ -161,8 +161,8 @@ std::optional<Box> LinearLayout::computeChildRect(const ChildInfo& c, Box conten
     if (_style.axis == Axis::Horizontal)
     {
         return std::make_optional(Box{
-            static_cast<uint16_t>(clampedStart),
-            static_cast<uint16_t>(secondaryPos),
+            static_cast<int16_t>(clampedStart),
+            static_cast<int16_t>(secondaryPos),
             static_cast<uint16_t>(clampedSize),
             static_cast<uint16_t>(c.secondarySize)
         });
@@ -170,8 +170,8 @@ std::optional<Box> LinearLayout::computeChildRect(const ChildInfo& c, Box conten
     else
     {
         return std::make_optional(Box{
-            static_cast<uint16_t>(secondaryPos),
-            static_cast<uint16_t>(clampedStart),
+            static_cast<int16_t>(secondaryPos),
+            static_cast<int16_t>(clampedStart),
             static_cast<uint16_t>(c.secondarySize),
             static_cast<uint16_t>(clampedSize)
         });
@@ -235,9 +235,9 @@ LinearLayout::computeLayout(Box content) const
     }
 
     // 4. Positioning
-    uint16_t start = PrimaryPos(content);
+    int16_t start = PrimaryPos(content);
 
-    uint16_t pos = start + spacing.leading;
+    int16_t pos = start + spacing.leading;
 
     double spacingError = 0;
 
@@ -245,7 +245,7 @@ LinearLayout::computeLayout(Box content) const
     {
         auto& child = children[i];
 
-        uint16_t childStart = pos;
+        int16_t childStart = pos;
         auto rect = computeChildRect(child, content, childStart);
 
         if (rect.has_value())

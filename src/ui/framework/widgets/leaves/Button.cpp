@@ -28,8 +28,8 @@ void Button::render(Renderer& r, Box canvasBox)
     if (canvasBox.w == 0 || canvasBox.h == 0)
         return; // nothing visible
 
-    uint16_t x = canvasBox.x;
-    uint16_t y = canvasBox.y;
+    int16_t x = canvasBox.x;
+    int16_t y = canvasBox.y;
 
     // Choose decorations based on state
     GlyphString leftDecorator  = _props.style.leftNormal.getGlyphs();

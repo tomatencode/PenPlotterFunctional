@@ -36,20 +36,24 @@ void Renderer::clearBuffer()
 
 void Renderer::drawTextToBuffer(int x, int y, const char* text)
 {
-    if (y >= LCD_ROWS) return;
+    if (y < 0 || y >= LCD_ROWS) return;
 
     while (*text && x < LCD_COLS)
     {
-        _buffer[y][x++].code = *text++;
+        if (x >= 0)
+            _buffer[y][x].code = *text;
+        x++;
+        text++;
     }
 }
 
 void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
 {
-    if (y >= LCD_ROWS) return;
+    if (y < 0 || y >= LCD_ROWS) return;
     size_t i = 0;
     while (i < s.size() && x < LCD_COLS) {
-        _buffer[y][x] = s[i];
+        if (x >= 0)
+            _buffer[y][x] = s[i];
         x++;
         i++;
     }
@@ -57,7 +61,7 @@ void Renderer::drawGlyphsToBuffer(int x, int y, const GlyphString& s)
 
 void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
 {
-    if (y >= LCD_ROWS || x >= LCD_COLS) return;
+    if (y < 0 || y >= LCD_ROWS || x < 0 || x >= LCD_COLS) return;
 
     _buffer[y][x] = g;
 }

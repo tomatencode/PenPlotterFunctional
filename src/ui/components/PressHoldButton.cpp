@@ -58,8 +58,8 @@ void PressHoldButton::render(Renderer& r, widgets::Box canvasBox)
 
     uint32_t currentTime = millis();
 
-    uint8_t x = canvasBox.x + 1; // Start just after left decoration
-    uint8_t y = canvasBox.y;
+    int16_t x = canvasBox.x + 1; // Start just after left decoration
+    int16_t y = canvasBox.y;
 
     // Calculate button width excluding decorations
     uint8_t buttonWidth = 0;
