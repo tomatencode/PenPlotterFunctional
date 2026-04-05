@@ -16,7 +16,6 @@
 
 // Include components and widgets used in this screen
 #include "ui/components/HeaderLine.hpp"
-#include "ui/components/FileList.hpp"
 #include "ui/framework/widgets/leaves/Button.hpp"
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/leaves/Switch.hpp"
