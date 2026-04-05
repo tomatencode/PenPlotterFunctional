@@ -58,6 +58,19 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "Back-off",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.homingBackOffSpeed_stp_per_s()),
+                        .next = [](int current) { return std::min(current + 10, 2000); },
+                        .prev = [](int current) { return std::max(current - 10, 10); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setHomingBackOffSpeed_stp_per_s(static_cast<float>(newValue));
+                        },
+                        .toString = [](int value) { return std::to_string(value) + " stp/s"; }
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Stallguard",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.stallguardThreshold()),

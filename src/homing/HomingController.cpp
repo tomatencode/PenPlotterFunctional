@@ -6,8 +6,8 @@ static constexpr uint32_t HOMING_TIMEOUT_US = 10000000UL;  // 10 seconds
 static constexpr uint32_t SG_CHECK_INTERVAL_MS = 50;
 static constexpr uint32_t SG_START_TIMEOUT_MS = 200;
 static constexpr uint8_t SG_HISTORY_SIZE = 10;             // Number of SG readings to average
-static constexpr uint32_t INTER_LIMIT_DELAY_MS = 500;
-static constexpr uint16_t BACK_OFF_STEPS = 15;
+static constexpr uint16_t BACK_OFF_STEPS_X = 25;
+static constexpr uint16_t BACK_OFF_STEPS_Y = 15;
 
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}
@@ -36,7 +36,7 @@ bool HomingController::checkPauseAbort() {
 }
 
 // Move stepper axes toward limit switches until stallguard detects stall
-void HomingController::moveToLimit(bool Afw, bool Bfw) {
+void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     float speed_stps_per_s = _runtimeSettings.homingSpeed_stp_per_s();
     float stallGuard_threshold = _runtimeSettings.stallguardThreshold();
     
@@ -115,6 +115,30 @@ void HomingController::moveToLimit(bool Afw, bool Bfw) {
 
     _driverA.setSpeed(0);
     _driverB.setSpeed(0);
+
+    // Interruptible delay before backing off
+    uint32_t delayStart = millis();
+    while ((uint32_t)(millis() - delayStart) < 100) {
+        if (checkPauseAbort()) return;
+        yield();
+    }
+
+    // Back off a few steps
+    double microsteps_per_s = _runtimeSettings.homingBackOffSpeed_stp_per_s() * _axisA.microsteps();
+    uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
+    
+    if (microsteps_per_s <= 0.0f) {
+        Serial.println("ERROR: Invalid homing back-off speed");
+        return;
+    }
+
+    for (uint16_t i = 0; i < backOffSteps * _axisA.microsteps(); i++) {
+        if (checkPauseAbort()) return;
+        
+        _axisA.step(!Afw);
+        _axisB.step(!Bfw);
+        delayMicroseconds(stepInterval_us);
+    }
 }
 
 // Full homing sequence: move to limits, back off, zero position
@@ -125,31 +149,19 @@ void HomingController::home() {
     }
 
     // Move to X limit (both axes negative)
-    moveToLimit(false, false);
+    moveToLimit(false, false, BACK_OFF_STEPS_X);
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
 
     // Interruptible delay before moving to Y limit
     uint32_t delayStart = millis();
-    while ((uint32_t)(millis() - delayStart) < INTER_LIMIT_DELAY_MS) {
+    while ((uint32_t)(millis() - delayStart) < 100) {
         if (checkPauseAbort()) return;
         yield();
     }
 
     // Move to Y limit (B axis positive)
-    moveToLimit(false, true);
+    moveToLimit(false, true, BACK_OFF_STEPS_Y);
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
-
-    // Back off from limits
-    double microsteps_per_s = _runtimeSettings.homingSpeed_stp_per_s() * _axisA.microsteps();
-    uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
-
-    for (uint16_t i = 0; i < BACK_OFF_STEPS * _axisA.microsteps(); i++) {
-        if (checkPauseAbort()) return;
-        
-        _axisA.step(true);
-        _axisB.step(true);
-        delayMicroseconds(stepInterval_us);
-    }
 
     // Zero both axes
     _axisA.setPositionSteps(0);

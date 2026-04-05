@@ -48,8 +48,8 @@ public:
                     .labelText = "Draw",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.drawFeedRate_mm_per_s()),
-                        .next = [](int current) { return std::min(current + 1, 200); },
-                        .prev = [](int current) { return std::max(current - 1, 1); },
+                        .next = [](int current) { return std::min(current + 5, 200); },
+                        .prev = [](int current) { return std::max(current - 5, 5); },
                         .onChange = [&settingsPersistence](const int& newValue) {
                             settingsPersistence.setDrawFeedRate_mm_per_s(static_cast<float>(newValue));
                         },
@@ -61,8 +61,8 @@ public:
                     .labelText = "Travel",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.travelFeedRate_mm_per_s()),
-                        .next = [](int current) { return std::min(current + 1, 200); },
-                        .prev = [](int current) { return std::max(current - 1, 1); },
+                        .next = [](int current) { return std::min(current + 5, 200); },
+                        .prev = [](int current) { return std::max(current - 5, 5); },
                         .onChange = [&settingsPersistence](const int& newValue) {
                             settingsPersistence.setTravelFeedRate_mm_per_s(static_cast<float>(newValue));
                         },

@@ -25,6 +25,7 @@ public:
     void setDrawFeedRate_mm_per_s(float value);
     void setTravelFeedRate_mm_per_s(float value);
     void setHomingSpeed_stp_per_s(float value);
+    void setHomingBackOffSpeed_stp_per_s(float value);
     void setStallguardThreshold(float value);
     void setPenUpAngle_deg(float value);
     void setPenDownAngle_deg(float value);

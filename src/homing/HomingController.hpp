@@ -20,6 +20,6 @@ private:
     MotionState& _motionState;
     RuntimeSettings& _runtimeSettings;
 
-    void moveToLimit(bool Afw, bool Bfw);
+    void moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps);
     bool checkPauseAbort();  // Handle pause/abort during homing; return true if should abort
 };

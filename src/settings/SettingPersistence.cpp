@@ -92,6 +92,16 @@ void SettingPersistence::setHomingSpeed_stp_per_s(float value) {
     notifyObservers(Setting::HomingSpeed);
 }
 
+void SettingPersistence::setHomingBackOffSpeed_stp_per_s(float value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putFloat("homingBOspd", value);
+    prefs.end();
+    
+    _runtimeSettings.setHomingBackOffSpeed_stp_per_s(value);
+    notifyObservers(Setting::HomingBackOffSpeed);
+}
+
 void SettingPersistence::setStallguardThreshold(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
@@ -160,6 +170,7 @@ void SettingPersistence::loadSettings() {
     setDrawFeedRate_mm_per_s(prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S));
     setTravelFeedRate_mm_per_s(prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S));
     setHomingSpeed_stp_per_s(prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S));
+    setHomingBackOffSpeed_stp_per_s(prefs.getFloat("homingBOspd", HOMING_BACK_OFF_SPEED_STP_PER_S));
     setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
     setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
     setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
