@@ -84,7 +84,8 @@ void TextEditor::handleInput(InputState& input) {
 GlyphString TextEditor::getTextToRender(Box canvasBox, uint16_t decorationWidth) const {
     uint16_t availableTextWidth = canvasBox.w - decorationWidth;
 
-    GlyphString text = GlyphString(_text) + (_isEditing ? getNextSymbol() : Glyph{});
+    GlyphString text = GlyphString(_text);
+    if (_isEditing) text += getNextSymbol();
 
     GlyphString textToRender;
     if (text.size() > availableTextWidth)
