@@ -100,10 +100,6 @@ void FilesScreen::reload() {
     }
 }
 
-void FilesScreen::onUnPause() {
-    Screen::reload();
-}
-
 void FilesScreen::onFileEvent(FileEvent event, const std::string& path) {
     if (event == FileEvent::ADDED || event == FileEvent::REMOVED) {
         reload();

@@ -38,8 +38,6 @@ public:
 
     void reload() override;
 
-    void onUnPause() override;
-
 private:
     JobController& _jobController;
     MotionState& _motionState;

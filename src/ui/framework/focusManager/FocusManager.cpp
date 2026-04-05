@@ -68,9 +68,14 @@ void FocusManager::refresh() {
 
     if (widgets.empty()) return;
 
-    // clamp index
     if (_focusedIndx >= widgets.size())
         _focusedIndx = widgets.size() - 1;
+
+    for (size_t i = 0; i < widgets.size(); i++) {
+        if (i != _focusedIndx && widgets[i] && widgets[i]->isFocused()) {
+            widgets[i]->unfocus();
+        }
+    }
 
     auto* current = widgets[_focusedIndx];
     if (!current) return;
