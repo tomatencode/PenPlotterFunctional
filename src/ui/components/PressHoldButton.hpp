@@ -21,28 +21,34 @@ struct PressHoldButtonStyle {
     GlyphString HoldReleaseAnimation = "-";
 };
 
+struct PressHoldButtonProps {
+    PressHoldButtonStyle style = {};
+    std::function<void()> onHoldComplete = nullptr;
+    uint16_t holdDurationMs = 2000;
+    uint16_t relAnimationTimeMs = 500;
+};
+
 class PressHoldButton: public ui::widgets::Button
 {
 public:
-    template <typename TextType>
-    PressHoldButton(TextType text, PressHoldButtonStyle style, std::function<void()> onHoldRelease, uint16_t holdTimeMs = 2000, uint16_t relAnimationTimeMs = 500)
+    PressHoldButton(PressHoldButtonProps props, std::unique_ptr<Widget> child = nullptr)
         : Button(
             widgets::ButtonProps{
                 .style = widgets::ButtonStyle{
-                    .leftNormal   = style.leftNormal,
-                    .rightNormal  = style.rightNormal,
-                    .leftFocused  = style.leftFocused,
-                    .rightFocused = style.rightFocused,
-                    .leftPressed  = style.leftPressed,
-                    .rightPressed = style.rightPressed
+                    .leftNormal   = props.style.leftNormal,
+                    .rightNormal  = props.style.rightNormal,
+                    .leftFocused  = props.style.leftFocused,
+                    .rightFocused = props.style.rightFocused,
+                    .leftPressed  = props.style.leftPressed,
+                    .rightPressed = props.style.rightPressed
                 }
             },
-            std::make_unique<widgets::Label>(text)
+            std::move(child)
           ),
-          _onHoldRelease(std::move(onHoldRelease)),
-          _holdTimeMs(holdTimeMs),
-          _relAnimationTimeMs(relAnimationTimeMs),
-          _style(std::move(style))
+          _onHoldRelease(std::move(props.onHoldComplete)),
+          _holdTimeMs(props.holdDurationMs),
+          _relAnimationTimeMs(props.relAnimationTimeMs),
+          _style(std::move(props.style))
     {}
 
 private:

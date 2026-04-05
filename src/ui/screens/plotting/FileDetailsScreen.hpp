@@ -98,16 +98,16 @@ public:
                                 std::make_unique<widgets::Label>("Plot")
                             ),
                             std::make_unique<components::PressHoldButton>(
-                                "Delete",
-                                components::PressHoldButtonStyle(),
-                                [this, filename, &fileManager]() {
-                                    fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
-                                    if (router()) {
-                                        router()->popScreen();
-                                    }
+                                components::PressHoldButtonProps{
+                                    .onHoldComplete = [this, filename, &fileManager]() {
+                                        fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
+                                        if (router()) {
+                                            router()->popScreen();
+                                        }
+                                    },
+                                    .holdDurationMs = 2000,
                                 },
-                                2000, // 2 second hold time
-                                500 // 500ms release animation
+                                std::make_unique<widgets::Label>("Delete")
                             )
                         ),
                         

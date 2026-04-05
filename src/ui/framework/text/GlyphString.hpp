@@ -37,6 +37,56 @@ public:
 
     Glyph operator[](size_t i) const { return i < size() ? _data[i] : Glyph{}; }
 
+    GlyphString operator+(const GlyphString& other) const
+    {
+        GlyphString result;
+        result._data.reserve(_data.size() + other._data.size());
+        result._data.insert(result._data.end(), _data.begin(), _data.end());
+        result._data.insert(result._data.end(), other._data.begin(), other._data.end());
+        return result;
+    }
+
+    GlyphString operator+(Glyph glyph) const
+    {
+        GlyphString result;
+        result._data.reserve(_data.size() + 1);
+        result._data.insert(result._data.end(), _data.begin(), _data.end());
+        result._data.push_back(glyph);
+        return result;
+    }
+
+    GlyphString& operator+=(const GlyphString& other)
+    {
+        _data.insert(_data.end(), other._data.begin(), other._data.end());
+        return *this;
+    }
+
+    GlyphString& operator+=(Glyph glyph)
+    {
+        _data.push_back(glyph);
+        return *this;
+    }
+
+    // Returns glyphs in [start, end) — clamps to valid range
+    GlyphString substr(size_t start, size_t end) const
+    {
+        if (start >= _data.size()) return {};
+        if (end > _data.size()) end = _data.size();
+        GlyphString result;
+        result._data.assign(_data.begin() + start, _data.begin() + end);
+        return result;
+    }
+
+    GlyphString substr(size_t start) const
+    {
+        size_t end = _data.size();
+        if (start >= _data.size()) return {};
+        if (end > _data.size()) end = _data.size();
+        GlyphString result;
+        result._data.assign(_data.begin() + start, _data.begin() + end);
+        return result;
+    }
+
 private:
     std::vector<Glyph> _data;
 };

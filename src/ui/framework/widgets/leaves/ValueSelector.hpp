@@ -68,19 +68,12 @@ public:
     Size measure() const override
     {
         std::string text = _toString(_value);
-        int width = static_cast<int>(text.size());
 
-        if (_isEditing)
-            width += _style.leftEditing.size() + _style.rightEditing.size();
-        else if (_isPressed)
-            width += _style.leftPressed.size() + _style.rightPressed.size();
-        else if (isFocused())
-            width += _style.leftFocused.size() + _style.rightFocused.size();
-        else
-            width += _style.leftNormal.size() + _style.rightNormal.size();
+        auto [leftDecorator, rightDecorator] = getDecorators();
+        uint16_t width = text.size() + leftDecorator.size() + rightDecorator.size();
 
         return {
-            static_cast<uint16_t>(width),
+            width,
             1
         };
     }
@@ -90,29 +83,7 @@ public:
         if (canvasBox.w == 0 || canvasBox.h == 0)
             return;
 
-        GlyphString leftDecorator = {};
-        GlyphString rightDecorator = {};
-
-        if (_isPressed)
-        {
-            leftDecorator = _style.leftPressed.getGlyphs();
-            rightDecorator = _style.rightPressed.getGlyphs();
-        }
-        else if (_isEditing)
-        {
-            leftDecorator = _style.leftEditing.getGlyphs();
-            rightDecorator = _style.rightEditing.getGlyphs();
-        }
-        else if (isFocused())
-        {
-            leftDecorator = _style.leftFocused.getGlyphs();
-            rightDecorator = _style.rightFocused.getGlyphs();
-        }
-        else
-        {
-            leftDecorator = _style.leftNormal.getGlyphs();
-            rightDecorator = _style.rightNormal.getGlyphs();
-        }
+        auto [leftDecorator, rightDecorator] = getDecorators();
 
         uint16_t x = canvasBox.x;
         uint16_t y = canvasBox.y;
@@ -185,6 +156,17 @@ private:
             _value = _prev(_value);
         if (delta != 0 && _onChange)
             _onChange(_value);
+    }
+
+    std::pair<GlyphString, GlyphString> getDecorators() const {
+        if (_isPressed)
+            return std::make_pair(_style.leftPressed.getGlyphs(), _style.rightPressed.getGlyphs());
+        else if (_isEditing)
+            return std::make_pair(_style.leftEditing.getGlyphs(), _style.rightEditing.getGlyphs());
+        else if (isFocused())
+            return std::make_pair(_style.leftFocused.getGlyphs(), _style.rightFocused.getGlyphs());
+        else
+            return std::make_pair(_style.leftNormal.getGlyphs(), _style.rightNormal.getGlyphs());
     }
 };
 

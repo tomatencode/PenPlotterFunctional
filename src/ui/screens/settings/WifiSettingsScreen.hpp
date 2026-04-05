@@ -16,6 +16,7 @@
 
 // Include components and widgets used in this screen
 #include "ui/components/HeaderLine.hpp"
+#include "ui/components/LabeledTextEditor.hpp"
 #include "ui/framework/widgets/leaves/Button.hpp"
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/layouts/LinearLayout.hpp"
@@ -44,8 +45,30 @@ public:
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
-                
-                std::make_unique<widgets::Label>("Configure Wifi")
+
+                std::make_unique<components::LabeledTextEditor<std::string>>(
+                    components::LabeledTextEditorProps<std::string>{
+                        .labelText = "SSID",
+                        .textEditorProps = widgets::TextEditorProps{
+                            .initialText = runtimeSettings.getSSID(),
+                            .onChange = [&settingsPersistence](const std::string& newValue) {
+                                settingsPersistence.setSSID(newValue);
+                            }
+                        }
+                    }
+                ),
+
+                std::make_unique<components::LabeledTextEditor<std::string>>(
+                    components::LabeledTextEditorProps<std::string>{
+                        .labelText = "Password",
+                        .textEditorProps = widgets::TextEditorProps{
+                            .initialText = runtimeSettings.getPassword(),
+                            .onChange = [&settingsPersistence](const std::string& newValue) {
+                                settingsPersistence.setPassword(newValue);
+                            }
+                        }
+                    }
+                )
             )
         )
     )
