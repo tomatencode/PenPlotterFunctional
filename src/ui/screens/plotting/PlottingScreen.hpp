@@ -18,7 +18,7 @@
 #include "ui/framework/widgets/leaves/Button.hpp"
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/leaves/ProgressBar.hpp"
-#include "ui/framework/widgets/leaves/Switch.hpp"
+#include "ui/framework/widgets/leaves/Conditional.hpp"
 
 namespace ui {
 namespace screens {
@@ -61,46 +61,35 @@ public:
                 return std::to_string(jobController.getCurrentLine()) + "/" + std::to_string(jobController.getTotalLines());
             }),
 
-            std::make_unique<widgets::Switch<bool>>(
-                widgets::SwitchProps{
-                    .selector = [&jobController]() { return jobController.isActive(); },
-                    .evaluationMode = widgets::SwitchEvaluationMode::Eager
+            std::make_unique<widgets::Conditional>(
+                widgets::ConditionalProps{
+                    .condition = [&jobController]() {
+                        return jobController.isActive();
+                    }
                 },
-                std::make_unique<widgets::Switch<bool>::Branch>(
-                    true,
-                    std::make_unique<widgets::LinearLayout>(
-                        widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal, .spacingMode = widgets::SpacingMode::SpaceAround},
+                std::make_unique<widgets::LinearLayout>(
+                    widgets::LinearLayoutStyle{.axis = widgets::Axis::Horizontal, .spacingMode = widgets::SpacingMode::SpaceAround},
 
-                        std::make_unique<widgets::Button>(
-                            widgets::ButtonProps{
-                                .onPress = [&jobController, &motionState]() {
-                                    if (motionState.getState() == MotionStateType::PAUSED) {
-                                        jobController.resume();
-                                    } else {
-                                        jobController.pause();
-                                    }
-                                }
-                            },
-                            std::make_unique<widgets::Label>([&jobController, &motionState]() {
-                                return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
-                            })
-                        ),
-
-                        std::make_unique<widgets::Button>(
-                            widgets::ButtonProps{
-                                .onPress = [&jobController]() { jobController.abort(); }
-                            },
-                            std::make_unique<widgets::Label>("Abort")
-                        )
-                    )
-                ),
-                std::make_unique<widgets::Switch<bool>::Branch>(
-                    false,
                     std::make_unique<widgets::Button>(
                         widgets::ButtonProps{
-                            .onPress = [this]() { router()->popScreen(); }
+                            .onPress = [&jobController, &motionState]() {
+                                if (motionState.getState() == MotionStateType::PAUSED) {
+                                    jobController.resume();
+                                } else {
+                                    jobController.pause();
+                                }
+                            }
                         },
-                        std::make_unique<widgets::Label>("Back to Files")
+                        std::make_unique<widgets::Label>([&jobController, &motionState]() {
+                            return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                        })
+                    ),
+
+                    std::make_unique<widgets::Button>(
+                        widgets::ButtonProps{
+                            .onPress = [&jobController]() { jobController.abort(); }
+                        },
+                        std::make_unique<widgets::Label>("Abort")
                     )
                 )
             )
