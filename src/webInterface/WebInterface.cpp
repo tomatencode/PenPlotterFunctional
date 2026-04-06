@@ -5,7 +5,7 @@
 
 void WebInterface::init() {
     Serial.println("WebInterface initializing (WiFi connects in background)...");
-    startWiFiConnection();
+    configureWifi();
 
     _settingPersistence.registerObserver(this);
 }
@@ -18,11 +18,20 @@ bool WebInterface::isWiFiConnected() const {
     return WiFi.status() == WL_CONNECTED;
 }
 
-
 void WebInterface::update() {
     SettingObserver::checkIfSettingsChanged();
 
-    if (!_serverStarted && WiFi.status() == WL_CONNECTED) {
+    if (!isWiFiConnected()) {
+        attemptWiFiConnection();
+        return; // Don't attempt to start server if WiFi isn't connected
+    }
+    
+    if (_currentWiFiConnectAttempts > 0) {
+        Serial.println("WiFi connected successfully!");
+        _currentWiFiConnectAttempts = 0;
+    }
+
+    if (!_serverStarted) {
         setupServer();
     }
 
@@ -32,13 +41,35 @@ void WebInterface::update() {
     }
 }
 
-// Non-blocking
-void WebInterface::startWiFiConnection() {
-
+void WebInterface::configureWifi() {
     WiFi.mode(WIFI_STA);
-    WiFi.setAutoConnect(true);
-    WiFi.setAutoReconnect(true);
-    WiFi.begin(_runtimeSettings.getSSID().c_str(), _runtimeSettings.getPassword().c_str());
+
+    _WifiConfigured = true;
+    _lastWiFiConnectAttemptMs = millis() - _wifiReconnectIntervalMs + _WifiConfigureTimeoutMs;
+    _currentWiFiConnectAttempts = 0;
+}
+
+void WebInterface::attemptWiFiConnection() {
+
+    if (!_WifiConfigured) return;
+    if (isWiFiConnected()) return;
+    if (_currentWiFiConnectAttempts >= _maxWiFiConnectAttempts) return;
+    if (millis() - _lastWiFiConnectAttemptMs < _wifiReconnectIntervalMs) return;
+
+    std::string ssid = _runtimeSettings.getSSID();
+    std::string password = _runtimeSettings.getPassword();
+
+    if (ssid.empty()) return;
+
+    Serial.println("Attempting WiFi connection...");
+    WiFi.begin(ssid.c_str(), password.c_str());
+
+    _currentWiFiConnectAttempts++;
+    _lastWiFiConnectAttemptMs = millis();
+
+    if (_currentWiFiConnectAttempts == _maxWiFiConnectAttempts) {
+        Serial.println("Max WiFi connection attempts reached.");
+    }
 }
 
 void WebInterface::setupServer() {
@@ -82,4 +113,7 @@ void WebInterface::onRelevantSettingsChanged() {
     
     // Restart WiFi connection with new credentials
     WiFi.begin(_runtimeSettings.getSSID().c_str(), _runtimeSettings.getPassword().c_str());
+
+    _lastWiFiConnectAttemptMs = millis();
+    _currentWiFiConnectAttempts = 0;
 }

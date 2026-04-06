@@ -43,7 +43,15 @@ private:
     WebServer _server; // HTTP server (port 80)
     bool _serverStarted = false;
 
-    void startWiFiConnection();
+    bool _WifiConfigured = false;
+    uint32_t _lastWiFiConnectAttemptMs = 0;
+    uint32_t _wifiReconnectIntervalMs = 5000;
+    uint32_t _WifiConfigureTimeoutMs = 100; // time to wait after configureing wifi
+    uint16_t _maxWiFiConnectAttempts = 10;
+    uint16_t _currentWiFiConnectAttempts = 0;
+
+    void configureWifi();
+    void attemptWiFiConnection();
     void setupServer();
 
     // HTTP Handlers
