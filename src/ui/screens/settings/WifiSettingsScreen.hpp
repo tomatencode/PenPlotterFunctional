@@ -66,6 +66,18 @@ public:
                             }
                         }
                     }
+                ),
+
+                std::make_unique<components::LabeledTextEditor<std::string>>(
+                    components::LabeledTextEditorProps<std::string>{
+                        .labelText = "mDNS Name",
+                        .textEditorProps = widgets::TextEditorProps{
+                            .initialText = runtimeSettings.getMdnsName(),
+                            .onChange = [&settingsPersistence](const std::string& newValue) {
+                                settingsPersistence.setMdnsName(newValue);
+                            }
+                        }
+                    }
                 )
             )
         )
