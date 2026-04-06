@@ -29,6 +29,10 @@ public:
     void setHomingBackOffSpeed_stp_per_s(float value);
     void setBackOffStepsX(uint16_t value);
     void setBackOffStepsY(uint16_t value);
+    void setHomingTimeout_us(uint32_t value);
+    void setSGCheckInterval_ms(uint16_t value);
+    void setSGStartTimeout_ms(uint16_t value);
+    void setSGHistorySize(uint8_t value);
     void setPenUpAngle_deg(float value);
     void setPenDownAngle_deg(float value);
 

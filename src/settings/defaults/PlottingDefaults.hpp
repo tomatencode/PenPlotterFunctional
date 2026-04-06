@@ -15,6 +15,10 @@ constexpr float STALLGUARD_THRESHOLD = 120.0f;
 constexpr float HOMING_BACK_OFF_SPEED_STP_PER_S = 100.0f;
 constexpr uint16_t BACK_OFF_STEPS_X = 25;
 constexpr uint16_t BACK_OFF_STEPS_Y = 15;
+constexpr uint32_t HOMING_TIMEOUT_US = 10000000UL;  // 10 seconds
+constexpr uint16_t SG_CHECK_INTERVAL_MS = 50;
+constexpr uint16_t SG_START_TIMEOUT_MS = 200;
+constexpr uint8_t SG_HISTORY_SIZE = 5;  // Number of SG readings to average
 
 // Movement Speeds
 constexpr float FEED_RATE_DRAW_MM_PER_S = 20.0f;

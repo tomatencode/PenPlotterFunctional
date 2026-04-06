@@ -20,6 +20,10 @@ public:
     float stallguardThreshold() const { return _stallguardThreshold.load(std::memory_order_relaxed); }
     uint16_t backOffStepsX() const { return _backOffStepsX.load(std::memory_order_relaxed); }
     uint16_t backOffStepsY() const { return _backOffStepsY.load(std::memory_order_relaxed); }
+    uint32_t homingTimeout_us() const { return _homingTimeout_us.load(std::memory_order_relaxed); }
+    uint16_t sgCheckInterval_ms() const { return _sgCheckInterval_ms.load(std::memory_order_relaxed); }
+    uint16_t sgStartTimeout_ms() const { return _sgStartTimeout_ms.load(std::memory_order_relaxed); }
+    uint8_t sgHistorySize() const { return _sgHistorySize.load(std::memory_order_relaxed); }
     float penUpAngle_deg() const { return _penUpAngle_deg.load(std::memory_order_relaxed); }
     float penDownAngle_deg() const { return _penDownAngle_deg.load(std::memory_order_relaxed); }
 
@@ -41,6 +45,10 @@ private:
     void setHomingBackOffSpeed_stp_per_s(float v) { _homingBackOffSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
     void setBackOffStepsX(uint16_t v) { _backOffStepsX.store(v, std::memory_order_relaxed); }
     void setBackOffStepsY(uint16_t v) { _backOffStepsY.store(v, std::memory_order_relaxed); }
+    void setHomingTimeout_us(uint32_t v) { _homingTimeout_us.store(v, std::memory_order_relaxed); }
+    void setSGCheckInterval_ms(uint16_t v) { _sgCheckInterval_ms.store(v, std::memory_order_relaxed); }
+    void setSGStartTimeout_ms(uint16_t v) { _sgStartTimeout_ms.store(v, std::memory_order_relaxed); }
+    void setSGHistorySize(uint8_t v) { _sgHistorySize.store(v, std::memory_order_relaxed); }
     void setPenUpAngle_deg(float v) { _penUpAngle_deg.store(v, std::memory_order_relaxed); }
     void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
 
@@ -56,6 +64,10 @@ private:
     std::atomic<float> _homingBackOffSpeed_stp_per_s{HOMING_BACK_OFF_SPEED_STP_PER_S};
     std::atomic<uint16_t> _backOffStepsX{BACK_OFF_STEPS_X};
     std::atomic<uint16_t> _backOffStepsY{BACK_OFF_STEPS_Y};
+    std::atomic<uint32_t> _homingTimeout_us{HOMING_TIMEOUT_US};
+    std::atomic<uint16_t> _sgCheckInterval_ms{SG_CHECK_INTERVAL_MS};
+    std::atomic<uint16_t> _sgStartTimeout_ms{SG_START_TIMEOUT_MS};
+    std::atomic<uint8_t> _sgHistorySize{SG_HISTORY_SIZE};
     std::atomic<float> _penUpAngle_deg{PEN_UP_DEG};
     std::atomic<float> _penDownAngle_deg{PEN_DOWN_DEG};
     

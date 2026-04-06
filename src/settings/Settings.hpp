@@ -13,6 +13,10 @@ enum class Setting {
     HomingBackOffSpeed,
     BackOffStepsX,
     BackOffStepsY,
+    HomingTimeout,
+    SGCheckInterval,
+    SGStartTimeout,
+    SGHistorySize,
     PenUpAngle,
     PenDownAngle,
 };

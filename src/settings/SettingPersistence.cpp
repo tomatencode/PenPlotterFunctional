@@ -132,6 +132,46 @@ void SettingPersistence::setBackOffStepsY(uint16_t value) {
     notifyObservers(Setting::BackOffStepsY);
 }
 
+void SettingPersistence::setHomingTimeout_us(uint32_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUInt("homingTimeout", value);
+    prefs.end();
+    
+    _runtimeSettings.setHomingTimeout_us(value);
+    notifyObservers(Setting::HomingTimeout);
+}
+
+void SettingPersistence::setSGCheckInterval_ms(uint16_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUShort("SGCheckInt", value);
+    prefs.end();
+    
+    _runtimeSettings.setSGCheckInterval_ms(value);
+    notifyObservers(Setting::SGCheckInterval);
+}
+
+void SettingPersistence::setSGStartTimeout_ms(uint16_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUShort("SGStartTO", value);
+    prefs.end();
+    
+    _runtimeSettings.setSGStartTimeout_ms(value);
+    notifyObservers(Setting::SGStartTimeout);
+}
+
+void SettingPersistence::setSGHistorySize(uint8_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUChar("SGHistSize", value);
+    prefs.end();
+    
+    _runtimeSettings.setSGHistorySize(value);
+    notifyObservers(Setting::SGHistorySize);
+}
+
 void SettingPersistence::setPenUpAngle_deg(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
@@ -194,6 +234,10 @@ void SettingPersistence::loadSettings() {
     setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
     setBackOffStepsX(prefs.getUShort("boStepsX", BACK_OFF_STEPS_X));
     setBackOffStepsY(prefs.getUShort("boStepsY", BACK_OFF_STEPS_Y));
+    setHomingTimeout_us(prefs.getUInt("homingTimeout", HOMING_TIMEOUT_US));
+    setSGCheckInterval_ms(prefs.getUShort("SGCheckInt", SG_CHECK_INTERVAL_MS));
+    setSGStartTimeout_ms(prefs.getUShort("SGStartTO", SG_START_TIMEOUT_MS));
+    setSGHistorySize(prefs.getUChar("SGHistSize", SG_HISTORY_SIZE));
     setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
     setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
     

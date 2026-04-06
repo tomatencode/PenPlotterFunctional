@@ -1,12 +1,6 @@
 #include "HomingController.hpp"
 #include "settings/RuntimeSettings.hpp"
 
-// Constants for homing behavior
-static constexpr uint32_t HOMING_TIMEOUT_US = 10000000UL;  // 10 seconds
-static constexpr uint32_t SG_CHECK_INTERVAL_MS = 50;
-static constexpr uint32_t SG_START_TIMEOUT_MS = 200;
-static constexpr uint8_t SG_HISTORY_SIZE = 5;             // Number of SG readings to average
-
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}
 
@@ -37,6 +31,10 @@ bool HomingController::checkPauseAbort() {
 void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     float speed_stps_per_s = _runtimeSettings.homingSpeed_stp_per_s();
     float stallGuard_threshold = _runtimeSettings.stallguardThreshold();
+    uint32_t homingTimeout_us = _runtimeSettings.homingTimeout_us();
+    uint16_t sgCheckInterval_ms = _runtimeSettings.sgCheckInterval_ms();
+    uint16_t sgStartTimeout_ms = _runtimeSettings.sgStartTimeout_ms();
+    uint8_t sgHistorySize = _runtimeSettings.sgHistorySize();
     
     if (speed_stps_per_s <= 0.0f) {
         Serial.println("ERROR: Invalid homing speed");
@@ -48,8 +46,8 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
         return;
     }
 
-    uint32_t sgCheckInterval_us = SG_CHECK_INTERVAL_MS * 1000UL;
-    uint32_t last_SGcheck_time = micros() + SG_START_TIMEOUT_MS * 1000UL;
+    uint32_t sgCheckInterval_us = sgCheckInterval_ms * 1000UL;
+    uint32_t last_SGcheck_time = micros() + sgStartTimeout_ms * 1000UL;
     uint32_t start_time = micros();
 
     // Circular buffer for stallguard history
@@ -82,7 +80,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
         
         // Add to circular buffer
         sgHistory[sgHistoryIndex] = stallGuardMin;
-        sgHistoryIndex = (sgHistoryIndex + 1) % SG_HISTORY_SIZE;
+        sgHistoryIndex = (sgHistoryIndex + 1) % sgHistorySize;
         
         // Mark buffer as filled after first full cycle
         if (sgHistoryIndex == 0) {
@@ -92,10 +90,10 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
         // Only check average after buffer is filled
         if (bufferFilled) {
             int sum = 0;
-            for (uint8_t i = 0; i < SG_HISTORY_SIZE; i++) {
+            for (uint8_t i = 0; i < sgHistorySize; i++) {
                 sum += sgHistory[i];
             }
-            int average = sum / SG_HISTORY_SIZE;
+            int average = sum / sgHistorySize;
             
             if (average < stallGuard_threshold) {
                 Serial.print("Stall detected: avg SG = ");
@@ -105,7 +103,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
         }
 
         // Safety timeout
-        if ((uint32_t)(micros() - start_time) > HOMING_TIMEOUT_US) {
+        if ((uint32_t)(micros() - start_time) > homingTimeout_us) {
             Serial.println("WARNING: Homing timeout, limit not found");
             break;
         }
