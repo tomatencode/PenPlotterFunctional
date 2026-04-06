@@ -11,8 +11,10 @@ constexpr uint16_t MICROSTEPS = 16;
 
 // Homing
 constexpr float HOMING_SPEED_STP_PER_S = 360.0f;
-constexpr float HOMING_BACK_OFF_SPEED_STP_PER_S = 100.0f;
 constexpr float STALLGUARD_THRESHOLD = 120.0f;
+constexpr float HOMING_BACK_OFF_SPEED_STP_PER_S = 100.0f;
+constexpr uint16_t BACK_OFF_STEPS_X = 25;
+constexpr uint16_t BACK_OFF_STEPS_Y = 15;
 
 // Movement Speeds
 constexpr float FEED_RATE_DRAW_MM_PER_S = 20.0f;

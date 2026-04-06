@@ -58,7 +58,19 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "Back-off",
+                    .labelText = "Stallguard",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.stallguardThreshold()),
+                        .next = [](int current) { return std::min(current + 1, 255); },
+                        .prev = [](int current) { return std::max(current - 1, 0); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setStallguardThreshold(static_cast<float>(newValue));
+                        },
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "BO speed",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.homingBackOffSpeed_stp_per_s()),
                         .next = [](int current) { return std::min(current + 10, 2000); },
@@ -71,13 +83,25 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "Stallguard",
+                    .labelText = "BO steps X",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(runtimeSettings.stallguardThreshold()),
-                        .next = [](int current) { return std::min(current + 1, 255); },
+                        .initialValue = static_cast<int>(runtimeSettings.backOffStepsX()),
+                        .next = [](int current) { return std::min(current + 1, 100); },
                         .prev = [](int current) { return std::max(current - 1, 0); },
                         .onChange = [&settingsPersistence](const int& newValue) {
-                            settingsPersistence.setStallguardThreshold(static_cast<float>(newValue));
+                            settingsPersistence.setBackOffStepsX(static_cast<uint16_t>(newValue));
+                        },
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "BO steps Y",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.backOffStepsY()),
+                        .next = [](int current) { return std::min(current + 1, 100); },
+                        .prev = [](int current) { return std::max(current - 1, 0); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setBackOffStepsY(static_cast<uint16_t>(newValue));
                         },
                     }
                 })

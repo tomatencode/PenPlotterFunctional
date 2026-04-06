@@ -6,8 +6,6 @@ static constexpr uint32_t HOMING_TIMEOUT_US = 10000000UL;  // 10 seconds
 static constexpr uint32_t SG_CHECK_INTERVAL_MS = 50;
 static constexpr uint32_t SG_START_TIMEOUT_MS = 200;
 static constexpr uint8_t SG_HISTORY_SIZE = 10;             // Number of SG readings to average
-static constexpr uint16_t BACK_OFF_STEPS_X = 25;
-static constexpr uint16_t BACK_OFF_STEPS_Y = 15;
 
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}
@@ -149,7 +147,7 @@ void HomingController::home() {
     }
 
     // Move to X limit (both axes negative)
-    moveToLimit(false, false, BACK_OFF_STEPS_X);
+    moveToLimit(false, false, _runtimeSettings.backOffStepsX());
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
 
     // Interruptible delay before moving to Y limit
@@ -160,7 +158,7 @@ void HomingController::home() {
     }
 
     // Move to Y limit (B axis positive)
-    moveToLimit(false, true, BACK_OFF_STEPS_Y);
+    moveToLimit(false, true, _runtimeSettings.backOffStepsY());
     if (_motionState.getCommand() == MotionCommand::ABORT) return;
 
     // Zero both axes

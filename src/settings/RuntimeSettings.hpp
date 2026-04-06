@@ -18,6 +18,8 @@ public:
     float homingSpeed_stp_per_s() const { return _homingSpeed_stp_per_s.load(std::memory_order_relaxed); }
     float homingBackOffSpeed_stp_per_s() const { return _homingBackOffSpeed_stp_per_s.load(std::memory_order_relaxed); }
     float stallguardThreshold() const { return _stallguardThreshold.load(std::memory_order_relaxed); }
+    uint16_t backOffStepsX() const { return _backOffStepsX.load(std::memory_order_relaxed); }
+    uint16_t backOffStepsY() const { return _backOffStepsY.load(std::memory_order_relaxed); }
     float penUpAngle_deg() const { return _penUpAngle_deg.load(std::memory_order_relaxed); }
     float penDownAngle_deg() const { return _penDownAngle_deg.load(std::memory_order_relaxed); }
 
@@ -35,8 +37,10 @@ private:
     void setTravelFeedRate_mm_per_s(float v) { _travelFeedRate_mm_per_s.store(v, std::memory_order_relaxed); }
     void setMinFeatureSize_mm(float v) { _minFeatureSize_mm.store(v, std::memory_order_relaxed); }
     void setHomingSpeed_stp_per_s(float v) { _homingSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
-    void setHomingBackOffSpeed_stp_per_s(float v) { _homingBackOffSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
     void setStallguardThreshold(float v) { _stallguardThreshold.store(v, std::memory_order_relaxed); }
+    void setHomingBackOffSpeed_stp_per_s(float v) { _homingBackOffSpeed_stp_per_s.store(v, std::memory_order_relaxed); }
+    void setBackOffStepsX(uint16_t v) { _backOffStepsX.store(v, std::memory_order_relaxed); }
+    void setBackOffStepsY(uint16_t v) { _backOffStepsY.store(v, std::memory_order_relaxed); }
     void setPenUpAngle_deg(float v) { _penUpAngle_deg.store(v, std::memory_order_relaxed); }
     void setPenDownAngle_deg(float v) { _penDownAngle_deg.store(v, std::memory_order_relaxed); }
 
@@ -48,8 +52,10 @@ private:
     std::atomic<float> _travelFeedRate_mm_per_s{FEED_RATE_TRAVEL_MM_PER_S};
     std::atomic<float> _minFeatureSize_mm{MIN_FEATURE_SIZE_MM};
     std::atomic<float> _homingSpeed_stp_per_s{HOMING_SPEED_STP_PER_S};
-    std::atomic<float> _homingBackOffSpeed_stp_per_s{HOMING_BACK_OFF_SPEED_STP_PER_S};
     std::atomic<float> _stallguardThreshold{STALLGUARD_THRESHOLD};
+    std::atomic<float> _homingBackOffSpeed_stp_per_s{HOMING_BACK_OFF_SPEED_STP_PER_S};
+    std::atomic<uint16_t> _backOffStepsX{BACK_OFF_STEPS_X};
+    std::atomic<uint16_t> _backOffStepsY{BACK_OFF_STEPS_Y};
     std::atomic<float> _penUpAngle_deg{PEN_UP_DEG};
     std::atomic<float> _penDownAngle_deg{PEN_DOWN_DEG};
     

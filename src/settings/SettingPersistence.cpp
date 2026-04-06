@@ -112,6 +112,26 @@ void SettingPersistence::setStallguardThreshold(float value) {
     notifyObservers(Setting::StallguardThreshold);
 }
 
+void SettingPersistence::setBackOffStepsX(uint16_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUShort("boStepsX", value);
+    prefs.end();
+    
+    _runtimeSettings.setBackOffStepsX(value);
+    notifyObservers(Setting::BackOffStepsX);
+}
+
+void SettingPersistence::setBackOffStepsY(uint16_t value) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putUShort("boStepsY", value);
+    prefs.end();
+    
+    _runtimeSettings.setBackOffStepsY(value);
+    notifyObservers(Setting::BackOffStepsY);
+}
+
 void SettingPersistence::setPenUpAngle_deg(float value) {
     Preferences prefs;
     prefs.begin("settings", false);
@@ -172,6 +192,8 @@ void SettingPersistence::loadSettings() {
     setHomingSpeed_stp_per_s(prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S));
     setHomingBackOffSpeed_stp_per_s(prefs.getFloat("homingBOspd", HOMING_BACK_OFF_SPEED_STP_PER_S));
     setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
+    setBackOffStepsX(prefs.getUShort("boStepsX", BACK_OFF_STEPS_X));
+    setBackOffStepsY(prefs.getUShort("boStepsY", BACK_OFF_STEPS_Y));
     setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
     setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
     

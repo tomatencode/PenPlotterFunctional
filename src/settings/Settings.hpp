@@ -9,8 +9,10 @@ enum class Setting {
     DrawFeedRate,
     TravelFeedRate,
     HomingSpeed,
-    HomingBackOffSpeed,
     StallguardThreshold,
+    HomingBackOffSpeed,
+    BackOffStepsX,
+    BackOffStepsY,
     PenUpAngle,
     PenDownAngle,
 };
