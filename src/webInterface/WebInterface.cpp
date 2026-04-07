@@ -6,6 +6,16 @@
 void WebInterface::init() {
     Serial.println("WebInterface initializing...");
     _settingPersistence.registerObserver(this);
+
+    // Register routes once — they persist across server restarts
+    _server.on("/files",    HTTP_GET,  [this]() { handleFileList(); });
+    _server.on("/start",    HTTP_POST, [this]() { handleStartJob(); });
+    _server.on("/abort",    HTTP_POST, [this]() { handleAbortJob(); });
+    _server.on("/upload",   HTTP_POST, [this]() {}, [this]() { handleUpload(); });
+    _server.on("/pause",    HTTP_POST, [this]() { handlePauseJob(); });
+    _server.on("/resume",   HTTP_POST, [this]() { handleResumeJob(); });
+    _server.on("/settings", HTTP_GET,  [this]() { handleGetSettings(); });
+    _server.on("/settings", HTTP_POST, [this]() { handleSetSetting(); });
 }
 
 WebInterface::~WebInterface() {
@@ -16,7 +26,12 @@ void WebInterface::update() {
     SettingObserver::checkIfSettingsChanged();
 
     if (!_wifiController.isConnected()) {
-        return; // Don't attempt to start server if WiFi isn't connected
+        if (_serverStarted) {
+            MDNS.end();
+            _serverStarted = false;
+            Serial.println("WebInterface: WiFi lost — HTTP server stopped");
+        }
+        return;
     }
 
     if (!_serverStarted) {
@@ -42,17 +57,6 @@ void WebInterface::setupServer() {
         Serial.print(_runtimeSettings.getMdnsName().c_str());
         Serial.println(".local");
     }
-
-    // HTTP server routes
-    _server.on("/files", HTTP_GET, [this]() { handleFileList(); });
-    _server.on("/start", HTTP_POST, [this]() { handleStartJob(); });
-    _server.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
-    _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUpload(); });
-    _server.on("/pause", HTTP_POST, [this]() { handlePauseJob(); });
-    _server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
-    _server.on("/settings", HTTP_GET, [this]() { handleGetSettings(); });
-    _server.on("/settings", HTTP_POST, [this]() { handleSetSetting(); });
-
 
     _server.begin();
     _serverStarted = true;
