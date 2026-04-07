@@ -54,12 +54,15 @@ private:
     static constexpr size_t MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB limit
 
     void setupServer();
+
+    // Upload helpers
     bool validateFileName(const std::string& filename);
     bool isValidGcodeFile(const std::string& filename);
     std::string getPlottingFilePath(const std::string& filename);
     std::string getTempFilePath(const std::string& filename);
+    void resetUploadState();
 
-    // HTTP Handlers
+    // HTTP handlers
     void handleFileList();
     void handleStartJob();
     void handleAbortJob();
