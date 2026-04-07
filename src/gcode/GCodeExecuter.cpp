@@ -24,7 +24,7 @@ void GCodeExecuter::executeLine(const std::string& line) {
     while (i < line.size() && (isdigit(line[i]) || line[i]=='.')) {
         cmdNum += line[i++];
     }
-    if (!cmdNum.empty()) cmd += cmdNum;  // e.g., "G1", "M3"
+    if (!cmdNum.empty()) cmd += cmdNum;  // e.g., "G5.1"
 
     // --- Parse remaining letters/numbers as parameters ---
     while (i < line.size()) {
