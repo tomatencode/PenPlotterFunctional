@@ -48,9 +48,9 @@ uint8_t TextEditorDelete_BITMAP[8] = {
 };
 
 uint8_t DegSymbol_BITMAP[8] = {
-	0b00100,
-	0b01010,
-	0b00100,
+	0b00111,
+	0b00101,
+	0b00111,
 	0b00000,
 	0b00000,
 	0b00000,
