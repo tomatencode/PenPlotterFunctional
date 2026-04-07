@@ -22,6 +22,10 @@ void WifiController::update() {
 
     if (_currentConnectionAttempts > 0) {
         Serial.println("WiFi connected successfully!");
+        Serial.print("Connected to SSID: ");
+        Serial.println(WiFi.SSID());
+        Serial.print("IP Address: ");
+        Serial.println(WiFi.localIP());
         _currentConnectionAttempts = 0;
     }
 }
