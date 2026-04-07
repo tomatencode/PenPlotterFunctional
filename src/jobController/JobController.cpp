@@ -1,4 +1,5 @@
 #include "JobController.hpp"
+#include "config/job_config.hpp"
 
 #include <FS.h>
 #include <cstring>
@@ -10,7 +11,7 @@ void JobController::start(const std::string& filename)
     Serial.println(("Starting job: " + filename).c_str());
 
     _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
-    _currentJob.file = _fileManager.openFileRead(_plottingDirectory + "/" + filename);
+    _currentJob.file = _fileManager.openFileRead(PLOTTING_DIRECTORY + filename);
 
     if (!_currentJob.file)
     {
@@ -35,7 +36,7 @@ void JobController::start(const std::string& filename)
 
     // Close and reopen to reset read position
     _currentJob.file.close();
-    _currentJob.file = _fileManager.openFileRead(_plottingDirectory + "/" + filename);
+    _currentJob.file = _fileManager.openFileRead(PLOTTING_DIRECTORY + filename);
 }
 
 void JobController::pause()

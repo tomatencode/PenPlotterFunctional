@@ -19,8 +19,8 @@ struct PlotJob {
 
 class JobController {
 public:
-    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, std::string plottingDirectory)
-        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _plottingDirectory(std::move(plottingDirectory))
+    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
+        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager)
     {}
 
     // Job control
@@ -44,7 +44,6 @@ public:
 private:
     PlotJob _currentJob;
     bool _active;
-    std::string _plottingDirectory;
 
     MotionState& _motionState;
     FileManager& _fileManager;

@@ -5,7 +5,7 @@
 
 void WebInterface::handleFileList()
 {
-    auto files = _fileManager.listFiles(PLOTTING_DIRECTORY + "/");
+    auto files = _fileManager.listFiles(PLOTTING_DIRECTORY);
 
     std::string json = "[";
     for (size_t i = 0; i < files.size(); i++)
@@ -39,7 +39,7 @@ void WebInterface::handleStartJob()
     }
 
     String filename = _server.arg("file");
-    std::string filepath = PLOTTING_DIRECTORY + "/" + std::string(filename.c_str());
+    std::string filepath = PLOTTING_DIRECTORY + filename.c_str();
 
     if (!_fileManager.fileExists(filepath))
     {
@@ -63,7 +63,7 @@ void WebInterface::handleUpload()
 
     if (upload.status == UPLOAD_FILE_START)
     {
-        std::string path = std::string("/") + upload.filename.c_str();
+        std::string path = PLOTTING_DIRECTORY + upload.filename.c_str();
         Serial.printf("WebInterface: Upload start - %s\n", path.c_str());
 
         if (_fileManager.fileExists(path))
@@ -77,7 +77,7 @@ void WebInterface::handleUpload()
     }
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
-        std::string path = std::string("/") + upload.filename.c_str();
+        std::string path = PLOTTING_DIRECTORY + upload.filename.c_str();
         File f = _fileManager.openFileWrite(path);
         f.write(upload.buf, upload.currentSize);
         f.close();

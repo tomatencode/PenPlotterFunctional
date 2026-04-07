@@ -49,7 +49,7 @@ public:
     : Screen(
         std::make_unique<widgets::Switch<bool>>(
             widgets::SwitchProps{
-                .selector = [filename, &fm = ctx.fileManager]() { return fm.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
+                .selector = [filename, &fm = ctx.fileManager]() { return fm.fileExists(PLOTTING_DIRECTORY + filename); },
                 .evaluationMode = widgets::SwitchEvaluationMode::Lazy
             },
             std::make_unique<widgets::Switch<bool>::Branch>(
@@ -92,7 +92,7 @@ public:
                             std::make_unique<components::PressHoldButton>(
                                 components::PressHoldButtonProps{
                                     .onHoldComplete = [this, filename, &fm = ctx.fileManager]() {
-                                        fm.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
+                                        fm.deleteFile(PLOTTING_DIRECTORY + filename);
                                         if (router()) {
                                             router()->popScreen();
                                         }
@@ -110,7 +110,7 @@ public:
                             },
 
                             std::make_unique<widgets::Label>([filename, &fm = ctx.fileManager]() {
-                                size_t size = fm.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
+                                size_t size = fm.getFileSize(PLOTTING_DIRECTORY + filename);
                                 return formatFileSize(size);
                             }),
 

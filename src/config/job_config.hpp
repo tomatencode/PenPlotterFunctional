@@ -3,4 +3,4 @@
 #include <string>
 
 // Plotting directory
-const std::string PLOTTING_DIRECTORY = "";
+const std::string PLOTTING_DIRECTORY = "/";

@@ -76,7 +76,7 @@ void FilesScreen::reload() {
         }
     }
 
-    auto files = _ctx.fileManager.listFiles(PLOTTING_DIRECTORY + "/");
+    auto files = _ctx.fileManager.listFiles(PLOTTING_DIRECTORY);
     for (const auto& file : files) {
         auto button = std::make_unique<widgets::Button>(
             widgets::ButtonProps{
