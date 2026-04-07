@@ -44,4 +44,7 @@ private:
 
     // Internal method to notify observers of file events
     void notifyFileEvent(FileEvent event, const std::string& path);
+
+    // Normalize a path to SPIFFS format: ensures leading '/' and no trailing '/'
+    static std::string normalizePath(const std::string& path);
 };

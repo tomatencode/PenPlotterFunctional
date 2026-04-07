@@ -4,6 +4,21 @@
 
 FileManager::FileManager() {}
 
+std::string FileManager::normalizePath(const std::string& path)
+{
+    std::string result = path;
+
+    // Remove trailing slash
+    if (!result.empty() && result.back() == '/')
+        result.pop_back();
+
+    // Ensure leading slash
+    if (result.empty() || result.front() != '/')
+        result = '/' + result;
+
+    return result;
+}
+
 bool FileManager::init()
 {
     if (!SPIFFS.begin(true))
@@ -20,20 +35,13 @@ std::vector<std::string> FileManager::listFiles(const std::string& directory)
 {
     std::vector<std::string> files;
 
-    // SPIFFS is a flat filesystem with no real directories.
-    // Always iterate from root and filter by path prefix.
-    std::string prefix = directory;
-    if (!prefix.empty() && prefix.back() != '/')
-        prefix += '/';
+    File root = SPIFFS.open(normalizePath(directory).c_str());
 
-    File root = SPIFFS.open("/");
     File file = root.openNextFile();
 
     while (file)
     {
-        std::string name = std::string(file.name());
-        if (prefix == "/" || name.rfind(prefix, 0) == 0)
-            files.push_back(name);
+        files.push_back(std::string(file.name()));
         file = root.openNextFile();
     }
 
@@ -42,19 +50,21 @@ std::vector<std::string> FileManager::listFiles(const std::string& directory)
 
 bool FileManager::fileExists(const std::string& path)
 {
-    return SPIFFS.exists(path.c_str());
+    return SPIFFS.exists(normalizePath(path).c_str());
 }
 
 bool FileManager::deleteFile(const std::string& path)
 {
-    if (!SPIFFS.exists(path.c_str()))
+    const std::string normalized = normalizePath(path);
+
+    if (!SPIFFS.exists(normalized.c_str()))
         return false;
 
-    bool success = SPIFFS.remove(path.c_str());
+    bool success = SPIFFS.remove(normalized.c_str());
 
     if (success)
     {
-        notifyFileEvent(FileEvent::REMOVED, path);
+        notifyFileEvent(FileEvent::REMOVED, normalized);
     }
     
     return success;
@@ -62,15 +72,18 @@ bool FileManager::deleteFile(const std::string& path)
 
 bool FileManager::renameFile(const std::string& oldPath, const std::string& newPath)
 {
-    if (!SPIFFS.exists(oldPath.c_str()))
+    const std::string normalizedOld = normalizePath(oldPath);
+    const std::string normalizedNew = normalizePath(newPath);
+
+    if (!SPIFFS.exists(normalizedOld.c_str()))
         return false;
 
-    bool success = SPIFFS.rename(oldPath.c_str(), newPath.c_str());
+    bool success = SPIFFS.rename(normalizedOld.c_str(), normalizedNew.c_str());
 
     if (success)
     {
-        notifyFileEvent(FileEvent::REMOVED, oldPath);
-        notifyFileEvent(FileEvent::ADDED, newPath);
+        notifyFileEvent(FileEvent::REMOVED, normalizedOld);
+        notifyFileEvent(FileEvent::ADDED, normalizedNew);
     }
     
     return success;
@@ -78,24 +91,25 @@ bool FileManager::renameFile(const std::string& oldPath, const std::string& newP
 
 File FileManager::openFileRead(const std::string& path)
 {
-    return SPIFFS.open(path.c_str(), "r");
+    return SPIFFS.open(normalizePath(path).c_str(), "r");
 }
 
 File FileManager::openFileWrite(const std::string& path)
 {
-    bool existed = fileExists(path);
+    const std::string normalized = normalizePath(path);
+    bool existed = fileExists(normalized);
     
-    File file = SPIFFS.open(path.c_str(), "w");
+    File file = SPIFFS.open(normalized.c_str(), "w");
 
     if (file)
     {
         if (!existed)
         {
-            notifyFileEvent(FileEvent::ADDED, path);
+            notifyFileEvent(FileEvent::ADDED, normalized);
         }
         else
         {
-            notifyFileEvent(FileEvent::UPDATED, path);
+            notifyFileEvent(FileEvent::UPDATED, normalized);
         }
     }
 
@@ -104,7 +118,7 @@ File FileManager::openFileWrite(const std::string& path)
 
 size_t FileManager::getFileSize(const std::string& path)
 {
-    File file = SPIFFS.open(path.c_str());
+    File file = SPIFFS.open(normalizePath(path).c_str());
     if (file)
     {
         size_t size = file.size();
