@@ -1,8 +1,8 @@
 #pragma once
 #include <cstdint>
 
-static const char* MDNS_NAME = "penPlttr";
+inline constexpr const char* MDNS_NAME = "penPlttr";
 
 // WiFi credentials
-static const char* SSID = "";
-static const char* PASSWORD = "";
+inline constexpr const char* SSID = "";
+inline constexpr const char* PASSWORD = "";

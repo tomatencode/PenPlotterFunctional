@@ -8,7 +8,7 @@ BezierExecuter::BezierExecuter(StepperAxis& axisA, StepperAxis& axisB, CoreXYKin
 
 XYPos BezierExecuter::getCurrentPos() const {
     MotorSteps steps = {_axisA.positionSteps(), _axisB.positionSteps()};
-    return _kinematics.steps_to_mm(steps);
+    return _kinematics.stepsToMm(steps);
 }
 
 void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s) {
@@ -16,17 +16,17 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s) {
     uint16_t msA = _axisA.microsteps();
     uint16_t msB = _axisB.microsteps();
 
-    XYPos currentPos = _kinematics.steps_to_mm(currentSteps);
+    XYPos currentPos = _kinematics.stepsToMm(currentSteps);
 
-    float dx = targetPos.x_mm - currentPos.x_mm;
-    float dy = targetPos.y_mm - currentPos.y_mm;
+    double dx = targetPos.xMm - currentPos.xMm;
+    double dy = targetPos.yMm - currentPos.yMm;
 
     double distance_mm = std::sqrt(dx * dx + dy * dy);
     if (distance_mm <= 0.0) return;
 
     if (mm_per_s <= 0.0) return;
 
-    MotorSteps dfullsteps = _kinematics.mm_to_steps({dx, dy});
+    MotorSteps dfullsteps = _kinematics.mmToSteps({dx, dy});
 
     int32_t deltaA = static_cast<int32_t>((dfullsteps.a) * msA);
     int32_t deltaB = static_cast<int32_t>((dfullsteps.b) * msB);

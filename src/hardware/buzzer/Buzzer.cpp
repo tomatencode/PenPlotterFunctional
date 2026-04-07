@@ -2,12 +2,12 @@
 
 Buzzer::Buzzer(uint8_t pin, uint8_t channel)
     : _pin(pin), _channel(channel), _active(false),
-      _frequency(1000), _endTime(0),
+      _frequency(0), _endTime(0),
       _melodyIndex(0) {}
 
 void Buzzer::begin() {
     pinMode(_pin, OUTPUT);
-    ledcSetup(_channel, 1000, 8); // initial 1 kHz, 8-bit
+    ledcSetup(_channel, 0, 8); // initial 0 Hz, 8-bit
     ledcAttachPin(_pin, _channel);
     off();
 }
@@ -40,13 +40,13 @@ void Buzzer::playMelody(const Melody& melody) {
 
     _melody = melody;
     _melodyIndex = 0;
-    _frequency = _melody[0].frequency;
+    _frequency = _melody[0].frequencyHz;
 
     if (_frequency == 0) ledcWriteTone(_channel, 0);
     else ledcWriteTone(_channel, _frequency);
 
     _active = true;
-    _endTime = millis() + _melody[0].duration;
+    _endTime = millis() + _melody[0].durationMs;
 }
 
 void Buzzer::update() {
@@ -61,12 +61,12 @@ void Buzzer::update() {
             return;
         }
 
-        _frequency = _melody[_melodyIndex].frequency;
+        _frequency = _melody[_melodyIndex].frequencyHz;
 
         if (_frequency == 0) ledcWriteTone(_channel, 0); // pause
         else ledcWriteTone(_channel, _frequency);
 
-        _endTime = now + _melody[_melodyIndex].duration;
+        _endTime = now + _melody[_melodyIndex].durationMs;
     } else if (_melody.empty() && _endTime != 0 && now >= _endTime) {
         off();
     }

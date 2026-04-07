@@ -7,17 +7,17 @@ struct MotorSteps {
 };
 
 struct XYPos {
-    double x_mm;
-    double y_mm;
+    double xMm;
+    double yMm;
 };
 
 class CoreXYKinematics {
 public:
-    explicit CoreXYKinematics(double steps_per_mm_);
+    explicit CoreXYKinematics(double newStepsPerMm);
 
-    MotorSteps mm_to_steps(const XYPos& pos) const;
-    XYPos steps_to_mm(const MotorSteps& steps) const;
+    MotorSteps mmToSteps(const XYPos& pos) const;
+    XYPos stepsToMm(const MotorSteps& steps) const;
 
 private:
-    double steps_per_mm;
+    double _stepsPerMm;
 };

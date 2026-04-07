@@ -19,7 +19,7 @@ void GCodeExecuter::executeLine(const std::string& line) {
     while (i < line.size() && isalpha(line[i])) {
         cmd += toupper(line[i++]);
     }
-    // Check if a number immediately follows (G1, M3, etc.)
+    // Check if a number immediately follows (e.g., G5.1)
     std::string cmdNum;
     while (i < line.size() && (isdigit(line[i]) || line[i]=='.')) {
         cmdNum += line[i++];
@@ -57,8 +57,8 @@ void GCodeExecuter::handleG0G1(const std::map<char,double>& params) {
     XYPos target = _motion.getCurrentPos();
     double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
 
-    if (params.count('X')) target.x_mm = _absolute ? params.at('X') : target.x_mm + params.at('X');
-    if (params.count('Y')) target.y_mm = _absolute ? params.at('Y') : target.y_mm + params.at('Y');
+    if (params.count('X')) target.xMm = _absolute ? params.at('X') : target.xMm + params.at('X');
+    if (params.count('Y')) target.yMm = _absolute ? params.at('Y') : target.yMm + params.at('Y');
     if (params.count('F')) feed = params.at('F');
 
     _motion.LineToXY(target, feed);
@@ -71,10 +71,10 @@ void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwi
         return;
     }
 
-    XYPos center = {current.x_mm + params.at('I'), current.y_mm + params.at('J')};
+    XYPos center = {current.xMm + params.at('I'), current.yMm + params.at('J')};
     XYPos target;
-    target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
-    target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
+    target.xMm = _absolute ? params.at('X') : current.xMm + params.at('X');
+    target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
     double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 
@@ -89,10 +89,10 @@ void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
     }
 
     XYPos target, control;
-    target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
-    target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
-    control.x_mm = params.at('C');       // Control X
-    control.y_mm = params.at('D');       // Control Y (use 'D' as second letter for clarity)
+    target.xMm = _absolute ? params.at('X') : current.xMm + params.at('X');
+    target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
+    control.xMm = params.at('C');       // Control X
+    control.yMm = params.at('D');       // Control Y (use 'D' as second letter for clarity)
     double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 
@@ -107,10 +107,10 @@ void GCodeExecuter::handleCUBIC(const std::map<char,double>& params) {
     }
 
     XYPos target, c1, c2;
-    target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
-    target.y_mm = _absolute ? params.at('Y') : current.y_mm + params.at('Y');
-    c1.x_mm = params.at('A'); c1.y_mm = params.at('B');
-    c2.x_mm = params.at('C'); c2.y_mm = params.at('D');
+    target.xMm = _absolute ? params.at('X') : current.xMm + params.at('X');
+    target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
+    c1.xMm = params.at('A'); c1.yMm = params.at('B');
+    c2.xMm = params.at('C'); c2.yMm = params.at('D');
     double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 

@@ -1,5 +1,5 @@
 #include "JobController.hpp"
-#include "config/directorys_config.hpp"
+#include "config/directories_config.hpp"
 
 #include <FS.h>
 #include <cstring>
@@ -82,8 +82,9 @@ void JobController::abort()
 uint16_t JobController::getCurrentLine() const
 {
     if (!_active) return 0;
-    if (_gcodeQueue.messagesWaiting() > _currentJob.currentBufferLine) return 0;
-    return _currentJob.currentBufferLine - _gcodeQueue.messagesWaiting();
+    int linesInQueue = _gcodeQueue.messagesWaiting();
+    if (linesInQueue > _currentJob.currentBufferLine) return 0;
+    return _currentJob.currentBufferLine - linesInQueue;
 }
 
 void JobController::update()
@@ -92,9 +93,10 @@ void JobController::update()
     
     // Check for completion
     if (!_currentJob.file.available() && _gcodeQueue.messagesWaiting() == 0) {
+        std::string filename = _currentJob.filename; // Capture filename before ending job
         endCurrentJob();
         _buzzer.playMelody(_jobCompleteMelody);
-        notifyObservers({.type = JobEvent::COMPLETED, .filename = _currentJob.filename});
+        notifyObservers({.type = JobEvent::COMPLETED, .filename = filename});
         return;
     }
     
@@ -122,11 +124,7 @@ void JobController::update()
         strncpy(msg.line, lineStr.c_str(), MAX_GCODE_LINE - 1);
         msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
 
-        if (_gcodeQueue.trySend(msg, 0))
-        {
-            // queue full, stop sending
-            break;
-        }
+        if (!_gcodeQueue.trySend(msg, 0)) break; // queue full
     }
 }
 

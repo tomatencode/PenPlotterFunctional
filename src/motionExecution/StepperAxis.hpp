@@ -15,7 +15,7 @@ class StepperAxis {
 
         uint16_t microsteps() const;
     private:
-        bool flippedDirection;
+        bool _flippedDirection;
         MotorDriver& _driver;
         Stepper& _stepper;
         double _positionSteps;

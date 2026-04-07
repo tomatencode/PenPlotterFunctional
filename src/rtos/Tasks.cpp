@@ -63,13 +63,13 @@ void startRtosTasks()
     static RtosQueue<GcodeMessage> gcodeQueue(gcodeQueueSize);
     static MotionState motionState;
     static RuntimeSettings runtimeSettings;
-    static SettingPersistence settingPercistence(runtimeSettings);
+    static SettingPersistence settingPersistence(runtimeSettings);
     
     // Load settings from NVS at startup
-    settingPercistence.init();
+    settingPersistence.init();
 
-    static SystemController appManager(motionState, gcodeQueue, settingPercistence, runtimeSettings);
-    static PlottingController plottingController(motionState, gcodeQueue, settingPercistence, runtimeSettings);
+    static SystemController appManager(motionState, gcodeQueue, settingPersistence, runtimeSettings);
+    static PlottingController plottingController(motionState, gcodeQueue, settingPersistence, runtimeSettings);
 
     // Plotting task (CORE 1)
     xTaskCreatePinnedToCore(

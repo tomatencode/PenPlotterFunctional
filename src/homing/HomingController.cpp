@@ -121,12 +121,11 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
 
     // Back off a few steps
     double microsteps_per_s = _runtimeSettings.homingBackOffSpeed_stp_per_s() * _axisA.microsteps();
-    uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
-    
     if (microsteps_per_s <= 0.0f) {
         Serial.println("ERROR: Invalid homing back-off speed");
         return;
     }
+    uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
 
     for (uint16_t i = 0; i < backOffSteps * _axisA.microsteps(); i++) {
         if (checkPauseAbort()) return;

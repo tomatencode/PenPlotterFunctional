@@ -1,5 +1,5 @@
 #include "../WebInterface.hpp"
-#include "config/directorys_config.hpp"
+#include "config/directories_config.hpp"
 
 void WebInterface::handleStartJob()
 {

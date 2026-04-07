@@ -14,6 +14,4 @@ public:
     virtual void setSpeed(float stps_per_s) = 0;
 
     virtual ~MotorDriver() = default;
-private:
-    uint16_t _microsteps;
 };

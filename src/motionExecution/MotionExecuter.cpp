@@ -28,12 +28,12 @@ void MotionExecuter::arcToXY(
     XYPos currentPos = _bezierExecuter.getCurrentPos();
 
     // Calculate the radius and angles
-    double dx = currentPos.x_mm - centerPos.x_mm;
-    double dy = currentPos.y_mm - centerPos.y_mm;
+    double dx = currentPos.xMm - centerPos.xMm;
+    double dy = currentPos.yMm - centerPos.yMm;
     double radius = std::sqrt(dx * dx + dy * dy);
 
-    double startAngle = atan2(currentPos.y_mm - centerPos.y_mm, currentPos.x_mm - centerPos.x_mm);
-    double endAngle = atan2(targetPos.y_mm - centerPos.y_mm, targetPos.x_mm - centerPos.x_mm);
+    double startAngle = atan2(currentPos.yMm - centerPos.yMm, currentPos.xMm - centerPos.xMm);
+    double endAngle = atan2(targetPos.yMm - centerPos.yMm, targetPos.xMm - centerPos.xMm);
 
     // Calculate the total angle to move through
     double totalAngle;
@@ -57,8 +57,8 @@ void MotionExecuter::arcToXY(
         // Calculate the current angle along the arc
         double t = static_cast<double>(i) / (linesegments); // Normalized progress along the arc
         double angle = startAngle + (clockwise ? -1 : 1) * t * totalAngle;
-        double x = centerPos.x_mm + radius * cos(angle);
-        double y = centerPos.y_mm + radius * sin(angle);
+        double x = centerPos.xMm + radius * cos(angle);
+        double y = centerPos.yMm + radius * sin(angle);
         LineToXY({x, y}, mm_per_s); // Move to the calculated position
 
         // Check for abort
@@ -79,8 +79,8 @@ void MotionExecuter::quadraticBezierToXY(
     auto bezier = [&](double t) -> XYPos {
         double u = 1.0 - t;
         return {
-            u*u*startPos.x_mm + 2*u*t*controlPoint.x_mm + t*t*targetPos.x_mm,
-            u*u*startPos.y_mm + 2*u*t*controlPoint.y_mm + t*t*targetPos.y_mm
+            u*u*startPos.xMm + 2*u*t*controlPoint.xMm + t*t*targetPos.xMm,
+            u*u*startPos.yMm + 2*u*t*controlPoint.yMm + t*t*targetPos.yMm
         };
     };
 
@@ -97,8 +97,8 @@ void MotionExecuter::quadraticBezierToXY(
 
         // Fully adaptive: increase t1 until segment length >= maxSegmentLength
         while (t1 < 1.0) {
-            double dx = p1.x_mm - lastPos.x_mm;
-            double dy = p1.y_mm - lastPos.y_mm;
+            double dx = p1.xMm - lastPos.xMm;
+            double dy = p1.yMm - lastPos.yMm;
             double dist2 = dx*dx + dy*dy;
             if (dist2 >= maxSegmentLength*maxSegmentLength) break;
 
@@ -121,8 +121,8 @@ void MotionExecuter::quadraticBezierToXY(
     }
 
     // Only move to exact target if not already there
-    double dx = targetPos.x_mm - lastPos.x_mm;
-    double dy = targetPos.y_mm - lastPos.y_mm;
+    double dx = targetPos.xMm - lastPos.xMm;
+    double dy = targetPos.yMm - lastPos.yMm;
     if (dx*dx + dy*dy > 1e-12) LineToXY(targetPos, mm_per_s);
 }
 
@@ -143,15 +143,15 @@ void MotionExecuter::cubicBezierToXY(
         double ttt = tt * t;
 
         XYPos p;
-        p.x_mm = uuu * startPos.x_mm
-                 + 3 * uu * t * controlPoint1.x_mm
-                 + 3 * u * tt * controlPoint2.x_mm
-                 + ttt * targetPos.x_mm;
+        p.xMm = uuu * startPos.xMm
+                 + 3 * uu * t * controlPoint1.xMm
+                 + 3 * u * tt * controlPoint2.xMm
+                 + ttt * targetPos.xMm;
 
-        p.y_mm = uuu * startPos.y_mm
-                 + 3 * uu * t * controlPoint1.y_mm
-                 + 3 * u * tt * controlPoint2.y_mm
-                 + ttt * targetPos.y_mm;
+        p.yMm = uuu * startPos.yMm
+                 + 3 * uu * t * controlPoint1.yMm
+                 + 3 * u * tt * controlPoint2.yMm
+                 + ttt * targetPos.yMm;
 
         return p;
     };
@@ -172,8 +172,8 @@ void MotionExecuter::cubicBezierToXY(
 
         // Increase t1 until distance >= maxSegmentLength or t1 reaches 1.0
         while (t1 < 1.0) {
-            double dx = p1.x_mm - lastPos.x_mm;
-            double dy = p1.y_mm - lastPos.y_mm;
+            double dx = p1.xMm - lastPos.xMm;
+            double dy = p1.yMm - lastPos.yMm;
             double dist = std::sqrt(dx*dx + dy*dy);
             if (dist >= maxSegmentLength) break;
 

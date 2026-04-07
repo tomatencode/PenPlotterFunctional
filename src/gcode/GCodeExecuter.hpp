@@ -16,12 +16,12 @@ public:
 
     void executeLine(const std::string& line);
 private:
+    Pen& _pen;
     MotionExecuter& _motion;
     HomingController& _homingController;
     RuntimeSettings& _runtimeSettings;
-    bool _absolute;
-    Pen& _pen;
     MotionState& _motionState;
+    bool _absolute;
 
     // Helpers
     void handleG0G1(const std::map<char,double>& params);

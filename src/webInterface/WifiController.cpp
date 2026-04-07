@@ -70,8 +70,7 @@ void WifiController::onRelevantSettingsChanged() {
 
     WiFi.disconnect(true);  // Disconnect and turn off WiFi
 
-    // Small delay to ensure WiFi is fully shut down
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-
-    configureWifi();
+    // Reset connection attempt tracking so it will try to connect immediately with new settings
+    _lastConnectionAttemptMs = millis() - _reconnectIntervalMs + _configureTimeoutMs;
+    _currentConnectionAttempts = 0;
 }

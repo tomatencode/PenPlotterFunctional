@@ -6,8 +6,8 @@
 class Buzzer {
 public:
     struct Note {
-        uint16_t frequency; // Hz, 0 = pause
-        uint16_t duration;  // ms
+        uint16_t frequencyHz; // 0 = pause
+        uint16_t durationMs;
     };
 
     using Melody = std::vector<Note>;

@@ -1,6 +1,6 @@
 #include "PlottingController.hpp"
 
-#include "config/pins.hpp"
+#include "config/pins_config.hpp"
 #include "config/hardware_config.hpp"
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"

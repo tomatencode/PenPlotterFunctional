@@ -20,7 +20,7 @@ class SystemController
 {
 public:
     SystemController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue,
-                       SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings);
+                       SettingPersistence& settingPersistence, RuntimeSettings& runtimeSettings);
     
     void init();
     void update();

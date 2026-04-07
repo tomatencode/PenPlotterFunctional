@@ -222,24 +222,24 @@ void SettingPersistence::loadSettings() {
     prefs.begin("settings", true);  // true = read-only mode
 
     // Load each setting with a default fallback
-    setSSID(prefs.getString("ssid", SSID).c_str());
-    setPassword(prefs.getString("password", PASSWORD).c_str());
-    setMdnsName(prefs.getString("mdnsName", MDNS_NAME).c_str());
-    setDriverCurrent_mA(prefs.getFloat("driverCurrent", DRIVER_CURRENT_MA));
-    setMicrosteps(prefs.getFloat("microsteps", MICROSTEPS));
-    setDrawFeedRate_mm_per_s(prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S));
-    setTravelFeedRate_mm_per_s(prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S));
-    setHomingSpeed_stp_per_s(prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S));
-    setHomingBackOffSpeed_stp_per_s(prefs.getFloat("homingBOspd", HOMING_BACK_OFF_SPEED_STP_PER_S));
-    setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
-    setBackOffStepsX(prefs.getUShort("boStepsX", BACK_OFF_STEPS_X));
-    setBackOffStepsY(prefs.getUShort("boStepsY", BACK_OFF_STEPS_Y));
-    setHomingTimeout_us(prefs.getUInt("homingTimeout", HOMING_TIMEOUT_US));
-    setSGCheckInterval_ms(prefs.getUShort("SGCheckInt", SG_CHECK_INTERVAL_MS));
-    setSGStartTimeout_ms(prefs.getUShort("SGStartTO", SG_START_TIMEOUT_MS));
-    setSGHistorySize(prefs.getUChar("SGHistSize", SG_HISTORY_SIZE));
-    setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
-    setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
+    _runtimeSettings.setSSID(prefs.getString("ssid", SSID).c_str());
+    _runtimeSettings.setPassword(prefs.getString("password", PASSWORD).c_str());
+    _runtimeSettings.setMdnsName(prefs.getString("mdnsName", MDNS_NAME).c_str());
+    _runtimeSettings.setDriverCurrent_mA(prefs.getFloat("driverCurrent", DRIVER_CURRENT_MA));
+    _runtimeSettings.setMicrosteps(prefs.getFloat("microsteps", MICROSTEPS));
+    _runtimeSettings.setDrawFeedRate_mm_per_s(prefs.getFloat("drawFeed", FEED_RATE_DRAW_MM_PER_S));
+    _runtimeSettings.setTravelFeedRate_mm_per_s(prefs.getFloat("travelFeed", FEED_RATE_TRAVEL_MM_PER_S));
+    _runtimeSettings.setHomingSpeed_stp_per_s(prefs.getFloat("homingSpeed", HOMING_SPEED_STP_PER_S));
+    _runtimeSettings.setHomingBackOffSpeed_stp_per_s(prefs.getFloat("homingBOspd", HOMING_BACK_OFF_SPEED_STP_PER_S));
+    _runtimeSettings.setStallguardThreshold(prefs.getFloat("SGThreshold", STALLGUARD_THRESHOLD));
+    _runtimeSettings.setBackOffStepsX(prefs.getUShort("boStepsX", BACK_OFF_STEPS_X));
+    _runtimeSettings.setBackOffStepsY(prefs.getUShort("boStepsY", BACK_OFF_STEPS_Y));
+    _runtimeSettings.setHomingTimeout_us(prefs.getUInt("homingTimeout", HOMING_TIMEOUT_US));
+    _runtimeSettings.setSGCheckInterval_ms(prefs.getUShort("SGCheckInt", SG_CHECK_INTERVAL_MS));
+    _runtimeSettings.setSGStartTimeout_ms(prefs.getUShort("SGStartTO", SG_START_TIMEOUT_MS));
+    _runtimeSettings.setSGHistorySize(prefs.getUChar("SGHistSize", SG_HISTORY_SIZE));
+    _runtimeSettings.setPenUpAngle_deg(prefs.getFloat("upAngle", PEN_UP_DEG));
+    _runtimeSettings.setPenDownAngle_deg(prefs.getFloat("downAngle", PEN_DOWN_DEG));
     
     prefs.end();
 }
