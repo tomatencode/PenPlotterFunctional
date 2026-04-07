@@ -70,6 +70,44 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "SG History",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.sgHistorySize()),
+                        .next = [](int current) { return std::min(current + 1, 20); },
+                        .prev = [](int current) { return std::max(current - 1, 1); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setSGHistorySize(static_cast<uint8_t>(newValue));
+                        },
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "SG Interval",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.sgCheckInterval_ms()),
+                        .next = [](int current) { return std::min(current + 10, 500); },
+                        .prev = [](int current) { return std::max(current - 10, 10); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setSGCheckInterval_ms(static_cast<uint16_t>(newValue));
+                        },
+                        .toString = [](int value) { return std::to_string(value) + " ms"; }
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
+                    .labelText = "SG Start",
+                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
+                        .initialValue = static_cast<int>(runtimeSettings.sgStartTimeout_ms()),
+                        .next = [](int current) { return std::min(current + 10, 1000); },
+                        .prev = [](int current) { return std::max(current - 10, 10); },
+                        .onChange = [&settingsPersistence](const int& newValue) {
+                            settingsPersistence.setSGStartTimeout_ms(static_cast<uint16_t>(newValue));
+                        },
+                        .toString = [](int value) { return std::to_string(value) + " ms"; }
+                    }
+                }),
+
+                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "BO speed",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.homingBackOffSpeed_stp_per_s()),
@@ -116,44 +154,6 @@ public:
                             settingsPersistence.setHomingTimeout_us(static_cast<uint32_t>(newValue) * 1000000UL);
                         },
                         .toString = [](int value) { return std::to_string(value) + " s"; }
-                    }
-                }),
-
-                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "SG Interval",
-                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(runtimeSettings.sgCheckInterval_ms()),
-                        .next = [](int current) { return std::min(current + 10, 500); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&settingsPersistence](const int& newValue) {
-                            settingsPersistence.setSGCheckInterval_ms(static_cast<uint16_t>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " ms"; }
-                    }
-                }),
-
-                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "SG Start",
-                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(runtimeSettings.sgStartTimeout_ms()),
-                        .next = [](int current) { return std::min(current + 10, 1000); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&settingsPersistence](const int& newValue) {
-                            settingsPersistence.setSGStartTimeout_ms(static_cast<uint16_t>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " ms"; }
-                    }
-                }),
-
-                std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "SG History",
-                    .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(runtimeSettings.sgHistorySize()),
-                        .next = [](int current) { return std::min(current + 1, 20); },
-                        .prev = [](int current) { return std::max(current - 1, 1); },
-                        .onChange = [&settingsPersistence](const int& newValue) {
-                            settingsPersistence.setSGHistorySize(static_cast<uint8_t>(newValue));
-                        },
                     }
                 })
             )
