@@ -22,27 +22,6 @@ bool WebInterface::validateFileName(const std::string& filename)
     return true;
 }
 
-bool WebInterface::isValidGcodeFile(const std::string& filename)
-{
-    if (filename.length() < 7) // minimum: "x.gcode"
-        return false;
-
-    std::string ext = filename.substr(filename.length() - 6);
-    for (char& c : ext) c = tolower(c);
-
-    return ext == ".gcode";
-}
-
-std::string WebInterface::getPlottingFilePath(const std::string& filename)
-{
-    return PLOTTING_DIRECTORY + filename;
-}
-
-std::string WebInterface::getTempFilePath(const std::string& filename)
-{
-    return TEMP_DIRECTORY + filename;
-}
-
 void WebInterface::resetUploadState()
 {
     _currentUploadFile = File();
@@ -56,25 +35,26 @@ void WebInterface::resetUploadState()
 void WebInterface::handleUpload()
 {
     HTTPUpload& upload = _server.upload();
+    std::string filename = upload.filename.c_str();
 
     if (upload.status == UPLOAD_FILE_START)
     {
-        if (!validateFileName(upload.filename.c_str()))
+        if (!validateFileName(filename.c_str()))
         {
-            Serial.printf("WebInterface: Upload rejected - invalid filename: %s\n", upload.filename.c_str());
+            Serial.printf("WebInterface: Upload rejected - invalid filename: %s\n", filename.c_str());
             _server.send(400, "text/plain", "Invalid filename");
             return;
         }
 
-        if (!isValidGcodeFile(upload.filename.c_str()))
+        if (!filename.ends_with(".gcode"))
         {
-            Serial.printf("WebInterface: Upload rejected - invalid file type: %s\n", upload.filename.c_str());
+            Serial.printf("WebInterface: Upload rejected - invalid file type: %s\n", filename.c_str());
             _server.send(400, "text/plain", "Only .gcode files are supported");
             return;
         }
 
-        _currentUploadPath = getPlottingFilePath(upload.filename.c_str());
-        _currentTempPath   = getTempFilePath(upload.filename.c_str());
+        _currentUploadPath = PLOTTING_DIRECTORY + filename;
+        _currentTempPath   = TEMP_DIRECTORY + filename.substr(0, filename.length() - 6) + ".tmp"; // e.g., "tmp/filename.tmp"
         _uploadedBytes     = 0;
 
         if (_fileManager.fileExists(_currentUploadPath))
@@ -91,7 +71,7 @@ void WebInterface::handleUpload()
             return;
         }
 
-        Serial.printf("WebInterface: Upload start - %s (%u bytes)\n", upload.filename.c_str(), upload.totalSize);
+        Serial.printf("WebInterface: Upload start - %s (%u bytes)\n", filename.c_str(), upload.totalSize);
     }
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
@@ -148,10 +128,10 @@ void WebInterface::handleUpload()
         }
 
         Serial.printf("WebInterface: Upload complete - %s (%u bytes)\n",
-                      upload.filename.c_str(), _uploadedBytes);
+                      filename.c_str(), _uploadedBytes);
 
         std::string response = "{\"status\":\"success\",\"file\":\""
-                             + std::string(upload.filename.c_str())
+                             + std::string(filename.c_str())
                              + "\",\"size\":" + std::to_string(_uploadedBytes) + "}";
         _server.send(200, "application/json", response.c_str());
 

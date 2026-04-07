@@ -57,9 +57,6 @@ private:
 
     // Upload helpers
     bool validateFileName(const std::string& filename);
-    bool isValidGcodeFile(const std::string& filename);
-    std::string getPlottingFilePath(const std::string& filename);
-    std::string getTempFilePath(const std::string& filename);
     void resetUploadState();
 
     // HTTP handlers
