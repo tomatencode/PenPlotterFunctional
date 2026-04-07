@@ -6,8 +6,6 @@
 
 #include "ui/framework/screen/Screen.hpp"
 
-#include "rtos/MotionState.hpp"
-#include "storage/FileManager.hpp"
 #include "jobController/JobController.hpp"
 
 // Include related screens to enable navigation
@@ -20,6 +18,7 @@
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/leaves/Switch.hpp"
 #include "ui/components/PressHoldButton.hpp"
+#include "ui/screens/ScreensContext.hpp"
 
 #include "config/job_config.hpp"
 
@@ -46,16 +45,11 @@ namespace {
 class FileDetailsScreen : public Screen
 {
 public:
-    FileDetailsScreen(const std::string& filename,
-                      JobController& jobController,
-                      MotionState& motionState,
-                      FileManager& fileManager,
-                      std::function<bool()> wifiStatusProvider
-    )
+    FileDetailsScreen(const std::string& filename, const ScreensContext& ctx)
     : Screen(
         std::make_unique<widgets::Switch<bool>>(
             widgets::SwitchProps{
-                .selector = [filename, &fileManager]() { return fileManager.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
+                .selector = [filename, &fm = ctx.fileManager]() { return fm.fileExists(PLOTTING_DIRECTORY + "/" + filename); },
                 .evaluationMode = widgets::SwitchEvaluationMode::Lazy
             },
             std::make_unique<widgets::Switch<bool>::Branch>(
@@ -65,7 +59,7 @@ public:
 
                     std::make_unique<components::HeaderLine>(components::HeaderLineProps{
                         .textProvider = filename.substr(0, filename.length() - 6),
-                        .wifiStatusProvider = wifiStatusProvider,
+                        .wifiStatusProvider = ctx.wifiStatusProvider,
                         .onBackPress = [this]() {
                             if (router()) router()->popScreen();
                         }
@@ -89,16 +83,16 @@ public:
                             
                             std::make_unique<widgets::Button>(
                                 widgets::ButtonProps{
-                                    .onPress = [filename, &jobController]() {
-                                        jobController.start(filename);
+                                    .onPress = [filename, &jc = ctx.jobController]() {
+                                        jc.start(filename);
                                     }
                                 },
                                 std::make_unique<widgets::Label>("Plot")
                             ),
                             std::make_unique<components::PressHoldButton>(
                                 components::PressHoldButtonProps{
-                                    .onHoldComplete = [this, filename, &fileManager]() {
-                                        fileManager.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
+                                    .onHoldComplete = [this, filename, &fm = ctx.fileManager]() {
+                                        fm.deleteFile(PLOTTING_DIRECTORY + "/" + filename);
                                         if (router()) {
                                             router()->popScreen();
                                         }
@@ -115,8 +109,8 @@ public:
                                 .horizontalAlign = widgets::HorizontalAlignment::Center,
                             },
 
-                            std::make_unique<widgets::Label>([filename, &fileManager]() {
-                                size_t size = fileManager.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
+                            std::make_unique<widgets::Label>([filename, &fm = ctx.fileManager]() {
+                                size_t size = fm.getFileSize(PLOTTING_DIRECTORY + "/" + filename);
                                 return formatFileSize(size);
                             }),
 
@@ -136,7 +130,7 @@ public:
 
                     std::make_unique<components::HeaderLine>(components::HeaderLineProps{
                         .textProvider = filename.substr(0, filename.length() - 6),
-                        .wifiStatusProvider = wifiStatusProvider,
+                        .wifiStatusProvider = ctx.wifiStatusProvider,
                         .onBackPress = [this]() {
                             if (router()) router()->popScreen();
                         }

@@ -1,16 +1,11 @@
 #pragma once
 
-#include <functional>
-#include <map>
-
 #include "ui/framework/screen/Screen.hpp"
 
-#include "rtos/MotionState.hpp"
 #include "jobController/JobController.hpp"
 #include "jobController/JobObserver.hpp"
 
 // Include related screens to enable navigation
-#include "FilesScreen.hpp"
 #include "ui/framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -19,6 +14,7 @@
 #include "ui/framework/widgets/leaves/Label.hpp"
 #include "ui/framework/widgets/leaves/ProgressBar.hpp"
 #include "ui/framework/widgets/leaves/Conditional.hpp"
+#include "ui/screens/ScreensContext.hpp"
 
 namespace ui {
 namespace screens {
@@ -26,16 +22,13 @@ namespace screens {
 class PlottingScreen : public Screen, public JobObserver
 {
 public:
-    PlottingScreen(JobController& jobController,
-                   MotionState& motionState,
-                   std::function<bool()> wifiStatusProvider
-                  )
+    PlottingScreen(const ScreensContext& ctx)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical, .horizontalAlign = widgets::HorizontalAlignment::Center},
             std::make_unique<components::HeaderLine>(components::HeaderLineProps{
-                .textProvider = [&jobController]() {
-                    std::string filename = jobController.getCurrentFile();
+                .textProvider = [&jc = ctx.jobController]() {
+                    std::string filename = jc.getCurrentFile();
                     if (filename.ends_with(".gcode")) {
                         filename = filename.substr(0, filename.length() - 6);
                     }
@@ -44,27 +37,27 @@ public:
                     }
                     return filename;
                 },
-                .wifiStatusProvider = wifiStatusProvider,
+                .wifiStatusProvider = ctx.wifiStatusProvider,
                 .onBackPress = [this]() {
                     if (router()) router()->popScreen();
                 }
             }),
 
             std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
-                .getProgress = [&jobController, this]() {
-                    if (jobController.getTotalLines() == 0) return 0.0;
-                    return static_cast<double>(jobController.getCurrentLine()) / static_cast<double>(jobController.getTotalLines());
+                .getProgress = [&jc = ctx.jobController]() {
+                    if (jc.getTotalLines() == 0) return 0.0;
+                    return static_cast<double>(jc.getCurrentLine()) / static_cast<double>(jc.getTotalLines());
                 }
             }),
 
-            std::make_unique<widgets::Label>([&jobController, this]() {
-                return std::to_string(jobController.getCurrentLine()) + "/" + std::to_string(jobController.getTotalLines());
+            std::make_unique<widgets::Label>([&jc = ctx.jobController]() {
+                return std::to_string(jc.getCurrentLine()) + "/" + std::to_string(jc.getTotalLines());
             }),
 
             std::make_unique<widgets::Conditional>(
                 widgets::ConditionalProps{
-                    .condition = [&jobController]() {
-                        return jobController.isActive();
+                    .condition = [&jc = ctx.jobController]() {
+                        return jc.isActive();
                     }
                 },
                 std::make_unique<widgets::LinearLayout>(
@@ -72,31 +65,31 @@ public:
 
                     std::make_unique<widgets::Button>(
                         widgets::ButtonProps{
-                            .onPress = [&jobController, &motionState]() {
-                                if (motionState.getState() == MotionStateType::PAUSED) {
-                                    jobController.resume();
+                            .onPress = [&jc = ctx.jobController, &ms = ctx.motionState]() {
+                                if (ms.getState() == MotionStateType::PAUSED) {
+                                    jc.resume();
                                 } else {
-                                    jobController.pause();
+                                    jc.pause();
                                 }
                             }
                         },
-                        std::make_unique<widgets::Label>([&jobController, &motionState]() {
-                            return motionState.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
+                        std::make_unique<widgets::Label>([&jc = ctx.jobController, &ms = ctx.motionState]() {
+                            return ms.getState() == MotionStateType::PAUSED ? "Resume" : "Pause";
                         })
                     ),
 
                     std::make_unique<widgets::Button>(
                         widgets::ButtonProps{
-                            .onPress = [&jobController]() { jobController.abort(); }
+                            .onPress = [&jc = ctx.jobController]() { jc.abort(); }
                         },
                         std::make_unique<widgets::Label>("Abort")
                     )
                 )
             )
         )
-    , 1)/*start with pause button focused*/, _jobController(jobController)
+    , 1)/*start with pause button focused*/, _jobController(ctx.jobController)
     {
-        jobController.registerObserver(this);
+        ctx.jobController.registerObserver(this);
     }
 
     ~PlottingScreen() {

@@ -4,10 +4,6 @@
 
 #include "ui/framework/screen/Screen.hpp"
 
-#include "rtos/MotionState.hpp"
-#include "jobController/JobController.hpp"
-#include "storage/FileManager.hpp"
-
 #include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
 
@@ -27,6 +23,7 @@
 #include "ui/framework/widgets/layouts/LinearLayout.hpp"
 
 #include "ui/styles/ButtonStyles.hpp"
+#include "ui/screens/ScreensContext.hpp"
 
 namespace ui {
 namespace screens {
@@ -34,14 +31,14 @@ namespace screens {
 class SettingsScreen : public Screen
 {
 public:
-    SettingsScreen(std::function<bool()> wifiStatusProvider, SettingPersistence& settingPersistence, RuntimeSettings& runtimeSettings)
+    SettingsScreen(const ScreensContext& ctx)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},
 
             std::make_unique<components::HeaderLine>(components::HeaderLineProps{
                 .textProvider = "Settings",
-                .wifiStatusProvider = wifiStatusProvider,
+                .wifiStatusProvider = ctx.wifiStatusProvider,
                 .onBackPress = [this]() {
                     if (router()) router()->popScreen();
                 }
@@ -53,9 +50,9 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, wifiStatusProvider, &settingPersistence, &runtimeSettings]() {
+                        .onPress = [this, ctx]() {
                             if (router()) {
-                                auto wifiSettingsScreen = std::make_unique<WifiSettingsScreen>(wifiStatusProvider, settingPersistence, runtimeSettings);
+                                auto wifiSettingsScreen = std::make_unique<WifiSettingsScreen>(ctx);
                                 router()->pushScreen(std::move(wifiSettingsScreen));
                             }
                         }
@@ -66,9 +63,9 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, wifiStatusProvider, &settingPersistence, &runtimeSettings]() {
+                        .onPress = [this, ctx]() {
                             if (router()) {
-                                auto plottingSettingsScreen = std::make_unique<PlottingSettingsScreen>(wifiStatusProvider, settingPersistence, runtimeSettings);
+                                auto plottingSettingsScreen = std::make_unique<PlottingSettingsScreen>(ctx);
                                 router()->pushScreen(std::move(plottingSettingsScreen));
                             }
                         }
@@ -79,9 +76,9 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, wifiStatusProvider, &settingPersistence, &runtimeSettings]() {
+                        .onPress = [this, ctx]() {
                             if (router()) {
-                                auto homingSettingsScreen = std::make_unique<HomingSettingsScreen>(wifiStatusProvider, settingPersistence, runtimeSettings);
+                                auto homingSettingsScreen = std::make_unique<HomingSettingsScreen>(ctx);
                                 router()->pushScreen(std::move(homingSettingsScreen));
                             }
                         }
@@ -92,9 +89,9 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, wifiStatusProvider, &settingPersistence, &runtimeSettings]() {
+                        .onPress = [this, ctx]() {
                             if (router()) {
-                                auto steppersSettingsScreen = std::make_unique<SteppersSettingsScreen>(wifiStatusProvider, settingPersistence, runtimeSettings);
+                                auto steppersSettingsScreen = std::make_unique<SteppersSettingsScreen>(ctx);
                                 router()->pushScreen(std::move(steppersSettingsScreen));
                             }
                         }
@@ -105,9 +102,9 @@ public:
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
                         .style = styles::listButtonStyle,
-                        .onPress = [this, wifiStatusProvider, &settingPersistence, &runtimeSettings]() {
+                        .onPress = [this, ctx]() {
                             if (router()) {
-                                auto penSettingsScreen = std::make_unique<PenSettingsScreen>(wifiStatusProvider, settingPersistence, runtimeSettings);
+                                auto penSettingsScreen = std::make_unique<PenSettingsScreen>(ctx);
                                 router()->pushScreen(std::move(penSettingsScreen));
                             }
                         }
@@ -117,8 +114,8 @@ public:
 
                 std::make_unique<components::PressHoldButton>(
                     components::PressHoldButtonProps{
-                        .onHoldComplete = [&settingPersistence]() {
-                            settingPersistence.clearAllSettings();
+                        .onHoldComplete = [&sp = ctx.settingsPersistence]() {
+                            sp.clearAllSettings();
                         },
                         .holdDurationMs = 3000,
                     },

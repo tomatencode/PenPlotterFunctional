@@ -9,6 +9,7 @@
 #include "ui/InputMapper.hpp"
 #include "ui/framework/router/Router.hpp"
 #include "ui/framework/renderer/Renderer.hpp"
+#include "ui/screens/ScreensContext.hpp"
 #include "rtos/MotionState.hpp"
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"

@@ -19,11 +19,15 @@ SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMess
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
-      _uiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer,
-                        [this]() -> bool {
-                            return _wifiController.isConnected();
-                        },
-                        settingPercistence, runtimeSettings
+      _uiOrchestrator(_jobController, _router, _renderer, _inputMapper, _buzzer,
+                        ui::ScreensContext{
+                            _jobController,
+                            motionState,
+                            _fileManager,
+                            settingPercistence,
+                            runtimeSettings,
+                            [this]() -> bool { return _wifiController.isConnected(); }
+                        }
                     )
 {}
 

@@ -2,9 +2,6 @@
 
 #include "ui/framework/screen/Screen.hpp"
 
-#include "rtos/MotionState.hpp"
-#include "jobController/JobController.hpp"
-
 #include "storage/FileObserver.hpp"
 #include "storage/FileManager.hpp"
 
@@ -22,6 +19,7 @@
 
 #include "config/job_config.hpp"
 #include "ui/styles/ButtonStyles.hpp"
+#include "ui/screens/ScreensContext.hpp"
 
 namespace ui {
 namespace screens {
@@ -29,20 +27,13 @@ namespace screens {
 class FilesScreen : public Screen, public FileObserver
 {
 public:
-    FilesScreen(JobController& jobController,
-                MotionState& motionState,
-                FileManager& fileManager,
-                std::function<bool()> wifiStatusProvider
-            );
+    FilesScreen(const ScreensContext& ctx);
     ~FilesScreen();
 
     void reload() override;
 
 private:
-    JobController& _jobController;
-    MotionState& _motionState;
-    FileManager& _fileManager;
-    std::function<bool()> _wifiStatusProvider;
+    ScreensContext _ctx;
     widgets::ScrollableVerticalLayout* _fileListLayout;
 
     void onFileEvent(FileEvent event, const std::string& path) override;

@@ -13,14 +13,7 @@ void UiOrchestrator::init()
     _renderer.init();
 
     // Start on the first screen
-    auto homeScreen = std::make_unique<screens::HomeScreen>(
-        _jobController,
-        _motionState,
-        _fileManager,
-        _wifiStatusProvider,
-        _settingsRepository,
-        _runtimeSettings
-    );
+    auto homeScreen = std::make_unique<screens::HomeScreen>(_screensCtx);
 
     _router.pushScreen(std::move(homeScreen));
 
@@ -53,11 +46,7 @@ void UiOrchestrator::update()
 void UiOrchestrator::onJobEvent(const JobEventType& event)
 {
     if (event.type == JobEvent::STARTED) {
-        auto plottingScreen = std::make_unique<screens::PlottingScreen>(
-            _jobController,
-            _motionState,
-            _wifiStatusProvider
-        );
+        auto plottingScreen = std::make_unique<screens::PlottingScreen>(_screensCtx);
 
         _router.pushScreen(std::move(plottingScreen));
         Serial.println("Navigated to PlottingScreen from observer");
