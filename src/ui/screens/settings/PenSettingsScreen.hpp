@@ -53,7 +53,8 @@ public:
                         .onChange = [&settingsPersistence](const int& newValue) {
                             settingsPersistence.setPenUpAngle_deg(static_cast<float>(newValue));
                         },
-                    }
+                        .toString = [](int value) { return GlyphString(std::to_string(value)) + DegSymbol; }
+                    }  
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
@@ -65,6 +66,7 @@ public:
                         .onChange = [&settingsPersistence](const int& newValue) {
                             settingsPersistence.setPenDownAngle_deg(static_cast<float>(newValue));
                         },
+                        .toString = [](int value) { return GlyphString(std::to_string(value)) + DegSymbol; }
                     }
                 })
             )

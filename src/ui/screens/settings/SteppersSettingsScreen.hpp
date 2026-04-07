@@ -45,7 +45,7 @@ public:
                 widgets::ScrollableVerticalLayoutStyle{},
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "Current (mA)",
+                    .labelText = "Current",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.driverCurrent_mA()),
                         .next = [](int current) { return std::min(current + 50, 1500); },
@@ -53,6 +53,7 @@ public:
                         .onChange = [&settingsPersistence](const int& newValue) {
                             settingsPersistence.setDriverCurrent_mA(static_cast<float>(newValue));
                         },
+                        .toString = [](int value) { return std::to_string(value) + " mA"; }
                     }
                 }),
 

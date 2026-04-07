@@ -30,7 +30,7 @@ struct ValueSelectorProps
     std::function<T(T)> next                      = nullptr;
     std::function<T(T)> prev                      = nullptr;
     std::function<void(const T&)> onChange        = nullptr;
-    std::function<std::string(const T&)> toString = nullptr;
+    std::function<GlyphString(const T&)> toString = nullptr;
     ValueSelectorStyle style                      = {};
 };
 
@@ -45,7 +45,7 @@ template <typename T>
 class ValueSelector : public Widget, public ISelectable
 {
 public:
-    static std::string defaultToString(const T& value)
+    static GlyphString defaultToString(const T& value)
     {
         std::ostringstream ss;
         ss << value;
@@ -67,7 +67,7 @@ public:
 
     Size measure() const override
     {
-        std::string text = _toString(_value);
+        GlyphString text = _toString(_value);
 
         auto [leftDecorator, rightDecorator] = getDecorators();
         uint16_t width = text.size() + leftDecorator.size() + rightDecorator.size();
@@ -88,7 +88,7 @@ public:
         int16_t x = canvasBox.x;
         int16_t y = canvasBox.y;
 
-        std::string text = _toString(_value);
+        GlyphString text = _toString(_value);
 
         uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 
@@ -100,9 +100,9 @@ public:
         if (textWidth > 0)
         {
             if (static_cast<int>(text.size()) > textWidth)
-                text.resize(textWidth);
+                text = text.substr(0, textWidth);
 
-            r.drawTextToBuffer(x, y, text.c_str());
+            r.drawGlyphsToBuffer(x, y, text);
             x += static_cast<uint16_t>(text.size());
         }
 
@@ -141,7 +141,7 @@ private:
     std::function<T(T)> _next;
     std::function<T(T)> _prev;
     std::function<void(const T&)> _onChange;
-    std::function<std::string(const T&)> _toString;
+    std::function<GlyphString(const T&)> _toString;
 
     bool _isEditing = false;
     bool _isPressed = false;

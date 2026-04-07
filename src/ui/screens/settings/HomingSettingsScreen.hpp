@@ -58,7 +58,7 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "Stallguard",
+                    .labelText = "SG thr",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.stallguardThreshold()),
                         .next = [](int current) { return std::min(current + 1, 255); },
@@ -107,7 +107,7 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "Timeout (s)",
+                    .labelText = "Timeout",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.homingTimeout_us() / 1000000),
                         .next = [](int current) { return std::min(current + 1, 120); },
@@ -120,7 +120,7 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "SG Interval (ms)",
+                    .labelText = "SG Interval",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.sgCheckInterval_ms()),
                         .next = [](int current) { return std::min(current + 10, 500); },
@@ -133,7 +133,7 @@ public:
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
-                    .labelText = "SG Start (ms)",
+                    .labelText = "SG Start",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
                         .initialValue = static_cast<int>(runtimeSettings.sgStartTimeout_ms()),
                         .next = [](int current) { return std::min(current + 10, 1000); },

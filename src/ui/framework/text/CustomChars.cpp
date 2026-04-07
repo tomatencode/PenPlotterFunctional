@@ -47,10 +47,10 @@ uint8_t TextEditorDelete_BITMAP[8] = {
 	0b00000
 };
 
-uint8_t CustomChar_5_BITMAP[8] = {
-	0b00000,
-	0b00000,
-	0b00000,
+uint8_t DegSymbol_BITMAP[8] = {
+	0b00100,
+	0b01010,
+	0b00100,
 	0b00000,
 	0b00000,
 	0b00000,
@@ -97,7 +97,7 @@ uint8_t* CUSTOM_CHAR_MAP[] = {
     NoWifiSymbol_BITMAP,
     TextEditorEnter_BITMAP,
     TextEditorDelete_BITMAP,
-    CustomChar_5_BITMAP,
+    DegSymbol_BITMAP,
     CustomChar_6_BITMAP,
     CustomChar_7_BITMAP,
     Ellipsis_BITMAP
