@@ -66,7 +66,10 @@ void GCodeExecuter::handleG0G1(const std::map<char,double>& params) {
 
 void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwise) {
     XYPos current = _motion.getCurrentPos();
-    if (!params.count('X') || !params.count('Y') || !params.count('I') || !params.count('J')) return;
+    if (!params.count('X') || !params.count('Y') || !params.count('I') || !params.count('J')) {
+        Serial.println("G2/G3 command missing required parameter");
+        return;
+    }
 
     XYPos center = {current.x_mm + params.at('I'), current.y_mm + params.at('J')};
     XYPos target;
@@ -80,7 +83,10 @@ void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwi
 
 void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
     XYPos current = _motion.getCurrentPos();
-    if (!params.count('X') || !params.count('Y') || !params.count('C') || !params.count('D')) return;
+    if (!params.count('X') || !params.count('Y') || !params.count('C') || !params.count('D')) {
+        Serial.println("G5 command missing required parameter");
+        return;
+    }
 
     XYPos target, control;
     target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
@@ -95,7 +101,10 @@ void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
 
 void GCodeExecuter::handleCUBIC(const std::map<char,double>& params) {
     XYPos current = _motion.getCurrentPos();
-    if (!params.count('X') || !params.count('Y') || !params.count('A') || !params.count('B') || !params.count('C') || !params.count('D')) return;
+    if (!params.count('X') || !params.count('Y') || !params.count('A') || !params.count('B') || !params.count('C') || !params.count('D')) {
+        Serial.println("G5.1 command missing required parameter");
+        return;
+    }
 
     XYPos target, c1, c2;
     target.x_mm = _absolute ? params.at('X') : current.x_mm + params.at('X');
@@ -114,6 +123,9 @@ void GCodeExecuter::handlePenUpDown(const std::string& cmd) {
         _pen.down();
     } else if (cmd == "M5") {
         _pen.up();
+    } else {
+        Serial.print("Unknown pen command: ");
+        Serial.println(cmd.c_str());
     }
 }
 
@@ -122,11 +134,17 @@ void GCodeExecuter::handleG90G91(const std::string& cmd) {
         _absolute = true;
     } else if (cmd == "G91") {
         _absolute = false;
+    } else {
+        Serial.print("Unknown command coordinate mode command: ");
+        Serial.println(cmd.c_str());
     }
 }
 
 void GCodeExecuter::handleHoming(const std::string& cmd) {
     if (cmd == "G28") {
         _homingController.home();
+    } else {
+        Serial.print("Unknown homing command: ");
+        Serial.println(cmd.c_str());
     }
 }
