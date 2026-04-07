@@ -70,7 +70,7 @@ void PlottingController::init()
     pinMode(SERVO_PIN, OUTPUT);
 
     _penServo.attach(SERVO_PIN);
-    _pen.up();
+    _pen.init();
 
     pinMode(EN_PIN, OUTPUT);
     digitalWrite(EN_PIN, LOW);

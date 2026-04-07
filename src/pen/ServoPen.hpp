@@ -14,11 +14,13 @@ public:
     ServoPen(Servo& servo, SettingPersistence& settingPersistence, RuntimeSettings& runtimeSettings);
     ~ServoPen();
 
-    void onRelevantSettingsChanged() override;
+    void init();
 
     void down() override;
     void up() override;
     bool isDown() const override;
+
+    void onRelevantSettingsChanged() override;
 
 private:
     Servo& _servo;

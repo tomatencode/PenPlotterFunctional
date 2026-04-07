@@ -9,8 +9,11 @@ ServoPen::ServoPen(Servo& servo, SettingPersistence& settingPersistence, Runtime
     _penDown(false)
 {
     _settingPersistence.registerObserver(this);
-    up();
 };
+
+void ServoPen::init() {
+    up();
+}
 
 ServoPen::~ServoPen() {
     _settingPersistence.unregisterObserver(this);
