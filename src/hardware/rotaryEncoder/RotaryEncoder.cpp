@@ -1,7 +1,5 @@
 #include "RotaryEncoder.hpp"
 
-RotaryEncoder* RotaryEncoder::instance = nullptr;
-
 static const int8_t transitionTable[16] = {
      0, -1,  1,  0,
      1,  0,  0, -1,
@@ -17,18 +15,21 @@ RotaryEncoder::RotaryEncoder(uint8_t dt, uint8_t clk, uint8_t sw, uint16_t debou
 
 void RotaryEncoder::begin()
 {
-    instance = this;
-
     pinMode(_dt, INPUT_PULLUP);
     pinMode(_clk, INPUT_PULLUP);
     pinMode(_sw, INPUT_PULLUP);
 
     _state = (digitalRead(_clk) << 1) | digitalRead(_dt);
 
-    attachInterrupt(digitalPinToInterrupt(_dt), isrEncoder, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(_clk), isrEncoder, CHANGE);
-
-    attachInterrupt(digitalPinToInterrupt(_sw), isrButton, CHANGE);
+    attachInterruptArg(digitalPinToInterrupt(_dt),
+        [](void* arg) { static_cast<RotaryEncoder*>(arg)->updateEncoder(); },
+        this, CHANGE);
+    attachInterruptArg(digitalPinToInterrupt(_clk),
+        [](void* arg) { static_cast<RotaryEncoder*>(arg)->updateEncoder(); },
+        this, CHANGE);
+    attachInterruptArg(digitalPinToInterrupt(_sw),
+        [](void* arg) { static_cast<RotaryEncoder*>(arg)->handleButton(); },
+        this, CHANGE);
 }
 
 int RotaryEncoder::getPositionDelta()
@@ -137,12 +138,3 @@ void RotaryEncoder::handleButton()
     _lastButtonState = buttonState;
 }
 
-void RotaryEncoder::isrEncoder()
-{
-    instance->updateEncoder();
-}
-
-void RotaryEncoder::isrButton()
-{
-    instance->handleButton();
-}

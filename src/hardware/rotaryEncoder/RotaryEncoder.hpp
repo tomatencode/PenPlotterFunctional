@@ -34,9 +34,4 @@ private:
 
     void updateEncoder();
     void handleButton();
-
-    static void isrEncoder();
-    static void isrButton();
-
-    static RotaryEncoder* instance;
 };
