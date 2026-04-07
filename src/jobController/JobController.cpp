@@ -37,11 +37,15 @@ void JobController::start(const std::string& filename)
     // Close and reopen to reset read position
     _currentJob.file.close();
     _currentJob.file = _fileManager.openFileRead(PLOTTING_DIRECTORY + filename);
+
+    _buzzer.playMelody(_jobStartMelody);
 }
 
 void JobController::pause()
 {
     if (!_active) return; // No active job to pause
+
+    _buzzer.playMelody(_jobPauseMelody);
     
     Serial.println("Pausing job");
     _motionState.setCommand(MotionCommand::PAUSE);
@@ -52,6 +56,8 @@ void JobController::resume()
 {
     if (!_active) return; // No active job to resume
 
+    _buzzer.playMelody(_jobResumeMelody);
+
     Serial.println("Resuming job");
     _motionState.setCommand(MotionCommand::NONE);
     notifyObservers({.type = JobEvent::RESUMED, .filename = _currentJob.filename});
@@ -60,6 +66,8 @@ void JobController::resume()
 void JobController::abort()
 {
     if (!_active) return; // No active job to abort
+
+    _buzzer.playMelody(_jobAbortMelody);
 
     Serial.println("Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
@@ -85,6 +93,7 @@ void JobController::update()
     // Check for completion
     if (!_currentJob.file.available() && _gcodeQueue.messagesWaiting() == 0) {
         endCurrentJob();
+        _buzzer.playMelody(_jobCompleteMelody);
         notifyObservers({.type = JobEvent::COMPLETED, .filename = _currentJob.filename});
         return;
     }

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "hardware/buzzer/Buzzer.hpp"
 #include "storage/FileManager.hpp"
 #include "rtos/MotionState.hpp"
 #include "rtos/RtosQueue.hpp"
@@ -19,8 +20,8 @@ struct PlotJob {
 
 class JobController {
 public:
-    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager)
-        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager)
+    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, Buzzer& buzzer)
+        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _buzzer(buzzer)
     {}
 
     // Job control
@@ -45,14 +46,43 @@ private:
     PlotJob _currentJob;
     bool _active;
 
+    void endCurrentJob();
+
+
     MotionState& _motionState;
     FileManager& _fileManager;
     RtosQueue<GcodeMessage>& _gcodeQueue;
+    Buzzer& _buzzer;
 
     std::vector<JobObserver*> _observers;
 
-    void endCurrentJob();
-
     // Internal notification method
     void notifyObservers(const JobEventType& event);
+
+    // Melodies for different job events
+    std::vector<Buzzer::Note> _jobStartMelody = {
+        {523, 150}, // C5
+        {659, 150}, // E5
+        {784, 150}  // G5
+    };
+
+    std::vector<Buzzer::Note> _jobCompleteMelody = {
+        {784, 150}, // G5
+        {659, 150}, // E5
+        {523, 150}  // C5
+    };
+
+    std::vector<Buzzer::Note> _jobAbortMelody = {
+        {523, 200}, // C5
+        {493, 200}, // B4
+    };
+
+    std::vector<Buzzer::Note> _jobPauseMelody = {
+        {440, 100}, // A4
+    };
+
+    std::vector<Buzzer::Note> _jobResumeMelody = {
+        {523, 100}, // C5
+    };
+
 };
