@@ -17,7 +17,7 @@ public:
     InputState mapInputs() {
         InputState state;
 
-        state.encoderDelta = _encoder.getPositionDelta();
+        state.encoderDelta = -_encoder.getPositionDelta(); // Invert to match intuitive direction
         state.buttonPressed = _encoder.buttonPressed();
         state.buttonReleased = _encoder.buttonReleased();
         state.buttonDown = _encoder.buttonDown();
