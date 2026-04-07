@@ -9,7 +9,7 @@ PlottingController::PlottingController(MotionState& motionState, RtosQueue<Gcode
     : SettingObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
     
     _motionState(motionState),
-    gcodeQueue(gcodeQueue),
+    _gcodeQueue(gcodeQueue),
     _settingPersistence(settingsPersistence),
     _runtimeSettings(runtimeSettings),
     _driverSerial(1),
@@ -88,7 +88,7 @@ void PlottingController::init()
 
 void PlottingController::update()
 {
-    auto msg = gcodeQueue.tryReceive(0);
+    auto msg = _gcodeQueue.tryReceive(0);
 
     if (msg.has_value() && _motionState.getCommand() != MotionCommand::ABORT)
     {

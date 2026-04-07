@@ -67,7 +67,7 @@ private:
     GCodeExecuter _gcodeExecuter;
 
     MotionState& _motionState;
-    RtosQueue<GcodeMessage>& gcodeQueue;
+    RtosQueue<GcodeMessage>& _gcodeQueue;
     RuntimeSettings& _runtimeSettings;
     SettingPersistence& _settingPersistence;
 };
