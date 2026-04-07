@@ -1,6 +1,7 @@
 #include "CustomChars.hpp"
 
 namespace ui {
+namespace customChars {
 
 // Each byte represents a row (5 LSBs used)
 uint8_t WifiSymbol_BITMAP[8] = {
@@ -103,4 +104,5 @@ uint8_t* CUSTOM_CHAR_MAP[] = {
     Ellipsis_BITMAP
 };
 
+} // namespace customChars
 } // namespace ui

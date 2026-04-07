@@ -19,7 +19,7 @@ void Renderer::init()
     // Load all custom chars
     for (int i = 0; i < 8; i++)
     {
-        _display.createChar(i, CUSTOM_CHAR_MAP[i]);
+        _display.createChar(i, customChars::CUSTOM_CHAR_MAP[i]);
     }
 }
 

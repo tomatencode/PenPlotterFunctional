@@ -20,7 +20,7 @@ public:
     WifiIndicator(WifiIndicatorProps props)
     : Container(
         std::make_unique<widgets::Label>([props]() -> const GlyphString {
-            return props.wifiStatusProvider() ? WifiSymbolGlyph : NoWifiSymbolGlyph;
+            return props.wifiStatusProvider() ? customChars::WifiSymbol : customChars::NoWifiSymbol;
         })
     )
 {

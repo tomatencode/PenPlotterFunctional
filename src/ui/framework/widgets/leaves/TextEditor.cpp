@@ -55,12 +55,12 @@ void TextEditor::handleInput(InputState& input) {
         }
         else
         {
-            if (getNextSymbol() == TextEditorEnter)
+            if (getNextSymbol() == customChars::TextEditorEnter)
             {
                 _isEditing = false;
                 if (_onChange) _onChange(_text);
             }
-            else if (getNextSymbol() == TextEditorDelete)
+            else if (getNextSymbol() == customChars::TextEditorDelete)
             {
                 if (!_text.empty())
                     _text.pop_back();
@@ -92,12 +92,12 @@ GlyphString TextEditor::getTextToRender(Box canvasBox, uint16_t decorationWidth)
     {
         if (_isEditing) {
             // If editing, show the end of the text with a leading ellipsis, ensuring the next symbol is visible
-            textToRender = GlyphString(Ellipsis) + text.substr(text.size() - availableTextWidth + 1);
+            textToRender = GlyphString(customChars::Ellipsis) + text.substr(text.size() - availableTextWidth + 1);
         }
         else
         {
             // If text exceeds available width, show the beginning of the text with a trailing ellipsis
-            textToRender = text.substr(0, availableTextWidth - 1) + GlyphString(Ellipsis);
+            textToRender = text.substr(0, availableTextWidth - 1) + GlyphString(customChars::Ellipsis);
         }
     }
     else

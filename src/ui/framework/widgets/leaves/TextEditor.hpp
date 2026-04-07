@@ -85,8 +85,8 @@ private:
     std::vector<char> _charCycle;
 
     std::vector<Glyph> _actionCycle = {
-        TextEditorEnter,
-        TextEditorDelete
+        customChars::TextEditorEnter,
+        customChars::TextEditorDelete
     };
 
     bool _isEditing = false;
