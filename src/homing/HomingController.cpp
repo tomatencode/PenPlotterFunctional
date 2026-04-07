@@ -51,7 +51,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     uint32_t start_time = micros();
 
     // Circular buffer for stallguard history
-    int sgHistory[SG_HISTORY_SIZE] = {0};
+    std::vector<int> sgHistory(sgHistorySize, 0);
     uint8_t sgHistoryIndex = 0;
     bool bufferFilled = false;
 
