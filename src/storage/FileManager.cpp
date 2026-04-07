@@ -4,6 +4,19 @@
 
 FileManager::FileManager() {}
 
+
+bool FileManager::init()
+{
+    if (!SPIFFS.begin(true))
+    {
+        Serial.println("SPIFFS mount failed");
+        return false;
+    }
+
+    Serial.println("SPIFFS mounted");
+    return true;
+}
+
 std::string FileManager::normalizePath(const std::string& path)
 {
     std::string result = path;
@@ -17,18 +30,6 @@ std::string FileManager::normalizePath(const std::string& path)
         result = '/' + result;
 
     return result;
-}
-
-bool FileManager::init()
-{
-    if (!SPIFFS.begin(true))
-    {
-        Serial.println("SPIFFS mount failed");
-        return false;
-    }
-
-    Serial.println("SPIFFS mounted");
-    return true;
 }
 
 std::vector<std::string> FileManager::listFiles(const std::string& directory)
@@ -51,6 +52,18 @@ std::vector<std::string> FileManager::listFiles(const std::string& directory)
 bool FileManager::fileExists(const std::string& path)
 {
     return SPIFFS.exists(normalizePath(path).c_str());
+}
+
+size_t FileManager::getFileSize(const std::string& path)
+{
+    File file = SPIFFS.open(normalizePath(path).c_str());
+    if (file)
+    {
+        size_t size = file.size();
+        file.close();
+        return size;
+    }
+    return 0;
 }
 
 bool FileManager::deleteFile(const std::string& path)
@@ -114,18 +127,6 @@ File FileManager::openFileWrite(const std::string& path)
     }
 
     return file;
-}
-
-size_t FileManager::getFileSize(const std::string& path)
-{
-    File file = SPIFFS.open(normalizePath(path).c_str());
-    if (file)
-    {
-        size_t size = file.size();
-        file.close();
-        return size;
-    }
-    return 0;
 }
 
 void FileManager::registerFileObserver(FileObserver* observer)

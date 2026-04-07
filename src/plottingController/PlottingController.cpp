@@ -12,6 +12,7 @@ PlottingController::PlottingController(MotionState& motionState, RtosQueue<Gcode
     _gcodeQueue(gcodeQueue),
     _settingPersistence(settingsPersistence),
     _runtimeSettings(runtimeSettings),
+    
     _driverSerial(1),
 
     _rawDriverA(&_driverSerial, R_SENSE, 0),

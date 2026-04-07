@@ -38,18 +38,15 @@ public:
 
     void clearAllSettings();  // Clear all NVS data and reload defaults
 
-    // ====== Observer Management ======
+    // Observer Management
     void registerObserver(SettingObserver* observer);
     void unregisterObserver(SettingObserver* observer);
 
 private:
-    // Notify all observers interested in a specific setting
+
+    void loadSettings();
     void notifyObservers(Setting setting) const;
 
     std::vector<SettingObserver*> _observers;
-
-    void loadSettings();
-
-    // Reference to cross-core atomic Setting Storage
     RuntimeSettings& _runtimeSettings;
 };

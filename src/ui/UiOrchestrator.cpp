@@ -14,10 +14,8 @@ void UiOrchestrator::init()
 
     // Start on the first screen
     auto homeScreen = std::make_unique<screens::HomeScreen>(_screensCtx);
-
     _router.pushScreen(std::move(homeScreen));
 
-    // Register as observer to be notified of job events
     _jobController.registerObserver(this);
 
     Serial.println("UI initialized.");
@@ -36,11 +34,8 @@ void UiOrchestrator::update()
     InputState input = _inputMapper.mapInputs();
     _router.handleInput(input);
 
-    // render current screen to buffer
-    _router.render(_renderer);
-
-    // push buffer to display
-    _renderer.renderToDisplay();
+    _router.render(_renderer); // render current screen to buffer
+    _renderer.renderToDisplay(); // push buffer to display
 }
 
 void UiOrchestrator::onJobEvent(const JobEventType& event)

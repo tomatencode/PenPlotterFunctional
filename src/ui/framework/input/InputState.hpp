@@ -4,7 +4,7 @@ namespace ui {
 
 struct InputState
 {   
-    int encoderDelta = 0;   // steps since last frame
+    int encoderDelta = 0;
 
     bool buttonPressed = false;
     bool buttonReleased = false;

@@ -50,35 +50,29 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     uint32_t last_SGcheck_time = micros() + sgStartTimeout_ms * 1000UL;
     uint32_t start_time = micros();
 
-    // Circular buffer for stallguard history
     std::vector<int> sgHistory(sgHistorySize, 0);
     uint8_t sgHistoryIndex = 0;
     bool bufferFilled = false;
 
-    // Set speeds with direction
     double speedA = speed_stps_per_s * _driverA.getMicrosteps() * (Afw ? 1 : -1);
     double speedB = speed_stps_per_s * _driverB.getMicrosteps() * (Bfw ? 1 : -1);
     _driverA.setSpeed(speedA);
     _driverB.setSpeed(speedB);
 
     while (true) {
-        // Wait for next stallguard check interval
         while ((uint32_t)(micros() - last_SGcheck_time) < sgCheckInterval_us) {
             yield();
         }
         last_SGcheck_time = micros();
 
-        // Check for pause/abort
         if (checkPauseAbort()) {
             return;
         }
 
-        // Get current stallguard values (take worst of both axes)
         int stallGuardA = _driverA.getStallGuardResult();
         int stallGuardB = _driverB.getStallGuardResult();
-        int stallGuardMin = (stallGuardA < stallGuardB) ? stallGuardA : stallGuardB;
+        int stallGuardMin = std::min(stallGuardA, stallGuardB);
         
-        // Add to circular buffer
         sgHistory[sgHistoryIndex] = stallGuardMin;
         sgHistoryIndex = (sgHistoryIndex + 1) % sgHistorySize;
         
@@ -87,7 +81,6 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
             bufferFilled = true;
         }
 
-        // Only check average after buffer is filled
         if (bufferFilled) {
             int sum = 0;
             for (uint8_t i = 0; i < sgHistorySize; i++) {
@@ -136,7 +129,6 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     }
 }
 
-// Full homing sequence: move to limits, back off, zero position
 void HomingController::home() {
     if (_axisA.microsteps() != _axisB.microsteps()) {
         Serial.println("ERROR: Axes have different microstep settings");

@@ -7,7 +7,7 @@ void WebInterface::init() {
     Serial.println("WebInterface initializing...");
     _settingPersistence.registerObserver(this);
 
-    // Register routes once — they persist across server restarts
+    // Register routes once, they persist across server restarts
     _server.on("/files",    HTTP_GET,  [this]() { handleFileList(); });
     _server.on("/start",    HTTP_POST, [this]() { handleStartJob(); });
     _server.on("/abort",    HTTP_POST, [this]() { handleAbortJob(); });
@@ -48,7 +48,6 @@ void WebInterface::setupServer() {
     if (_serverStarted) return;
     if (!_wifiController.isConnected()) return;
 
-    // mDNS server
     if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
         Serial.println("Error starting mDNS");
     }

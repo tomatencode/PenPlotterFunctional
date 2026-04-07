@@ -3,9 +3,9 @@
 #include <memory>
 #include <functional>
 
-#include "../framework/widgets/core/Widget.hpp"
-#include "../framework/widgets/core/Container.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/core/Widget.hpp"
+#include "ui/framework/widgets/core/Container.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
 
 namespace ui {
 namespace components {

@@ -68,7 +68,6 @@ void Renderer::drawGlyphToBuffer(int x, int y, Glyph g)
 
 void Renderer::renderToDisplay()
 {
-    // Save current cursor position
     int cursorX = 0;
     int cursorY = 0;
     _display.setCursor(0, 0);

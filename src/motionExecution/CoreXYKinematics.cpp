@@ -2,7 +2,7 @@
 
 CoreXYKinematics::CoreXYKinematics(double steps_per_mm_) : _stepsPerMm(steps_per_mm_) {}
 
-// Convert X/Y in mm to motor steps
+// Convert X/Y space in mm to motor step space
 MotorSteps CoreXYKinematics::mmToSteps(const XYPos& pos) const {
     MotorSteps m;
     m.a = (pos.xMm + pos.yMm) * _stepsPerMm;
@@ -10,7 +10,7 @@ MotorSteps CoreXYKinematics::mmToSteps(const XYPos& pos) const {
     return m;
 }
 
-// Convert motor steps to X/Y in mm
+// Convert motor step space to X/Y space in mm
 XYPos CoreXYKinematics::stepsToMm(const MotorSteps& steps) const {
     XYPos pos;
     pos.xMm = (steps.a + steps.b) / (2.0 * _stepsPerMm);

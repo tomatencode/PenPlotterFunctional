@@ -13,6 +13,5 @@ class FileObserver
 public:
     virtual ~FileObserver() = default;
 
-    // Method to be called when a file event occurs (e.g., file added, removed)
     virtual void onFileEvent(FileEvent event, const std::string& path) = 0;
 };

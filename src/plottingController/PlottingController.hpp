@@ -66,6 +66,7 @@ private:
 
     GCodeExecuter _gcodeExecuter;
 
+    // State and communication
     MotionState& _motionState;
     RtosQueue<GcodeMessage>& _gcodeQueue;
     RuntimeSettings& _runtimeSettings;

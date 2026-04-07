@@ -28,7 +28,7 @@ void plottingTask(void *parameter)
     while (true)
     {
         plottingController->update();
-        taskYIELD();
+        vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 }
 

@@ -1,7 +1,7 @@
 #include "../WebInterface.hpp"
 #include "config/directories_config.hpp"
 
-// ── Private helpers ──────────────────────────────────────────────────────────
+// Private helpers
 
 bool WebInterface::validateFileName(const std::string& filename)
 {
@@ -30,7 +30,7 @@ void WebInterface::resetUploadState()
     _uploadedBytes     = 0;
 }
 
-// ── Handler ──────────────────────────────────────────────────────────────────
+// Handler
 
 void WebInterface::handleUpload()
 {

@@ -3,8 +3,8 @@
 #include <functional>
 #include <memory>
 
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
 
 namespace ui {
 namespace components {

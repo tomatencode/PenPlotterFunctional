@@ -15,7 +15,9 @@ void StepperAxis::setPositionSteps(double steps) {
     _positionSteps = steps;
 }
 
-double StepperAxis::positionSteps() const { return _positionSteps; }
+double StepperAxis::positionSteps() const {
+    return _positionSteps;
+}
 
 uint16_t StepperAxis::microsteps() const {
     return _driver.getMicrosteps();

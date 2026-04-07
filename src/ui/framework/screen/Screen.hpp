@@ -29,7 +29,7 @@ public:
     virtual void onPause() {};
     virtual void onUnPause() {};
 
-    // Access selectable widgets
+    
     virtual void handleInput(InputState& input) {
         _focusManager.handleInput(input);
     }

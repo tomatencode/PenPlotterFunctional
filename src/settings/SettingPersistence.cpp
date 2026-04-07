@@ -192,31 +192,6 @@ void SettingPersistence::setPenDownAngle_deg(float value) {
     notifyObservers(Setting::PenDownAngle);
 }
 
-// ============================================================================
-// Observer Management
-// ============================================================================
-
-void SettingPersistence::registerObserver(SettingObserver* observer) {
-    if (observer) {
-        _observers.push_back(observer);
-    }
-}
-
-void SettingPersistence::unregisterObserver(SettingObserver* observer) {
-    auto it = std::find(_observers.begin(), _observers.end(), observer);
-    if (it != _observers.end()) {
-        _observers.erase(it);
-    }
-}
-
-void SettingPersistence::notifyObservers(Setting setting) const {
-    for (auto observer : _observers) {
-        if (observer->isInterestedIn(setting)) {
-            observer->markChanged();
-        }
-    }
-}
-
 void SettingPersistence::loadSettings() {
     Preferences prefs;
     prefs.begin("settings", true);  // true = read-only mode
@@ -244,10 +219,6 @@ void SettingPersistence::loadSettings() {
     prefs.end();
 }
 
-// ============================================================================
-// Settings Management
-// ============================================================================
-
 void SettingPersistence::clearAllSettings() {
     Preferences prefs;
     prefs.begin("settings", false);  // false = read-write mode
@@ -258,4 +229,27 @@ void SettingPersistence::clearAllSettings() {
     
     // Reload with defaults
     loadSettings();
+}
+
+// Observer Management
+
+void SettingPersistence::registerObserver(SettingObserver* observer) {
+    if (observer) {
+        _observers.push_back(observer);
+    }
+}
+
+void SettingPersistence::unregisterObserver(SettingObserver* observer) {
+    auto it = std::find(_observers.begin(), _observers.end(), observer);
+    if (it != _observers.end()) {
+        _observers.erase(it);
+    }
+}
+
+void SettingPersistence::notifyObservers(Setting setting) const {
+    for (auto observer : _observers) {
+        if (observer->isInterestedIn(setting)) {
+            observer->markChanged();
+        }
+    }
 }

@@ -56,6 +56,8 @@ void PressHoldButton::render(Renderer& r, widgets::Box canvasBox)
 
     if (!isFocused() || !(isPressed() || _inRelAnimation)) return;
 
+    // Render hold progress bar
+
     uint32_t currentTime = millis();
 
     int16_t x = canvasBox.x + 1; // Start just after left decoration
@@ -73,6 +75,7 @@ void PressHoldButton::render(Renderer& r, widgets::Box canvasBox)
         timeHeldMs = currentTime - _lastPressStartTime;
     }
     else {
+        // Exclude release animation time from hold duration
         uint32_t timeReleased = _lastReleaseStartTime > 0 ? currentTime - _lastReleaseStartTime : 0;
         timeHeldMs = currentTime - _lastPressStartTime - timeReleased;
     }

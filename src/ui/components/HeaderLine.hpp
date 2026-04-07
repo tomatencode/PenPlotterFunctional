@@ -4,14 +4,14 @@
 #include <memory>
 #include <concepts>
 
-#include "../framework/widgets/core/Container.hpp"
-#include "../framework/widgets/leaves/Label.hpp"
-#include "../components/WifiIndicator.hpp"
-#include "../framework/widgets/leaves/Button.hpp"
-#include "../framework/widgets/leaves/Spacer.hpp"
-#include "../framework/widgets/leaves/Switch.hpp"
-#include "../framework/widgets/layouts/LinearLayout.hpp"
-#include "../framework/text/GlyphStringProvider.hpp"
+#include "ui/framework/widgets/core/Container.hpp"
+#include "ui/framework/widgets/leaves/Label.hpp"
+#include "ui/components/WifiIndicator.hpp"
+#include "ui/framework/widgets/leaves/Button.hpp"
+#include "ui/framework/widgets/leaves/Spacer.hpp"
+#include "ui/framework/widgets/leaves/Switch.hpp"
+#include "ui/framework/widgets/layouts/LinearLayout.hpp"
+#include "ui/framework/text/GlyphStringProvider.hpp"
 
 namespace ui {
 namespace components {

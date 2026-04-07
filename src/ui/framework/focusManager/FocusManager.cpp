@@ -20,16 +20,12 @@ void FocusManager::handleInput(InputState& input) {
 
     if (_cachedSelectables.empty()) return;
 
-    // clamp index
-    if (_focusedIndx >= _cachedSelectables.size())
-        _focusedIndx = 0;
-
     auto* current = _cachedSelectables[_focusedIndx];
     if (!current) return;
 
     current->handleInput(input);
 
-    // navigation widget input
+    // Handle navigation input if current widget didn't consume it
     if (input.encoderDelta > 0)
         next();
     else if (input.encoderDelta < 0)

@@ -43,7 +43,7 @@ void JobController::start(const std::string& filename)
 
 void JobController::pause()
 {
-    if (!_active) return; // No active job to pause
+    if (!_active) return;
 
     _buzzer.playMelody(_jobPauseMelody);
     
@@ -54,7 +54,7 @@ void JobController::pause()
 
 void JobController::resume()
 {
-    if (!_active) return; // No active job to resume
+    if (!_active) return;
 
     _buzzer.playMelody(_jobResumeMelody);
 
@@ -65,13 +65,13 @@ void JobController::resume()
 
 void JobController::abort()
 {
-    if (!_active) return; // No active job to abort
+    if (!_active) return;
 
     _buzzer.playMelody(_jobAbortMelody);
 
     Serial.println("Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
-    _gcodeQueue.clear(); // Clear any pending G-code commands
+    _gcodeQueue.clear();
 
     std::string filename = _currentJob.filename; // Capture filename before ending job
     endCurrentJob();
@@ -89,7 +89,7 @@ uint16_t JobController::getCurrentLine() const
 
 void JobController::update()
 {
-    if (!_active) return; // No active job
+    if (!_active) return;
     
     // Check for completion
     if (!_currentJob.file.available() && _gcodeQueue.messagesWaiting() == 0) {
@@ -102,9 +102,8 @@ void JobController::update()
     
     if (!_currentJob.file.available()) return; // No more lines to read
 
-    // prefetch queue space
-    UBaseType_t space = _gcodeQueue.spacesAvailable();
 
+    UBaseType_t space = _gcodeQueue.spacesAvailable();
     for (UBaseType_t i = 0; i < space && _currentJob.file.available(); i++)
     {
         String line = _currentJob.file.readStringUntil('\n');
@@ -134,7 +133,7 @@ void JobController::endCurrentJob()
     if (_currentJob.file) {
         _currentJob.file.close();
     }
-    _currentJob = PlotJob(); // Reset to default
+    _currentJob = PlotJob();
     Serial.println("Job ended");
 }
 
