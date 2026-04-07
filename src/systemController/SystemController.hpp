@@ -3,6 +3,7 @@
 #include <LCD-I2C.h>
 #include "jobController/JobController.hpp"
 #include "webInterface/WebInterface.hpp"
+#include "webInterface/WifiController.hpp"
 #include "storage/FileManager.hpp"
 #include "ui/UiOrchestrator.hpp"
 #include "ui/InputMapper.hpp"
@@ -32,6 +33,7 @@ private:
 
     JobController _jobController;
     FileManager _fileManager;
+    WifiController _wifiController;
     WebInterface _webInterface;
 
     ui::Router _router;

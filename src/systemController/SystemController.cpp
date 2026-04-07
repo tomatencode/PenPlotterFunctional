@@ -14,13 +14,14 @@ SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMess
       _buzzer(BUZZER_PIN, 5),
       _fileManager(),
       _jobController(motionState, gcodeQueue, _fileManager, PLOTTING_DIRECTORY),
-      _webInterface(_jobController, motionState, _fileManager, settingPercistence, runtimeSettings),
+      _wifiController(settingPercistence, runtimeSettings),
+      _webInterface(_jobController, motionState, _fileManager, _wifiController, settingPercistence, runtimeSettings),
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),
       _uiOrchestrator(_router, _renderer, _inputMapper, _jobController, _fileManager, motionState, _buzzer,
                         [this]() -> bool {
-                            return _webInterface.isWiFiConnected();
+                            return _wifiController.isConnected();
                         },
                         settingPercistence, runtimeSettings
                     )
@@ -40,6 +41,8 @@ void SystemController::init()
     _fileManager.init();
 
     _uiOrchestrator.init();
+
+    _wifiController.init();
     _webInterface.init();
 
     _buzzer.playMelody(startupMelody);
@@ -47,6 +50,7 @@ void SystemController::init()
 
 void SystemController::update()
 {
+    _wifiController.update();
     _webInterface.update();
     _jobController.update();
     _buzzer.update();

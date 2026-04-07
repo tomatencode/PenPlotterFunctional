@@ -4,9 +4,7 @@
 #include <ESPmDNS.h>
 
 void WebInterface::init() {
-    Serial.println("WebInterface initializing (WiFi connects in background)...");
-    configureWifi();
-
+    Serial.println("WebInterface initializing...");
     _settingPersistence.registerObserver(this);
 }
 
@@ -14,21 +12,11 @@ WebInterface::~WebInterface() {
     _settingPersistence.unregisterObserver(this);
 }
 
-bool WebInterface::isWiFiConnected() const {
-    return WiFi.status() == WL_CONNECTED;
-}
-
 void WebInterface::update() {
     SettingObserver::checkIfSettingsChanged();
 
-    if (!isWiFiConnected()) {
-        attemptWiFiConnection();
+    if (!_wifiController.isConnected()) {
         return; // Don't attempt to start server if WiFi isn't connected
-    }
-    
-    if (_currentWiFiConnectAttempts > 0) {
-        Serial.println("WiFi connected successfully!");
-        _currentWiFiConnectAttempts = 0;
     }
 
     if (!_serverStarted) {
@@ -41,41 +29,9 @@ void WebInterface::update() {
     }
 }
 
-void WebInterface::configureWifi() {
-    WiFi.mode(WIFI_STA);
-
-    _WifiConfigured = true;
-    _lastWiFiConnectAttemptMs = millis() - _wifiReconnectIntervalMs + _WifiConfigureTimeoutMs;
-    _currentWiFiConnectAttempts = 0;
-}
-
-void WebInterface::attemptWiFiConnection() {
-
-    if (!_WifiConfigured) return;
-    if (isWiFiConnected()) return;
-    if (_currentWiFiConnectAttempts >= _maxWiFiConnectAttempts) return;
-    if (millis() - _lastWiFiConnectAttemptMs < _wifiReconnectIntervalMs) return;
-
-    std::string ssid = _runtimeSettings.getSSID();
-    std::string password = _runtimeSettings.getPassword();
-
-    if (ssid.empty()) return;
-
-    Serial.println("Attempting WiFi connection...");
-    WiFi.begin(ssid.c_str(), password.c_str());
-
-    _currentWiFiConnectAttempts++;
-    _lastWiFiConnectAttemptMs = millis();
-
-    if (_currentWiFiConnectAttempts == _maxWiFiConnectAttempts) {
-        Serial.println("Max WiFi connection attempts reached.");
-    }
-}
-
 void WebInterface::setupServer() {
     if (_serverStarted) return;
-    if (WiFi.status() != WL_CONNECTED) return;
-
+    if (!_wifiController.isConnected()) return;
 
     // mDNS server
     if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
@@ -102,18 +58,15 @@ void WebInterface::setupServer() {
 }
 
 void WebInterface::onRelevantSettingsChanged() {
-    // WiFi credentials have changed, reconnect with new credentials
-    Serial.println("Network settings changed, reconnecting WiFi...");
-    
-    WiFi.disconnect(true);  // Disconnect and turn off WiFi
-    _serverStarted = false;
-    
-    // Small delay to ensure WiFi is fully shut down
-    vTaskDelay(500 / portTICK_PERIOD_MS);
-    
-    // Restart WiFi connection with new credentials
-    WiFi.begin(_runtimeSettings.getSSID().c_str(), _runtimeSettings.getPassword().c_str());
-
-    _lastWiFiConnectAttemptMs = millis();
-    _currentWiFiConnectAttempts = 0;
+    // mDNS name has changed, restart mDNS with new name
+    Serial.println("mDNS name changed, restarting mDNS...");
+    MDNS.end();
+    if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
+        Serial.println("Error restarting mDNS");
+    }
+    else {
+        Serial.print("mDNS restarted: http://");
+        Serial.print(_runtimeSettings.getMdnsName().c_str());
+        Serial.println(".local");
+    }
 }
