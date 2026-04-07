@@ -1,27 +1,16 @@
 #pragma once
 
 #include <Arduino.h>
+#include <vector>
 
 class Buzzer {
 public:
-    // Nested Melody type
-    struct Melody {
-        static constexpr size_t MAX_NOTES = 32;
-        uint16_t notes[MAX_NOTES];      // Hz, 0 = pause
-        uint16_t durations[MAX_NOTES];  // ms
-        size_t length = 0;
-
-        Melody() = default;
-
-        template <size_t N>
-        Melody(const uint16_t (&n)[N], const uint16_t (&d)[N]) {
-            length = (N > MAX_NOTES) ? MAX_NOTES : N;
-            for (size_t i = 0; i < length; i++) {
-                notes[i] = n[i];
-                durations[i] = d[i];
-            }
-        }
+    struct Note {
+        uint16_t frequency; // Hz, 0 = pause
+        uint16_t duration;  // ms
     };
+
+    using Melody = std::vector<Note>;
 
     Buzzer(uint8_t pin, uint8_t channel = 5);
 
@@ -40,8 +29,6 @@ private:
     uint16_t _frequency;
     unsigned long _endTime;
 
-    uint16_t _melodyNotes[Melody::MAX_NOTES];
-    uint16_t _melodyDurations[Melody::MAX_NOTES];
-    size_t _melodyLength;
+    Melody _melody;
     size_t _melodyIndex;
 };

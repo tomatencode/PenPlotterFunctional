@@ -3,7 +3,11 @@
 #include "config/pins.hpp"
 #include "config/ui_config.hpp"
 
-const Buzzer::Melody startupMelody((uint16_t[]){262, 294, 330}, (uint16_t[]){200, 200, 200});
+const Buzzer::Melody startupMelody = {
+    {262, 200},
+    {294, 200},
+    {330, 200}
+};
 
 SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue,
                                        SettingPersistence& settingPercistence, RuntimeSettings& runtimeSettings)
