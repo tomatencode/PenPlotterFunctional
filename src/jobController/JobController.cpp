@@ -65,9 +65,10 @@ void JobController::abort()
     _motionState.setCommand(MotionCommand::ABORT);
     _gcodeQueue.clear(); // Clear any pending G-code commands
 
+    std::string filename = _currentJob.filename; // Capture filename before ending job
     endCurrentJob();
 
-    notifyObservers({.type = JobEvent::ABORTED, .filename = _currentJob.filename});
+    notifyObservers({.type = JobEvent::ABORTED, .filename = filename});
 }
 
 uint16_t JobController::getCurrentLine() const
