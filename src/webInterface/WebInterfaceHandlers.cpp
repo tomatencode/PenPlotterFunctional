@@ -1,5 +1,5 @@
 #include "WebInterface.hpp"
-#include "config/job_config.hpp"
+#include "config/directorys_config.hpp"
 
 #include <string>
 #include <functional>
@@ -65,31 +65,208 @@ void WebInterface::handleUpload()
 
     if (upload.status == UPLOAD_FILE_START)
     {
-        std::string path = PLOTTING_DIRECTORY + upload.filename.c_str();
-        Serial.printf("WebInterface: Upload start - %s\n", path.c_str());
+        // Validate filename
+        if (!validateFileName(upload.filename.c_str()))
+        {
+            Serial.printf("WebInterface: Upload rejected - invalid filename: %s\n", upload.filename.c_str());
+            _server.send(400, "text/plain", "Invalid filename");
+            return;
+        }
 
-        if (_fileManager.fileExists(path))
-            _fileManager.deleteFile(path);
+        // Validate file extension
+        if (!isValidGcodeFile(upload.filename.c_str()))
+        {
+            Serial.printf("WebInterface: Upload rejected - invalid file type: %s\n", upload.filename.c_str());
+            _server.send(400, "text/plain", "Only .gcode files are supported");
+            return;
+        }
 
-        File f = _fileManager.openFileWrite(path);
-        if (!f)
-            Serial.println("WebInterface: ERROR - Failed to open file for writing");
+        _currentUploadPath = getPlottingFilePath(upload.filename.c_str());
+        _currentTempPath = getTempFilePath(upload.filename.c_str());
 
-        f.close();
+        Serial.printf("WebInterface: uploading to - %s\n", _currentUploadPath.c_str());
+        Serial.printf("WebInterface: Temp path - %s\n", _currentTempPath.c_str());
+        _uploadedBytes = 0;
+
+        // Delete old file if exists
+        if (_fileManager.fileExists(_currentUploadPath))
+        {
+            _fileManager.deleteFile(_currentUploadPath);
+        }
+
+        // Delete incomplete temp file if exists
+        if (_fileManager.fileExists(_currentTempPath))
+        {
+            _fileManager.deleteFile(_currentTempPath);
+        }
+
+        // Open temp file for writing
+        _currentUploadFile = _fileManager.openFileWrite(_currentTempPath);
+        if (!_currentUploadFile)
+        {
+            Serial.printf("WebInterface: ERROR - Failed to create temp file: %s\n", _currentTempPath.c_str());
+            _server.send(507, "text/plain", "Insufficient storage");
+            return;
+        }
+
+        Serial.printf("WebInterface: Upload start - %s (%u bytes total)\n", 
+                      upload.filename.c_str(), upload.totalSize);
     }
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
-        std::string path = PLOTTING_DIRECTORY + upload.filename.c_str();
-        File f = _fileManager.openFileWrite(path);
-        f.write(upload.buf, upload.currentSize);
-        f.close();
+        // Check size limit
+        if (_uploadedBytes + upload.currentSize > MAX_UPLOAD_SIZE)
+        {
+            if (_currentUploadFile)
+                _currentUploadFile.close();
+            if (_fileManager.fileExists(_currentTempPath))
+                _fileManager.deleteFile(_currentTempPath);
+            
+            Serial.printf("WebInterface: Upload rejected - exceeds size limit (%u bytes)\n", MAX_UPLOAD_SIZE);
+            _server.send(413, "text/plain", "File too large");
+            return;
+        }
+
+        // Write chunk to temp file
+        if (_currentUploadFile)
+        {
+            size_t written = _currentUploadFile.write(upload.buf, upload.currentSize);
+            if (written != upload.currentSize)
+            {
+                _currentUploadFile.close();
+                _fileManager.deleteFile(_currentTempPath);
+                Serial.printf("WebInterface: ERROR - Failed to write upload chunk\n");
+                _server.send(500, "text/plain", "Write error");
+                return;
+            }
+            _uploadedBytes += written;
+        }
+        else
+        {
+            Serial.println("WebInterface: ERROR - Upload file not open");
+            _server.send(500, "text/plain", "Upload not initialized");
+        }
     }
     else if (upload.status == UPLOAD_FILE_END)
     {
+        if (_currentUploadFile)
+        {
+            _currentUploadFile.close();
+        }
+
+        // Verify upload size matches expected
+        if (_uploadedBytes != upload.totalSize)
+        {
+            _fileManager.deleteFile(_currentTempPath);
+            Serial.printf("WebInterface: ERROR - Upload size mismatch (got %u, expected %u)\n", 
+                          _uploadedBytes, upload.totalSize);
+            _server.send(400, "text/plain", "Upload incomplete or corrupted");
+            return;
+        }
+
+        // Rename temp file to final destination
+        if (!_fileManager.renameFile(_currentTempPath, _currentUploadPath))
+        {
+            _fileManager.deleteFile(_currentTempPath);
+            Serial.printf("WebInterface: ERROR - Failed to finalize upload\n");
+            _server.send(500, "text/plain", "Failed to save file");
+            return;
+        }
+
         Serial.printf("WebInterface: Upload complete - %s (%u bytes)\n",
-                      upload.filename.c_str(), upload.totalSize);
-        _server.send(200, "text/plain", "File uploaded successfully");
+                      upload.filename.c_str(), _uploadedBytes);
+        
+        std::string response = "{\"status\":\"success\",\"file\":\"" + std::string(upload.filename.c_str()) + "\",\"size\":" + std::to_string(_uploadedBytes) + "}";
+        _server.send(200, "application/json", response.c_str());
+
+        // Reset upload state
+        _currentUploadFile = File();
+        _currentUploadPath = "";
+        _currentTempPath = "";
+        _uploadedBytes = 0;
     }
+    else if (upload.status == UPLOAD_FILE_ABORTED)
+    {
+        if (_currentUploadFile)
+        {
+            _currentUploadFile.close();
+        }
+
+        // Clean up temp file
+        if (_fileManager.fileExists(_currentTempPath))
+        {
+            _fileManager.deleteFile(_currentTempPath);
+        }
+
+        Serial.println("WebInterface: Upload aborted by client");
+        
+        // Reset upload state
+        _currentUploadFile = File();
+        _currentUploadPath = "";
+        _currentTempPath = "";
+        _uploadedBytes = 0;
+    }
+}
+
+bool WebInterface::validateFileName(const std::string& filename)
+{
+    if (filename.empty() || filename.length() > 255)
+        return false;
+
+    // Check for directory traversal attempts
+    if (filename.find("..") != std::string::npos || 
+        filename.find("/") != std::string::npos ||
+        filename.find("\\") != std::string::npos)
+        return false;
+
+    // Only alphanumeric, dash, underscore, and dot allowed
+    for (char c : filename)
+    {
+        if (!isalnum(c) && c != '-' && c != '_' && c != '.')
+            return false;
+    }
+
+    return true;
+}
+
+bool WebInterface::isValidGcodeFile(const std::string& filename)
+{
+    if (filename.length() < 7) // minimum ".gcode"
+        return false;
+
+    std::string ext = filename.substr(filename.length() - 6);
+    // Convert to lowercase for comparison
+    for (char& c : ext) c = tolower(c);
+
+    return ext == ".gcode";
+}
+
+std::string WebInterface::getPlottingFilePath(const std::string& filename)
+{
+    // Construct path from PLOTTING_DIRECTORY + filename
+    std::string path = PLOTTING_DIRECTORY + filename;
+    
+    // Ensure path starts with / for SPIFFS compatibility
+    if (path.empty() || path[0] != '/')
+    {
+        path = "/" + path;
+    }
+    
+    return path;
+}
+
+std::string WebInterface::getTempFilePath(const std::string& filename)
+{
+    // Construct path from TEMP_DIRECTORY + filename
+    std::string path = TEMP_DIRECTORY + filename;
+    
+    // Ensure path starts with / for SPIFFS compatibility
+    if (path.empty() || path[0] != '/')
+    {
+        path = "/" + path;
+    }
+    
+    return path;
 }
 
 void WebInterface::handleGetSettings()

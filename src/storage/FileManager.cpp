@@ -20,13 +20,20 @@ std::vector<std::string> FileManager::listFiles(const std::string& directory)
 {
     std::vector<std::string> files;
 
-    File root = SPIFFS.open(directory.c_str());
+    // SPIFFS is a flat filesystem with no real directories.
+    // Always iterate from root and filter by path prefix.
+    std::string prefix = directory;
+    if (!prefix.empty() && prefix.back() != '/')
+        prefix += '/';
 
+    File root = SPIFFS.open("/");
     File file = root.openNextFile();
 
     while (file)
     {
-        files.push_back(std::string(file.name()));
+        std::string name = std::string(file.name());
+        if (prefix == "/" || name.rfind(prefix, 0) == 0)
+            files.push_back(name);
         file = root.openNextFile();
     }
 
@@ -48,6 +55,22 @@ bool FileManager::deleteFile(const std::string& path)
     if (success)
     {
         notifyFileEvent(FileEvent::REMOVED, path);
+    }
+    
+    return success;
+}
+
+bool FileManager::renameFile(const std::string& oldPath, const std::string& newPath)
+{
+    if (!SPIFFS.exists(oldPath.c_str()))
+        return false;
+
+    bool success = SPIFFS.rename(oldPath.c_str(), newPath.c_str());
+
+    if (success)
+    {
+        notifyFileEvent(FileEvent::REMOVED, oldPath);
+        notifyFileEvent(FileEvent::ADDED, newPath);
     }
     
     return success;

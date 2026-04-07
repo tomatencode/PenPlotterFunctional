@@ -46,7 +46,18 @@ private:
     WebServer _server; // HTTP server (port 80)
     bool _serverStarted = false;
 
+    // Upload state tracking
+    File _currentUploadFile;
+    std::string _currentUploadPath;
+    std::string _currentTempPath;
+    size_t _uploadedBytes = 0;
+    static constexpr size_t MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB limit
+
     void setupServer();
+    bool validateFileName(const std::string& filename);
+    bool isValidGcodeFile(const std::string& filename);
+    std::string getPlottingFilePath(const std::string& filename);
+    std::string getTempFilePath(const std::string& filename);
 
     // HTTP Handlers
     void handleFileList();

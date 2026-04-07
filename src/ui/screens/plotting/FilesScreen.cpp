@@ -78,6 +78,10 @@ void FilesScreen::reload() {
 
     auto files = _ctx.fileManager.listFiles(PLOTTING_DIRECTORY);
     for (const auto& file : files) {
+        if (file.length() < 7 || file.substr(file.length() - 6) != ".gcode") {
+            continue; // skip non-gcode files
+        }
+
         auto button = std::make_unique<widgets::Button>(
             widgets::ButtonProps{
                 .style = ui::styles::listButtonStyle,

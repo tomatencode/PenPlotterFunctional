@@ -27,6 +27,9 @@ public:
     // Delete a file
     bool deleteFile(const std::string& path);
 
+    // Rename or move a file
+    bool renameFile(const std::string& oldPath, const std::string& newPath);
+
     // Open a file for reading
     File openFileRead(const std::string& path);
 
