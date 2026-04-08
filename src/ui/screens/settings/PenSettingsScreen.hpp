@@ -35,26 +35,20 @@ public:
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Up Angle",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.penUpAngle_deg()),
-                        .next = [](int current) { return std::min(current + 1, 180); },
-                        .prev = [](int current) { return std::max(current - 1, 0); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setPenUpAngle_deg(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return GlyphString(std::to_string(value)) + customChars::DegSymbol; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.penUpAngle_deg()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setPenUpAngle_deg(static_cast<float>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setPenUpAngle_deg(static_cast<float>(v - 1)); },
+                        .toString = [](const int& value) { return GlyphString(std::to_string(value)) + customChars::DegSymbol; }
                     }  
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Down Angle",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.penDownAngle_deg()),
-                        .next = [](int current) { return std::min(current + 1, 180); },
-                        .prev = [](int current) { return std::max(current - 1, 0); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setPenDownAngle_deg(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return GlyphString(std::to_string(value)) + customChars::DegSymbol; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.penDownAngle_deg()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setPenDownAngle_deg(static_cast<float>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setPenDownAngle_deg(static_cast<float>(v - 1)); },
+                        .toString = [](const int& value) { return GlyphString(std::to_string(value)) + customChars::DegSymbol; }
                     }
                 })
             )

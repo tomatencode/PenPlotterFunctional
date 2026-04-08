@@ -35,25 +35,19 @@ public:
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Current",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.driverCurrent_mA()),
-                        .next = [](int current) { return std::min(current + 50, 1500); },
-                        .prev = [](int current) { return std::max(current - 50, 100); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setDriverCurrent_mA(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " mA"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.driverCurrent_mA()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setDriverCurrent_mA(static_cast<float>(v + 50)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setDriverCurrent_mA(static_cast<float>(v - 50)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " mA"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Microsteps",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.microsteps()),
-                        .next = [](int current) { return std::min(current * 2, 256); },
-                        .prev = [](int current) { return std::max(current / 2, 1); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setMicrosteps(static_cast<float>(newValue));
-                        },
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.microsteps()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setMicrosteps(static_cast<float>(v * 2)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setMicrosteps(static_cast<float>(v / 2)); },
                     }
                 })
             )

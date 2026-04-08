@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <sstream>
 #include <type_traits>
 
@@ -26,12 +27,37 @@ struct ValueSelectorStyle
 template <typename T>
 struct ValueSelectorProps
 {
-    T initialValue                                = {};
-    std::function<T(T)> next                      = nullptr;
-    std::function<T(T)> prev                      = nullptr;
-    std::function<void(const T&)> onChange        = nullptr;
+    std::function<T()> getValue                   = nullptr;  // source of truth, called on every render
+    std::function<void(T)> next                   = nullptr;  // apply increment; new value read back via getValue
+    std::function<void(T)> prev                   = nullptr;  // apply decrement
     std::function<GlyphString(const T&)> toString = nullptr;
     ValueSelectorStyle style                      = {};
+
+    // Special case: widget owns its own copy of the value (no external source of truth).
+    // Use for purely local UI state that does not need to persist or sync externally.
+    static ValueSelectorProps<T> withLocalState(
+        T initialValue,
+        std::function<T(T)> next,
+        std::function<T(T)> prev,
+        std::function<void(const T&)> onChange = nullptr,
+        std::function<GlyphString(const T&)> toString = nullptr,
+        ValueSelectorStyle style = {})
+    {
+        auto state = std::make_shared<T>(std::move(initialValue));
+        return ValueSelectorProps<T>{
+            .getValue = [state]() -> T { return *state; },
+            .next = [state, next, onChange](T current) {
+                *state = next(current);
+                if (onChange) onChange(*state);
+            },
+            .prev = [state, prev, onChange](T current) {
+                *state = prev(current);
+                if (onChange) onChange(*state);
+            },
+            .toString = std::move(toString),
+            .style    = std::move(style),
+        };
+    }
 };
 
 // ValueSelector provides a focusable widget for +/− selection using rotary encoder and button.
@@ -53,21 +79,20 @@ public:
     }
 
     ValueSelector(ValueSelectorProps<T> props)
-        : _value(std::move(props.initialValue))
+        : _getValue(std::move(props.getValue))
         , _next(std::move(props.next))
         , _prev(std::move(props.prev))
-        , _onChange(std::move(props.onChange))
         , _toString(props.toString ? std::move(props.toString) : defaultToString)
         , _style(std::move(props.style))
     {}
 
     ISelectable* tryGetSelectable() override { return this; }
 
-    const T& value() const { return _value; }
+    T value() const { return _getValue(); }
 
     Size measure() const override
     {
-        GlyphString text = _toString(_value);
+        GlyphString text = _toString(_getValue());
 
         auto [leftDecorator, rightDecorator] = getDecorators();
         uint16_t width = text.size() + leftDecorator.size() + rightDecorator.size();
@@ -88,7 +113,7 @@ public:
         int16_t x = canvasBox.x;
         int16_t y = canvasBox.y;
 
-        GlyphString text = _toString(_value);
+        GlyphString text = _toString(_getValue());
 
         uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 
@@ -137,10 +162,9 @@ public:
     }
 
 private:
-    T _value;
-    std::function<T(T)> _next;
-    std::function<T(T)> _prev;
-    std::function<void(const T&)> _onChange;
+    std::function<T()> _getValue;
+    std::function<void(T)> _next;
+    std::function<void(T)> _prev;
     std::function<GlyphString(const T&)> _toString;
 
     bool _isEditing = false;
@@ -150,12 +174,11 @@ private:
 
     void updateValueByEncoderDelta(int delta)
     {
+        const T current = _getValue();
         if (delta > 0 && _next)
-            _value = _next(_value);
+            _next(current);
         else if (delta < 0 && _prev)
-            _value = _prev(_value);
-        if (delta != 0 && _onChange)
-            _onChange(_value);
+            _prev(current);
     }
 
     std::pair<GlyphString, GlyphString> getDecorators() const {

@@ -35,26 +35,20 @@ public:
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Draw",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.drawFeedRate_mm_per_s()),
-                        .next = [](int current) { return std::min(current + 5, 200); },
-                        .prev = [](int current) { return std::max(current - 5, 5); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setDrawFeedRate_mm_per_s(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " mm/s"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.drawFeedRate_mm_per_s()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setDrawFeedRate_mm_per_s(static_cast<float>(v + 5)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setDrawFeedRate_mm_per_s(static_cast<float>(v - 5)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " mm/s"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Travel",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.travelFeedRate_mm_per_s()),
-                        .next = [](int current) { return std::min(current + 5, 200); },
-                        .prev = [](int current) { return std::max(current - 5, 5); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setTravelFeedRate_mm_per_s(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " mm/s"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.travelFeedRate_mm_per_s()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setTravelFeedRate_mm_per_s(static_cast<float>(v + 5)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setTravelFeedRate_mm_per_s(static_cast<float>(v - 5)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " mm/s"; }
                     }
                 })
             )

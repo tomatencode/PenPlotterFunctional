@@ -35,113 +35,86 @@ public:
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Speed",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.homingSpeed_stp_per_s()),
-                        .next = [](int current) { return std::min(current + 10, 2000); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setHomingSpeed_stp_per_s(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " stp/s"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.homingSpeed_stp_per_s()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setHomingSpeed_stp_per_s(static_cast<float>(v + 10)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setHomingSpeed_stp_per_s(static_cast<float>(v - 10)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " stp/s"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "SG thr",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.stallguardThreshold()),
-                        .next = [](int current) { return std::min(current + 1, 255); },
-                        .prev = [](int current) { return std::max(current - 1, 0); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setStallguardThreshold(static_cast<float>(newValue));
-                        },
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.stallguardThreshold()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setStallguardThreshold(static_cast<float>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setStallguardThreshold(static_cast<float>(v - 1)); },
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "SG History",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.sgHistorySize()),
-                        .next = [](int current) { return std::min(current + 1, 20); },
-                        .prev = [](int current) { return std::max(current - 1, 1); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setSGHistorySize(static_cast<uint8_t>(newValue));
-                        },
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.sgHistorySize()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setSGHistorySize(static_cast<uint8_t>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setSGHistorySize(static_cast<uint8_t>(v - 1)); },
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "SG Interval",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.sgCheckInterval_ms()),
-                        .next = [](int current) { return std::min(current + 10, 500); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setSGCheckInterval_ms(static_cast<uint16_t>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " ms"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.sgCheckInterval_ms()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setSGCheckInterval_ms(static_cast<uint16_t>(v + 10)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setSGCheckInterval_ms(static_cast<uint16_t>(v - 10)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " ms"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "SG Start",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.sgStartTimeout_ms()),
-                        .next = [](int current) { return std::min(current + 10, 1000); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setSGStartTimeout_ms(static_cast<uint16_t>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " ms"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.sgStartTimeout_ms()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setSGStartTimeout_ms(static_cast<uint16_t>(v + 10)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setSGStartTimeout_ms(static_cast<uint16_t>(v - 10)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " ms"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "BO speed",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.homingBackOffSpeed_stp_per_s()),
-                        .next = [](int current) { return std::min(current + 10, 2000); },
-                        .prev = [](int current) { return std::max(current - 10, 10); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setHomingBackOffSpeed_stp_per_s(static_cast<float>(newValue));
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " stp/s"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.homingBackOffSpeed_stp_per_s()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setHomingBackOffSpeed_stp_per_s(static_cast<float>(v + 10)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setHomingBackOffSpeed_stp_per_s(static_cast<float>(v - 10)); },
+                        .toString = [](const int& value) { return std::to_string(value) + " stp/s"; }
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "BO steps X",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.backOffStepsX()),
-                        .next = [](int current) { return std::min(current + 1, 100); },
-                        .prev = [](int current) { return std::max(current - 1, 0); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setBackOffStepsX(static_cast<uint16_t>(newValue));
-                        },
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.backOffStepsX()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setBackOffStepsX(static_cast<uint16_t>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setBackOffStepsX(static_cast<uint16_t>(v - 1)); },
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "BO steps Y",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.backOffStepsY()),
-                        .next = [](int current) { return std::min(current + 1, 100); },
-                        .prev = [](int current) { return std::max(current - 1, 0); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setBackOffStepsY(static_cast<uint16_t>(newValue));
-                        },
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.backOffStepsY()); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setBackOffStepsY(static_cast<uint16_t>(v + 1)); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setBackOffStepsY(static_cast<uint16_t>(v - 1)); },
                     }
                 }),
 
                 std::make_unique<components::LabeledValueSelector<int>>(components::LabeledValueSelectorProps<int>{
                     .labelText = "Timeout",
                     .valueSelectorProps = widgets::ValueSelectorProps<int>{
-                        .initialValue = static_cast<int>(ctx.runtimeSettings.homingTimeout_us() / 1000000),
-                        .next = [](int current) { return std::min(current + 1, 120); },
-                        .prev = [](int current) { return std::max(current - 1, 1); },
-                        .onChange = [&sp = ctx.settingsPersistence](const int& newValue) {
-                            sp.setHomingTimeout_us(static_cast<uint32_t>(newValue) * 1000000UL);
-                        },
-                        .toString = [](int value) { return std::to_string(value) + " s"; }
+                        .getValue = [&rs = ctx.runtimeSettings]() { return static_cast<int>(rs.homingTimeout_us() / 1000000); },
+                        .next = [&sp = ctx.settingsPersistence](int v) { sp.setHomingTimeout_us(static_cast<uint32_t>(v + 1) * 1000000UL); },
+                        .prev = [&sp = ctx.settingsPersistence](int v) { sp.setHomingTimeout_us(static_cast<uint32_t>(v) * 1000000UL); },
+                        .toString = [](const int& value) { return std::to_string(value) + " s"; }
                     }
                 })
             )
