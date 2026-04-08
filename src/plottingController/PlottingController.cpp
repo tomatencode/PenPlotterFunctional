@@ -116,6 +116,7 @@ void PlottingController::update()
 
 void PlottingController::onRelevantSettingsChanged() {
     // Update driver configurations based on the changed settings
+    ESP_LOGI(TAG, "Reconfiguring drivers due to relevant setting change");
     configureDriver(_driverA);
     configureDriver(_driverB);
 }
