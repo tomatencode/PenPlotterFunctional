@@ -2,6 +2,7 @@
 #include "SettingObserver.hpp"
 #include "RuntimeSettings.hpp"
 #include "Settings.hpp"
+#include "SettingLimits.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -43,6 +44,13 @@ public:
     void unregisterObserver(SettingObserver* observer);
 
 private:
+
+    // Type-dispatched NVS write helpers — each opens its own prefs scope
+    void persist(const char* key, float v);
+    void persist(const char* key, uint8_t v);
+    void persist(const char* key, uint16_t v);
+    void persist(const char* key, uint32_t v);
+    void persist(const char* key, const std::string& v);
 
     void loadSettings();
     void notifyObservers(Setting setting) const;
