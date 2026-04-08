@@ -19,7 +19,7 @@ SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMess
       _fileManager(),
       _jobController(_gcodeSender, motionState, _fileManager, _buzzer),
       _wifiController(settingPersistence, runtimeSettings),
-      _webInterface(_jobController, motionState, _fileManager, _wifiController, settingPersistence, runtimeSettings),
+      _webInterface(_jobController, _gcodeSender, motionState, _fileManager, _wifiController, settingPersistence, runtimeSettings),
       _router(),
       _renderer(_display),
       _inputMapper(_encoder),

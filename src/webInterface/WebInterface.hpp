@@ -4,6 +4,7 @@
 
 #include "rtos/MotionState.hpp"
 #include "storage/FileManager.hpp"
+#include "gcode/GCodeSender.hpp"
 #include "jobController/JobController.hpp"
 #include "settings/SettingPersistence.hpp"
 #include "settings/RuntimeSettings.hpp"
@@ -14,6 +15,7 @@ class WebInterface : public SettingObserver
 {
 public:
     WebInterface(JobController& jobController,
+                 GCodeSender& gcodeSender,
                  MotionState& motionState,
                  FileManager& fileManager,
                  WifiController& wifiController,
@@ -22,6 +24,7 @@ public:
 
         : SettingObserver({Setting::MdnsName}),
           _jobController(jobController),
+          _gcodeSender(gcodeSender),
           _motionState(motionState),
           _fileManager(fileManager),
           _wifiController(wifiController),
@@ -37,6 +40,7 @@ public:
 
 private:
     JobController& _jobController;
+    GCodeSender& _gcodeSender;
     MotionState& _motionState;
     FileManager& _fileManager;
     SettingPersistence& _settingPersistence;
@@ -65,6 +69,7 @@ private:
     void handleAbortJob();
     void handlePauseJob();
     void handleResumeJob();
+    void handleExecuteLine();
     void handleUpload();
     void handleGetSetting();
     void handleSetSetting();
