@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <cstdio>
 
+static const char* TAG = "WebInterface";
+
 void WebInterface::handleGetSettings()
 {
     char buf[1024];
@@ -87,6 +89,7 @@ void WebInterface::handleSetSetting()
     {
         if (key == entry.key)
         {
+            ESP_LOGI(TAG, "Attempting to update setting '%s' to '%s'", key.c_str(), value.c_str());
             entry.setter(value);
             _server.send(200, "text/plain", "OK");
             return;
