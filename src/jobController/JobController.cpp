@@ -3,19 +3,22 @@
 
 #include <FS.h>
 #include <cstring>
+#include <esp_log.h>
+
+static const char* TAG = "JobController";
 
 void JobController::start(const std::string& filename)
 {
     abort(); // Ensure any existing job is stopped before starting a new one
 
-    Serial.println(("Starting job: " + filename).c_str());
+    ESP_LOGI(TAG, "Starting job: %s", filename.c_str());
 
     _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
     _currentJob.file = _fileManager.openFileRead(PLOTTING_DIRECTORY + filename);
 
     if (!_currentJob.file)
     {
-        Serial.println("Failed to open file");
+        ESP_LOGE(TAG, "Failed to open file: %s", filename.c_str());
         return;
     }
 
@@ -47,7 +50,7 @@ void JobController::pause()
 
     _buzzer.playMelody(_jobPauseMelody);
     
-    Serial.println("Pausing job");
+    ESP_LOGI(TAG, "Pausing job");
     _motionState.setCommand(MotionCommand::PAUSE);
     notifyObservers({.type = JobEvent::PAUSED, .filename = _currentJob.filename});
 }
@@ -58,7 +61,7 @@ void JobController::resume()
 
     _buzzer.playMelody(_jobResumeMelody);
 
-    Serial.println("Resuming job");
+    ESP_LOGI(TAG, "Resuming job");
     _motionState.setCommand(MotionCommand::NONE);
     notifyObservers({.type = JobEvent::RESUMED, .filename = _currentJob.filename});
 }
@@ -69,7 +72,7 @@ void JobController::abort()
 
     _buzzer.playMelody(_jobAbortMelody);
 
-    Serial.println("Aborting job");
+    ESP_LOGI(TAG, "Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
     _gcodeQueue.clear();
 
@@ -134,7 +137,7 @@ void JobController::endCurrentJob()
         _currentJob.file.close();
     }
     _currentJob = PlotJob();
-    Serial.println("Job ended");
+    ESP_LOGI(TAG, "Job ended");
 }
 
 void JobController::registerObserver(JobObserver* observer)

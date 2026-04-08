@@ -3,6 +3,9 @@
 #include "defaults/WifiDefaults.hpp"
 #include <Preferences.h>
 #include <algorithm>
+#include <esp_log.h>
+
+static const char* TAG = "SettingPersistence";
 
 
 void SettingPersistence::init() {
@@ -225,7 +228,7 @@ void SettingPersistence::clearAllSettings() {
     prefs.clear();                   // Clear entire namespace
     prefs.end();
     
-    Serial.println("All settings cleared from NVS. Reloading defaults...");
+    ESP_LOGI(TAG, "All settings cleared from NVS, reloading defaults");
     
     // Reload with defaults
     loadSettings();

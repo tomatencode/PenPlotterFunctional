@@ -1,6 +1,9 @@
 #include "FileManager.hpp"
 
 #include <SPIFFS.h>
+#include <esp_log.h>
+
+static const char* TAG = "FileManager";
 
 FileManager::FileManager() {}
 
@@ -9,11 +12,11 @@ bool FileManager::init()
 {
     if (!SPIFFS.begin(true))
     {
-        Serial.println("SPIFFS mount failed");
+        ESP_LOGE(TAG, "SPIFFS mount failed");
         return false;
     }
 
-    Serial.println("SPIFFS mounted");
+    ESP_LOGI(TAG, "SPIFFS mounted");
     return true;
 }
 

@@ -1,4 +1,7 @@
 #include "Button.hpp"
+#include <esp_log.h>
+
+static const char* TAG = "Button";
 
 namespace ui {
 namespace widgets {
@@ -53,7 +56,7 @@ void Button::render(Renderer& r, Box canvasBox)
     Size ChildSize = Container::measure();
 
     if (ChildSize.h > 1)
-        Serial.println("Warning: Button label height exceeds 1, clipping will occur");
+        ESP_LOGW(TAG, "Button label height exceeds 1, clipping will occur");
     
     uint16_t decorationWidth = leftDecorator.size() + rightDecorator.size();
 

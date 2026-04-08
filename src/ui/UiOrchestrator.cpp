@@ -5,6 +5,9 @@
 #include "screens/plotting/PlottingScreen.hpp"
 
 #include <string>
+#include <esp_log.h>
+
+static const char* TAG = "UiOrchestrator";
 
 namespace ui {
 
@@ -18,7 +21,7 @@ void UiOrchestrator::init()
 
     _jobController.registerObserver(this);
 
-    Serial.println("UI initialized.");
+    ESP_LOGI(TAG, "UI initialized");
 }
 
 UiOrchestrator::~UiOrchestrator() {
@@ -44,7 +47,7 @@ void UiOrchestrator::onJobEvent(const JobEventType& event)
         auto plottingScreen = std::make_unique<screens::PlottingScreen>(_screensCtx);
 
         _router.pushScreen(std::move(plottingScreen));
-        Serial.println("Navigated to PlottingScreen from observer");
+        ESP_LOGI(TAG, "Navigated to PlottingScreen");
     }
 }
 

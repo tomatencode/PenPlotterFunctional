@@ -1,5 +1,8 @@
 #include "../WebInterface.hpp"
 #include "config/directories_config.hpp"
+#include <esp_log.h>
+
+static const char* TAG = "HandleUpload";
 
 // Private helpers
 
@@ -41,14 +44,14 @@ void WebInterface::handleUpload()
     {
         if (!validateFileName(filename.c_str()))
         {
-            Serial.printf("WebInterface: Upload rejected - invalid filename: %s\n", filename.c_str());
+            ESP_LOGW(TAG, "Upload rejected - invalid filename: %s", filename.c_str());
             _server.send(400, "text/plain", "Invalid filename");
             return;
         }
 
         if (!filename.ends_with(".gcode"))
         {
-            Serial.printf("WebInterface: Upload rejected - invalid file type: %s\n", filename.c_str());
+            ESP_LOGW(TAG, "Upload rejected - invalid file type: %s", filename.c_str());
             _server.send(400, "text/plain", "Only .gcode files are supported");
             return;
         }
@@ -66,12 +69,12 @@ void WebInterface::handleUpload()
         _currentUploadFile = _fileManager.openFileWrite(_currentTempPath);
         if (!_currentUploadFile)
         {
-            Serial.printf("WebInterface: Failed to create temp file: %s\n", _currentTempPath.c_str());
+            ESP_LOGE(TAG, "Failed to create temp file: %s", _currentTempPath.c_str());
             _server.send(507, "text/plain", "Insufficient storage");
             return;
         }
 
-        Serial.printf("WebInterface: Upload start - %s (%u bytes)\n", filename.c_str(), upload.totalSize);
+        ESP_LOGI(TAG, "Upload start - %s (%u bytes)", filename.c_str(), upload.totalSize);
     }
     else if (upload.status == UPLOAD_FILE_WRITE)
     {
@@ -80,14 +83,14 @@ void WebInterface::handleUpload()
             if (_currentUploadFile) _currentUploadFile.close();
             if (_fileManager.fileExists(_currentTempPath)) _fileManager.deleteFile(_currentTempPath);
 
-            Serial.printf("WebInterface: Upload rejected - exceeds %u byte limit\n", MAX_UPLOAD_SIZE);
+            ESP_LOGW(TAG, "Upload rejected - exceeds %u byte limit", MAX_UPLOAD_SIZE);
             _server.send(413, "text/plain", "File too large");
             return;
         }
 
         if (!_currentUploadFile)
         {
-            Serial.println("WebInterface: Upload file not open");
+            ESP_LOGE(TAG, "Upload file not open");
             _server.send(500, "text/plain", "Upload not initialized");
             return;
         }
@@ -97,7 +100,7 @@ void WebInterface::handleUpload()
         {
             _currentUploadFile.close();
             _fileManager.deleteFile(_currentTempPath);
-            Serial.println("WebInterface: Failed to write upload chunk");
+            ESP_LOGE(TAG, "Failed to write upload chunk");
             _server.send(500, "text/plain", "Write error");
             return;
         }
@@ -111,7 +114,7 @@ void WebInterface::handleUpload()
         if (_uploadedBytes != upload.totalSize)
         {
             _fileManager.deleteFile(_currentTempPath);
-            Serial.printf("WebInterface: Upload size mismatch (got %u, expected %u)\n",
+            ESP_LOGW(TAG, "Upload size mismatch (got %u, expected %u)",
                           _uploadedBytes, upload.totalSize);
             _server.send(400, "text/plain", "Upload incomplete or corrupted");
             resetUploadState();
@@ -121,13 +124,13 @@ void WebInterface::handleUpload()
         if (!_fileManager.renameFile(_currentTempPath, _currentUploadPath))
         {
             _fileManager.deleteFile(_currentTempPath);
-            Serial.println("WebInterface: Failed to finalize upload");
+            ESP_LOGE(TAG, "Failed to finalize upload");
             _server.send(500, "text/plain", "Failed to save file");
             resetUploadState();
             return;
         }
 
-        Serial.printf("WebInterface: Upload complete - %s (%u bytes)\n",
+        ESP_LOGI(TAG, "Upload complete - %s (%u bytes)",
                       filename.c_str(), _uploadedBytes);
 
         std::string response = "{\"status\":\"success\",\"file\":\""
@@ -142,7 +145,7 @@ void WebInterface::handleUpload()
         if (_currentUploadFile) _currentUploadFile.close();
         if (_fileManager.fileExists(_currentTempPath)) _fileManager.deleteFile(_currentTempPath);
 
-        Serial.println("WebInterface: Upload aborted by client");
+        ESP_LOGI(TAG, "Upload aborted by client");
         resetUploadState();
     }
 }

@@ -1,6 +1,10 @@
 #include "HomingController.hpp"
 #include "settings/RuntimeSettings.hpp"
 
+#include <esp_log.h>
+
+static const char* TAG = "HomingController";
+
 HomingController::HomingController(StepperAxis& axisA, StepperAxis& axisB, MotorDriver& driverA, MotorDriver& driverB, MotionState& motionState, RuntimeSettings& runtimeSettings)
     : _axisA(axisA), _axisB(axisB), _driverA(driverA), _driverB(driverB), _motionState(motionState), _runtimeSettings(runtimeSettings) {}
 
@@ -11,15 +15,15 @@ bool HomingController::checkPauseAbort() {
         _driverB.setSpeed(0);
         _motionState.setState(MotionStateType::PAUSED);
 
-        Serial.println("Homing paused");
+        ESP_LOGI(TAG, "Homing paused");
         while (_motionState.getCommand() == MotionCommand::PAUSE) {
             yield();
         }
-        Serial.println("Homing resumed");
+        ESP_LOGI(TAG, "Homing resumed");
         _motionState.setState(MotionStateType::RUNNING);
         return false;  // Continue homing
     } else if (_motionState.getCommand() == MotionCommand::ABORT) {
-        Serial.println("Homing aborted");
+        ESP_LOGI(TAG, "Homing aborted");
         _driverA.setSpeed(0);
         _driverB.setSpeed(0);
         return true;  // Abort homing
@@ -37,12 +41,12 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     uint8_t sgHistorySize = _runtimeSettings.sgHistorySize();
     
     if (speed_stps_per_s <= 0.0f) {
-        Serial.println("ERROR: Invalid homing speed");
+        ESP_LOGE(TAG, "Invalid homing speed");
         return;
     }
     
     if (_driverA.getMicrosteps() != _driverB.getMicrosteps()) {
-        Serial.println("ERROR: Drivers have different microstep settings");
+        ESP_LOGE(TAG, "Drivers have different microstep settings");
         return;
     }
 
@@ -89,15 +93,14 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
             int average = sum / sgHistorySize;
             
             if (average < stallGuard_threshold) {
-                Serial.print("Stall detected: avg SG = ");
-                Serial.println(average);
+                ESP_LOGD(TAG, "Stall detected: avg SG = %d", average);
                 break;  // Stall detected, stop moving
             }
         }
 
         // Safety timeout
         if ((uint32_t)(micros() - start_time) > homingTimeout_us) {
-            Serial.println("WARNING: Homing timeout, limit not found");
+            ESP_LOGW(TAG, "Homing timeout, limit not found");
             break;
         }
     }
@@ -115,7 +118,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
     // Back off a few steps
     double microsteps_per_s = _runtimeSettings.homingBackOffSpeed_stp_per_s() * _axisA.microsteps();
     if (microsteps_per_s <= 0.0f) {
-        Serial.println("ERROR: Invalid homing back-off speed");
+        ESP_LOGE(TAG, "Invalid homing back-off speed");
         return;
     }
     uint16_t stepInterval_us = 1000000UL / microsteps_per_s;
@@ -131,7 +134,7 @@ void HomingController::moveToLimit(bool Afw, bool Bfw, uint16_t backOffSteps) {
 
 void HomingController::home() {
     if (_axisA.microsteps() != _axisB.microsteps()) {
-        Serial.println("ERROR: Axes have different microstep settings");
+        ESP_LOGE(TAG, "Axes have different microstep settings");
         return;
     }
 

@@ -2,9 +2,12 @@
 
 #include <WiFi.h>
 #include <ESPmDNS.h>
+#include <esp_log.h>
+
+static const char* TAG = "WebInterface";
 
 void WebInterface::init() {
-    Serial.println("WebInterface initializing...");
+    ESP_LOGI(TAG, "Initializing");
     _settingPersistence.registerObserver(this);
 
     // Register routes once, they persist across server restarts
@@ -29,7 +32,7 @@ void WebInterface::update() {
         if (_serverStarted) {
             MDNS.end();
             _serverStarted = false;
-            Serial.println("WebInterface: WiFi lost — HTTP server stopped");
+            ESP_LOGI(TAG, "WiFi lost - HTTP server stopped");
         }
         return;
     }
@@ -49,30 +52,26 @@ void WebInterface::setupServer() {
     if (!_wifiController.isConnected()) return;
 
     if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
-        Serial.println("Error starting mDNS");
+        ESP_LOGE(TAG, "Error starting mDNS");
     }
     else {
-        Serial.print("mDNS started: http://");
-        Serial.print(_runtimeSettings.getMdnsName().c_str());
-        Serial.println(".local");
+        ESP_LOGI(TAG, "mDNS started: http://%s.local", _runtimeSettings.getMdnsName().c_str());
     }
 
     _server.begin();
     _serverStarted = true;
 
-    Serial.println("HTTP server started");
+    ESP_LOGI(TAG, "HTTP server started");
 }
 
 void WebInterface::onRelevantSettingsChanged() {
     // mDNS name has changed, restart mDNS with new name
-    Serial.println("mDNS name changed, restarting mDNS...");
+    ESP_LOGI(TAG, "mDNS name changed, restarting mDNS");
     MDNS.end();
     if (!MDNS.begin(_runtimeSettings.getMdnsName().c_str())) {
-        Serial.println("Error restarting mDNS");
+        ESP_LOGE(TAG, "Error restarting mDNS");
     }
     else {
-        Serial.print("mDNS restarted: http://");
-        Serial.print(_runtimeSettings.getMdnsName().c_str());
-        Serial.println(".local");
+        ESP_LOGI(TAG, "mDNS restarted: http://%s.local", _runtimeSettings.getMdnsName().c_str());
     }
 }

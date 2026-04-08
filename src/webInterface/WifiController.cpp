@@ -1,9 +1,12 @@
 #include "WifiController.hpp"
 
 #include <WiFi.h>
+#include <esp_log.h>
+
+static const char* TAG = "WifiController";
 
 void WifiController::init() {
-    Serial.println("WifiController initializing (WiFi connects in background)...");
+    ESP_LOGI(TAG, "Initializing (WiFi connects in background)");
     _settingPersistence.registerObserver(this);
     configureWifi();
 }
@@ -21,11 +24,8 @@ void WifiController::update() {
     }
 
     if (_currentConnectionAttempts > 0) {
-        Serial.println("WiFi connected successfully!");
-        Serial.print("Connected to SSID: ");
-        Serial.println(WiFi.SSID());
-        Serial.print("IP Address: ");
-        Serial.println(WiFi.localIP());
+        ESP_LOGI(TAG, "WiFi connected to SSID: %s, IP: %s",
+                 WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
         _currentConnectionAttempts = 0;
     }
 }
@@ -53,20 +53,20 @@ void WifiController::attemptConnection() {
 
     if (ssid.empty()) return;
 
-    Serial.println("Attempting WiFi connection...");
+    ESP_LOGI(TAG, "Attempting WiFi connection");
     WiFi.begin(ssid.c_str(), password.c_str());
 
     _currentConnectionAttempts++;
     _lastConnectionAttemptMs = millis();
 
     if (_currentConnectionAttempts == _maxConnectionAttempts) {
-        Serial.println("Max WiFi connection attempts reached.");
+        ESP_LOGW(TAG, "Max WiFi connection attempts reached");
     }
 }
 
 void WifiController::onRelevantSettingsChanged() {
     // WiFi credentials have changed, reconnect with new credentials
-    Serial.println("Network settings changed, reconnecting WiFi...");
+    ESP_LOGI(TAG, "Network settings changed, reconnecting WiFi");
 
     WiFi.disconnect(true);  // Disconnect and turn off WiFi
 

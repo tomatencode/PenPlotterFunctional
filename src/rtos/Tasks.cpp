@@ -7,6 +7,9 @@
 #include "plottingController/PlottingController.hpp"
 #include "settings/RuntimeSettings.hpp"
 #include "settings/SettingPersistence.hpp"
+#include <esp_log.h>
+
+static const char* TAG = "Tasks";
 
 TaskHandle_t plottingTaskHandle = nullptr;
 TaskHandle_t systemTaskHandle = nullptr;
@@ -17,8 +20,7 @@ TaskHandle_t systemTaskHandle = nullptr;
 */
 void plottingTask(void *parameter)
 {
-    Serial.print("Plotting task running on core: ");
-    Serial.println(xPortGetCoreID());
+    ESP_LOGI(TAG, "Plotting task running on core %d", xPortGetCoreID());
 
     PlottingController* plottingController =
         static_cast<PlottingController*>(parameter);
@@ -38,8 +40,7 @@ void plottingTask(void *parameter)
 */
 void systemTask(void *parameter)
 {
-    Serial.print("System task running on core: ");
-    Serial.println(xPortGetCoreID());
+    ESP_LOGI(TAG, "System task running on core %d", xPortGetCoreID());
 
     SystemController* app =
         static_cast<SystemController*>(parameter);

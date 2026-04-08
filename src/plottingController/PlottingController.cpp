@@ -4,6 +4,9 @@
 #include "config/hardware_config.hpp"
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"
+#include <esp_log.h>
+
+static const char* TAG = "PlottingController";
 
 PlottingController::PlottingController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, SettingPersistence& settingsPersistence, RuntimeSettings& runtimeSettings)
     : SettingObserver({Setting::DriverCurrent, Setting::Microsteps, Setting::StallguardThreshold}),
@@ -84,7 +87,7 @@ void PlottingController::init()
     _driverB.begin();
     configureDriver(_driverB);
 
-    Serial.println("Plotting manager initialized.");
+    ESP_LOGI(TAG, "Plotting controller initialized");
 }
 
 void PlottingController::update()
@@ -95,8 +98,7 @@ void PlottingController::update()
     {
         _motionState.setState(MotionStateType::RUNNING);
 
-        Serial.print("Executing line: ");
-        Serial.println(msg->line);
+        ESP_LOGD(TAG, "Executing line: %s", msg->line);
 
         _gcodeExecuter.executeLine(msg->line);
     }
