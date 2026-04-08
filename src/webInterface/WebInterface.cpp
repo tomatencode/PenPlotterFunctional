@@ -11,10 +11,10 @@ void WebInterface::init() {
     _settingPersistence.registerObserver(this);
 
     // Register routes once, they persist across server restarts
-    _server.on("/files",    HTTP_GET,  [this]() { handleFileList(); });
+    _server.on("/upload",   HTTP_POST, [this]() {}, [this]() { handleUpload(); });
+    _server.on("/plotFiles",HTTP_GET,  [this]() { handleListJobs(); });
     _server.on("/start",    HTTP_POST, [this]() { handleStartJob(); });
     _server.on("/abort",    HTTP_POST, [this]() { handleAbortJob(); });
-    _server.on("/upload",   HTTP_POST, [this]() {}, [this]() { handleUpload(); });
     _server.on("/pause",    HTTP_POST, [this]() { handlePauseJob(); });
     _server.on("/resume",   HTTP_POST, [this]() { handleResumeJob(); });
     _server.on("/settings", HTTP_GET,  [this]() { handleGetSetting(); });

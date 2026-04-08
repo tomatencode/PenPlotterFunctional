@@ -60,7 +60,7 @@ private:
     void resetUploadState();
 
     // HTTP handlers
-    void handleFileList();
+    void handleListJobs();
     void handleStartJob();
     void handleAbortJob();
     void handlePauseJob();

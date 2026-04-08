@@ -1,7 +1,7 @@
 #include "../WebInterface.hpp"
 #include "config/DirectoriesConfig.hpp"
 
-void WebInterface::handleFileList()
+void WebInterface::handleListJobs()
 {
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY);
 
