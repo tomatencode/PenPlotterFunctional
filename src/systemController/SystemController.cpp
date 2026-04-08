@@ -26,6 +26,7 @@ SystemController::SystemController(MotionState& motionState, RtosQueue<GcodeMess
       _uiOrchestrator(_jobController, _router, _renderer, _inputMapper, _buzzer,
                         ui::ScreensContext{
                             _jobController,
+                            _gcodeSender,
                             motionState,
                             _fileManager,
                             settingPersistence,

@@ -19,6 +19,7 @@ public:
 
     // Render the screen
     virtual void render(Renderer& r);
+    virtual void update() {};
 
     // Reload all widgets, useful for dynamic content updates
     virtual void reload();

@@ -156,4 +156,8 @@ void HomingController::home() {
     // Zero both axes
     _axisA.setPositionSteps(0);
     _axisB.setPositionSteps(0);
+
+    // Update motion state machine position
+    _motionState.setMachineX(0.0);
+    _motionState.setMachineY(0.0);
 }

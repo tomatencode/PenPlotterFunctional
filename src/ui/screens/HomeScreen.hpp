@@ -5,7 +5,8 @@
 
 // Include related screens to enable navigation
 #include "plotting/FilesScreen.hpp"
-#include "settings/SettingsScreen.hpp"
+#include "manualControll/ManualControllScreen.hpp"
+//#include "settings/SettingsScreen.hpp"
 #include "../framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -46,6 +47,18 @@ public:
                 widgets::ButtonProps{
                     .onPress = [this, ctx]() {
                         if (router()) {
+                            auto manualControlScreen = std::make_unique<ManualControllScreen>(ctx);
+                            router()->pushScreen(std::move(manualControlScreen));
+                        }
+                    }
+                },
+                std::make_unique<widgets::Label>("Manual Control")
+            )
+            /*
+            std::make_unique<widgets::Button>(
+                widgets::ButtonProps{
+                    .onPress = [this, ctx]() {
+                        if (router()) {
                             auto settingsScreen = std::make_unique<SettingsScreen>(ctx);
                             router()->pushScreen(std::move(settingsScreen));
                         }
@@ -53,6 +66,7 @@ public:
                 },
                 std::make_unique<widgets::Label>("Settings")
             )
+            */
         )
     , 0) // Start with Plot button focused
     {}

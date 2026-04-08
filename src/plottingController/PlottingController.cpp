@@ -30,7 +30,7 @@ PlottingController::PlottingController(MotionState& motionState, RtosQueue<Gcode
     _axisA(_stepA, _driverA, true),
     _axisB(_stepB, _driverB, true),
 
-    _pen(_penServo, settingsPersistence, runtimeSettings),
+    _pen(_penServo, motionState, settingsPersistence, runtimeSettings),
 
     _homingController(
         _axisA,

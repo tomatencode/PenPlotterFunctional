@@ -40,6 +40,7 @@ void Router::handleInput(InputState& input)
 void Router::render(Renderer& r)
 {
     if (!top()) return;
+    top()->update();
     top()->render(r);
 }
 

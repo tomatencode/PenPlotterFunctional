@@ -58,7 +58,7 @@ void GCodeExecuter::executeLine(const std::string& line) {
 
 void GCodeExecuter::handleG0G1(const std::map<char,double>& params) {
     XYPos target = _motion.getCurrentPos();
-    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
+    double feed = _motionState.penIsDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
 
     if (params.count('X')) target.xMm = _absolute ? params.at('X') : target.xMm + params.at('X');
     if (params.count('Y')) target.yMm = _absolute ? params.at('Y') : target.yMm + params.at('Y');
@@ -78,7 +78,7 @@ void GCodeExecuter::handleG2G3(const std::map<char,double>& params, bool clockwi
     XYPos target;
     target.xMm = _absolute ? params.at('X') : current.xMm + params.at('X');
     target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
-    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
+    double feed = _motionState.penIsDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 
     _motion.arcToXY(target, center, clockwise, feed);
@@ -96,7 +96,7 @@ void GCodeExecuter::handleQUAD(const std::map<char,double>& params) {
     target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
     control.xMm = params.at('C');       // Control X
     control.yMm = params.at('D');       // Control Y (use 'D' as second letter for clarity)
-    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
+    double feed = _motionState.penIsDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 
     _motion.quadraticBezierToXY(control, target, feed);
@@ -114,7 +114,7 @@ void GCodeExecuter::handleCUBIC(const std::map<char,double>& params) {
     target.yMm = _absolute ? params.at('Y') : current.yMm + params.at('Y');
     c1.xMm = params.at('A'); c1.yMm = params.at('B');
     c2.xMm = params.at('C'); c2.yMm = params.at('D');
-    double feed = _pen.isDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
+    double feed = _motionState.penIsDown() ? _runtimeSettings.drawFeedRate_mm_per_s() : _runtimeSettings.travelFeedRate_mm_per_s();
     if (params.count('F')) feed = params.at('F');
 
     _motion.cubicBezierToXY(c1, c2, target, feed);

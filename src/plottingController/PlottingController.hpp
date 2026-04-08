@@ -10,7 +10,7 @@
 #include "motionExecution/CoreXYKinematics.hpp"
 #include "motionExecution/MotionExecuter.hpp"
 #include "motionExecution/BezierExecuter.hpp"
-#include "pen/ServoPen.hpp"
+#include "pen/Pen.hpp"
 #include "homing/HomingController.hpp"
 #include "gcode/GCodeExecuter.hpp"
 #include "rtos/MotionState.hpp"
@@ -54,7 +54,7 @@ private:
     StepperAxis _axisA;
     StepperAxis _axisB;
 
-    ServoPen _pen;
+    Pen _pen;
 
     HomingController _homingController;
 

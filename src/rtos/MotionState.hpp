@@ -31,13 +31,17 @@ public:
 
     void setMachineX(float x) { _machineX.store(x); }
     void setMachineY(float y) { _machineY.store(y); }
+    void setPenIsDown(bool isDown) { _penIsDown.store(isDown); }
 
     float getMachineX() const { return _machineX.load(); }
     float getMachineY() const { return _machineY.load(); }
+    bool penIsDown() const { return _penIsDown.load(); }
 
 private:
     std::atomic<MotionCommand> _command = MotionCommand::NONE;
+    std::atomic<MotionStateType> _state = MotionStateType::IDLE;
+
     std::atomic<float> _machineX = 0.0f;
     std::atomic<float> _machineY = 0.0f;
-    std::atomic<MotionStateType> _state = MotionStateType::IDLE;
+    std::atomic<bool> _penIsDown = false;
 };

@@ -83,4 +83,7 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s) {
             errB -= stepsInLoop;
         }
     }
+
+    _motionState.setMachineX(targetPos.xMm);
+    _motionState.setMachineY(targetPos.yMm);
 }
