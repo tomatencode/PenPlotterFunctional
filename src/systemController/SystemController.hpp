@@ -1,6 +1,7 @@
 #pragma once
 
 #include <LCD-I2C.h>
+#include "gcode/GCodeSender.hpp"
 #include "jobController/JobController.hpp"
 #include "webInterface/WebInterface.hpp"
 #include "webInterface/WifiController.hpp"
@@ -31,6 +32,8 @@ private:
     LcdDisplay _display;
     RotaryEncoder _encoder;
     Buzzer _buzzer;
+
+    GCodeSender _gcodeSender;
 
     JobController _jobController;
     FileManager _fileManager;

@@ -4,11 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "gcode/GCodeSender.hpp"
 #include "hardware/buzzer/Buzzer.hpp"
 #include "storage/FileManager.hpp"
 #include "rtos/MotionState.hpp"
-#include "rtos/RtosQueue.hpp"
-#include "rtos/GcodeMessage.hpp"
 #include "JobObserver.hpp"
 
 struct PlotJob {
@@ -20,8 +19,13 @@ struct PlotJob {
 
 class JobController {
 public:
-    JobController(MotionState& motionState, RtosQueue<GcodeMessage>& gcodeQueue, FileManager& fileManager, Buzzer& buzzer)
-        : _currentJob(PlotJob()), _active(false), _motionState(motionState), _gcodeQueue(gcodeQueue), _fileManager(fileManager), _buzzer(buzzer)
+    JobController(GCodeSender& gcodeSender, MotionState& motionState, FileManager& fileManager, Buzzer& buzzer)
+        : _currentJob(PlotJob()),
+          _active(false),
+          _gcodeSender(gcodeSender),
+          _motionState(motionState),
+          _fileManager(fileManager),
+          _buzzer(buzzer)
     {}
 
     // Job control
@@ -38,7 +42,7 @@ public:
     bool isActive() const { return _active; }
     std::string getCurrentFile() const { return _currentJob.filename; }
     uint32_t getTotalLines() const { return _currentJob.totalLines; }
-    uint16_t getCurrentLine() const;
+    uint32_t getCurrentLine() const;
 
     void update();
 
@@ -48,10 +52,10 @@ private:
 
     void endCurrentJob();
 
-
+    GCodeSender& _gcodeSender;
+    std::optional<GCodeSender::Token> _gcodeToken;
     MotionState& _motionState;
     FileManager& _fileManager;
-    RtosQueue<GcodeMessage>& _gcodeQueue;
     Buzzer& _buzzer;
 
     std::vector<JobObserver*> _observers;

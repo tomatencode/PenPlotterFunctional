@@ -11,6 +11,12 @@ void JobController::start(const std::string& filename)
 {
     abort(); // Ensure any existing job is stopped before starting a new one
 
+    _gcodeToken = _gcodeSender.tryAcquire();
+    if (!_gcodeToken) {
+        ESP_LOGW(TAG, "Cannot start job - GCode sender is busy");
+        return;
+    }
+
     ESP_LOGI(TAG, "Starting job: %s", filename.c_str());
 
     _motionState.setCommand(MotionCommand::NONE); // Clear any existing motion commands
@@ -74,7 +80,7 @@ void JobController::abort()
 
     ESP_LOGI(TAG, "Aborting job");
     _motionState.setCommand(MotionCommand::ABORT);
-    _gcodeQueue.clear();
+    _gcodeToken->clearQueue();
 
     std::string filename = _currentJob.filename; // Capture filename before ending job
     endCurrentJob();
@@ -82,10 +88,10 @@ void JobController::abort()
     notifyObservers({.type = JobEvent::ABORTED, .filename = filename});
 }
 
-uint16_t JobController::getCurrentLine() const
+uint32_t JobController::getCurrentLine() const
 {
-    if (!_active) return 0;
-    int linesInQueue = _gcodeQueue.messagesWaiting();
+    if (!_active || !_gcodeToken) return 0;
+    size_t linesInQueue = _gcodeToken->messagesWaiting();
     if (linesInQueue > _currentJob.currentBufferLine) return 0;
     return _currentJob.currentBufferLine - linesInQueue;
 }
@@ -93,9 +99,9 @@ uint16_t JobController::getCurrentLine() const
 void JobController::update()
 {
     if (!_active) return;
-    
+
     // Check for completion
-    if (!_currentJob.file.available() && _gcodeQueue.messagesWaiting() == 0) {
+    if (!_currentJob.file.available() && _gcodeToken->messagesWaiting() == 0) {
         std::string filename = _currentJob.filename; // Capture filename before ending job
         endCurrentJob();
         _buzzer.playMelody(_jobCompleteMelody);
@@ -105,8 +111,7 @@ void JobController::update()
     
     if (!_currentJob.file.available()) return; // No more lines to read
 
-
-    UBaseType_t space = _gcodeQueue.spacesAvailable();
+    UBaseType_t space = _gcodeToken->spacesAvailable();
     for (UBaseType_t i = 0; i < space && _currentJob.file.available(); i++)
     {
         String line = _currentJob.file.readStringUntil('\n');
@@ -117,21 +122,16 @@ void JobController::update()
 
         _currentJob.currentBufferLine++;
 
-        // skip empty lines
-        if (lineStr.length() == 0)
-            continue;
+        if (lineStr.length() == 0) continue; // skip empty lines
 
-        GcodeMessage msg;
-
-        strncpy(msg.line, lineStr.c_str(), MAX_GCODE_LINE - 1);
-        msg.line[MAX_GCODE_LINE - 1] = '\0';   // safety termination
-
-        if (!_gcodeQueue.trySend(msg, 0)) break; // queue full
+        if (!_gcodeToken->send(lineStr)) break; // queue full
     }
 }
 
 void JobController::endCurrentJob()
 {
+    _gcodeToken = std::nullopt; // RAII destructor releases the lock
+
     _active = false;
     if (_currentJob.file) {
         _currentJob.file.close();
