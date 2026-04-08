@@ -83,8 +83,10 @@ void SettingPersistence::setDriverCurrent_mA(float value) {
 
 void SettingPersistence::setMicrosteps(float value) {
     const float clamped = std::clamp(value, MIN_MICROSTEPS, MAX_MICROSTEPS);
-    persist("microsteps", clamped);
-    _runtimeSettings.setMicrosteps(clamped);
+    // make sure microsteps is a power of 2 (common requirement for stepper drivers)
+    const float microsteps_pow2 = std::pow(2, std::round(std::log2(clamped)));
+    persist("microsteps", microsteps_pow2);
+    _runtimeSettings.setMicrosteps(microsteps_pow2);
     notifyObservers(Setting::Microsteps);
 }
 
