@@ -1,7 +1,7 @@
 #include "SystemController.hpp"
 
-#include "config/pins_config.hpp"
-#include "config/ui_config.hpp"
+#include "config/PinsConfig.hpp"
+#include "config/UiConfig.hpp"
 
 const Buzzer::Melody startupMelody = {
     {262, 200},

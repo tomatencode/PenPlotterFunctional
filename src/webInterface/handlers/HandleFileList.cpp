@@ -1,5 +1,5 @@
 #include "../WebInterface.hpp"
-#include "config/directories_config.hpp"
+#include "config/DirectoriesConfig.hpp"
 
 void WebInterface::handleFileList()
 {

@@ -17,7 +17,7 @@
 #include "ui/framework/widgets/layouts/LinearLayout.hpp"
 #include "ui/framework/widgets/layouts/ScrollableVerticalLayout.hpp"
 
-#include "config/directories_config.hpp"
+#include "config/DirectoriesConfig.hpp"
 #include "ui/styles/ButtonStyles.hpp"
 #include "ui/screens/ScreensContext.hpp"
 

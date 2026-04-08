@@ -1,5 +1,5 @@
 #include "JobController.hpp"
-#include "config/directories_config.hpp"
+#include "config/DirectoriesConfig.hpp"
 
 #include <FS.h>
 #include <cstring>

@@ -1,5 +1,5 @@
 #include "../WebInterface.hpp"
-#include "config/directories_config.hpp"
+#include "config/DirectoriesConfig.hpp"
 #include <esp_log.h>
 
 static const char* TAG = "HandleUpload";

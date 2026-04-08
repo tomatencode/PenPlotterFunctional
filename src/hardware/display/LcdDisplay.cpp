@@ -1,5 +1,5 @@
 #include "LcdDisplay.hpp"
-#include "config/ui_config.hpp"
+#include "config/UiConfig.hpp"
 
 LcdDisplay::LcdDisplay(LCD_I2C& lcd)
     : _lcd(lcd)

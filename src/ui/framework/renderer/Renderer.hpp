@@ -1,5 +1,5 @@
 #pragma once
-#include "config/ui_config.hpp"
+#include "config/UiConfig.hpp"
 #include "hardware/display/LcdDisplay.hpp"
 #include "../text/CustomChars.hpp"
 #include "../text/Glyph.hpp"

@@ -20,7 +20,7 @@
 #include "ui/components/PressHoldButton.hpp"
 #include "ui/screens/ScreensContext.hpp"
 
-#include "config/directories_config.hpp"
+#include "config/DirectoriesConfig.hpp"
 
 namespace ui {
 namespace screens {

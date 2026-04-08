@@ -1,7 +1,7 @@
 #include "PlottingController.hpp"
 
-#include "config/pins_config.hpp"
-#include "config/hardware_config.hpp"
+#include "config/PinsConfig.hpp"
+#include "config/HardwareConfig.hpp"
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"
 #include <esp_log.h>
