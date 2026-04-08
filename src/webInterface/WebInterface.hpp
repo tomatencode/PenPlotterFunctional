@@ -66,7 +66,7 @@ private:
     void handlePauseJob();
     void handleResumeJob();
     void handleUpload();
-    void handleGetSettings();
+    void handleGetSetting();
     void handleSetSetting();
 
     void onRelevantSettingsChanged() override;

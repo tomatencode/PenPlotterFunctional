@@ -17,7 +17,7 @@ void WebInterface::init() {
     _server.on("/upload",   HTTP_POST, [this]() {}, [this]() { handleUpload(); });
     _server.on("/pause",    HTTP_POST, [this]() { handlePauseJob(); });
     _server.on("/resume",   HTTP_POST, [this]() { handleResumeJob(); });
-    _server.on("/settings", HTTP_GET,  [this]() { handleGetSettings(); });
+    _server.on("/settings", HTTP_GET,  [this]() { handleGetSetting(); });
     _server.on("/settings", HTTP_POST, [this]() { handleSetSetting(); });
 }
 

@@ -7,47 +7,51 @@
 
 static const char* TAG = "WebInterface";
 
-void WebInterface::handleGetSettings()
+void WebInterface::handleGetSetting()
 {
-    char buf[1024];
-    snprintf(buf, sizeof(buf),
-        "{"
-        "\"mdnsName\":\"%s\""
-        ",\"driverCurrent\":%.2f"
-        ",\"microsteps\":%.2f"
-        ",\"drawFeedRate\":%.2f"
-        ",\"travelFeedRate\":%.2f"
-        ",\"homingSpeed\":%.2f"
-        ",\"homingBackOffSpeed\":%.2f"
-        ",\"stallguardThreshold\":%.2f"
-        ",\"backOffStepsX\":%u"
-        ",\"backOffStepsY\":%u"
-        ",\"homingTimeout\":%u"
-        ",\"sgCheckInterval\":%u"
-        ",\"sgStartTimeout\":%u"
-        ",\"sgHistorySize\":%u"
-        ",\"penUpAngle\":%.2f"
-        ",\"penDownAngle\":%.2f"
-        "}",
-        _runtimeSettings.getMdnsName().c_str(),
-        _runtimeSettings.driverCurrent_mA(),
-        _runtimeSettings.microsteps(),
-        _runtimeSettings.drawFeedRate_mm_per_s(),
-        _runtimeSettings.travelFeedRate_mm_per_s(),
-        _runtimeSettings.homingSpeed_stp_per_s(),
-        _runtimeSettings.homingBackOffSpeed_stp_per_s(),
-        _runtimeSettings.stallguardThreshold(),
-        (unsigned int)_runtimeSettings.backOffStepsX(),
-        (unsigned int)_runtimeSettings.backOffStepsY(),
-        (unsigned int)_runtimeSettings.homingTimeout_us(),
-        (unsigned int)_runtimeSettings.sgCheckInterval_ms(),
-        (unsigned int)_runtimeSettings.sgStartTimeout_ms(),
-        (unsigned int)_runtimeSettings.sgHistorySize(),
-        _runtimeSettings.penUpAngle_deg(),
-        _runtimeSettings.penDownAngle_deg()
-    );
+    if (!_server.hasArg("key"))
+    {
+        _server.send(400, "text/plain", "Missing 'key' parameter");
+        return;
+    }
 
-    _server.send(200, "application/json", buf);
+    const std::string key = _server.arg("key").c_str();
+
+    struct Entry {
+        const char* key;
+        std::function<std::string()> getter;
+    };
+
+    char buf[64];
+    const Entry table[] = {
+        {"mdnsName",            [this]()                    { return _runtimeSettings.getMdnsName(); }},
+        {"driverCurrent",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.driverCurrent_mA());          return buf; }},
+        {"microsteps",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.microsteps());                 return buf; }},
+        {"drawFeedRate",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.drawFeedRate_mm_per_s());      return buf; }},
+        {"travelFeedRate",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.travelFeedRate_mm_per_s());    return buf; }},
+        {"homingSpeed",         [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingSpeed_stp_per_s());      return buf; }},
+        {"homingBackOffSpeed",  [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingBackOffSpeed_stp_per_s()); return buf; }},
+        {"stallguardThreshold", [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.stallguardThreshold());        return buf; }},
+        {"backOffStepsX",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.backOffStepsX()); return buf; }},
+        {"backOffStepsY",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.backOffStepsY()); return buf; }},
+        {"homingTimeout",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.homingTimeout_us()); return buf; }},
+        {"sgCheckInterval",     [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgCheckInterval_ms()); return buf; }},
+        {"sgStartTimeout",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgStartTimeout_ms()); return buf; }},
+        {"sgHistorySize",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgHistorySize()); return buf; }},
+        {"penUpAngle",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penUpAngle_deg());             return buf; }},
+        {"penDownAngle",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penDownAngle_deg());           return buf; }},
+    };
+
+    for (const auto& entry : table)
+    {
+        if (key == entry.key)
+        {
+            _server.send(200, "text/plain", entry.getter().c_str());
+            return;
+        }
+    }
+
+    _server.send(404, "text/plain", "Unknown setting key");
 }
 
 void WebInterface::handleSetSetting()
