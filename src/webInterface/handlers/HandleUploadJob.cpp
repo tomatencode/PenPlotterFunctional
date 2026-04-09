@@ -34,24 +34,16 @@ void WebInterface::resetUploadState()
 
 // Handler
 
-void WebInterface::handleUpload()
+void WebInterface::handleUploadJob()
 {
     HTTPUpload& upload = _server.upload();
     std::string filename = upload.filename.c_str();
 
     if (upload.status == UPLOAD_FILE_START)
     {
-        if (!validateFileName(filename.c_str()))
+        if (!validateFileName(filename.c_str()) || !filename.ends_with(".gcode"))
         {
-            ESP_LOGW(TAG, "Upload rejected - invalid filename: %s", filename.c_str());
             _server.send(400, "text/plain", "Invalid filename");
-            return;
-        }
-
-        if (!filename.ends_with(".gcode"))
-        {
-            ESP_LOGW(TAG, "Upload rejected - invalid file type: %s", filename.c_str());
-            _server.send(400, "text/plain", "Only .gcode files are supported");
             return;
         }
 

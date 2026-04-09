@@ -11,7 +11,8 @@ void WebInterface::init() {
     _settingPersistence.registerObserver(this);
 
     // Register routes once, they persist across server restarts
-    _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUpload(); });
+    _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUploadJob(); });
+    _server.on("/plotFiles", HTTP_DELETE, [this]() { handleDeleteJob(); });
     _server.on("/plotFiles", HTTP_GET,  [this]() { handleListJobs(); });
     _server.on("/start", HTTP_POST, [this]() { handleStartJob(); });
     _server.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
