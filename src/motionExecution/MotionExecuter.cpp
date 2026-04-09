@@ -16,7 +16,7 @@ void MotionExecuter::LineToXY(
     const XYPos& targetPos,
     double mm_per_s
 ) {
-    _bezierExecuter.bezierTo(targetPos, mm_per_s, true);
+    _bezierExecuter.bezierTo(targetPos, mm_per_s, false);
 }
 
 void MotionExecuter::arcToXY(
