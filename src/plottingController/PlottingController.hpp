@@ -13,6 +13,7 @@
 #include "pen/Pen.hpp"
 #include "homing/HomingController.hpp"
 #include "gcode/GCodeExecuter.hpp"
+#include "gcode/GCodeParser.hpp"
 #include "rtos/MotionState.hpp"
 #include "rtos/RtosQueue.hpp"
 #include "rtos/GcodeMessage.hpp"

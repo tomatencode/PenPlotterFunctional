@@ -100,7 +100,8 @@ void PlottingController::update()
 
         ESP_LOGD(TAG, "Executing line: %s", msg->line);
 
-        _gcodeExecuter.executeLine(msg->line);
+        auto command = GCodeParser::parse(msg->line);
+        if (command) _gcodeExecuter.execute(*command);
     }
     else
     {

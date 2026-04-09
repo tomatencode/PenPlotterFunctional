@@ -9,40 +9,10 @@ GCodeExecuter::GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController&
         : _motion(motion), _pen(pen), _homingController(homingController), _runtimeSettings(runtimeSettings),
           _absolute(true), _motionState(motionState) {}
 
-void GCodeExecuter::executeLine(const std::string& line) {
-    std::string cmd;
-    std::map<char,double> params;
+void GCodeExecuter::execute(const GCodeCommand& command) {
+    const std::string& cmd = command.cmd;
+    const std::map<char,double>& params = command.params;
 
-    size_t i = 0;
-
-    // Skip whitespace
-    while (i < line.size() && isspace(line[i])) i++;
-
-    // --- Capture the command token ---
-    // Command can be letters followed immediately by numbers (e.g., G1, M3)
-    while (i < line.size() && isalpha(line[i])) {
-        cmd += toupper(line[i++]);
-    }
-    // Check if a number immediately follows (e.g., G5.1)
-    std::string cmdNum;
-    while (i < line.size() && (isdigit(line[i]) || line[i]=='.')) {
-        cmdNum += line[i++];
-    }
-    if (!cmdNum.empty()) cmd += cmdNum;  // e.g., "G5.1"
-
-    // --- Parse remaining letters/numbers as parameters ---
-    while (i < line.size()) {
-        if (isalpha(line[i])) {
-            char key = toupper(line[i++]);
-            std::string num;
-            while (i < line.size() && (isdigit(line[i]) || line[i]=='.' || line[i]=='-' || line[i]=='+')) {
-                num += line[i++];
-            }
-            if (!num.empty()) params[key] = std::stod(num);
-        } else i++;
-    }
-
-    // --- Dispatch ---
     if (cmd == "G0" || cmd == "G1") handleG0G1(params);
     else if (cmd == "G2") handleG2G3(params, true);
     else if (cmd == "G3") handleG2G3(params, false);

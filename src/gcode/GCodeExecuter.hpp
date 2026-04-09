@@ -5,8 +5,8 @@
 #include "homing/HomingController.hpp"
 #include "rtos/MotionState.hpp"
 #include "settings/RuntimeSettings.hpp"
+#include "GCodeCommand.hpp"
 #include <string>
-#include <vector>
 #include <map>
 
 class GCodeExecuter {
@@ -14,7 +14,7 @@ public:
     GCodeExecuter(MotionExecuter& motion, Pen& pen, HomingController& homingController, 
                   RuntimeSettings& runtimeSettings, MotionState& motionState);
 
-    void executeLine(const std::string& line);
+    void execute(const GCodeCommand& command);
 private:
     Pen& _pen;
     MotionExecuter& _motion;
