@@ -1,8 +1,7 @@
 #include "../WebInterface.hpp"
 #include "config/DirectoriesConfig.hpp"
 
-void WebInterface::handleStartJob()
-{
+void WebInterface::handleStartJob() {
     if (!_server.hasArg("file"))
     {
         _server.send(400, "text/plain", "Missing 'file' parameter");
@@ -21,20 +20,17 @@ void WebInterface::handleStartJob()
     _server.send(200, "text/plain", "Job started");
 }
 
-void WebInterface::handleAbortJob()
-{
+void WebInterface::handleAbortJob() {
     _jobController.abort();
     _server.send(200, "text/plain", "Job aborted");
 }
 
-void WebInterface::handlePauseJob()
-{
+void WebInterface::handlePauseJob() {
     _jobController.pause();
     _server.send(200, "text/plain", "Job paused");
 }
 
-void WebInterface::handleResumeJob()
-{
+void WebInterface::handleResumeJob() {
     _jobController.resume();
     _server.send(200, "text/plain", "Job resumed");
 }

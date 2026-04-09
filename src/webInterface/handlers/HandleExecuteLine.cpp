@@ -1,7 +1,6 @@
 #include "../WebInterface.hpp"
 
-void WebInterface::handleExecuteLine()
-{
+void WebInterface::handleExecuteLine() {
     std::string line = _server.arg("plain").c_str(); // "plain" = raw request body
 
     if (line.empty())

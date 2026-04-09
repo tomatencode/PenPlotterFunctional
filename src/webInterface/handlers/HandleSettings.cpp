@@ -7,8 +7,7 @@
 
 static const char* TAG = "WebInterface";
 
-void WebInterface::handleGetSetting()
-{
+void WebInterface::handleGetSetting() {
     if (!_server.hasArg("key"))
     {
         _server.send(400, "text/plain", "Missing 'key' parameter");
@@ -54,8 +53,7 @@ void WebInterface::handleGetSetting()
     _server.send(404, "text/plain", "Unknown setting key");
 }
 
-void WebInterface::handleSetSetting()
-{
+void WebInterface::handleSetSetting() {
     if (!_server.hasArg("key") || !_server.hasArg("value"))
     {
         _server.send(400, "text/plain", "Missing 'key' or 'value' parameter");
@@ -103,8 +101,7 @@ void WebInterface::handleSetSetting()
     _server.send(404, "text/plain", "Unknown setting key");
 }
 
-void WebInterface::handleGetAllSettings()
-{
+void WebInterface::handleGetAllSettings() {
     const auto& s = _runtimeSettings;
     char buf[512];
     snprintf(buf, sizeof(buf),

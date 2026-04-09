@@ -6,8 +6,7 @@ static const char* TAG = "HandleUpload";
 
 // Private helpers
 
-bool WebInterface::validateFileName(const std::string& filename)
-{
+bool WebInterface::validateFileName(const std::string& filename) {
     if (filename.empty() || filename.length() > 255)
         return false;
 

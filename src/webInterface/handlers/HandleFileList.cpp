@@ -1,8 +1,7 @@
 #include "../WebInterface.hpp"
 #include "config/DirectoriesConfig.hpp"
 
-void WebInterface::handleListJobs()
-{
+void WebInterface::handleListJobs() {
     auto files = _fileManager.listFiles(PLOTTING_DIRECTORY);
 
     std::string json = "[";
