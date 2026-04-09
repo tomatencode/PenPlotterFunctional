@@ -11,15 +11,26 @@ void WebInterface::init() {
     _settingPersistence.registerObserver(this);
 
     // Register routes once, they persist across server restarts
-    _server.on("/upload",   HTTP_POST, [this]() {}, [this]() { handleUpload(); });
-    _server.on("/plotFiles",HTTP_GET,  [this]() { handleListJobs(); });
-    _server.on("/start",    HTTP_POST, [this]() { handleStartJob(); });
-    _server.on("/abort",    HTTP_POST, [this]() { handleAbortJob(); });
-    _server.on("/pause",    HTTP_POST, [this]() { handlePauseJob(); });
-    _server.on("/resume",   HTTP_POST, [this]() { handleResumeJob(); });
-    _server.on("/execute",  HTTP_POST, [this]() { handleExecuteLine(); });
-    _server.on("/settings", HTTP_GET,  [this]() { handleGetSetting(); });
-    _server.on("/settings", HTTP_POST, [this]() { handleSetSetting(); });
+    _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUpload(); });
+    _server.on("/plotFiles", HTTP_GET,  [this]() { handleListJobs(); });
+    _server.on("/start", HTTP_POST, [this]() { handleStartJob(); });
+    _server.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
+    _server.on("/pause", HTTP_POST, [this]() { handlePauseJob(); });
+    _server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
+
+    _server.on("/jobStatus", HTTP_GET, [this]() { handleGetJobStatus(); });
+    _server.on("/plotActive", HTTP_GET,  [this]() { handlePlotActive(); });
+    _server.on("/plotPaused", HTTP_GET,  [this]() { handleGetPlotPaused(); });
+    _server.on("/currentPlot", HTTP_GET,  [this]() { handleGetCurrentPlot(); });
+    _server.on("/plotProgress", HTTP_GET,  [this]() { handleGetPlotProgress(); });
+    _server.on("/plotCurrentLine", HTTP_GET,  [this]() { handleGetCurrentLine(); });
+    _server.on("/plotTotalLines", HTTP_GET,  [this]() { handleGetTotalLines(); });
+
+    _server.on("/execute", HTTP_POST, [this]() { handleExecuteLine(); });
+
+    _server.on("/setting", HTTP_GET,  [this]() { handleGetSetting(); });
+    _server.on("/setting", HTTP_PUT, [this]() { handleSetSetting(); });
+    _server.on("/settings", HTTP_GET,  [this]() { handleGetAllSettings(); });
 }
 
 WebInterface::~WebInterface() {

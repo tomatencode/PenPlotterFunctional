@@ -64,15 +64,26 @@ private:
     void resetUploadState();
 
     // HTTP handlers
+    void handleUpload();
     void handleListJobs();
     void handleStartJob();
     void handleAbortJob();
     void handlePauseJob();
     void handleResumeJob();
+
+    void handleGetJobStatus();
+    void handlePlotActive();
+    void handleGetPlotPaused();
+    void handleGetCurrentPlot();
+    void handleGetPlotProgress();
+    void handleGetCurrentLine();
+    void handleGetTotalLines();
+
     void handleExecuteLine();
-    void handleUpload();
+
     void handleGetSetting();
     void handleSetSetting();
+    void handleGetAllSettings();
 
     void onRelevantSettingsChanged() override;
 };

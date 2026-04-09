@@ -102,3 +102,47 @@ void WebInterface::handleSetSetting()
 
     _server.send(404, "text/plain", "Unknown setting key");
 }
+
+void WebInterface::handleGetAllSettings()
+{
+    const auto& s = _runtimeSettings;
+    char buf[512];
+    snprintf(buf, sizeof(buf),
+        "{"
+        "\"mdnsName\":\"%s\","
+        "\"driverCurrent\":%.2f,"
+        "\"microsteps\":%.2f,"
+        "\"drawFeedRate\":%.2f,"
+        "\"travelFeedRate\":%.2f,"
+        "\"homingSpeed\":%.2f,"
+        "\"homingBackOffSpeed\":%.2f,"
+        "\"stallguardThreshold\":%.2f,"
+        "\"backOffStepsX\":%u,"
+        "\"backOffStepsY\":%u,"
+        "\"homingTimeout\":%u,"
+        "\"sgCheckInterval\":%u,"
+        "\"sgStartTimeout\":%u,"
+        "\"sgHistorySize\":%u,"
+        "\"penUpAngle\":%.2f,"
+        "\"penDownAngle\":%.2f"
+        "}",
+        s.getMdnsName().c_str(),
+        s.driverCurrent_mA(),
+        s.microsteps(),
+        s.drawFeedRate_mm_per_s(),
+        s.travelFeedRate_mm_per_s(),
+        s.homingSpeed_stp_per_s(),
+        s.homingBackOffSpeed_stp_per_s(),
+        s.stallguardThreshold(),
+        (unsigned int)s.backOffStepsX(),
+        (unsigned int)s.backOffStepsY(),
+        (unsigned int)s.homingTimeout_us(),
+        (unsigned int)s.sgCheckInterval_ms(),
+        (unsigned int)s.sgStartTimeout_ms(),
+        (unsigned int)s.sgHistorySize(),
+        s.penUpAngle_deg(),
+        s.penDownAngle_deg()
+    );
+
+    _server.send(200, "application/json", buf);
+}
