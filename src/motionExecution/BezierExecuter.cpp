@@ -1,4 +1,5 @@
 #include "BezierExecuter.hpp"
+#include "config/HardwareConfig.hpp"
 #include <cmath>
 #include <algorithm>
 #include <Arduino.h>
@@ -11,15 +12,28 @@ XYPos BezierExecuter::getCurrentPos() const {
     return _kinematics.stepsToMm(steps);
 }
 
-void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s) {
+void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s, bool clipToWorkspace) {
     MotorSteps currentSteps = {_axisA.positionSteps(), _axisB.positionSteps()};
     uint16_t msA = _axisA.microsteps();
     uint16_t msB = _axisB.microsteps();
 
     XYPos currentPos = _kinematics.stepsToMm(currentSteps);
 
-    double dx = targetPos.xMm - currentPos.xMm;
-    double dy = targetPos.yMm - currentPos.yMm;
+    double dx, dy;
+
+    if (clipToWorkspace) {
+        double clippedX = std::clamp(targetPos.xMm, 0.0, static_cast<double>(MAX_X_MM));
+        double clippedY = std::clamp(targetPos.yMm, 0.0, static_cast<double>(MAX_Y_MM));
+        if (clippedX != targetPos.xMm || clippedY != targetPos.yMm) {
+            ESP_LOGW("BezierExecuter", "Target position (%.2f, %.2f) is outside workspace. Clipping to (%.2f, %.2f).",
+                     targetPos.xMm, targetPos.yMm, clippedX, clippedY);
+        }
+        dx = clippedX - currentPos.xMm;
+        dy = clippedY - currentPos.yMm;
+    } else {
+        dx = targetPos.xMm - currentPos.xMm;
+        dy = targetPos.yMm - currentPos.yMm;
+    }
 
     double distance_mm = std::sqrt(dx * dx + dy * dy);
     if (distance_mm <= 0.0) return;

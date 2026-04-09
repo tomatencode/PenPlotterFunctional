@@ -8,7 +8,7 @@ class BezierExecuter {
 public:
     BezierExecuter(StepperAxis& axisA, StepperAxis& axisB, CoreXYKinematics& kinematics, MotionState& motionState);
 
-    void bezierTo(const XYPos& targetPos, double mm_per_s);
+    void bezierTo(const XYPos& targetPos, double mm_per_s, bool clipToWorkspace);
     XYPos getCurrentPos() const;
 
 private:
