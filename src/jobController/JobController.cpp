@@ -93,7 +93,7 @@ void JobController::update()
     if (!_active) return;
 
     // Check for completion
-    if (!_currentJob.file.available() && _gcodeToken->messagesWaiting() == 0) {
+    if (!_currentJob.file.available() && _gcodeToken->messagesWaiting() == 0 && _motionState.getState() == MotionStateType::IDLE) {
         std::string filename = _currentJob.filename; // Capture filename before ending job
         endCurrentJob();
         _buzzer.playMelody(_jobCompleteMelody);
