@@ -2,6 +2,8 @@
 
 #include <optional>
 
+#include "config/hardwareConfig.hpp"
+
 #include "ui/framework/screen/Screen.hpp"
 #include "../ScreensContext.hpp"
 
@@ -53,6 +55,7 @@ public:
                                     _gcodeToken->send("G28"); // Home all axes
                                     _currentTargetX = 0;
                                     _currentTargetY = 0;
+                                    _isHomed = true;
                                 }
                             },
                             std::make_unique<widgets::Label>("Do homing")
@@ -71,10 +74,16 @@ public:
                                     },
                                     .next = [this](int current) {
                                         _currentTargetX += 5;
+                                        if (_isHomed && _currentTargetX > MAX_X_MM) {
+                                            _currentTargetX = (MAX_X_MM / 5) * 5; // Round down to nearest multiple of 5
+                                        }
                                         _lastTagetChangeMS = millis();
                                     },
                                     .prev = [this](int current) {
                                         _currentTargetX -= 5;
+                                        if (_isHomed && _currentTargetX < 0) {
+                                            _currentTargetX = 0;
+                                        }
                                         _lastTagetChangeMS = millis();
                                     },
                                     .toString = [this](int value) {
@@ -94,10 +103,16 @@ public:
                                     },
                                     .next = [this](int current) {
                                         _currentTargetY += 5;
+                                        if (_isHomed && _currentTargetY > MAX_Y_MM) {
+                                            _currentTargetY = (MAX_Y_MM / 5) * 5; // Round down to nearest multiple of 5
+                                        }
                                         _lastTagetChangeMS = millis();
                                     },
                                     .prev = [this](int current) {
                                         _currentTargetY -= 5;
+                                        if (_isHomed && _currentTargetY < 0) {
+                                            _currentTargetY = 0;
+                                        }
                                         _lastTagetChangeMS = millis();
                                     },
                                     .toString = [this](int value) {
@@ -152,6 +167,8 @@ public:
         if (tokenOpt) {
             _gcodeToken = std::move(tokenOpt);
             _gcodeToken->send("G90"); // Ensure we're in absolute mode
+            _currentTargetX = _motionState.getMachineX();
+            _currentTargetY = _motionState.getMachineY();
         } else {
             ESP_LOGI("ManualControllScreen", "Failed to acquire GCodeSender token");
         }
@@ -164,7 +181,6 @@ public:
                 && (_quedTargetX != _currentTargetX || _quedTargetY != _currentTargetY)
                 && (millis() - _lastTagetChangeMS > 250))
             {
-                // Move to target position
                 _gcodeToken->send("G0 X" + std::to_string(_currentTargetX) + " Y" + std::to_string(_currentTargetY));
                 _quedTargetX = _currentTargetX;
                 _quedTargetY = _currentTargetY;
@@ -175,6 +191,8 @@ public:
             if (tokenOpt) {
                 _gcodeToken = std::move(tokenOpt);
                 _gcodeToken->send("G90"); // Ensure we're in absolute mode
+                _currentTargetX = _motionState.getMachineX();
+                _currentTargetY = _motionState.getMachineY();
             }
         }
     }
@@ -183,6 +201,8 @@ private:
     std::optional<GCodeSender::Token> _gcodeToken;
     MotionState& _motionState;
     GCodeSender& _gcodeSender;
+
+    bool _isHomed = false;
 
     int _currentTargetX = 0;
     int _currentTargetY = 0;
