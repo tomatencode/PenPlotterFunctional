@@ -45,8 +45,7 @@ public:
 
             std::make_unique<widgets::ProgressBar>(widgets::ProgressBarProps{
                 .getProgress = [&jc = ctx.jobController]() {
-                    if (jc.getTotalLines() == 0) return 0.0;
-                    return static_cast<double>(jc.getCurrentLine()) / static_cast<double>(jc.getTotalLines());
+                    return jc.getProgress();
                 }
             }),
 

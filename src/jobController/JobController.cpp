@@ -88,14 +88,6 @@ void JobController::abort()
     notifyObservers({.type = JobEvent::ABORTED, .filename = filename});
 }
 
-uint32_t JobController::getCurrentLine() const
-{
-    if (!_active || !_gcodeToken) return 0;
-    size_t linesInQueue = _gcodeToken->messagesWaiting();
-    if (linesInQueue > _currentJob.currentBufferLine) return 0;
-    return _currentJob.currentBufferLine - linesInQueue;
-}
-
 void JobController::update()
 {
     if (!_active) return;
@@ -139,6 +131,22 @@ void JobController::endCurrentJob()
     _currentJob = PlotJob();
     ESP_LOGI(TAG, "Job ended");
 }
+
+
+uint32_t JobController::getCurrentLine() const
+{
+    if (!_active || !_gcodeToken) return 0;
+    size_t linesInQueue = _gcodeToken->messagesWaiting();
+    if (linesInQueue > _currentJob.currentBufferLine) return 0;
+    return _currentJob.currentBufferLine - linesInQueue;
+}
+
+double JobController::getProgress() const
+{
+    if (!_active || _currentJob.totalLines == 0) return 0.0;
+    return static_cast<double>(getCurrentLine()) / _currentJob.totalLines;
+}
+
 
 void JobController::registerObserver(JobObserver* observer)
 {

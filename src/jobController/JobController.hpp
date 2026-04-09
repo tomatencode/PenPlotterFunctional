@@ -43,6 +43,7 @@ public:
     std::string getCurrentFile() const { return _currentJob.filename; }
     uint32_t getTotalLines() const { return _currentJob.totalLines; }
     uint32_t getCurrentLine() const;
+    double getProgress() const;
 
     void update();
 
