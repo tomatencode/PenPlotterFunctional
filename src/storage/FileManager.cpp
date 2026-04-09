@@ -1,5 +1,7 @@
 #include "FileManager.hpp"
 
+#include <algorithm>
+
 #include <SPIFFS.h>
 #include <esp_log.h>
 
@@ -48,6 +50,8 @@ std::vector<std::string> FileManager::listFiles(const std::string& directory)
         files.push_back(std::string(file.name()));
         file = root.openNextFile();
     }
+
+    std::sort(files.begin(), files.end());
 
     return files;
 }

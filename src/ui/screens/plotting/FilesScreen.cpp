@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <memory>
-#include <algorithm>
 
 namespace ui {
 namespace screens {
@@ -78,7 +77,6 @@ void FilesScreen::reload() {
     }
 
     auto files = _ctx.fileManager.listFiles(PLOTTING_DIRECTORY);
-    std::sort(files.begin(), files.end());
     for (const auto& file : files) {
         if (file.length() < 7 || file.substr(file.length() - 6) != ".gcode") {
             continue; // skip non-gcode files
