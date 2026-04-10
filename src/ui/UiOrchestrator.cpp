@@ -15,7 +15,7 @@ void UiOrchestrator::init()
 {
     _renderer.init();
 
-    // Start on the first screen
+    // Push initial screen
     auto homeScreen = std::make_unique<screens::HomeScreen>(_screensCtx);
     _router.pushScreen(std::move(homeScreen));
 
@@ -30,7 +30,7 @@ UiOrchestrator::~UiOrchestrator() {
 
 void UiOrchestrator::update()
 {
-    // Simple non-blocking timing to limit update frequency (e.g., 20 FPS)
+    // non-blocking timing to limit update frequency 20 FPS
     unsigned long currentTime = millis();
     if (currentTime - _lastUpdateTime < 50) return;
 
