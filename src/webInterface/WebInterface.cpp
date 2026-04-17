@@ -11,6 +11,7 @@ void WebInterface::init() {
     _settingPersistence.registerObserver(this);
 
     // Register routes once, they persist across server restarts
+    _server.on("/name", HTTP_GET, [this]() { handleGetName(); });
     _server.on("/name", HTTP_PUT, [this]() { changeName(); });
     _server.on("/mdnsName", HTTP_PUT, [this]() { changeMDNSName(); });
     
@@ -27,7 +28,7 @@ void WebInterface::init() {
     _server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
 
     _server.on("/jobStatus", HTTP_GET, [this]() { handleGetJobStatus(); });
-    
+
     _server.on("/execute", HTTP_POST, [this]() { handleExecuteLine(); });
 
     _server.on("/setting", HTTP_GET,  [this]() { handleGetSetting(); });
@@ -65,10 +66,11 @@ void WebInterface::setupServer() {
     if (_serverStarted) return;
     if (!_wifiController.isConnected()) return;
 
-    if (!MDNS.begin(_runtimeSettings.mdnsName().c_str())) {
+    if (!(MDNS.begin(_runtimeSettings.mdnsName().c_str()) && MDNS.addService("http", "tcp", 80))) {
         ESP_LOGE(TAG, "Error starting mDNS");
     }
     else {
+        MDNS.addServiceTxt("http", "tcp", "device", "pnplttr");
         ESP_LOGI(TAG, "mDNS started: http://%s.local", _runtimeSettings.mdnsName().c_str());
     }
 

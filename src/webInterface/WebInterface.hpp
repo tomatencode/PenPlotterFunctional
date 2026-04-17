@@ -64,6 +64,7 @@ private:
     void resetUploadState();
 
     // HTTP handlers
+    void handleGetName();
     void changeName();
     void changeMDNSName();
 
