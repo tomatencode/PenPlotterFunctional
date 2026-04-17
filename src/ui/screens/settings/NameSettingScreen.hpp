@@ -31,14 +31,16 @@ public:
 
             std::make_unique<widgets::LinearLayout>(
                 widgets::LinearLayoutStyle{
-                    .axis = widgets::Axis::Vertical,
-                    .spacingMode = widgets::SpacingMode::Even
+                    .axis = widgets::Axis::Horizontal,
+                    .spacingMode = widgets::SpacingMode::Even,
+                    .horizontalAlign = widgets::HorizontalAlignment::Center,
                 },
 
                 std::make_unique<widgets::LinearLayout>(
                     widgets::LinearLayoutStyle{
-                        .axis = widgets::Axis::Horizontal,
-                        .spacingMode = widgets::SpacingMode::Even
+                        .axis = widgets::Axis::Vertical,
+                        .spacingMode = widgets::SpacingMode::Even,
+                        .verticalAlign = widgets::VerticalAlignment::Middle,
                     },
                     std::make_unique<widgets::Label>("Device Name"),
 

@@ -47,7 +47,7 @@ uint16_t LinearLayout::availableSecondarySpace(Box r) const {
 LinearLayout::Spacing
 LinearLayout::computeSpacing(uint16_t available, uint16_t total, size_t childCount) const
 {
-    if (childCount <= 1)
+    if (childCount == 0 || _style.spacingMode == SpacingMode::Fixed)
         return {double(_style.spacing), 0};
 
     uint16_t remaining = std::max(0, static_cast<int>(available) - static_cast<int>(total));
@@ -59,6 +59,7 @@ LinearLayout::computeSpacing(uint16_t available, uint16_t total, size_t childCou
                     static_cast<double>(remaining) / (childCount + 1)};
 
         case SpacingMode::SpaceBetween:
+            if (childCount <= 1) return {0, 0};
             return {static_cast<double>(remaining) / (childCount - 1), 0};
 
         case SpacingMode::SpaceAround:
