@@ -80,12 +80,6 @@ private:
     void handleResumeJob();
 
     void handleGetJobStatus();
-    void handlePlotActive();
-    void handleGetPlotPaused();
-    void handleGetCurrentPlot();
-    void handleGetPlotProgress();
-    void handleGetCurrentLine();
-    void handleGetTotalLines();
 
     void handleExecuteLine();
 

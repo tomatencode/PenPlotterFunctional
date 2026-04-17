@@ -27,13 +27,7 @@ void WebInterface::init() {
     _server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
 
     _server.on("/jobStatus", HTTP_GET, [this]() { handleGetJobStatus(); });
-    _server.on("/plotActive", HTTP_GET,  [this]() { handlePlotActive(); });
-    _server.on("/plotPaused", HTTP_GET,  [this]() { handleGetPlotPaused(); });
-    _server.on("/currentPlot", HTTP_GET,  [this]() { handleGetCurrentPlot(); });
-    _server.on("/plotProgress", HTTP_GET,  [this]() { handleGetPlotProgress(); });
-    _server.on("/plotCurrentLine", HTTP_GET,  [this]() { handleGetCurrentLine(); });
-    _server.on("/plotTotalLines", HTTP_GET,  [this]() { handleGetTotalLines(); });
-
+    
     _server.on("/execute", HTTP_POST, [this]() { handleExecuteLine(); });
 
     _server.on("/setting", HTTP_GET,  [this]() { handleGetSetting(); });
