@@ -2,6 +2,9 @@
 #include <cstdint>
 #include <cstddef>
 
+// Name
+constexpr size_t    SETTING_MAX_NAME_LEN                = 32;   // arbitrary limit for user-friendly names
+
 // WiFi / Network
 constexpr size_t    SETTING_MAX_SSID_LEN                = 32;   // IEEE 802.11 limit
 constexpr size_t    SETTING_MAX_PASSWORD_LEN            = 64;   // WPA2 limit

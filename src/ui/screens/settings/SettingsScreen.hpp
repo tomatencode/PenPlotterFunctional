@@ -9,10 +9,12 @@
 
 // Include related screens to enable navigation
 #include "WifiSettingsScreen.hpp"
+#include "NameSettingScreen.hpp"
 #include "PlottingSettingsScreen.hpp"
 #include "HomingSettingsScreen.hpp"
 #include "SteppersSettingsScreen.hpp"
-#include "PenSettingsScreen.hpp"
+#include "PenServoSettingsScreen.hpp"
+#include "PenSlotsScreen.hpp"
 #include "ui/framework/router/Router.hpp"
 
 // Include components and widgets used in this screen
@@ -46,6 +48,32 @@ public:
 
             std::make_unique<widgets::ScrollableVerticalLayout>(
                 widgets::ScrollableVerticalLayoutStyle{},
+
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, ctx]() {
+                            if (router()) {
+                                auto nameSettingScreen = std::make_unique<NameSettingScreen>(ctx);
+                                router()->pushScreen(std::move(nameSettingScreen));
+                            }
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Name & DNS")
+                ),
+
+                std::make_unique<widgets::Button>(
+                    widgets::ButtonProps{
+                        .style = styles::listButtonStyle,
+                        .onPress = [this, ctx]() {
+                            if (router()) {
+                                auto penSlotsScreen = std::make_unique<PenSlotsScreen>(ctx);
+                                router()->pushScreen(std::move(penSlotsScreen));
+                            }
+                        }
+                    },
+                    std::make_unique<widgets::Label>("Pen Slots")
+                ),
                 
                 std::make_unique<widgets::Button>(
                     widgets::ButtonProps{
@@ -104,12 +132,12 @@ public:
                         .style = styles::listButtonStyle,
                         .onPress = [this, ctx]() {
                             if (router()) {
-                                auto penSettingsScreen = std::make_unique<PenSettingsScreen>(ctx);
+                                auto penSettingsScreen = std::make_unique<PenServoScreen>(ctx);
                                 router()->pushScreen(std::move(penSettingsScreen));
                             }
                         }
                     },
-                    std::make_unique<widgets::Label>("Pen")
+                    std::make_unique<widgets::Label>("Pen Servo")
                 ),
 
                 std::make_unique<components::PressHoldButton>(

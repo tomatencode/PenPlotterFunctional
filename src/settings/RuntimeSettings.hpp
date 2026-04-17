@@ -1,15 +1,20 @@
 #pragma once
 #include <atomic>
+#include <array>
 #include <string>
 
+#include "Settings.hpp"
+#include "config/PenSlotsConfig.hpp"
 #include "defaults/PlottingDefaults.hpp"
 
 class RuntimeSettings {
 public:
 
-    std::string getSSID() const { return _ssid; }
-    std::string getPassword() const { return _password; }
-    std::string getMdnsName() const { return _mdnsName; }
+    std::string name() const { return _name; }
+    std::array<PenSlot, NUM_PEN_SLOTS> penSlots() const { return _penSlots; }
+    std::string ssid() const { return _ssid; }
+    std::string password() const { return _password; }
+    std::string mdnsName() const { return _mdnsName; }
     float driverCurrent_mA() const { return _driverCurrent_mA.load(std::memory_order_relaxed); }
     float microsteps() const { return _microsteps.load(std::memory_order_relaxed); }
     float drawFeedRate_mm_per_s() const { return _drawFeedRate_mm_per_s.load(std::memory_order_relaxed); }
@@ -32,6 +37,8 @@ private:
     friend class SettingPersistence;
     
     // setters called by SettingPersistence when loading from NVS or updating a setting
+    void setName(const std::string& v) { _name = v; }
+    void setPenSlots(const std::array<PenSlot, NUM_PEN_SLOTS>& penSlots) { _penSlots = penSlots; }
     void setSSID(const std::string& v) { _ssid = v; }
     void setPassword(const std::string& v) { _password = v; }
     void setMdnsName(const std::string& v) { _mdnsName = v; }
@@ -73,6 +80,8 @@ private:
     
     // cant make these atomics since std::string is not trivially copyable
     // but they are only accessed on Core 0 (main thread) so should be safe without synchronization
+    std::string _name;
+    std::array<PenSlot, NUM_PEN_SLOTS> _penSlots{};
     std::string _ssid;
     std::string _password;
     std::string _mdnsName;

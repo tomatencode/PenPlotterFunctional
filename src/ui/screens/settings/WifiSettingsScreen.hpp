@@ -36,7 +36,7 @@ public:
                     components::LabeledTextEditorProps<std::string>{
                         .labelText = "SSID",
                         .textEditorProps = widgets::TextEditorProps{
-                            .initialText = ctx.runtimeSettings.getSSID(),
+                            .initialText = ctx.runtimeSettings.ssid(),
                             .onChange = [&sp = ctx.settingsPersistence](const std::string& newValue) {
                                 sp.setSSID(newValue);
                             }
@@ -48,7 +48,7 @@ public:
                     components::LabeledTextEditorProps<std::string>{
                         .labelText = "Password",
                         .textEditorProps = widgets::TextEditorProps{
-                            .initialText = ctx.runtimeSettings.getPassword(),
+                            .initialText = ctx.runtimeSettings.password(),
                             .onChange = [&sp = ctx.settingsPersistence](const std::string& newValue) {
                                 sp.setPassword(newValue);
                             }
@@ -60,7 +60,7 @@ public:
                     components::LabeledTextEditorProps<std::string>{
                         .labelText = "mDNS Name",
                         .textEditorProps = widgets::TextEditorProps{
-                            .initialText = ctx.runtimeSettings.getMdnsName(),
+                            .initialText = ctx.runtimeSettings.mdnsName(),
                             .onChange = [&sp = ctx.settingsPersistence](const std::string& newValue) {
                                 sp.setMdnsName(newValue);
                             }

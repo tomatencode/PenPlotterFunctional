@@ -48,8 +48,8 @@ void WifiController::attemptConnection() {
     if (_currentConnectionAttempts >= _maxConnectionAttempts) return;
     if (millis() - _lastConnectionAttemptMs < _reconnectIntervalMs) return;
 
-    std::string ssid = _runtimeSettings.getSSID();
-    std::string password = _runtimeSettings.getPassword();
+    std::string ssid = _runtimeSettings.ssid();
+    std::string password = _runtimeSettings.password();
 
     if (ssid.empty()) return;
 

@@ -13,10 +13,10 @@
 namespace ui {
 namespace screens {
 
-class PenSettingsScreen : public Screen
+class PenServoScreen : public Screen
 {
 public:
-    PenSettingsScreen(const ScreensContext& ctx)
+    PenServoScreen(const ScreensContext& ctx)
     : Screen(
         std::make_unique<widgets::LinearLayout>(
             widgets::LinearLayoutStyle{.axis = widgets::Axis::Vertical},

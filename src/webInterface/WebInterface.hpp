@@ -64,6 +64,13 @@ private:
     void resetUploadState();
 
     // HTTP handlers
+    void changeName();
+    void changeMDNSName();
+
+    void getPenSlots();
+    void setPenSlots();
+    void getActivePenSlot();
+
     void handleUploadJob();
     void handleDeleteJob();
     void handleListJobs();

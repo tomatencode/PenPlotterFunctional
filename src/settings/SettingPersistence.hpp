@@ -4,6 +4,7 @@
 #include "Settings.hpp"
 #include "SettingLimits.hpp"
 #include <string>
+#include <array>
 #include <vector>
 #include <algorithm>
 #include <memory>
@@ -18,6 +19,8 @@ public:
     void init();
 
     // setters: persist → RuntimeSettings → notify
+    void setName(const std::string& value);
+    void setPenSlots(const std::array<PenSlot, NUM_PEN_SLOTS>& penSlots);
     void setSSID(const std::string& value);
     void setPassword(const std::string& value);
     void setMdnsName(const std::string& value);

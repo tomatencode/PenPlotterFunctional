@@ -1,9 +1,12 @@
 #pragma once
+#include <cstdint>
 
 enum class Setting {
-    SSID,
-    Password,
-    MdnsName,
+    Name, // not threadsafe
+    PenSlots, // not threadsafe
+    SSID, // not threadsafe
+    Password, // not threadsafe
+    MdnsName, // not threadsafe
     DriverCurrent,
     Microsteps,
     DrawFeedRate,
@@ -19,4 +22,10 @@ enum class Setting {
     SGHistorySize,
     PenUpAngle,
     PenDownAngle,
+};
+
+struct PenSlot {
+    bool empty; // whether this slot is empty
+    float stroke;
+    uint8_t color[4]; // RGBA
 };

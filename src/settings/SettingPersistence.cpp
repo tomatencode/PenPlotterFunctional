@@ -51,7 +51,25 @@ void SettingPersistence::persist(const char* key, const std::string& v) {
 }
 
 
+
 // ── Setters: clamp/truncate → persist → update RuntimeSettings → notify ───
+
+void SettingPersistence::setName(const std::string& value) {
+    const std::string clamped = value.substr(0, SETTING_MAX_NAME_LEN);
+    persist("name", clamped);
+    // _runtimeSettings.setName(clamped); // not threadsafe, so not stored in RuntimeSettings
+    notifyObservers(Setting::Name);
+}
+
+void SettingPersistence::setPenSlots(const std::array<PenSlot, NUM_PEN_SLOTS>& penSlots) {
+    Preferences prefs;
+    prefs.begin("settings", false);
+    prefs.putBytes("penSlots", penSlots.data(), sizeof(penSlots));
+    prefs.end();
+
+    _runtimeSettings.setPenSlots(penSlots);
+    notifyObservers(Setting::PenSlots);
+}
 
 void SettingPersistence::setSSID(const std::string& value) {
     const std::string clamped = value.substr(0, SETTING_MAX_SSID_LEN);
@@ -187,6 +205,14 @@ void SettingPersistence::setPenDownAngle_deg(float value) {
 void SettingPersistence::loadSettings() {
     Preferences prefs;
     prefs.begin("settings", true);  // read-only
+
+    _runtimeSettings.setName(prefs.getString("name", "").c_str());
+    std::array<PenSlot, NUM_PEN_SLOTS> penSlots{};
+    const size_t expected = sizeof(penSlots);
+    if (prefs.getBytes("penSlots", penSlots.data(), expected) != expected) {
+        penSlots = {}; // corrupt or missing — use zero-initialised defaults
+    }
+    _runtimeSettings.setPenSlots(penSlots);
 
     _runtimeSettings.setSSID(    prefs.getString("ssid",     SSID    ).c_str());
     _runtimeSettings.setPassword(prefs.getString("password", PASSWORD).c_str());

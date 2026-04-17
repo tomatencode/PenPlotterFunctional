@@ -23,7 +23,7 @@ void WebInterface::handleGetSetting() {
 
     char buf[64];
     const Entry table[] = {
-        {"mdnsName",            [this]()                    { return _runtimeSettings.getMdnsName(); }},
+        {"mdnsName",            [this]()                    { return _runtimeSettings.mdnsName(); }},
         {"driverCurrent",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.driverCurrent_mA());          return buf; }},
         {"microsteps",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.microsteps());                 return buf; }},
         {"drawFeedRate",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.drawFeedRate_mm_per_s());      return buf; }},
@@ -123,7 +123,7 @@ void WebInterface::handleGetAllSettings() {
         "\"penUpAngle\":%.2f,"
         "\"penDownAngle\":%.2f"
         "}",
-        s.getMdnsName().c_str(),
+        s.mdnsName().c_str(),
         s.driverCurrent_mA(),
         s.microsteps(),
         s.drawFeedRate_mm_per_s(),
