@@ -17,7 +17,7 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s, bool clip
     uint16_t msA = _axisA.microsteps();
     uint16_t msB = _axisB.microsteps();
 
-    XYPos currentPos = _kinematics.stepsToMm(currentSteps);
+    XYPos startPos = _kinematics.stepsToMm(currentSteps);
 
     double dx, dy;
 
@@ -28,11 +28,11 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s, bool clip
             ESP_LOGW("BezierExecuter", "Target position (%.2f, %.2f) is outside workspace. Clipping to (%.2f, %.2f).",
                      targetPos.xMm, targetPos.yMm, clippedX, clippedY);
         }
-        dx = clippedX - currentPos.xMm;
-        dy = clippedY - currentPos.yMm;
+        dx = clippedX - startPos.xMm;
+        dy = clippedY - startPos.yMm;
     } else {
-        dx = targetPos.xMm - currentPos.xMm;
-        dy = targetPos.yMm - currentPos.yMm;
+        dx = targetPos.xMm - startPos.xMm;
+        dy = targetPos.yMm - startPos.yMm;
     }
 
     double distance_mm = std::sqrt(dx * dx + dy * dy);
@@ -89,17 +89,16 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s, bool clip
 
         if (errA >= stepsInLoop) {
             _axisA.step(dirA);
-            _motionState.setMachineX(currentPos.xMm + (dirA ? (i + 1) * dx / stepsInLoop : (stepsInLoop - i - 1) * dx / stepsInLoop));
-            _motionState.setMachineY(currentPos.yMm + (dirB ? (i + 1) * dy / stepsInLoop : (stepsInLoop - i - 1) * dy / stepsInLoop));
             errA -= stepsInLoop;
         }
 
         if (errB >= stepsInLoop) {
             _axisB.step(dirB);
-            _motionState.setMachineX(currentPos.xMm + (dirA ? (i + 1) * dx / stepsInLoop : (stepsInLoop - i - 1) * dx / stepsInLoop));
-            _motionState.setMachineY(currentPos.yMm + (dirB ? (i + 1) * dy / stepsInLoop : (stepsInLoop - i - 1) * dy / stepsInLoop));
             errB -= stepsInLoop;
         }
+
+        _motionState.setMachineX(startPos.xMm + (i + 1) * dx / stepsInLoop);
+        _motionState.setMachineY(startPos.yMm + (i + 1) * dy / stepsInLoop);
     }
 
     _motionState.setMachineX(targetPos.xMm);
