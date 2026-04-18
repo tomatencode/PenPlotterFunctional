@@ -89,11 +89,15 @@ void BezierExecuter::bezierTo(const XYPos& targetPos, double mm_per_s, bool clip
 
         if (errA >= stepsInLoop) {
             _axisA.step(dirA);
+            _motionState.setMachineX(currentPos.xMm + (dirA ? (i + 1) * dx / stepsInLoop : (stepsInLoop - i - 1) * dx / stepsInLoop));
+            _motionState.setMachineY(currentPos.yMm + (dirB ? (i + 1) * dy / stepsInLoop : (stepsInLoop - i - 1) * dy / stepsInLoop));
             errA -= stepsInLoop;
         }
 
         if (errB >= stepsInLoop) {
             _axisB.step(dirB);
+            _motionState.setMachineX(currentPos.xMm + (dirA ? (i + 1) * dx / stepsInLoop : (stepsInLoop - i - 1) * dx / stepsInLoop));
+            _motionState.setMachineY(currentPos.yMm + (dirB ? (i + 1) * dy / stepsInLoop : (stepsInLoop - i - 1) * dy / stepsInLoop));
             errB -= stepsInLoop;
         }
     }
