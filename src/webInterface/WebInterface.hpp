@@ -1,6 +1,7 @@
 #pragma once
 
 #include <WebServer.h>
+#include <WebSocketsServer.h>
 
 #include "rtos/MotionState.hpp"
 #include "storage/FileManager.hpp"
@@ -30,7 +31,8 @@ public:
           _wifiController(wifiController),
           _settingPersistence(settingsPersistence),
           _runtimeSettings(runtimeSettings),
-          _server(80)
+          _server(80),
+          _wsServer(81)
     {}
     
     ~WebInterface();
@@ -47,8 +49,10 @@ private:
     RuntimeSettings& _runtimeSettings;
     WifiController& _wifiController;
 
-    WebServer _server; // HTTP server (port 80)
+    WebServer _server;         // HTTP server (port 80)
+    WebSocketsServer _wsServer; // WebSocket server (port 81)
     bool _serverStarted = false;
+    unsigned long _lastStateMs = 0;
 
     // Upload state tracking
     File _currentUploadFile;
@@ -59,18 +63,31 @@ private:
 
     void setupServer();
 
+    // WebSocket
+    void handleWebSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length);
+    void broadcastState();
+    void sendState(uint8_t num);
+
+    std::string buildStateJson();
+    std::string buildAllSettingsJson();
+
     // Upload helpers
     bool validateFileName(const std::string& filename);
     void resetUploadState();
 
     // HTTP handlers
+    void handleGetItteration();
+    void handleGetFirmwareVersion();
+    void handleGetWorkspace();
+
+    void handleGetPosition();
+    void handleGetMotionState();
+    void handleGetActivePenSlot();
+
     void handleGetName();
     void changeName();
+    void handleGetMDNSName();
     void changeMDNSName();
-
-    void getPenSlots();
-    void setPenSlots();
-    void getActivePenSlot();
 
     void handleUploadJob();
     void handleDeleteJob();

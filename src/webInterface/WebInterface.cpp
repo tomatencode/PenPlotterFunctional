@@ -10,15 +10,24 @@ void WebInterface::init() {
     ESP_LOGI(TAG, "Initializing");
     _settingPersistence.registerObserver(this);
 
+    _wsServer.onEvent([this](uint8_t num, WStype_t type, uint8_t* payload, size_t length) {
+        handleWebSocketEvent(num, type, payload, length);
+    });
+
     // Register routes once, they persist across server restarts
+    _server.on("/iteration", HTTP_GET, [this]() { handleGetItteration(); });
+    _server.on("/firmwareVersion", HTTP_GET, [this]() { handleGetFirmwareVersion(); });
+    _server.on("/workspace", HTTP_GET, [this]() { handleGetWorkspace(); });
+    
+    _server.on("/position", HTTP_GET, [this]() { handleGetPosition(); });
+    _server.on("/motionState", HTTP_GET, [this]() { handleGetMotionState(); });
+    _server.on("/activePenSlot", HTTP_GET, [this]() { handleGetActivePenSlot(); });
+
     _server.on("/name", HTTP_GET, [this]() { handleGetName(); });
     _server.on("/name", HTTP_PUT, [this]() { changeName(); });
+    _server.on("/mdnsName", HTTP_GET, [this]() { handleGetMDNSName(); });
     _server.on("/mdnsName", HTTP_PUT, [this]() { changeMDNSName(); });
     
-    _server.on("/penSlots", HTTP_GET, [this]() { getPenSlots(); });
-    _server.on("/penSlots", HTTP_PUT, [this]() { setPenSlots(); });
-    _server.on("/activePenSlot", HTTP_GET, [this]() { getActivePenSlot(); });
-
     _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUploadJob(); });
     _server.on("/plotFiles", HTTP_DELETE, [this]() { handleDeleteJob(); });
     _server.on("/plotFiles", HTTP_GET,  [this]() { handleListJobs(); });
@@ -46,6 +55,7 @@ void WebInterface::update() {
     if (!_wifiController.isConnected()) {
         if (_serverStarted) {
             MDNS.end();
+            _wsServer.close();
             _serverStarted = false;
             ESP_LOGI(TAG, "WiFi lost - HTTP server stopped");
         }
@@ -59,6 +69,13 @@ void WebInterface::update() {
     if (_serverStarted)
     {
         _server.handleClient();
+        _wsServer.loop();
+
+        unsigned long now = millis();
+        if (now - _lastStateMs >= 100) {
+            _lastStateMs = now;
+            broadcastState();
+        }
     }
 }
 
@@ -75,9 +92,10 @@ void WebInterface::setupServer() {
     }
 
     _server.begin();
+    _wsServer.begin();
     _serverStarted = true;
 
-    ESP_LOGI(TAG, "HTTP server started");
+    ESP_LOGI(TAG, "HTTP and WebSocket server started");
 }
 
 void WebInterface::onRelevantSettingsChanged() {

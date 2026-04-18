@@ -39,6 +39,25 @@ void WebInterface::handleGetSetting() {
         {"sgHistorySize",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgHistorySize()); return buf; }},
         {"penUpAngle",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penUpAngle_deg());             return buf; }},
         {"penDownAngle",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penDownAngle_deg());           return buf; }},
+        {"penSlots",            [this]() -> std::string {
+            std::string json = "[";
+            const auto penSlots = _runtimeSettings.penSlots();
+            char slotBuf[64];
+            for (size_t i = 0; i < penSlots.size(); ++i) {
+                const PenSlot& slot = penSlots[i];
+                snprintf(slotBuf, sizeof(slotBuf),
+                    "{\"empty\":%s,\"stroke\":%u,\"color\":[%u,%u,%u,%u]}",
+                    slot.empty ? "true" : "false",
+                    (unsigned)slot.stroke,
+                    (unsigned)slot.color[0], (unsigned)slot.color[1],
+                    (unsigned)slot.color[2], (unsigned)slot.color[3]
+                );
+                json += slotBuf;
+                if (i + 1 < penSlots.size()) json += ",";
+            }
+            json += "]";
+            return json;
+        }},
     };
 
     for (const auto& entry : table)
@@ -85,6 +104,35 @@ void WebInterface::handleSetSetting() {
         {"sgHistorySize",       [this](const std::string& v){ _settingPersistence.setSGHistorySize(static_cast<uint8_t>(atoi(v.c_str()))); }},
         {"penUpAngle",          [this](const std::string& v){ _settingPersistence.setPenUpAngle_deg(atof(v.c_str())); }},
         {"penDownAngle",        [this](const std::string& v){ _settingPersistence.setPenDownAngle_deg(atof(v.c_str())); }},
+        {"penSlots",            [this](const std::string& v){
+            std::array<PenSlot, NUM_PEN_SLOTS> penSlots{};
+            size_t pos = 0;
+            for (int i = 0; i < NUM_PEN_SLOTS; ++i) {
+                const size_t start = v.find('{', pos);
+                const size_t end   = v.find('}', start);
+                if (start == std::string::npos || end == std::string::npos) return;
+                const std::string obj = v.substr(start, end - start + 1);
+                PenSlot& slot = penSlots[i];
+                slot.empty = obj.find("\"empty\":true") != std::string::npos;
+                const size_t strokePos = obj.find("\"stroke\":");
+                if (strokePos == std::string::npos) return;
+                int stroke = 0;
+                if (sscanf(obj.c_str() + strokePos + 9, "%d", &stroke) != 1) return;
+                slot.stroke = static_cast<uint8_t>(stroke);
+                const size_t colorPos = obj.find("\"color\":[");
+                const size_t colorEnd = (colorPos != std::string::npos) ? obj.find(']', colorPos) : std::string::npos;
+                if (colorPos == std::string::npos || colorEnd == std::string::npos) return;
+                const std::string colorStr = obj.substr(colorPos + 9, colorEnd - colorPos - 9);
+                int r, g, b, a;
+                if (sscanf(colorStr.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a) != 4) return;
+                slot.color[0] = static_cast<uint8_t>(r);
+                slot.color[1] = static_cast<uint8_t>(g);
+                slot.color[2] = static_cast<uint8_t>(b);
+                slot.color[3] = static_cast<uint8_t>(a);
+                pos = end + 1;
+            }
+            _settingPersistence.setPenSlots(penSlots);
+        }},
     };
 
     for (const auto& entry : table)
@@ -104,9 +152,28 @@ void WebInterface::handleSetSetting() {
 void WebInterface::handleGetAllSettings() {
     const auto& s = _runtimeSettings;
     char buf[512];
+    std::string penSlotsJson = "[";
+    const auto penSlots = s.penSlots();
+    for (size_t i = 0; i < penSlots.size(); ++i) {
+        const PenSlot& slot = penSlots[i];
+        char slotBuf[64];
+        snprintf(slotBuf, sizeof(slotBuf),
+            "{\"empty\":%s,\"stroke\":%u,\"color\":[%u,%u,%u,%u]}",
+            slot.empty ? "true" : "false",
+            (unsigned)slot.stroke,
+            (unsigned)slot.color[0],
+            (unsigned)slot.color[1],
+            (unsigned)slot.color[2],
+            (unsigned)slot.color[3]
+        );
+        penSlotsJson += slotBuf;
+        if (i + 1 < penSlots.size()) penSlotsJson += ",";
+    }
+    penSlotsJson += "]";
+
     snprintf(buf, sizeof(buf),
         "{"
-        "\"mdnsName\":\"%s\","
+        "\"mdnsName\":\"%s\"," 
         "\"driverCurrent\":%.2f,"
         "\"microsteps\":%.2f,"
         "\"drawFeedRate\":%.2f,"
@@ -121,7 +188,8 @@ void WebInterface::handleGetAllSettings() {
         "\"sgStartTimeout\":%u,"
         "\"sgHistorySize\":%u,"
         "\"penUpAngle\":%.2f,"
-        "\"penDownAngle\":%.2f"
+        "\"penDownAngle\":%.2f,"
+        "\"penSlots\":%s"
         "}",
         s.mdnsName().c_str(),
         s.driverCurrent_mA(),
@@ -138,7 +206,8 @@ void WebInterface::handleGetAllSettings() {
         (unsigned int)s.sgStartTimeout_ms(),
         (unsigned int)s.sgHistorySize(),
         s.penUpAngle_deg(),
-        s.penDownAngle_deg()
+        s.penDownAngle_deg(),
+        penSlotsJson.c_str()
     );
 
     _server.send(200, "application/json", buf);

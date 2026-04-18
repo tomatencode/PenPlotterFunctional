@@ -10,6 +10,11 @@ void WebInterface::changeName() {
     _settingPersistence.setName(newName);
 }
 
+void WebInterface::handleGetMDNSName() {
+    std::string mdnsName = _runtimeSettings.mdnsName();
+    _server.send(200, "text/plain", mdnsName.c_str());
+}
+
 void WebInterface::changeMDNSName() {
     std::string newMdnsName = _server.arg("plain").c_str();
     _settingPersistence.setMdnsName(newMdnsName);
