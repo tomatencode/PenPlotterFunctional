@@ -70,6 +70,8 @@ private:
 
     std::string buildStateJson();
     std::string buildAllSettingsJson();
+    std::string penSlotsToJson() const;
+    bool penSlotsFromJson(const std::string& json, std::array<PenSlot, NUM_PEN_SLOTS>& out) const;
 
     // Upload helpers
     bool validateFileName(const std::string& filename);

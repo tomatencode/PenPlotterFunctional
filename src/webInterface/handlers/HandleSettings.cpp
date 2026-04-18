@@ -7,9 +7,66 @@
 
 static const char* TAG = "WebInterface";
 
-void WebInterface::handleGetSetting() {
-    if (!_server.hasArg("key"))
-    {
+
+// Helper
+bool WebInterface::penSlotsFromJson(const std::string& v, std::array<PenSlot, NUM_PEN_SLOTS>& penSlots) const
+{
+    size_t pos = 0;
+    for (int i = 0; i < NUM_PEN_SLOTS; ++i) {
+        const size_t start = v.find('{', pos);
+        const size_t end   = v.find('}', start);
+        if (start == std::string::npos || end == std::string::npos) return false;
+        const std::string obj = v.substr(start, end - start + 1);
+
+        PenSlot& slot = penSlots[i];
+        slot.empty = obj.find("\"empty\":true") != std::string::npos;
+
+        const size_t strokePos = obj.find("\"stroke\":");
+        if (strokePos == std::string::npos) return false;
+        int stroke = 0;
+        if (sscanf(obj.c_str() + strokePos + 9, "%d", &stroke) != 1) return false;
+        slot.stroke = static_cast<uint8_t>(stroke);
+
+        const size_t colorPos = obj.find("\"color\":[");
+        const size_t colorEnd = (colorPos != std::string::npos) ? obj.find(']', colorPos) : std::string::npos;
+        if (colorPos == std::string::npos || colorEnd == std::string::npos) return false;
+        const std::string colorStr = obj.substr(colorPos + 9, colorEnd - colorPos - 9);
+        int r, g, b, a;
+        if (sscanf(colorStr.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a) != 4) return false;
+        slot.color[0] = static_cast<uint8_t>(r);
+        slot.color[1] = static_cast<uint8_t>(g);
+        slot.color[2] = static_cast<uint8_t>(b);
+        slot.color[3] = static_cast<uint8_t>(a);
+
+        pos = end + 1;
+    }
+    return true;
+}
+
+std::string WebInterface::penSlotsToJson() const
+{
+    std::string json = "[";
+    const auto slots = _runtimeSettings.penSlots();
+    char buf[64];
+    for (size_t i = 0; i < slots.size(); ++i) {
+        const PenSlot& slot = slots[i];
+        snprintf(buf, sizeof(buf),
+            "{\"empty\":%s,\"stroke\":%u,\"color\":[%u,%u,%u,%u]}",
+            slot.empty ? "true" : "false",
+            (unsigned)slot.stroke,
+            (unsigned)slot.color[0], (unsigned)slot.color[1],
+            (unsigned)slot.color[2], (unsigned)slot.color[3]);
+        json += buf;
+        if (i + 1 < slots.size()) json += ",";
+    }
+    json += "]";
+    return json;
+}
+
+// GET /setting?key=...
+void WebInterface::handleGetSetting()
+{
+    if (!_server.hasArg("key")) {
         _server.send(400, "text/plain", "Missing 'key' parameter");
         return;
     }
@@ -24,46 +81,26 @@ void WebInterface::handleGetSetting() {
     char buf[64];
     const Entry table[] = {
         {"mdnsName",            [this]()                    { return _runtimeSettings.mdnsName(); }},
-        {"driverCurrent",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.driverCurrent_mA());          return buf; }},
-        {"microsteps",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.microsteps());                 return buf; }},
-        {"drawFeedRate",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.drawFeedRate_mm_per_s());      return buf; }},
-        {"travelFeedRate",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.travelFeedRate_mm_per_s());    return buf; }},
-        {"homingSpeed",         [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingSpeed_stp_per_s());      return buf; }},
-        {"homingBackOffSpeed",  [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingBackOffSpeed_stp_per_s()); return buf; }},
-        {"stallguardThreshold", [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.stallguardThreshold());        return buf; }},
-        {"backOffStepsX",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.backOffStepsX()); return buf; }},
-        {"backOffStepsY",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.backOffStepsY()); return buf; }},
-        {"homingTimeout",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.homingTimeout_us()); return buf; }},
-        {"sgCheckInterval",     [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgCheckInterval_ms()); return buf; }},
-        {"sgStartTimeout",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgStartTimeout_ms()); return buf; }},
-        {"sgHistorySize",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned int)_runtimeSettings.sgHistorySize()); return buf; }},
-        {"penUpAngle",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penUpAngle_deg());             return buf; }},
-        {"penDownAngle",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penDownAngle_deg());           return buf; }},
-        {"penSlots",            [this]() -> std::string {
-            std::string json = "[";
-            const auto penSlots = _runtimeSettings.penSlots();
-            char slotBuf[64];
-            for (size_t i = 0; i < penSlots.size(); ++i) {
-                const PenSlot& slot = penSlots[i];
-                snprintf(slotBuf, sizeof(slotBuf),
-                    "{\"empty\":%s,\"stroke\":%u,\"color\":[%u,%u,%u,%u]}",
-                    slot.empty ? "true" : "false",
-                    (unsigned)slot.stroke,
-                    (unsigned)slot.color[0], (unsigned)slot.color[1],
-                    (unsigned)slot.color[2], (unsigned)slot.color[3]
-                );
-                json += slotBuf;
-                if (i + 1 < penSlots.size()) json += ",";
-            }
-            json += "]";
-            return json;
-        }},
+        {"driverCurrent",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.driverCurrent_mA());              return buf; }},
+        {"microsteps",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.microsteps());                    return buf; }},
+        {"drawFeedRate",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.drawFeedRate_mm_per_s());          return buf; }},
+        {"travelFeedRate",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.travelFeedRate_mm_per_s());        return buf; }},
+        {"homingSpeed",         [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingSpeed_stp_per_s());          return buf; }},
+        {"homingBackOffSpeed",  [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.homingBackOffSpeed_stp_per_s());   return buf; }},
+        {"stallguardThreshold", [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.stallguardThreshold());            return buf; }},
+        {"backOffStepsX",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.backOffStepsX());        return buf; }},
+        {"backOffStepsY",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.backOffStepsY());        return buf; }},
+        {"homingTimeout",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.homingTimeout_us());     return buf; }},
+        {"sgCheckInterval",     [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.sgCheckInterval_ms());   return buf; }},
+        {"sgStartTimeout",      [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.sgStartTimeout_ms());    return buf; }},
+        {"sgHistorySize",       [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%u",   (unsigned)_runtimeSettings.sgHistorySize());        return buf; }},
+        {"penUpAngle",          [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penUpAngle_deg());                 return buf; }},
+        {"penDownAngle",        [this, &buf]() -> std::string { snprintf(buf, sizeof(buf), "%.2f", _runtimeSettings.penDownAngle_deg());               return buf; }},
+        {"penSlots",            [this]()       -> std::string { return penSlotsToJson(); }},
     };
 
-    for (const auto& entry : table)
-    {
-        if (key == entry.key)
-        {
+    for (const auto& entry : table) {
+        if (key == entry.key) {
             _server.send(200, "text/plain", entry.getter().c_str());
             return;
         }
@@ -72,9 +109,10 @@ void WebInterface::handleGetSetting() {
     _server.send(404, "text/plain", "Unknown setting key");
 }
 
-void WebInterface::handleSetSetting() {
-    if (!_server.hasArg("key") || !_server.hasArg("value"))
-    {
+// POST /setting?key=...&value=...
+void WebInterface::handleSetSetting()
+{
+    if (!_server.hasArg("key") || !_server.hasArg("value")) {
         _server.send(400, "text/plain", "Missing 'key' or 'value' parameter");
         return;
     }
@@ -106,39 +144,13 @@ void WebInterface::handleSetSetting() {
         {"penDownAngle",        [this](const std::string& v){ _settingPersistence.setPenDownAngle_deg(atof(v.c_str())); }},
         {"penSlots",            [this](const std::string& v){
             std::array<PenSlot, NUM_PEN_SLOTS> penSlots{};
-            size_t pos = 0;
-            for (int i = 0; i < NUM_PEN_SLOTS; ++i) {
-                const size_t start = v.find('{', pos);
-                const size_t end   = v.find('}', start);
-                if (start == std::string::npos || end == std::string::npos) return;
-                const std::string obj = v.substr(start, end - start + 1);
-                PenSlot& slot = penSlots[i];
-                slot.empty = obj.find("\"empty\":true") != std::string::npos;
-                const size_t strokePos = obj.find("\"stroke\":");
-                if (strokePos == std::string::npos) return;
-                int stroke = 0;
-                if (sscanf(obj.c_str() + strokePos + 9, "%d", &stroke) != 1) return;
-                slot.stroke = static_cast<uint8_t>(stroke);
-                const size_t colorPos = obj.find("\"color\":[");
-                const size_t colorEnd = (colorPos != std::string::npos) ? obj.find(']', colorPos) : std::string::npos;
-                if (colorPos == std::string::npos || colorEnd == std::string::npos) return;
-                const std::string colorStr = obj.substr(colorPos + 9, colorEnd - colorPos - 9);
-                int r, g, b, a;
-                if (sscanf(colorStr.c_str(), "%d,%d,%d,%d", &r, &g, &b, &a) != 4) return;
-                slot.color[0] = static_cast<uint8_t>(r);
-                slot.color[1] = static_cast<uint8_t>(g);
-                slot.color[2] = static_cast<uint8_t>(b);
-                slot.color[3] = static_cast<uint8_t>(a);
-                pos = end + 1;
-            }
+            if (!penSlotsFromJson(v, penSlots)) return;
             _settingPersistence.setPenSlots(penSlots);
         }},
     };
 
-    for (const auto& entry : table)
-    {
-        if (key == entry.key)
-        {
+    for (const auto& entry : table) {
+        if (key == entry.key) {
             ESP_LOGI(TAG, "Attempting to update setting '%s' to '%s'", key.c_str(), value.c_str());
             entry.setter(value);
             _server.send(200, "text/plain", "OK");
@@ -149,66 +161,50 @@ void WebInterface::handleSetSetting() {
     _server.send(404, "text/plain", "Unknown setting key");
 }
 
-void WebInterface::handleGetAllSettings() {
+// GET /settings  (all settings as JSON)
+std::string WebInterface::buildAllSettingsJson()
+{
     const auto& s = _runtimeSettings;
-    char buf[512];
-    std::string penSlotsJson = "[";
-    const auto penSlots = s.penSlots();
-    for (size_t i = 0; i < penSlots.size(); ++i) {
-        const PenSlot& slot = penSlots[i];
-        char slotBuf[64];
-        snprintf(slotBuf, sizeof(slotBuf),
-            "{\"empty\":%s,\"stroke\":%u,\"color\":[%u,%u,%u,%u]}",
-            slot.empty ? "true" : "false",
-            (unsigned)slot.stroke,
-            (unsigned)slot.color[0],
-            (unsigned)slot.color[1],
-            (unsigned)slot.color[2],
-            (unsigned)slot.color[3]
-        );
-        penSlotsJson += slotBuf;
-        if (i + 1 < penSlots.size()) penSlotsJson += ",";
-    }
-    penSlotsJson += "]";
+    char buf[64];
+    std::string json = "{";
 
-    snprintf(buf, sizeof(buf),
-        "{"
-        "\"mdnsName\":\"%s\"," 
-        "\"driverCurrent\":%.2f,"
-        "\"microsteps\":%.2f,"
-        "\"drawFeedRate\":%.2f,"
-        "\"travelFeedRate\":%.2f,"
-        "\"homingSpeed\":%.2f,"
-        "\"homingBackOffSpeed\":%.2f,"
-        "\"stallguardThreshold\":%.2f,"
-        "\"backOffStepsX\":%u,"
-        "\"backOffStepsY\":%u,"
-        "\"homingTimeout\":%u,"
-        "\"sgCheckInterval\":%u,"
-        "\"sgStartTimeout\":%u,"
-        "\"sgHistorySize\":%u,"
-        "\"penUpAngle\":%.2f,"
-        "\"penDownAngle\":%.2f,"
-        "\"penSlots\":%s"
-        "}",
-        s.mdnsName().c_str(),
-        s.driverCurrent_mA(),
-        s.microsteps(),
-        s.drawFeedRate_mm_per_s(),
-        s.travelFeedRate_mm_per_s(),
-        s.homingSpeed_stp_per_s(),
-        s.homingBackOffSpeed_stp_per_s(),
-        s.stallguardThreshold(),
-        (unsigned int)s.backOffStepsX(),
-        (unsigned int)s.backOffStepsY(),
-        (unsigned int)s.homingTimeout_us(),
-        (unsigned int)s.sgCheckInterval_ms(),
-        (unsigned int)s.sgStartTimeout_ms(),
-        (unsigned int)s.sgHistorySize(),
-        s.penUpAngle_deg(),
-        s.penDownAngle_deg(),
-        penSlotsJson.c_str()
-    );
+    json += "\"mdnsName\":\"" + s.mdnsName() + "\",";
 
-    _server.send(200, "application/json", buf);
+    auto appendFloat = [&](const char* key, float value) {
+        snprintf(buf, sizeof(buf), "\"%.2f\"", value);
+        json += '"'; json += key; json += "\":";
+        snprintf(buf, sizeof(buf), "%.2f", value);
+        json += buf; json += ",";
+    };
+    auto appendUint = [&](const char* key, unsigned value) {
+        json += '"'; json += key; json += "\":";
+        snprintf(buf, sizeof(buf), "%u", value);
+        json += buf; json += ",";
+    };
+
+    appendFloat("driverCurrent",       s.driverCurrent_mA());
+    appendFloat("microsteps",          s.microsteps());
+    appendFloat("drawFeedRate",        s.drawFeedRate_mm_per_s());
+    appendFloat("travelFeedRate",      s.travelFeedRate_mm_per_s());
+    appendFloat("homingSpeed",         s.homingSpeed_stp_per_s());
+    appendFloat("homingBackOffSpeed",  s.homingBackOffSpeed_stp_per_s());
+    appendFloat("stallguardThreshold", s.stallguardThreshold());
+    appendUint ("backOffStepsX",       (unsigned)s.backOffStepsX());
+    appendUint ("backOffStepsY",       (unsigned)s.backOffStepsY());
+    appendUint ("homingTimeout",       (unsigned)s.homingTimeout_us());
+    appendUint ("sgCheckInterval",     (unsigned)s.sgCheckInterval_ms());
+    appendUint ("sgStartTimeout",      (unsigned)s.sgStartTimeout_ms());
+    appendUint ("sgHistorySize",       (unsigned)s.sgHistorySize());
+    appendFloat("penUpAngle",          s.penUpAngle_deg());
+    appendFloat("penDownAngle",        s.penDownAngle_deg());
+
+    json += "\"penSlots\":" + penSlotsToJson();
+    json += "}";
+    return json;
+}
+
+void WebInterface::handleGetAllSettings()
+{
+    const std::string json = buildAllSettingsJson();
+    _server.send(200, "application/json", json.c_str());
 }
