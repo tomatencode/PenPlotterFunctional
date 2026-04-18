@@ -19,5 +19,5 @@ void WebInterface::handleGetJobStatus() {
         progress
     );
 
-    _server.send(200, "application/json", buf);
+    _httpServer.send(200, "application/json", buf);
 }

@@ -36,14 +36,14 @@ void WebInterface::resetUploadState()
 
 void WebInterface::handleUploadJob()
 {
-    HTTPUpload& upload = _server.upload();
+    HTTPUpload& upload = _httpServer.upload();
     std::string filename = upload.filename.c_str();
 
     if (upload.status == UPLOAD_FILE_START)
     {
         if (!validateFileName(filename.c_str()) || !filename.ends_with(".gcode"))
         {
-            _server.send(400, "text/plain", "Invalid filename");
+            _httpServer.send(400, "text/plain", "Invalid filename");
             return;
         }
 
@@ -61,7 +61,7 @@ void WebInterface::handleUploadJob()
         if (!_currentUploadFile)
         {
             ESP_LOGE(TAG, "Failed to create temp file: %s", _currentTempPath.c_str());
-            _server.send(507, "text/plain", "Insufficient storage");
+            _httpServer.send(507, "text/plain", "Insufficient storage");
             return;
         }
 
@@ -75,14 +75,14 @@ void WebInterface::handleUploadJob()
             if (_fileManager.fileExists(_currentTempPath)) _fileManager.deleteFile(_currentTempPath);
 
             ESP_LOGW(TAG, "Upload rejected - exceeds %u byte limit", MAX_UPLOAD_SIZE);
-            _server.send(413, "text/plain", "File too large");
+            _httpServer.send(413, "text/plain", "File too large");
             return;
         }
 
         if (!_currentUploadFile)
         {
             ESP_LOGE(TAG, "Upload file not open");
-            _server.send(500, "text/plain", "Upload not initialized");
+            _httpServer.send(500, "text/plain", "Upload not initialized");
             return;
         }
 
@@ -92,7 +92,7 @@ void WebInterface::handleUploadJob()
             _currentUploadFile.close();
             _fileManager.deleteFile(_currentTempPath);
             ESP_LOGE(TAG, "Failed to write upload chunk");
-            _server.send(500, "text/plain", "Write error");
+            _httpServer.send(500, "text/plain", "Write error");
             return;
         }
 
@@ -107,7 +107,7 @@ void WebInterface::handleUploadJob()
             _fileManager.deleteFile(_currentTempPath);
             ESP_LOGW(TAG, "Upload size mismatch (got %u, expected %u)",
                           _uploadedBytes, upload.totalSize);
-            _server.send(400, "text/plain", "Upload incomplete or corrupted");
+            _httpServer.send(400, "text/plain", "Upload incomplete or corrupted");
             resetUploadState();
             return;
         }
@@ -116,7 +116,7 @@ void WebInterface::handleUploadJob()
         {
             _fileManager.deleteFile(_currentTempPath);
             ESP_LOGE(TAG, "Failed to finalize upload");
-            _server.send(500, "text/plain", "Failed to save file");
+            _httpServer.send(500, "text/plain", "Failed to save file");
             resetUploadState();
             return;
         }
@@ -127,7 +127,7 @@ void WebInterface::handleUploadJob()
         std::string response = "{\"status\":\"success\",\"file\":\""
                              + std::string(filename.c_str())
                              + "\",\"size\":" + std::to_string(_uploadedBytes) + "}";
-        _server.send(200, "application/json", response.c_str());
+        _httpServer.send(200, "application/json", response.c_str());
 
         resetUploadState();
     }

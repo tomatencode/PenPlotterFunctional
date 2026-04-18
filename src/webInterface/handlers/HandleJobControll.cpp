@@ -2,35 +2,35 @@
 #include "config/DirectoriesConfig.hpp"
 
 void WebInterface::handleStartJob() {
-    if (!_server.hasArg("file"))
+    if (!_httpServer.hasArg("file"))
     {
-        _server.send(400, "text/plain", "Missing 'file' parameter");
+        _httpServer.send(400, "text/plain", "Missing 'file' parameter");
         return;
     }
 
-    std::string filename = _server.arg("file").c_str();
+    std::string filename = _httpServer.arg("file").c_str();
 
     if (!_fileManager.fileExists(PLOTTING_DIRECTORY + filename))
     {
-        _server.send(404, "text/plain", "File not found");
+        _httpServer.send(404, "text/plain", "File not found");
         return;
     }
 
     _jobController.start(filename.c_str());
-    _server.send(200, "text/plain", "Job started");
+    _httpServer.send(200, "text/plain", "Job started");
 }
 
 void WebInterface::handleAbortJob() {
     _jobController.abort();
-    _server.send(200, "text/plain", "Job aborted");
+    _httpServer.send(200, "text/plain", "Job aborted");
 }
 
 void WebInterface::handlePauseJob() {
     _jobController.pause();
-    _server.send(200, "text/plain", "Job paused");
+    _httpServer.send(200, "text/plain", "Job paused");
 }
 
 void WebInterface::handleResumeJob() {
     _jobController.resume();
-    _server.send(200, "text/plain", "Job resumed");
+    _httpServer.send(200, "text/plain", "Job resumed");
 }

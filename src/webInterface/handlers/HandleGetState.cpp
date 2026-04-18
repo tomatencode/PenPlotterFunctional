@@ -3,7 +3,7 @@
 void WebInterface::handleGetPosition() {
     char buf[64];
     snprintf(buf, sizeof(buf), "{\"x\":%.3f,\"y\":%.3f}", _motionState.getMachineX(), _motionState.getMachineY());
-    _server.send(200, "application/json", buf);
+    _httpServer.send(200, "application/json", buf);
 }
 
 void WebInterface::handleGetMotionState() {
@@ -16,10 +16,10 @@ void WebInterface::handleGetMotionState() {
 
     char buf[64];
     snprintf(buf, sizeof(buf), "{\"motionState\":\"%s\"}", motionStateStr);
-    _server.send(200, "application/json", buf);
+    _httpServer.send(200, "application/json", buf);
 }
 
 void WebInterface::handleGetActivePenSlot() {
     const auto activeSlot = _motionState.getActivePenSlot();
-    _server.send(200, "application/json", activeSlot.has_value() ? std::to_string(activeSlot.value()).c_str() : "null");
+    _httpServer.send(200, "application/json", activeSlot.has_value() ? std::to_string(activeSlot.value()).c_str() : "null");
 }

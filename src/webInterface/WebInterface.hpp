@@ -31,7 +31,7 @@ public:
           _wifiController(wifiController),
           _settingPersistence(settingsPersistence),
           _runtimeSettings(runtimeSettings),
-          _server(80),
+          _httpServer(80),
           _wsServer(81)
     {}
     
@@ -49,8 +49,8 @@ private:
     RuntimeSettings& _runtimeSettings;
     WifiController& _wifiController;
 
-    WebServer _server;         // HTTP server (port 80)
-    WebSocketsServer _wsServer; // WebSocket server (port 81)
+    WebServer _httpServer;
+    WebSocketsServer _wsServer;
     bool _serverStarted = false;
     unsigned long _lastStateMs = 0;
 

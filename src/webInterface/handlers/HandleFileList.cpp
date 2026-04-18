@@ -12,5 +12,5 @@ void WebInterface::handleListJobs() {
     }
     json += "]";
 
-    _server.send(200, "application/json", json.c_str());
+    _httpServer.send(200, "application/json", json.c_str());
 }

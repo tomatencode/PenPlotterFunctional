@@ -15,34 +15,34 @@ void WebInterface::init() {
     });
 
     // Register routes once, they persist across server restarts
-    _server.on("/iteration", HTTP_GET, [this]() { handleGetItteration(); });
-    _server.on("/firmwareVersion", HTTP_GET, [this]() { handleGetFirmwareVersion(); });
-    _server.on("/workspace", HTTP_GET, [this]() { handleGetWorkspace(); });
+    _httpServer.on("/iteration", HTTP_GET, [this]() { handleGetItteration(); });
+    _httpServer.on("/firmwareVersion", HTTP_GET, [this]() { handleGetFirmwareVersion(); });
+    _httpServer.on("/workspace", HTTP_GET, [this]() { handleGetWorkspace(); });
+
+    _httpServer.on("/position", HTTP_GET, [this]() { handleGetPosition(); });
+    _httpServer.on("/motionState", HTTP_GET, [this]() { handleGetMotionState(); });
+    _httpServer.on("/activePenSlot", HTTP_GET, [this]() { handleGetActivePenSlot(); });
+
+    _httpServer.on("/name", HTTP_GET, [this]() { handleGetName(); });
+    _httpServer.on("/name", HTTP_PUT, [this]() { changeName(); });
+    _httpServer.on("/mdnsName", HTTP_GET, [this]() { handleGetMDNSName(); });
+    _httpServer.on("/mdnsName", HTTP_PUT, [this]() { changeMDNSName(); });
     
-    _server.on("/position", HTTP_GET, [this]() { handleGetPosition(); });
-    _server.on("/motionState", HTTP_GET, [this]() { handleGetMotionState(); });
-    _server.on("/activePenSlot", HTTP_GET, [this]() { handleGetActivePenSlot(); });
+    _httpServer.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUploadJob(); });
+    _httpServer.on("/plotFiles", HTTP_DELETE, [this]() { handleDeleteJob(); });
+    _httpServer.on("/plotFiles", HTTP_GET,  [this]() { handleListJobs(); });
+    _httpServer.on("/start", HTTP_POST, [this]() { handleStartJob(); });
+    _httpServer.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
+    _httpServer.on("/pause", HTTP_POST, [this]() { handlePauseJob(); });
+    _httpServer.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
 
-    _server.on("/name", HTTP_GET, [this]() { handleGetName(); });
-    _server.on("/name", HTTP_PUT, [this]() { changeName(); });
-    _server.on("/mdnsName", HTTP_GET, [this]() { handleGetMDNSName(); });
-    _server.on("/mdnsName", HTTP_PUT, [this]() { changeMDNSName(); });
-    
-    _server.on("/upload", HTTP_POST, [this]() {}, [this]() { handleUploadJob(); });
-    _server.on("/plotFiles", HTTP_DELETE, [this]() { handleDeleteJob(); });
-    _server.on("/plotFiles", HTTP_GET,  [this]() { handleListJobs(); });
-    _server.on("/start", HTTP_POST, [this]() { handleStartJob(); });
-    _server.on("/abort", HTTP_POST, [this]() { handleAbortJob(); });
-    _server.on("/pause", HTTP_POST, [this]() { handlePauseJob(); });
-    _server.on("/resume", HTTP_POST, [this]() { handleResumeJob(); });
+    _httpServer.on("/jobStatus", HTTP_GET, [this]() { handleGetJobStatus(); });
 
-    _server.on("/jobStatus", HTTP_GET, [this]() { handleGetJobStatus(); });
+    _httpServer.on("/execute", HTTP_POST, [this]() { handleExecuteLine(); });
 
-    _server.on("/execute", HTTP_POST, [this]() { handleExecuteLine(); });
-
-    _server.on("/setting", HTTP_GET,  [this]() { handleGetSetting(); });
-    _server.on("/setting", HTTP_PUT, [this]() { handleSetSetting(); });
-    _server.on("/settings", HTTP_GET,  [this]() { handleGetAllSettings(); });
+    _httpServer.on("/setting", HTTP_GET,  [this]() { handleGetSetting(); });
+    _httpServer.on("/setting", HTTP_PUT, [this]() { handleSetSetting(); });
+    _httpServer.on("/settings", HTTP_GET,  [this]() { handleGetAllSettings(); });
 }
 
 WebInterface::~WebInterface() {
@@ -68,7 +68,7 @@ void WebInterface::update() {
 
     if (_serverStarted)
     {
-        _server.handleClient();
+        _httpServer.handleClient();
         _wsServer.loop();
 
         unsigned long now = millis();
@@ -91,7 +91,7 @@ void WebInterface::setupServer() {
         ESP_LOGI(TAG, "mDNS started: http://%s.local", _runtimeSettings.mdnsName().c_str());
     }
 
-    _server.begin();
+    _httpServer.begin();
     _wsServer.begin();
     _serverStarted = true;
 

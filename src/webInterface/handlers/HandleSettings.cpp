@@ -66,12 +66,12 @@ std::string WebInterface::penSlotsToJson() const
 // GET /setting?key=...
 void WebInterface::handleGetSetting()
 {
-    if (!_server.hasArg("key")) {
-        _server.send(400, "text/plain", "Missing 'key' parameter");
+    if (!_httpServer.hasArg("key")) {
+        _httpServer.send(400, "text/plain", "Missing 'key' parameter");
         return;
     }
 
-    const std::string key = _server.arg("key").c_str();
+    const std::string key = _httpServer.arg("key").c_str();
 
     struct Entry {
         const char* key;
@@ -101,24 +101,24 @@ void WebInterface::handleGetSetting()
 
     for (const auto& entry : table) {
         if (key == entry.key) {
-            _server.send(200, "text/plain", entry.getter().c_str());
+            _httpServer.send(200, "text/plain", entry.getter().c_str());
             return;
         }
     }
 
-    _server.send(404, "text/plain", "Unknown setting key");
+    _httpServer.send(404, "text/plain", "Unknown setting key");
 }
 
 // POST /setting?key=...&value=...
 void WebInterface::handleSetSetting()
 {
-    if (!_server.hasArg("key") || !_server.hasArg("value")) {
-        _server.send(400, "text/plain", "Missing 'key' or 'value' parameter");
+    if (!_httpServer.hasArg("key") || !_httpServer.hasArg("value")) {
+        _httpServer.send(400, "text/plain", "Missing 'key' or 'value' parameter");
         return;
     }
 
-    const std::string key   = _server.arg("key").c_str();
-    const std::string value = _server.arg("value").c_str();
+    const std::string key   = _httpServer.arg("key").c_str();
+    const std::string value = _httpServer.arg("value").c_str();
 
     struct Entry {
         const char* key;
@@ -153,12 +153,12 @@ void WebInterface::handleSetSetting()
         if (key == entry.key) {
             ESP_LOGI(TAG, "Attempting to update setting '%s' to '%s'", key.c_str(), value.c_str());
             entry.setter(value);
-            _server.send(200, "text/plain", "OK");
+            _httpServer.send(200, "text/plain", "OK");
             return;
         }
     }
 
-    _server.send(404, "text/plain", "Unknown setting key");
+    _httpServer.send(404, "text/plain", "Unknown setting key");
 }
 
 // GET /settings  (all settings as JSON)
@@ -206,5 +206,5 @@ std::string WebInterface::buildAllSettingsJson()
 void WebInterface::handleGetAllSettings()
 {
     const std::string json = buildAllSettingsJson();
-    _server.send(200, "application/json", json.c_str());
+    _httpServer.send(200, "application/json", json.c_str());
 }
