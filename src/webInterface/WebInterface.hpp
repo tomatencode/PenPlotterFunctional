@@ -94,6 +94,7 @@ private:
     void handleUploadJob();
     void handleDeleteJob();
     void handleListJobs();
+    void handleGetFileInfo();
     void handleStartJob();
     void handleAbortJob();
     void handlePauseJob();

@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include "config/hardwareConfig.hpp"
+#include "config/HardwareConfig.hpp"
 
 #include "ui/framework/screen/Screen.hpp"
 #include "../ScreensContext.hpp"
